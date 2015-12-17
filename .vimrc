@@ -75,26 +75,26 @@ augroup END
 "---------------------------------------
 " Keyboard mappings
 "---------------------------------------
-let mapleader=","
+let mapleader="\<Space>"
 nmap \ :NERDTreeToggle<CR>
 nmap <leader>T :enew<CR>
-nmap <leader>b<right> :bnext<CR>
-nmap <leader>b<left> :bprevious<CR>
+nmap <leader>bl :bnext<CR>
+nmap <leader>bh :bprevious<CR>
 nmap <leader>bq :bp <BAR> bd #<CR>
-nmap <leader>bl :ls<CR>
-nmap <leader>n<down> :rightbelow sb #<CR>
-nmap <leader>n<up> :leftabove sb #<CR>
-nmap <leader>n<left> :vert leftabove sb #<CR>
-nmap <leader>n<right> :vert rightbelow sb #<CR>
+nmap <leader>bs :ls<CR>
+nmap <leader>nj :rightbelow sb #<CR>
+nmap <leader>nk :leftabove sb #<CR>
+nmap <leader>nh :vert leftabove sb #<CR>
+nmap <leader>nl :vert rightbelow sb #<CR>
 nmap <leader>h :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
-nnoremap <leader><down> <C-w><down>
-nnoremap <leader><right> <C-w><right>
-nnoremap <leader><left> <C-w><left>
-nnoremap <leader><up> <C-w><up>
-nnoremap <leader>m<up> <C-w>K
-nnoremap <leader>m<down> <C-w>K<C-w>r
-nnoremap <leader>m<left> <C-w>H
-nnoremap <leader>m<right> <C-w>H<C-w>r
+nnoremap <leader>j <C-w>j
+nnoremap <leader>l <C-w>l
+nnoremap <leader>h <C-w>h
+nnoremap <leader>k <C-w>k
+nnoremap <leader>mk <C-w>K
+nnoremap <leader>mj <C-w>K<C-w>r
+nnoremap <leader>mh <C-w>H
+nnoremap <leader>ml <C-w>H<C-w>r
 nnoremap j gj
 nnoremap k gk
 
@@ -217,3 +217,4 @@ hi colorcolumn     ctermfg=NONE ctermbg=237  cterm=NONE
 "hi EnumerationValue -- no settings --
 "hi Question -- no settings --
 "hi Union -- no settings --
+
