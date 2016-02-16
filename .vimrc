@@ -13,8 +13,9 @@ set backspace=indent,eol,start " Allow backspace to work normally
 set number " Turn on line numbers
 set laststatus=2 " Always show statusline
 set list "Show invisible characters, next line specifies characters
-set listchars=eol:¬,nbsp:¤,space:·,trail:•,tab:››,extends:…,precedes:…,conceal:‡
-set rtp+=~/.vim/bundle/Vundle.vim " set runtime path to use vundle for plugins
+set listchars=eol:¬,nbsp:¤,trail:•,tab:››,extends:…,precedes:…,conceal:‡
+set rtp+=~/.vim/bundle/vundle/ " set runtime path to use vundle for plugins
+call vundle#rc()
 
 "----------------------------------------
 " Start Vundle and loading plugins
