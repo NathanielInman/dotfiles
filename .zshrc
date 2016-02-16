@@ -10,7 +10,7 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 # All aliases 
-alias ls='ls -GFh'
+alias ls='ls -GFh --color=auto'
 alias ga='git add -A'
 alias gc='git commit -m'
 alias gp='git push --follow-tags'
