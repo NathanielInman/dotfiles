@@ -1,13 +1,13 @@
-# Variable declaration
-ZSH_THEME="powerlevel9k/powerlevel9k"
-HIST_STAMPS="dd.mm.yyyy"
-POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+# Set up paths and language library
+export LANG=en_US.UTF-8
+export ZSH=$HOME/.oh-my-zsh
+export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+ZSH_THEME="bureau"
 plugins=(git)
 
 # User configuration
-export ZSH=/Users/nateinman/.oh-my-zsh
 source $ZSH/oh-my-zsh.sh
-export LANG=en_US.UTF-8
 
 # All aliases 
 alias ls='ls -GFh'
