@@ -31,7 +31,6 @@ ssh-copy-id test@SERVER_IP_ADDRESS
 ```
 
 ## Setting Up Node on Debian-based OS
-Link latest
 ```
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 sudo apt-get install -y nodejs
