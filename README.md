@@ -35,9 +35,17 @@ ssh-copy-id test@SERVER_IP_ADDRESS
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 sudo apt-get install -y nodejs build-essential
 ```
-## Basic Vim and TMux setup on Debian-based OS
+## Basic Vim setup on Debian-based OS
 ```
 sudo apt-get update
 sudo apt-get install vim tmux git
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 ```
+Then replace the existing `~/.vimrc` with the one in this repository
+## Switching to Zsh with theme
+```
+sudo apt-get install zsh
+chsh -s $(which zsh)
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+```
+Then replace the existing `~/.zshrc` with the one in this repository
