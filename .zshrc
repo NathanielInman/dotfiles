@@ -24,7 +24,6 @@ if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 # All aliases 
 alias ls='ls -GFh'
 alias t='tree -phCL 2'
-alias chrome="open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --disable-web-security" "$1"
 alias ga='git add -A'
 alias gc='git commit -m'
 alias gp='git push --follow-tags'
@@ -45,13 +44,6 @@ search(){
   grep -nr $1 ./
 }
 
-# Make it easy to test npm packages
-link(){
-  npm uninstall -g $1
-  npm unlink $1
-  npm link $1
-}
-
 # Create a directory and cd into it
 walk(){
   mkdir -p $1
@@ -66,16 +58,4 @@ close(){
   else
     rm -rf -- "$(pwd -P)" && cd ..
   fi
-}
-
-# Download and extract url zip 
-czip(){
-  curl -sS $1 > file.zip
-  unzip file.zip
-  rm file.zip
-}
-
-# Automatically download the latest pip and install it
-getPip(){
-  curl --silent --show-error --retry 5 https://bootstrap.pypa.io/get-pip.py | sudo python
 }
