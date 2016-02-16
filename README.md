@@ -30,19 +30,19 @@ Then on the client, use that username and password to copy the ssh key to the se
 ssh-copy-id test@SERVER_IP_ADDRESS
 ```
 
-## Setting Up Node on Debian-based OS
+## Node Setup (DEBIAN)
 ```
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 sudo apt-get install -y nodejs build-essential
 ```
-## Basic Vim setup on Debian-based OS
+## Vim Setup (DEBIAN)
 ```
 sudo apt-get update
 sudo apt-get install vim tmux git
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 ```
 Then replace the existing `~/.vimrc` with the one in this repository
-## Switching to Zsh with theme
+## Zsh Setup (DEBIAN)
 ```
 sudo apt-get install zsh
 chsh -s $(which zsh)
