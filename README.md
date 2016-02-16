@@ -26,4 +26,6 @@ gpasswd -a test sudo
 ```
 
 Then on the client, use that username and password to copy the ssh key to the server
-```ssh-copy-id test@SERVER_IP_ADDRESS```
+```
+ssh-copy-id test@SERVER_IP_ADDRESS
+```
