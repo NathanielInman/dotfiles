@@ -33,6 +33,11 @@ ssh-copy-id test@SERVER_IP_ADDRESS
 ## Setting Up Node on Debian-based OS
 ```
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
-sudo apt-get install -y nodejs
-sudo apt-get install -y build-essential
+sudo apt-get install -y nodejs build-essential
+```
+## Basic Vim and TMux setup on Debian-based OS
+```
+sudo apt-get update
+sudo apt-get install vim tmux git
+git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 ```
