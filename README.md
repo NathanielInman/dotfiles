@@ -4,6 +4,22 @@ Configuration files for VIM, Tmux and more
 ## Minimalistic and Documented
 I try to make sure that all of my configuration files are documented in the case that myself or others don't remember what certain things do. This is particularly helpful with vim commands that aren't used so often or just simple refreshing oneself.
 
+## Setting Up AWS users
+start by going root (aws requires you to login as `ubuntu`), then add your user, followed by adding the ssh key to authorized
+```
+sudo su -
+adduser nate
+gpasswd -a nate sudo
+exit
+sudo su nate
+cd ~
+mkdir .ssh
+chmod 700 .ssh
+touch .ssh/authorized_keys
+chmod 600 .ssh/authorized_keys
+```
+then finally paste the ssh key into the `authorized_keys` file, log out and then login with the user.
+
 ## Setting Up Digital Ocean
 
 After initialization of the server, we need access to root.
@@ -21,13 +37,13 @@ You will receive an email with a password
 > Enter emailed password again, then enter new password followed by confirmation
 
 ```
-adduser test
-gpasswd -a test sudo
+adduser nate
+gpasswd -a nate sudo
 ```
 
 Then on the client, use that username and password to copy the ssh key to the server
 ```
-ssh-copy-id test@SERVER_IP_ADDRESS
+ssh-copy-id nate@SERVER_IP_ADDRESS
 ```
 
 ## Node Setup (DEBIAN)
