@@ -102,3 +102,31 @@ The following will monitor realtime statics for the CPU
 ```
 pm2 monit
 ```
+
+## Reverse Proxy
+The following will help allow public users to access the application. It will use a generic nginx location block.
+```
+sudo apt-get install nginx
+sudo vim /etc/nginx/sites-available/default
+```
+replace the entire contents with the following, while replacing the ip dictated and the domain if one is already allocated to the application.
+```
+server {
+  listen 80;
+
+  server_name applicationDomain.com;
+
+  location / {
+    proxy_pass http://APP_IP_ADDRESS:8080;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+  }
+}
+```
+After finished restart the nginx server.
+```
+sudo service nginx restart
+```
