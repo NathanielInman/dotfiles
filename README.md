@@ -130,3 +130,15 @@ After finished restart the nginx server.
 ```
 sudo service nginx restart
 ```
+## Setting up Mongodb
+Start by using the official mongodb repo for apt-get
+```
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+sudo apt-get update
+```
+Now install mongod and make sure it is running okay
+```
+sudo apt-get install -y mongodb-org
+service mongod status
+```
