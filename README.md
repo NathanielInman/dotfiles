@@ -65,3 +65,18 @@ chsh -s $(which zsh)
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
 Then replace the existing `~/.zshrc` with the one in this repository
+
+## Packaging and Deploying
+Package the distribution folder into a tarball
+```
+cd distFolder && tar -czvf ../dist.tar.gz . && cd ..
+```
+Now we will deploy to the server. Make sure to replace `$username` and `$serverip` with the correct values
+```
+user=$(whoami)
+rsync -avhtz -e 'ssh -i /Users/$user/.ssh/id_rsa' dist.tar.gz $username@$serverip:./
+```
+Now for extracting the package on the server, don't forget to replace `/srv/html` with where you want the package to go as well as `$username` and `$serverip` with the correct values.
+```
+ssh -i ~/.ssh/id_rsa $username@$serverip "sudo tar -C /srv/html -zxvf dist.tar.gz;rm dist.tar.gz"
+```
