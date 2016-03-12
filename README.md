@@ -66,7 +66,7 @@ sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/i
 ```
 Then replace the existing `~/.zshrc` with the one in this repository
 
-## Packaging and Deploying
+## Packaging
 Package the distribution folder into a tarball
 ```
 cd distFolder && tar -czvf ../dist.tar.gz . && cd ..
@@ -76,7 +76,29 @@ Now we will deploy to the server. Make sure to replace `$username` and `$serveri
 user=$(whoami)
 rsync -avhtz -e 'ssh -i /Users/$user/.ssh/id_rsa' dist.tar.gz $username@$serverip:./
 ```
-Now for extracting the package on the server, don't forget to replace `/var/opt/applicationName` with where you want the package to go as well as `$username` and `$serverip` with the correct values.
+Now for extracting the package on the server, don't forget to replace `/var/opt/applicationName` with where you want the package to go as well as `$username` and `$serverip` with the correct values. It creates the destination folder if it doesn't exist, and then extracts the package to that destination folder, removes the package and exits the server.
 ```
-ssh -i ~/.ssh/id_rsa $username@$serverip "sudo tar -C /var/opt/applicationName -zxvf dist.tar.gz;rm dist.tar.gz"
+ssh -i ~/.ssh/id_rsa $username@$serverip "sudo mkdir -p /var/opt/applicationName;sudo tar -C /var/opt/applicationName -zxvf dist.tar.gz;rm dist.tar.gz"
+```
+
+## Deploying
+First we need to add a watcher that will restart our application when it crashes. Make sure to change `index.js` to the entry javascript file of the application that you would normally start with `node fileName.js`.
+```
+sudo npm install pm2 -g
+pm2 start index.js
+```
+Now we need to add a startup script so when the server restarts for any reason we can start the application automatically. Make sure to replace `ubuntu` with the proper linux distro. For additional information refer to `pm2 -h` for help.
+```
+pm2 startup ubuntu
+```
+This will output a command, run the command supplied to generate and initiate the script.
+
+## Monitoring Application
+The following will get uptime statistics and restart information for the application.
+```
+pm2 info appName
+```
+The following will monitor realtime statics for the CPU 
+```
+pm2 monit
 ```
