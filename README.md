@@ -76,7 +76,7 @@ Now we will deploy to the server. Make sure to replace `$username` and `$serveri
 user=$(whoami)
 rsync -avhtz -e 'ssh -i /Users/$user/.ssh/id_rsa' dist.tar.gz $username@$serverip:./
 ```
-Now for extracting the package on the server, don't forget to replace `/var/opt/node` with where you want the package to go as well as `$username` and `$serverip` with the correct values.
+Now for extracting the package on the server, don't forget to replace `/var/opt/applicationName` with where you want the package to go as well as `$username` and `$serverip` with the correct values.
 ```
-ssh -i ~/.ssh/id_rsa $username@$serverip "sudo tar -C /var/opt/node -zxvf dist.tar.gz;rm dist.tar.gz"
+ssh -i ~/.ssh/id_rsa $username@$serverip "sudo tar -C /var/opt/applicationName -zxvf dist.tar.gz;rm dist.tar.gz"
 ```
