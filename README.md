@@ -46,29 +46,42 @@ Then on the client, use that username and password to copy the ssh key to the se
 ssh-copy-id nate@SERVER_IP_ADDRESS
 ```
 ## Setting Up A Mac
-Start by installing homebrew
+We need homebrew first as it's our main package manager
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew install git node vim zsh tmux python reattach-to-user-namespace
+```
+Now we update our package manager and then install powerline-status
+```
 pip install --upgrade pip
 pip install --user powerline-status
+```
+After doing so, we can copy `.tmux.conf` to the home directory.
+Now for installing vim package manager
+```
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+```
+Now that Vundler is installed, we can copy the `.vimrc` to the home directory.
+Open up vim and `:PluginInstall` to install all the plugins.
+Now it's time to install our most important component, zsh.
+```
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
-## Node Setup (DEBIAN)
+It sets up a basic `.zshrc` replace that with the one in this repository.
+## Setting up Debian
+Start with Node
 ```
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 sudo apt-get install -y nodejs build-essential
 ```
-### MAC
-## Vim Setup (DEBIAN)
+Now for Vim
 ```
 sudo apt-get update
 sudo apt-get install vim tmux git
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 ```
-Then replace the existing `~/.vimrc` with the one in this repository
-## Zsh Setup (DEBIAN)
+Then replace the existing `~/.vimrc` with the one in this repository.
+Finally we setup zsh
 ```
 sudo apt-get install zsh
 chsh -s $(which zsh)
