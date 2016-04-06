@@ -1,7 +1,7 @@
 # Set up paths and language library
 export LANG=en_US.UTF-8
 export ZSH=$HOME/.oh-my-zsh
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=/usr/local/bin:$HOME/bin:$PATH
 
 ZSH_THEME="bureau"
 plugins=(git)
@@ -10,7 +10,7 @@ plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 # All aliases 
-alias ls='ls -GFh --color=auto'
+alias ls='ls -GFh'
 alias ga='git add -A'
 alias gc='git commit -m'
 alias gp='git push --follow-tags'
