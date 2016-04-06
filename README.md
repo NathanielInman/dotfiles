@@ -45,12 +45,20 @@ Then on the client, use that username and password to copy the ssh key to the se
 ```
 ssh-copy-id nate@SERVER_IP_ADDRESS
 ```
-
+## Setting Up A Mac
+Start by installing homebrew
+```
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew install git node vim zsh tmux
+git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+```
 ## Node Setup (DEBIAN)
 ```
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 sudo apt-get install -y nodejs build-essential
 ```
+### MAC
 ## Vim Setup (DEBIAN)
 ```
 sudo apt-get update
