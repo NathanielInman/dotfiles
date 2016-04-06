@@ -49,7 +49,9 @@ ssh-copy-id nate@SERVER_IP_ADDRESS
 Start by installing homebrew
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew install git node vim zsh tmux
+brew install git node vim zsh tmux python reattach-to-user-namespace
+pip install --upgrade pip
+pip install --user powerline-status
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
