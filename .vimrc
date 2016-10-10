@@ -14,14 +14,13 @@ set number " Turn on line numbers
 set laststatus=2 " Always show statusline
 set list "Show invisible characters, next line specifies characters
 set listchars=eol:¬,nbsp:¤,trail:•,tab:››,extends:…,precedes:…,conceal:‡
-set rtp+=~/.vim/bundle/vundle/ " set runtime path to use vundle for plugins
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim/ " set runtime path to use vundle for plugins
 
 "----------------------------------------
 " Start Vundle and loading plugins
 "----------------------------------------
 call vundle#begin()
-Plugin 'gmarik/Vundle.vim' "Best plugin management for vim
+Plugin 'VundleVim/Vundle.vim' "Best plugin management for vim
 Plugin 'slim-template/vim-slim' "Slim templating for Rails
 Plugin 'digitaltoad/vim-jade' "Jade templating for Node
 Plugin 'wavded/vim-stylus' "Stylus preprocessor for css
@@ -29,7 +28,7 @@ Plugin 'othree/yajs.vim' "ES2015+ javascript support
 Plugin 'airblade/vim-gitgutter' "See git + / - / ~ in gutter
 Plugin 'scrooloose/nerdtree' "File management
 Plugin 'Xuyuanp/nerdtree-git-plugin' "Shows modifications in nerdtree
-Plugin 'bling/vim-airline' "UI update to vim
+Plugin 'itchyny/lightline.vim' "pretty statusline
 Plugin 'hail2u/vim-css3-syntax' "Support for latest css3
 Plugin 'myusuf3/numbers.vim' "Shows relative line numbers on normal mode
 Plugin 'ctrlpvim/ctrlp.vim' "Fuzzy file finder
@@ -39,6 +38,8 @@ Plugin 'leafgarland/typescript-vim' "Typescript syntax support
 Plugin 'kchmck/vim-coffee-script' "Coffeescript syntax support
 Plugin 'othree/html5-syntax.vim' "Good html5 syntax support
 Plugin 'moll/vim-node' "Allows gf/gF on relative node paths
+Plugin 'scrooloose/nerdcommenter' "Allows commenting of lines easier
+Plugin 'ap/vim-buftabline' "Allows the buffers as tabs
 call vundle#end()
 
 filetype plugin indent on " Plugins default to indent
@@ -48,9 +49,6 @@ filetype plugin indent on " Plugins default to indent
 "---------------------------------------
 let g:syntastic_javascript_checkers = ['eslint']
 let g:indentLine_char="│" " Change indentation looks
-let g:airline#extensions#tabline#enabled=1 " turn on buffer 'tabs'
-let g:airline#extensions#tabline#fnamemod=':t' " change 'tab' names to just filename
-let g:airline_powerline_fonts=1 " Ensure to use pretty powerline fonts
 let NERDTreeQuitOnOpen = 1
 let g:gitgutter_highlight_lines=1
 let g:gitgutter_sign_added="++"
@@ -103,11 +101,52 @@ nnoremap k gk
 " ~Frost~ Highlight Theme (xterm256 required)
 "---------------------------------------------
 syntax on "Make sure syntax highlighting is on
+hi clear "Start by clearing the screen
+
+" Color Table for Theme
+" 8   guifg=#808080 "rgb=128,128,128 (GRAYTONE)
+" 29  guifg=#00875f "rgb=0,135,95 - deapsea approx.
+" 52  guifg=#5f0000 "rgb=95,0,0 - rosewood approx.
+" 60  guifg=#5f5f87 "rgb=95,95,135 - comet approx.
+" 68  guifg=#5f87d7 "rgb=95,135,215 - havelock blue approx.
+" 88  guifg=#870000 "rgb=135,0,0 - maroon approx.
+" 97  guifg=#875faf "rgb=135,95,175 - deluge approx.
+" 109 guifg=#87afaf "rgb=135,175,175 - gulf stream approx.
+" 118 guifg=#87ff00 "rgb=135,255,0 - chartreuse approx.
+" 130 guifg=#af5f00 "rgb=175,95,0 - rose of sharon approx.
+" 131 guifg=#af5f5f "rgb=175,95,95 - matrix approx.
+" 160 guifg=#d70000 "rgb=215,0,0 - guardsman red approx.
+" 189 guifg=#d7d7ff "rgb=215,215,255 - fog approx.
+" 196 guifg=#ff0000 "rgb=255,0,0 - red
+" 209 guifg=#ff875f "rgb=255,135,95 - salmon approx.
+" 226 guifg=#ffff00 "rgb=255,255,0 - yellow
+" 233 guifg=#121212 "rgb=18,18,18 (GRAYTONE)
+" 235 guifg=#262626 "rgb=38,38,38 (GRAYTONE)
+" 236 guifg=#303030 "rgb=48,48,48 (GRAYTONE)
+" 237 guifg=#3a3a3a "rgb=58,58,58 (GRAYTONE)
+" 238 guifg=#444444 "rgb=68,68,68 (GRAYTONE)
+" 239 guifg=#4e4e4e "rgb=78,78,78 (GRAYTONE)
+" 241 guifg=#626262 "rgb=98,98,98 (GRAYTONE)
+" 242 guifg=#6c6c6c "rgb=108,108,108 (GRAYTONE)
+" 243 guifg=#767676 "rgb=118,118,118 (GRAYTONE)
+" 246 guifg=#949494 "rgb=148,148,148 (GRAYTONE)
+" 248 guifg=#a8a8a8 "rgb=168,168,168 (GRAYTONE)
+" 249 guifg=#b2b2b2 "rgb=178,178,178 (GRAYTONE)
+" 251 guifg=#c6c6c6 "rgb=198,198,198 (GRAYTONE)
+" 252 guifg=#d0d0d0 "rgb=208,208,208 (GRAYTONE)
+" 253 guifg=#dadada "rgb=218,218,218 (GRAYTONE)
+" 254 guifg=#e4e4e4 "rgb=228,228,228 (GRAYTONE)
 
 " Background colors for invisibles and line numbers
 hi NonText         ctermfg=235
 hi SpecialKey      ctermfg=235
-hi LineNr          ctermfg=236
+hi LineNr          ctermfg=241
+
+" Buffer tab line colors
+hi BufTabLineCurrent ctermfg=109 ctermbg=238 cterm=bold
+hi BufTabLineActive  ctermfg=243 ctermbg=238 cterm=NONE
+hi BufTabLineHidden  ctermfg=242
+hi BufTabLineFill    ctermfg=242
 
 " Git Gutter and Git Diff
 hi SignColumn      ctermfg=235 
@@ -218,4 +257,3 @@ hi colorcolumn     ctermfg=NONE ctermbg=237  cterm=NONE
 "hi EnumerationValue -- no settings --
 "hi Question -- no settings --
 "hi Union -- no settings --
-
