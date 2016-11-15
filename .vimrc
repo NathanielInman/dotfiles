@@ -13,7 +13,7 @@ set backspace=indent,eol,start " Allow backspace to work normally
 set number " Turn on line numbers
 set laststatus=2 " Always show statusline
 set list "Show invisible characters, next line specifies characters
-set listchars=eol:¬,nbsp:¤,trail:•,tab:››,extends:…,precedes:…,conceal:‡
+set listchars=eol:¬,nbsp:¤,space:⋅,trail:•,tab:››,extends:…,precedes:…,conceal:‡
 set rtp+=~/.vim/bundle/Vundle.vim/ " set runtime path to use vundle for plugins
 
 "----------------------------------------
@@ -94,6 +94,10 @@ nnoremap <leader>mk <C-w>K
 nnoremap <leader>mj <C-w>K<C-w>r
 nnoremap <leader>mh <C-w>H
 nnoremap <leader>ml <C-w>H<C-w>r
+nnoremap <leader>sk :res +5<CR>
+nnoremap <leader>sj :res -5<CR>
+nnoremap <leader>sh :vertical res -5<CR>
+nnoremap <leader>sl :vertical res +5<CR>
 nnoremap j gj
 nnoremap k gk
 
@@ -138,8 +142,8 @@ hi clear "Start by clearing the screen
 " 254 guifg=#e4e4e4 "rgb=228,228,228 (GRAYTONE)
 
 " Background colors for invisibles and line numbers
-hi NonText         ctermfg=235
-hi SpecialKey      ctermfg=235
+hi NonText         ctermfg=239
+hi SpecialKey      ctermfg=239
 hi LineNr          ctermfg=241
 
 " Buffer tab line colors
