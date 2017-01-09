@@ -57,37 +57,52 @@ pip install --upgrade pip
 pip install --user powerline-status
 ```
 After doing so, we can copy `.tmux.conf` to the home directory.
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.tmux.conf -o ~/.tmux.conf
+```
 Now for installing vim package manager
 ```
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 ```
 Now that Vundler is installed, we can copy the `.vimrc` to the home directory.
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.vimrc -o ~/.vimrc
+```
 Open up vim and `:PluginInstall` to install all the plugins.
 Now it's time to install our most important component, zsh.
 ```
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
-It sets up a basic `.zshrc` replace that with the one in this repository.
+Now finally set up your zsh with the better one here.
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
+```
 ## Setting up Debian
 Start with Node
 ```
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
 sudo apt-get install -y nodejs build-essential
 ```
-Now for Vim
+Now for Vim and package manager
 ```
 sudo apt-get update
 sudo apt-get install vim tmux git
 git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
 ```
-Then replace the existing `~/.vimrc` with the one in this repository.
+Now that vim and Vundler are installed, we can copy the `.vimrc` to the home directory.
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.vimrc -o ~/.vimrc
+```
 Finally we setup zsh
 ```
 sudo apt-get install zsh
 chsh -s $(which zsh)
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
-Then replace the existing `~/.zshrc` with the one in this repository
+Now finally set up your zsh with the better one here.
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
+```
 
 ## Packaging
 Package the distribution folder into a tarball
