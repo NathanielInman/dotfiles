@@ -59,6 +59,7 @@ pip install --user powerline-status
 After doing so, we can copy `.tmux.conf` to the home directory.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.tmux.conf -o ~/.tmux.conf
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.tmux.defaultLayout.conf -o ~/.tmux.defaultLayout.conf
 ```
 Now for installing vim package manager
 ```
