@@ -3,7 +3,7 @@ export LANG=en_US.UTF-8
 export ZSH=$HOME/.oh-my-zsh
 export PATH=/usr/local/bin:$HOME/bin:$PATH
 
-ZSH_THEME="bureau"
+ZSH_THEME="pragmata"
 plugins=(git)
 
 # User configuration
