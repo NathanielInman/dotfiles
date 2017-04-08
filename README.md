@@ -51,10 +51,10 @@ We need homebrew first as it's our main package manager
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 brew install git node vim zsh tmux python reattach-to-user-namespace
 ```
-Now we update our package manager and then install powerline-status
+Now we update our python node package managers
 ```
 pip install --upgrade pip
-pip install --user powerline-status
+npm install -g npm npm-check-updates
 ```
 After doing so, we can copy `.tmux.conf` to the home directory.
 ```
@@ -69,8 +69,7 @@ Now that Vundler is installed, we can copy the `.vimrc` to the home directory.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.vimrc -o ~/.vimrc
 ```
-Open up vim and `:PluginInstall` to install all the plugins.
-Now it's time to install our most important component, zsh.
+Open up vim and `:PluginInstall` to install all the plugins. Now for configuring the shell.
 ```
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
@@ -78,7 +77,7 @@ Download the personal theme to use with oh-my-zsh
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme ~/.oh-my-zsh/themes/pragmata.zsh-theme
 ```
-Now finally set up your zsh with the better one here.
+Now finally set up your zsh run commands file with the better one here.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
 ```
@@ -104,9 +103,17 @@ sudo apt-get install zsh
 chsh -s $(which zsh)
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
-Now finally set up your zsh with the better one here.
+Download the personal theme to use with oh-my-zsh
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme ~/.oh-my-zsh/themes/pragmata.zsh-theme
+```
+Now finally set up your zsh run commands file with the better one here.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
+```
+To reacquire the configuration without terminating the current session
+```
+source ~/.zshrc
 ```
 
 ## Packaging
@@ -122,6 +129,14 @@ rsync -avhtz -e 'ssh -i /Users/$user/.ssh/id_rsa' dist.tar.gz $username@$serveri
 Now for extracting the package on the server, don't forget to replace `/var/opt/applicationName` with where you want the package to go as well as `$username` and `$serverip` with the correct values. It creates the destination folder if it doesn't exist, and then extracts the package to that destination folder, removes the package and exits the server.
 ```
 ssh -i ~/.ssh/id_rsa $username@$serverip "sudo mkdir -p /var/opt/applicationName;sudo tar -C /var/opt/applicationName -zxvf dist.tar.gz;rm dist.tar.gz"
+```
+Alternatively you can use a `here document` if you have a lot of commands, to improve readability
+```
+ssh -i ~/.ssh/id_rsa $username@$serverip << EOF
+  sudo mkdir -p /var/opt/applicationName
+  sudo tar -C /var/opt/applicationName -zxvf dist.tar.gz
+  rm dist.tar.gz
+EOF
 ```
 
 ## Deploying
