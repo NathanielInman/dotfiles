@@ -74,6 +74,10 @@ Now it's time to install our most important component, zsh.
 ```
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
+Download the personal theme to use with oh-my-zsh
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme ~/.oh-my-zsh/themes/pragmata.zsh-theme
+```
 Now finally set up your zsh with the better one here.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
