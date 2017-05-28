@@ -22,8 +22,11 @@ alias gshow='git show'
 alias gpull='git pull'
 
 # Alias grep command for search
-search(){
+searchText(){
   grep -nr $1 ./
+}
+searchFiles(){
+  find . -type f -name $1
 }
 
 # Create a directory and cd into it
