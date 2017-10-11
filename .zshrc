@@ -28,6 +28,9 @@ alias rvimtmp='rm -i `find . | grep .swp$`'
 search(){
   grep -nr $1 ./
 }
+searchDetailed(){
+  grep -nrC 3 $1 ./
+}
 searchFiles(){
   find . -type f -name $1
 }
