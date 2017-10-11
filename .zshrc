@@ -24,19 +24,24 @@ alias termpdf='~/termpdf'
 alias k2pdfopt='~/k2pdfopt'
 alias rvimtmp='rm -i `find . | grep .swp$`'
 
-# Alias grep command for search
+# Search recursively for a phrase in all files starting
+# in current directory
 search(){
   grep -nr $1 ./
 }
+# Search recursively for a phrase in all files starting
+# in current directory and show results with an extra 
+# 3 lines above and below
 searchDetailed(){
   grep -nrC 3 $1 ./
 }
+# Search recursively for filenames matching phrase starting
+# in current directory
 searchFiles(){
   find . -type f -name $1
 }
 
-# If I search and find a line number but want to see what's near that
-# number, I can output specified start and end lines to output
+# Show lines of a specified file $3 starting at $1, ending with $2
 showLines(){
   sed -n "$1,$2p" $3
 }
