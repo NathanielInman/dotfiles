@@ -1,16 +1,16 @@
-# Set up paths and language library
-export LANG=en_US.UTF-8
-export ZSH=$HOME/.oh-my-zsh
-export PATH=/usr/local/bin:$HOME/bin:$PATH
-
-ZSH_THEME="pragmata"
+# Variable declaration
+ZSH_THEME="nate"
+HIST_STAMPS="dd.mm.yyyy"
 plugins=(git)
 
 # User configuration
+export ZSH=$HOME/.oh-my-zsh
 source $ZSH/oh-my-zsh.sh
+export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$PATH
+export LANG=en_US.UTF-8
 
 # All aliases 
-alias ls='ls -GFh'
+alias ls='exa -GF'
 alias ga='git add -A'
 alias gc='git commit -m'
 alias gp='git push --follow-tags'
@@ -20,13 +20,27 @@ alias gs='git status'
 alias gco='git checkout'
 alias gshow='git show'
 alias gpull='git pull'
+alias termpdf='~/termpdf'
+alias k2pdfopt='~/k2pdfopt'
+alias rvimtmp='rm -i `find . | grep .swp$`'
 
 # Alias grep command for search
-searchText(){
+search(){
   grep -nr $1 ./
 }
 searchFiles(){
   find . -type f -name $1
+}
+
+# If I search and find a line number but want to see what's near that
+# number, I can output specified start and end lines to output
+showLines(){
+  sed -n "$1,$2p" $3
+}
+
+#Alias for finding process by port and killing it
+killPort(){
+  lsof -ti tcp:$1 | xargs kill
 }
 
 # Create a directory and cd into it
