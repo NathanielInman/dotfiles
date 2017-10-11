@@ -25,22 +25,24 @@ alias k2pdfopt='~/k2pdfopt'
 alias rvimtmp='rm -i `find . | grep .swp$`'
 
 # Search recursively for a phrase in all files starting
-# in current directory
+# in current directory will return file name,line number
+# and the line it found the result
 search(){
   grep -nr $1 ./
 }
 # Search recursively for a phrase in all files starting
 # in current directory and show results with an extra 
-# 3 lines above and below
+# 3 lines above and below. Will also return file name and
+# line numbers for found results
 searchDetailed(){
   grep -nrC 3 $1 ./
 }
 # Search recursively for filenames matching phrase starting
-# in current directory
+# in current directory. Will return a list of files with their
+# directories relative to the search directory
 searchFiles(){
   find . -type f -name $1
 }
-
 # Show lines of a specified file $3 starting at $1, ending with $2
 showLines(){
   sed -n "$1,$2p" $3
