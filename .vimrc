@@ -14,17 +14,23 @@ set number " Turn on line numbers
 set laststatus=2 " Always show statusline
 set list "Show invisible characters, next line specifies characters
 set listchars=eol:¬,nbsp:¤,space:⋅,trail:•,tab:››,extends:…,precedes:…,conceal:‡
-set rtp+=~/.vim/bundle/vundle/ " set runtime path to use vundle for plugins
+set rtp+=~/.vim/bundle/Vundle.vim/ " set runtime path to use vundle for plugins
 
 "----------------------------------------
 " Start Vundle and loading plugins
 "----------------------------------------
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim' "Best plugin management for vim
-Plugin 'slim-template/vim-slim' "Slim templating for Rails
-Plugin 'digitaltoad/vim-jade' "Jade templating for Node
-Plugin 'wavded/vim-stylus' "Stylus preprocessor for css
+Plugin 'tpope/vim-rails' "Quick navigation in rails projects
+Plugin 'pangloss/vim-javascript' "Better tabbing in javascript
 Plugin 'othree/yajs.vim' "ES2015+ javascript support
+Plugin 'othree/html5-syntax.vim' "Good html5 syntax support
+Plugin 'moll/vim-node' "Allows gf/gF on relative node paths
+Plugin 'kchmck/vim-coffee-script' "Coffeescript syntax
+Plugin 'mtscout6/vim-cjsx' "Coffeescript JSX (CJSX)
+Plugin 'slim-template/vim-slim' "Slim templating for Rails
+Plugin 'digitaltoad/vim-pug' "Jade/Pug templating for Node
+Plugin 'wavded/vim-stylus' "Stylus preprocessor for css
 Plugin 'airblade/vim-gitgutter' "See git + / - / ~ in gutter
 Plugin 'scrooloose/nerdtree' "File management
 Plugin 'Xuyuanp/nerdtree-git-plugin' "Shows modifications in nerdtree
@@ -32,14 +38,10 @@ Plugin 'itchyny/lightline.vim' "pretty statusline
 Plugin 'hail2u/vim-css3-syntax' "Support for latest css3
 Plugin 'myusuf3/numbers.vim' "Shows relative line numbers on normal mode
 Plugin 'ctrlpvim/ctrlp.vim' "Fuzzy file finder
-Plugin 'tpope/vim-rails' "Quick navigation in rails projects
-Plugin 'pangloss/vim-javascript' "Better tabbing in javascript
-Plugin 'leafgarland/typescript-vim' "Typescript syntax support
-Plugin 'kchmck/vim-coffee-script' "Coffeescript syntax support
-Plugin 'othree/html5-syntax.vim' "Good html5 syntax support
-Plugin 'moll/vim-node' "Allows gf/gF on relative node paths
 Plugin 'scrooloose/nerdcommenter' "Allows commenting of lines easier
 Plugin 'ap/vim-buftabline' "Allows the buffers as tabs
+Plugin 'easymotion/vim-easymotion' "Allows quick movement around vim
+Plugin 'chr4/nginx.vim' "nginx sytax support
 call vundle#end()
 
 filetype plugin indent on " Plugins default to indent
@@ -47,8 +49,6 @@ filetype plugin indent on " Plugins default to indent
 "---------------------------------------
 " Reconfigure Plugin Options
 "---------------------------------------
-let g:syntastic_javascript_checkers = ['eslint']
-let g:indentLine_char="│" " Change indentation looks
 let NERDTreeQuitOnOpen = 1
 let g:gitgutter_highlight_lines=1
 let g:gitgutter_sign_added="++"
@@ -58,15 +58,6 @@ let g:gitgutter_max_signs=3000
 let g:ctrlp_map = '<c-p>' " ctrl+p starts plugin
 let g:ctrlp_cmd = 'CtrlP'
 let g:ctrlp_working_path_mode = 'ra' " start nearest search dir @ root .git
-let g:javascript_conceal_function = "ƒ"
-let g:javascript_conceal_null = "ø"
-let g:javascript_conceal_this = "@"
-let g:javascript_conceal_return = "⇚"
-let g:javascript_conceal_undefined = "¿"
-let g:javascript_conceal_NaN = "ℕ"
-let g:javascript_conceal_prototype = "¶"
-let g:javascript_conceal_static = "•"
-let g:javascript_conceal_superc= "Ω"
 augroup VimCSS3Syntax
   autocmd!
   autocmd FileType css setlocal iskeyword+=-
@@ -75,7 +66,12 @@ augroup END
 " Keyboard mappings
 "---------------------------------------
 let mapleader="\<Space>"
+
+" Open nerdtree and then open current file location in nerdtree
 nmap \ :NERDTreeToggle<CR>
+nmap <leader>\ :NERDTreeFind<CR>
+
+" New buffers, quitting buffers
 nmap <leader>T :enew<CR>
 nmap <leader>bl :bnext<CR>
 nmap <leader>bh :bprevious<CR>
@@ -85,7 +81,11 @@ nmap <leader>nj :rightbelow sb #<CR>
 nmap <leader>nk :leftabove sb #<CR>
 nmap <leader>nh :vert leftabove sb #<CR>
 nmap <leader>nl :vert rightbelow sb #<CR>
-nmap <leader>h :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
+" Indicate color code under cursor
+nmap <leader>z :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
+" Selecting, making and resizing windows
 nnoremap <leader>j <C-w>j
 nnoremap <leader>l <C-w>l
 nnoremap <leader>h <C-w>h
@@ -140,6 +140,13 @@ hi clear "Start by clearing the screen
 " 252 guifg=#d0d0d0 "rgb=208,208,208 (GRAYTONE)
 " 253 guifg=#dadada "rgb=218,218,218 (GRAYTONE)
 " 254 guifg=#e4e4e4 "rgb=228,228,228 (GRAYTONE)
+
+hi jsClassBraces   ctermfg=243 ctermbg=NONE cterm=NONE
+hi jsFuncBraces    ctermfg=243 ctermbg=NONE cterm=NONE
+hi jsFuncParens    ctermfg=243 ctermbg=NONE cterm=NONE
+hi jsIfElseBraces  ctermfg=243 ctermbg=NONE cterm=NONE
+hi jsParensIfElse  ctermfg=243 ctermbg=NONE cterm=NONE
+hi jsParens        ctermfg=243 ctermbg=NONE cterm=NONE
 
 " Background colors for invisibles and line numbers
 hi NonText         ctermfg=239
