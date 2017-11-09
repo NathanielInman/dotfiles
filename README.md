@@ -200,3 +200,7 @@ Now install mongod and make sure it is running okay
 sudo apt-get install -y mongodb-org
 service mongod status
 ```
+## Global git ignore
+```
+git config --global core.excludesfile ~/.gitignore_global
+```
