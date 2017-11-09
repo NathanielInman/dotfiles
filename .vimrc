@@ -8,7 +8,7 @@ set hlsearch " highlight search terms
 set incsearch " show search while typing it
 set smartcase " ignore case if search is lc, sensitive otherwise
 set showmatch " set show matching parenthesis
-set mouse=a " Allow mouse scrolling (peer programming) 
+set mouse=a " Allow mouse scrolling (peer programming)
 set backspace=indent,eol,start " Allow backspace to work normally
 set number " Turn on line numbers
 set laststatus=2 " Always show statusline
@@ -32,6 +32,7 @@ Plugin 'slim-template/vim-slim' "Slim templating for Rails
 Plugin 'digitaltoad/vim-pug' "Jade/Pug templating for Node
 Plugin 'wavded/vim-stylus' "Stylus preprocessor for css
 Plugin 'airblade/vim-gitgutter' "See git + / - / ~ in gutter
+Plugin 'thaerkh/vim-workspace' "session save and load features
 Plugin 'scrooloose/nerdtree' "File management
 Plugin 'Xuyuanp/nerdtree-git-plugin' "Shows modifications in nerdtree
 Plugin 'itchyny/lightline.vim' "pretty statusline
@@ -66,6 +67,9 @@ augroup END
 " Keyboard mappings
 "---------------------------------------
 let mapleader="\<Space>"
+
+" Session management
+nnoremap <leader>s :ToggleWorkspace<CR>
 
 " Open nerdtree and then open current file location in nerdtree
 nmap \ :NERDTreeToggle<CR>
@@ -160,10 +164,10 @@ hi BufTabLineHidden  ctermfg=242
 hi BufTabLineFill    ctermfg=242
 
 " Git Gutter and Git Diff
-hi SignColumn      ctermfg=235 
-hi GitGutterAdd    ctermfg=118  
-hi GitGutterChange ctermfg=226  
-hi GitGutterDelete ctermfg=160 
+hi SignColumn      ctermfg=235
+hi GitGutterAdd    ctermfg=118
+hi GitGutterChange ctermfg=226
+hi GitGutterDelete ctermfg=160
 hi DiffAdd                      ctermbg=233  cterm=NONE
 hi DiffChange                   ctermbg=233  cterm=NONE
 hi DiffDelete                   ctermbg=233  cterm=NONE
