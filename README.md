@@ -53,7 +53,7 @@ brew install git node vim zsh tmux python reattach-to-user-namespace
 ```
 Now we update our python node package managers
 ```
-pip install --upgrade pip
+pip3 install --upgrade pip
 npm install -g npm npm-check-updates
 ```
 After doing so, we can copy `.tmux.conf` to the home directory.
