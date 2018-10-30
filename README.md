@@ -76,11 +76,15 @@ sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/i
 ```
 Download the personal theme to use with oh-my-zsh
 ```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme ~/.oh-my-zsh/themes/pragmata.zsh-theme
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme -o ~/.oh-my-zsh/themes/pragmata.zsh-theme
 ```
 Now finally set up your zsh run commands file with the better one here.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
+```
+To have the theme available in the current terminal, source it up.
+```
+source ~/.zshrc
 ```
 ## Setting up Debian
 Start with Node
