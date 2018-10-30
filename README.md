@@ -65,11 +65,12 @@ Now for installing vim package manager
 ```
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 ```
-Now that Vundler is installed, we can copy the `.vimrc` to the home directory.
+Now that Vundler is installed, we can copy the `.vimrc` to the home directory and install plugins.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.vimrc -o ~/.vimrc
+vim +PluginInstall +qall
 ```
-Open up vim and `:PluginInstall` to install all the plugins. Now for configuring the shell.
+Now for configuring the shell.
 ```
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
