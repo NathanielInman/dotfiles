@@ -49,7 +49,7 @@ ssh-copy-id nate@SERVER_IP_ADDRESS
 We need homebrew first as it's our main package manager
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew install git node vim zsh tmux python reattach-to-user-namespace
+brew install wget exa git node vim zsh tmux python reattach-to-user-namespace
 ```
 Now we update our python node package managers
 ```
@@ -106,7 +106,7 @@ sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/i
 ```
 Download the personal theme to use with oh-my-zsh
 ```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme ~/.oh-my-zsh/themes/pragmata.zsh-theme
+wget https://raw.githubusercontent.com/NathanielInman/dot-files/master/pragmata.zsh-theme -O ~/.oh-my-zsh/themes/pragmata.zsh-theme
 ```
 Now finally set up your zsh run commands file with the better one here.
 ```
