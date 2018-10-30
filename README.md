@@ -63,7 +63,7 @@ curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.tmux.def
 ```
 Now for installing vim package manager
 ```
-git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 ```
 Now that Vundler is installed, we can copy the `.vimrc` to the home directory.
 ```
