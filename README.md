@@ -49,7 +49,7 @@ ssh-copy-id nate@SERVER_IP_ADDRESS
 We need homebrew first as it's our main package manager
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew install exa git node vim zsh tmux python reattach-to-user-namespace
+brew install exa git node vim zsh tmux tmux-mem-cpu-load python reattach-to-user-namespace
 ```
 Now we update our python node package managers
 ```
