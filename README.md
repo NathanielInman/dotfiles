@@ -1,10 +1,7 @@
 # Dot-Files
-Configuration files for VIM, Tmux and more
+This repo contains configuration files for VIM, Tmux as well as minimal step-by-step bash instructions to install them. I frequently forget what certain configurations do so even the config files themselves contain basic reminders of what everything does. I try to keep all dot files small, compact and purposeful.
 
-Table of Contents
-=================
-
-  * [Minimalistic and Documented](#minimalistic-and-documented)
+## Table of Contents
   * [Setting Up Aws Users](#setting-up-aws-users)
   * [Setting Up Digital Ocean](#setting-up-digital-ocean)
   * [Setting Up A Mac](#setting-up-a-mac)
@@ -15,9 +12,6 @@ Table of Contents
     * [Reverse Proxy](#reverse-proxy)
     * [Setting Up Mongodb](#setting-up-mongodb)
     * [Global Git Ignore](#global-git-ignore)
-
-## Minimalistic and Documented
-I try to make sure that all of my configuration files are documented in the case that myself or others don't remember what certain things do. This is particularly helpful with vim commands that aren't used so often or just simple refreshing oneself.
 
 ## Setting Up AWS Users
 start by going root (aws requires you to login as `ubuntu`), then add your user, followed by adding the ssh key to authorized
