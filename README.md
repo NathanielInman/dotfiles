@@ -1,10 +1,25 @@
 # Dot-Files
 Configuration files for VIM, Tmux and more
 
+Table of Contents
+=================
+
+  * [Minimalistic and Documented](#minimalistic-and-documented)
+  * [Setting Up Aws Users](#setting-up-aws-users)
+  * [Setting Up Digital Ocean](#setting-up-digital-ocean)
+  * [Setting Up A Mac](#setting-up-a-mac)
+  * [Basic Scripts](#basic-scripts)
+    * [Packaging](#packaging)
+    * [Deploying](#deploying)
+    * [Monitoring Application](#monitoring-application)
+    * [Reverse Proxy](#reverse-proxy)
+    * [Setting Up Mongodb](#setting-up-mongodb)
+    * [Global Git Ignore](#global-git-ignore)
+
 ## Minimalistic and Documented
 I try to make sure that all of my configuration files are documented in the case that myself or others don't remember what certain things do. This is particularly helpful with vim commands that aren't used so often or just simple refreshing oneself.
 
-## Setting Up AWS users
+## Setting Up AWS Users
 start by going root (aws requires you to login as `ubuntu`), then add your user, followed by adding the ssh key to authorized
 ```
 sudo su -
@@ -120,8 +135,10 @@ To reacquire the configuration without terminating the current session
 ```
 source ~/.zshrc
 ```
+## Basic Scripts
+There's commonly a lot of simple tasks one needs to complete with shell scripts from deploying, packaging or monitoring applications. These are helpful notes and bash commands I commonly use to accomplish these tasks.
 
-## Packaging
+### Packaging
 Package the distribution folder into a tarball
 ```
 cd distFolder && tar -czvf ../dist.tar.gz . && cd ..
@@ -144,7 +161,7 @@ ssh -i ~/.ssh/id_rsa $username@$serverip << EOF
 EOF
 ```
 
-## Deploying
+### Deploying
 First we need to add a watcher that will restart our application when it crashes. Make sure to change `index.js` to the entry javascript file of the application that you would normally start with `node fileName.js`.
 ```
 sudo npm install pm2 -g
@@ -156,7 +173,7 @@ pm2 startup ubuntu
 ```
 This will output a command, run the command supplied to generate and initiate the script.
 
-## Monitoring Application
+### Monitoring Application
 The following will get uptime statistics and restart information for the application.
 ```
 pm2 info appName
@@ -166,7 +183,7 @@ The following will monitor realtime statics for the CPU
 pm2 monit
 ```
 
-## Reverse Proxy
+### Reverse Proxy
 The following will help allow public users to access the application. It will use a generic nginx location block.
 ```
 sudo apt-get install nginx
@@ -193,7 +210,7 @@ After finished restart the nginx server.
 ```
 sudo service nginx restart
 ```
-## Setting up Mongodb
+### Setting Up Mongodb
 Start by using the official mongodb repo for apt-get
 ```
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
@@ -205,7 +222,7 @@ Now install mongod and make sure it is running okay
 sudo apt-get install -y mongodb-org
 service mongod status
 ```
-## Global git ignore
+### Global Git Ignore
 ```
 git config --global core.excludesfile ~/.gitignore_global
 ```
