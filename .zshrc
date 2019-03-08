@@ -14,25 +14,11 @@ export LANG=en_US.UTF-8
 
 # All aliases
 alias ls='lsd'
+alias search='rg'
 alias tree='lsd --tree'
 alias cat='bat'
 alias rvimtmp='rm -i `find . | grep .swp$`'
 alias searchFiles='fd'
-
-# Search recursively for a phrase in all files starting
-# in current directory will return file name,line number
-# and the line it found the result
-search(){
-  grep -nr $1 ./
-}
-
-# Search recursively for a phrase in all files starting
-# in current directory and show results with an extra 
-# 3 lines above and below. Will also return file name and
-# line numbers for found results
-searchDetailed(){
-  grep -nrC 3 $1 ./
-}
 
 # Show lines of a specified file $3 starting at $1, ending with $2
 showLines(){
