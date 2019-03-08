@@ -1,5 +1,6 @@
 [core]
   editor = vim
+  pager = diff-so-fancy | less --tabs=4 -RFX
 [user]
   name = Nathaniel Inman
   email = nate@theoestudio.com
