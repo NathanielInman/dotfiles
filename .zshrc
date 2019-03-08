@@ -1,28 +1,22 @@
+#!/bin/bash
 # Variable declaration
-ZSH_THEME="nate"
+ZSH_THEME="pragmata"
 HIST_STAMPS="dd.mm.yyyy"
 plugins=(git)
 
 # User configuration
 export ZSH=$HOME/.oh-my-zsh
 source $ZSH/oh-my-zsh.sh
-export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$PATH
+export NODEVERSION=$(node -v | cut -c 2-)
+export NODEBIN=/usr/local/Cellar/node/$NODEVERSION/bin
+export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$NODEBIN:$PATH
 export LANG=en_US.UTF-8
 
-# All aliases 
+# All aliases
 alias ls='exa -GF'
-alias ga='git add -A'
-alias gc='git commit -m'
-alias gp='git push --follow-tags'
-alias gf='git fetch -p origin'
-alias gl='git log'
-alias gs='git status'
-alias gco='git checkout'
-alias gshow='git show'
-alias gpull='git pull'
-alias termpdf='~/termpdf'
-alias k2pdfopt='~/k2pdfopt'
+alias cat='bat'
 alias rvimtmp='rm -i `find . | grep .swp$`'
+alias searchFiles='fd'
 
 # Search recursively for a phrase in all files starting
 # in current directory will return file name,line number
@@ -30,6 +24,7 @@ alias rvimtmp='rm -i `find . | grep .swp$`'
 search(){
   grep -nr $1 ./
 }
+
 # Search recursively for a phrase in all files starting
 # in current directory and show results with an extra 
 # 3 lines above and below. Will also return file name and
@@ -37,12 +32,7 @@ search(){
 searchDetailed(){
   grep -nrC 3 $1 ./
 }
-# Search recursively for filenames matching phrase starting
-# in current directory. Will return a list of files with their
-# directories relative to the search directory
-searchFiles(){
-  find . -type f -name $1
-}
+
 # Show lines of a specified file $3 starting at $1, ending with $2
 showLines(){
   sed -n "$1,$2p" $3
@@ -63,7 +53,7 @@ walk(){
 # within that directory, or by specifying it
 close(){
   if [ -n "$1" ]; then
-    rm -rf $1  
+    rm -rf $1
   else
     rm -rf -- "$(pwd -P)" && cd ..
   fi
