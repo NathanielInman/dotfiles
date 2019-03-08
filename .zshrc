@@ -13,7 +13,8 @@ export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$NODEBIN:$PATH
 export LANG=en_US.UTF-8
 
 # All aliases
-alias ls='exa -GF'
+alias ls='lsd'
+alias tree='lsd --tree'
 alias cat='bat'
 alias rvimtmp='rm -i `find . | grep .swp$`'
 alias searchFiles='fd'
