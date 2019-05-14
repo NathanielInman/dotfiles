@@ -55,6 +55,8 @@ Then on the client, use that username and password to copy the ssh key to the se
 ssh-copy-id nate@SERVER_IP_ADDRESS
 ```
 ## Setting Up A Mac
+Start by downloading `iterm2` and then downloading the `nord` [color theme](https://github.com/arcticicestudio/nord-iterm2) available for it and set it immediately.
+
 We need homebrew first as it's our main package manager
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
