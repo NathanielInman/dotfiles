@@ -67,6 +67,10 @@ Now we update our python node package managers
 pip3 install --upgrade pip
 npm install -g npm npm-check-updates
 ```
+Now for installing tmux package manager
+```
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+```
 After doing so, we can copy `.tmux.conf` to the home directory.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.tmux.conf -o ~/.tmux.conf
