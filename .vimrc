@@ -1,6 +1,7 @@
 "----------------------------------------
 " Start general configurations
 "----------------------------------------
+set term=screen-256color "ensure color compatibility matches tmux
 set nocompatible " don't lose new vim features due to compatibility
 set ts=2 sw=2 et " 2 space tabs (tabstop=2, shiftwidth=2, expandtab=true)
 set autoindent "Always autoindent
@@ -13,6 +14,7 @@ set backspace=indent,eol,start " Allow backspace to work normally
 set number " Turn on line numbers
 set laststatus=2 " Always show statusline
 set list "Show invisible characters, next line specifies characters
+set belloff=all "Turn off the annoying audible error bell
 set listchars=eol:¬,nbsp:¤,space:⋅,trail:•,tab:››,extends:…,precedes:…,conceal:‡
 set rtp+=~/.vim/bundle/Vundle.vim/ " set runtime path to use vundle for plugins
 
@@ -51,8 +53,9 @@ filetype plugin indent on " Plugins default to indent
 "---------------------------------------
 " Reconfigure Plugin Options
 "---------------------------------------
+let g:lightline = {'colorscheme': 'nord'}
+let g:lightline.separator = { 'left': '', 'right': '' }
 let NERDTreeQuitOnOpen = 1
-let g:gitgutter_highlight_lines=1
 let g:gitgutter_sign_added="++"
 let g:gitgutter_sign_modified="~~"
 let g:gitgutter_sign_removed="--"
@@ -107,7 +110,10 @@ nnoremap j gj
 nnoremap k gk
 
 "---------------------------------------------
-" ~Frost~ Highlight Theme (xterm256 required)
+" Color scheme configuration
 "---------------------------------------------
 syntax on "Make sure syntax highlighting is on
 colorscheme nord
+hi BufTabLineCurrent ctermfg=16 ctermbg=6 cterm=NONE
+hi BufTabLineHidden ctermfg=8 ctermbg=NONE cterm=NONE
+hi BufTabLineFill ctermfg=NONE ctermbg=NONE cterm=NONE
