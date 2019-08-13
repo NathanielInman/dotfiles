@@ -6,6 +6,7 @@ This repo contains configuration files for VIM, Tmux as well as minimal step-by-
   * [Setting Up Digital Ocean](#setting-up-digital-ocean)
   * [Setting Up MacOS](#setting-up-macos)
   * [Setting Up Manjaro Or Archlinux](#setting-up-manjaro-or-archlinux)
+  * [Setting Up Debian Or Ubuntu](#setting-up-debian-or-ubuntu)
   * [Basic Scripts](#basic-scripts)
     * [Packaging](#packaging)
     * [Deploying](#deploying)
@@ -154,7 +155,7 @@ To have the theme available in the current terminal, source it up.
 ```
 source ~/.zshrc
 ```
-## Setting up Debian
+## Setting Up Debian Or Ubuntu
 Start with Node
 ```
 curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
