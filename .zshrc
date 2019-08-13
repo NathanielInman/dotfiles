@@ -7,7 +7,8 @@ plugins=(git)
 # User configuration
 export ZSH=$HOME/.oh-my-zsh
 source $ZSH/oh-my-zsh.sh
-export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$N_PREFIX:$PATH
+export N_PREFIX="$HOME/n"
+export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$N_PREFIX/bin:$PATH
 export LANG=en_US.UTF-8
 
 # All aliases
