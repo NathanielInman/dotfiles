@@ -1,15 +1,15 @@
 #!/bin/bash
 
-# Variable declaration
+# Variable declaration used by oh-my-zsh
 ZSH_THEME="pragmata"
 HIST_STAMPS="dd.mm.yyyy"
 plugins=(git)
 
+# Start by inheriting default os oh-my-zsh (git aliases, etc)
+source $HOME/.oh-my-zsh/oh-my-zsh.sh
+
 # User configuration
-export ZSH=$HOME/.oh-my-zsh
-source $ZSH/oh-my-zsh.sh
-export N_PREFIX="$HOME/n"
-export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$N_PREFIX/bin:$PATH
+export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
 export LANG=en_US.UTF-8
 
 # All aliases
