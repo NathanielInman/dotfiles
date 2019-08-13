@@ -112,7 +112,7 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 ```
 pacman -S diff-so-fancy htop lsd bat fd ripgrep git vim zsh tmux
 ```
-Now we install `n` for managing node instead of using brew
+Now we install `n` for managing node instead of using pacman
 ```
 curl -L https://git.io/n-install | bash
 ```
