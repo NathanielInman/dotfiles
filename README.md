@@ -5,6 +5,7 @@ This repo contains configuration files for VIM, Tmux as well as minimal step-by-
   * [Setting Up Aws Users](#setting-up-aws-users)
   * [Setting Up Digital Ocean](#setting-up-digital-ocean)
   * [Setting Up MacOS](#setting-up-macos)
+  * [Setting Up Manjaro Or Archlinux](#setting-up-manjaro-or-archlinux)
   * [Basic Scripts](#basic-scripts)
     * [Packaging](#packaging)
     * [Deploying](#deploying)
