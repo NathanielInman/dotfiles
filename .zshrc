@@ -3,7 +3,7 @@
 # Variable declaration used by oh-my-zsh
 ZSH_THEME="pragmata"
 HIST_STAMPS="dd.mm.yyyy"
-plugins=(git)
+plugins=(git history zsh-syntax-highlighting zsh-autosuggestions)
 
 # Start by inheriting default os oh-my-zsh (git aliases, etc)
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
