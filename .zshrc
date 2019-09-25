@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# User configuration
+export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
+export LANG=en_US.UTF-8
+export ZSH=$HOME/.oh-my-zsh
+
 # Variable declaration used by oh-my-zsh
 ZSH_THEME="pragmata"
 HIST_STAMPS="dd.mm.yyyy"
@@ -7,10 +12,6 @@ plugins=(git history zsh-syntax-highlighting zsh-autosuggestions)
 
 # Start by inheriting default os oh-my-zsh (git aliases, etc)
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
-
-# User configuration
-export PATH=/usr/local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
-export LANG=en_US.UTF-8
 
 # All aliases
 alias gbclean=$'git branch --merged master | grep -v \'^[ *]*master$\' | xargs git branch -d'
