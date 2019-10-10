@@ -108,3 +108,6 @@ colorscheme nord
 hi BufTabLineCurrent ctermfg=16 ctermbg=6 cterm=NONE
 hi BufTabLineHidden ctermfg=8 ctermbg=NONE cterm=NONE
 hi BufTabLineFill ctermfg=NONE ctermbg=NONE cterm=NONE
+
+" Color Fixes Caused by Plugins
+hi link vueSurroundingTag htmlEndTag
