@@ -23,22 +23,13 @@ set rtp+=~/.vim/bundle/Vundle.vim/ " set runtime path to use vundle for plugins
 "----------------------------------------
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim' "Best plugin management for vim
-Plugin 'tpope/vim-rails' "Quick navigation in rails projects
-Plugin 'pangloss/vim-javascript' "Better tabbing in javascript
-Plugin 'othree/yajs.vim' "ES2015+ javascript support
-Plugin 'othree/html5-syntax.vim' "Good html5 syntax support
 Plugin 'moll/vim-node' "Allows gf/gF on relative node paths
-Plugin 'kchmck/vim-coffee-script' "Coffeescript syntax
-Plugin 'mtscout6/vim-cjsx' "Coffeescript JSX (CJSX)
-Plugin 'slim-template/vim-slim' "Slim templating for Rails
 Plugin 'digitaltoad/vim-pug' "Jade/Pug templating for Node
 Plugin 'wavded/vim-stylus' "Stylus preprocessor for css
 Plugin 'airblade/vim-gitgutter' "See git + / - / ~ in gutter
-Plugin 'thaerkh/vim-workspace' "session save and load features
 Plugin 'scrooloose/nerdtree' "File management
 Plugin 'Xuyuanp/nerdtree-git-plugin' "Shows modifications in nerdtree
 Plugin 'itchyny/lightline.vim' "pretty statusline
-Plugin 'hail2u/vim-css3-syntax' "Support for latest css3
 Plugin 'myusuf3/numbers.vim' "Shows relative line numbers on normal mode
 Plugin 'ctrlpvim/ctrlp.vim' "Fuzzy file finder
 Plugin 'scrooloose/nerdcommenter' "Allows commenting of lines easier
@@ -46,6 +37,8 @@ Plugin 'ap/vim-buftabline' "Allows the buffers as tabs
 Plugin 'easymotion/vim-easymotion' "Allows quick movement around vim
 Plugin 'chr4/nginx.vim' "nginx sytax support
 Plugin 'arcticicestudio/nord-vim' "color scheme
+Plugin 'pangloss/vim-javascript' "Better tabbing in javascript
+Plugin 'posva/vim-vue' "vue file syntax support
 call vundle#end()
 
 filetype plugin indent on " Plugins default to indent
@@ -53,6 +46,8 @@ filetype plugin indent on " Plugins default to indent
 "---------------------------------------
 " Reconfigure Plugin Options
 "---------------------------------------
+let g:NERDCustomDelimiters = {'vue': {'left': '//'}, 'javascript': {'left': '//'}}
+let g:vue_pre_processors = ['pug', 'stylus']
 let g:lightline = {'colorscheme': 'nord'}
 let g:lightline.separator = { 'left': '', 'right': '' }
 let NERDTreeQuitOnOpen = 1
@@ -63,10 +58,6 @@ let g:gitgutter_max_signs=3000
 let g:ctrlp_map = '<c-p>' " ctrl+p starts plugin
 let g:ctrlp_cmd = 'CtrlP'
 let g:ctrlp_working_path_mode = 'ra' " start nearest search dir @ root .git
-augroup VimCSS3Syntax
-  autocmd!
-  autocmd FileType css setlocal iskeyword+=-
-augroup END
 "---------------------------------------
 " Keyboard mappings
 "---------------------------------------
