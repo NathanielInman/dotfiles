@@ -23,3 +23,6 @@ alias rvimtmp='rm -i `find . | grep .swp$`'
 alias searchFiles='fd'
 alias du='ncdu --color dark -rr -x --exclude .git --exclude node_modules'
 alias top='htop'
+
+# Vim mode (default mode is insert)
+bindkey -v
