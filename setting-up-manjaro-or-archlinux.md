@@ -53,8 +53,8 @@ To have the theme available in the current terminal, source it up.
 source ~/.zshrc
 ```
 ### Arch From Scratch
-
-Ensure internet is connected and sync time.
+When all else fails, the best installation guide is [the official arch wiki](https://wiki.archlinux.org/index.php/installation_guide).
+To start, lets ensure the internet is connected and sync time.
 ```
 ping -c 3 google.com
 timedatectl set-ntp true
