@@ -6,6 +6,8 @@ This repo contains configuration files for VIM, Tmux as well as minimal step-by-
   * [Setting Up Digital Ocean](https://github.com/NathanielInman/dot-files/blob/master/setting-up-digital-ocean.md#setting-up-digital-ocean)
   * [Setting Up MacOS](https://github.com/NathanielInman/dot-files/blob/master/setting-up-macos.md#setting-up-macos)
   * [Setting Up Manjaro Or Archlinux](https://github.com/NathanielInman/dot-files/blob/master/setting-up-manjaro-or-archlinux.md#setting-up-manjaro-or-archlinux)
+    * [CLI Configuration](https://github.com/NathanielInman/dot-files/blob/master/setting-up-manjaro-or-archlinux.md#cli-configuration)
+    * [Arch From Scratch](https://github.com/NathanielInman/dot-files/blob/master/setting-up-manjaro-or-archlinux.md#arch-from-scratch)
   * [Setting Up Debian Or Ubuntu](https://github.com/NathanielInman/dot-files/blob/master/setting-up-debian-or-ubuntu.md#setting-up-debian-or-ubuntu)
   * [Basic Scripts](https://github.com/NathanielInman/dot-files/blob/master/basic-scripts.md#basic-scripts)
     * [Packaging](https://github.com/NathanielInman/dot-files/blob/master/basic-scripts.md#packaging)
