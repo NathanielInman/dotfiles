@@ -1,5 +1,5 @@
 ## Setting Up Manjaro Or Archlinux
-
+### CLI Configuration
 We start by using our package manager `pacman` to get all necessary binaries. We'll be omitting `python` and `node` here as `python` will come with every distro and `node` will be managed by it's own version manager.
 ```
 pacman -S diff-so-fancy htop lsd bat fd ripgrep git vim zsh tmux
@@ -51,4 +51,140 @@ curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o
 To have the theme available in the current terminal, source it up.
 ```
 source ~/.zshrc
+```
+### Arch From Scratch
+
+Ensure internet is connected and sync time.
+```
+ping -c 3 google.com
+timedatectl set-ntp true
+```
+Use this to make sure you know your drive names, mine show `nvme0n1` and `nvme1n1`. I'll reference those going forward to stripe (RAID 0) those m.2 drives.
+```
+fdisk -l
+```
+Will be using GPT and partition 2 nvme drives based on their sizes. Your sizes may be different.
+```
+cfdisk /dev/nvme0n1
+create 550M
+create 5G
+create 455G
+create 5G
+write and exit
+cfdisk /dev/nvme1n1
+create 5G
+create 455G
+create 5G
+write and exit
+fdsik -l
+```
+Now that the drives are partitioned lets setup raid 0
+```
+mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md0 /dev/nvme0n1p2 /dev/nvme1n1p1
+mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md1 /dev/nvme0n1p3 /dev/nvme1n1p2
+mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md2 /dev/nvme0n1p4 /dev/nvme1n1p3
+```
+Now lets validate those changes
+```
+lvmdiskscan
+```
+Now create volumes for those partitions and label them
+```
+pvcreate /dev/md0
+pvcreate /dev/md1
+pvcreate /dev/md2
+vgcreate vg_swap /dev/md0
+vgcreate vg_main /dev/md1
+vgcreate vg_tmp /dev/md2
+vgscan
+lvcreate -l +100%FREE vg_swap -n swap
+lvcreate -L 60GiB vg_main -n rootfs
+lvcreate -l +100%FREE vg_main -n homefs
+lvcreate -l +100%FREE vg_tmp -n tmpfs
+lvscan
+mkswap /dev/mapper/vg_swap-swap
+mkfs.ext4 /dev/mapper/vg_main-rootfs
+mkfs.ext4 /dev/mapper/vg_main-homefs
+mkfs.ext4 /dev/mapper/vg_tmp-tmpfs
+swapon /dev/mapper/vg_swap-swap
+mkfs.fat -F32 /dev/nvme0n1p1
+```
+Now create mount points
+```
+mount /dev/mapper/vg_main-rootfs /mnt
+mkdir /mnt/home
+mkdir /mnt/tmp
+mount /dev/mapper/vg_main-homefs /mnt/home
+mount /dev/mapper/vg_tmp-tmpfs /mnt/tmp
+pacstrap -i /mnt base base-devel
+genfstab -U -p  /mnt > > /mnt/etc/fstab
+arch-chroot /mnt /bin/bash
+```
+Now uncomment `[en_US.UTF-8 UTF-8]`
+```
+vim /etc/locale.gen
+```
+Now configure local time
+```
+locale-gen
+ln -sf /usr/share/zoneinfo/America/Chicago  /etc/localtime
+hwclock --systohc --utc
+```
+Now add `dm_mod` between the `""` on `MODULES` and add `mdadm_udev lvm2` between block & filesystems of `HOOKS=""` here:
+```
+vim /etc/mkinitcpio.conf
+```
+Now setup grub:
+```
+mkinitcpio -p linux
+pacman -S grub efibootmgr
+mkdir /boot/efi
+mount /dev/nvme0n1p1 /boot/efi
+grub-install --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/boot/efi
+grub-mkconfig -o /boot/grub/grub.cfg
+mkdir /boot/efi/EFI/BOOT
+cp /boot/efi/EFI/GRUB/grubx64.efi /boot/efi/EFI/BOOT/BOOTX64.EFI
+```
+Now you'll add the following within `vim /boot/efi/startup.nsh`:
+```
+bcf boot add 1 fs0:\EFI\GRUB\grubx64.efi "My GRUB bootloader"
+```
+Now properly setup networking, substitute `FROSTY` for your computer name.
+```
+pacman -S networkmanager
+systemctl enable NetworkManager
+echo FROSTY > /etc/hostname
+```
+Now add the following within `vim /etc/hosts`:
+```
+127.0.1.1 localhost.localdomain FROSTY
+```
+Now setup password
+```
+passwd
+```
+Now lets wrap things up. after rebooting, boot to bios, ensure nvme raid is on and remove boot flash drive.
+```
+exit
+umount -R /mnt
+reboot
+```
+Now after boot, login with `root` with the configured password and unncomment `multilib` within:
+```
+vim /etc/pacman.conf
+```
+Now lets update everything:
+```
+pacman -Syyu
+```
+The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
+```
+pacman -S xorg xorg-server xorg-xinit xterm
+useradd -m -g users -G wheel -s /bin/bash nate
+EDITOR=vim
+uncomment %wheel ALL=(ALL) ALL ctrl o {enter} ctrl x # <-- obv do this in vim not nano
+passwd nate
+exit
+login: nate
+sudo pacman -S konsole dolphin firefox kate
 ```
