@@ -194,7 +194,7 @@ pacman -Ss xf86-video # you can search for your driver this way
 pacman -S xf86-video-nouveau # this is my driver
 
 # We can make a login screen now instead of having to "xstart" each time
-pacman -S lightdm lightdm-gtk-greeter
+pacman -S lightdm lightdm-gtk-greeter gnome-screensaver
 sudo systemctl enable lightdm.service
 
 # The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
@@ -207,7 +207,15 @@ passwd nate
 # finally set the default editor for all users to vim save this to `vim/etc/profile.d/editor.sh`
 export EDITOR=vim
 
-# log into user and install user-specific applications
+# helpful non-user-specific applications
+pacman -S unzip ntp
+
+# ensure time synchronization service is started and activated
+systemctl enable ntpd.service --now
+
+# login to user
 login
+
+# install user-specific applications
 sudo pacman -S alacritty chromium
 ```
