@@ -159,6 +159,14 @@ echo FROSTYARCH > /etc/hostname
 ::1       localhost
 127.0.1.1 FROSTYARCH.localdomain FROSTYARCH
 
+# newer machines, no eth0. config DHCP make sure to edit the proper `ip link` name
+# mine shows `enp5s0` for ethernet, `vim /etc/systemd/network/enp5s0` and write this:
+[Match]
+Name=en**
+
+[Network]
+DHCP=yes
+
 # Now setup password
 passwd
 
@@ -168,18 +176,34 @@ umount -R /mnt
 reboot
 
 # Now after boot, login with `root` with the configured password and unncomment `multilib` within:
+# if u have issues with timing out due to /tmp, just remove it from fstab
 vim /etc/pacman.conf
 
 # Now lets update everything:
 pacman -Syyu
 
+# Now for installing windowmanager stuff (i3)
+Pacman -S xorg xorg-server xorg-xinit xterm i3-gaps i3blocks i3lock i3status dmenu noto-fonts
+
+# Now lets have it start by default in `vim ~/.xinitrc`
+exec i3
+
+# Before we can start i3 we need graphics drivers, validate what we're using
+lspci -v | grep -A1 -e VGA -e 3D
+pacman -Ss xf86-video # you can search for your driver this way
+pacman -S xf86-video-nouveau # this is my driver
+
 # The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
-pacman -S xorg xorg-server xorg-xinit xterm
 useradd -m -g users -G wheel -s /bin/bash nate
-EDITOR=vim
-uncomment %wheel ALL=(ALL) ALL ctrl o {enter} ctrl x # <-- obv do this in vim not nano
 passwd nate
-exit
-login: nate
-sudo pacman -S konsole dolphin firefox kate
+
+# Now ensure user is sudoer, vim `/etc/sudoers` and uncomment this line and :wq!
+%wheel ALL=(ALL) NOPASSWD: ALL
+
+# finally set the default editor for all users to vim save this to `vim/etc/profile.d/editor.sh`
+export EDITOR=vim
+
+# log into user and install user-specific applications
+login
+sudo pacman -S alacritty chromium
 ```
