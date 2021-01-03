@@ -193,6 +193,10 @@ lspci -v | grep -A1 -e VGA -e 3D
 pacman -Ss xf86-video # you can search for your driver this way
 pacman -S xf86-video-nouveau # this is my driver
 
+# We can make a login screen now instead of having to "xstart" each time
+pacman -S lightdm lightdm-gtk-greeter
+sudo systemctl enable lightdm.service
+
 # The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
 useradd -m -g users -G wheel -s /bin/bash nate
 passwd nate
