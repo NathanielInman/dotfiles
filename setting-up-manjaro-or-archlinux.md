@@ -1,8 +1,19 @@
 ## Setting Up Manjaro Or Archlinux
 ### CLI Configuration
-We start by using our package manager `pacman` to get all necessary binaries. We'll be omitting `python` and `node` here as `python` will come with every distro and `node` will be managed by it's own version manager.
+We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager.
+- `diff-so-fancy` helps make cli `git diff` look good (automatic)
+- `htop` is better version of `top` command (we alias it instead in .zshrc)
+- `lsd` is prettier version of `ls` command (we alias it instead in .zshrc)
+- `bat` is prettier version of `cat` command (we alias it instead in .zshrc)
+- `fd` is aliased in .zshrc as `searchFiles` and finds within directories filenames
+- `ripgrep` looks within files for strings
+- `git` is basic requirement for version control
+- `vim` is basic requirement for file editor
+- `zsh` will be our default shell
+- `yay` is will sit ontop of Pacman as our package manager accessing AUR
+- `python-pip` will give us pip for python package management
 ```
-pacman -S diff-so-fancy htop lsd bat fd ripgrep git vim zsh tmux
+pacman -S diff-so-fancy htop lsd bat fd ripgrep git vim zsh yay python-pip
 ```
 Now we install `n` for managing node instead of using pacman
 ```
@@ -12,15 +23,6 @@ Now we update our python node package managers
 ```
 pip3 install --upgrade pip
 npm install -g npm npm-check-updates
-```
-Now for installing tmux package manager
-```
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-```
-After doing so, we can copy `.tmux.conf` to the home directory.
-```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.tmux.conf -o ~/.tmux.conf
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.tmux.defaultLayout.conf -o ~/.tmux.defaultLayout.conf
 ```
 Now for installing vim package manager
 ```
@@ -230,4 +232,21 @@ exec i3
 
 # install user-specific applications
 sudo pacman -S alacritty chromium
+
+# Grab alacritty theme
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/.alacritty.yml -o ~/
+
+# Make basic home folders
+mkdir ~/Sites #will hold our projects
+mkdir ~/Pictures #will hold backgrounds etc
+mkdir -p ~/.config/i3
+mkdir ~/.config/i3blocks
+
+# Grab the background and set its loader fehbg
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/arch-bg.jpg -o ~/Pictures
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/fehbg -o ~/
+
+# Grab i3 configurations
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3.conf -o ~/.config/i3/config
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3blocks.conf -o ~/.config/i3blocks/config.conf
 ```
