@@ -182,11 +182,15 @@ vim /etc/pacman.conf
 # Now lets update everything:
 pacman -Syyu
 
-# Now for installing windowmanager stuff (i3)
-Pacman -S xorg xorg-server xorg-xinit xterm i3-gaps i3blocks i3lock i3status dmenu noto-fonts
+# Sound and bluetooth
+Pacman -S alsa-utils pulseaudio-alsa pulseaudio-bluetooth bluez-utils
+systemctl start bluetooth.service
+systemctl enable bluetooth.service
+pulseaudio -vvv
 
-# Now lets have it start by default in `vim ~/.xinitrc`
-exec i3
+# Now for installing windowmanager stuff (i3)
+# sysstat is to show cpu usage and other percentages on cli
+Pacman -S xorg xorg-server xorg-xinit xterm i3-gaps i3blocks i3lock i3status dmenu noto-fonts sysstat
 
 # Before we can start i3 we need graphics drivers, validate what we're using
 lspci -v | grep -A1 -e VGA -e 3D
@@ -215,6 +219,14 @@ systemctl enable ntpd.service --now
 
 # login to user
 login
+
+# Ensure we're automatically logged in, `systemctl edit getty@tty1.service` and add:
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin nate --noclear %I $TERM
+
+# Now lets have it start by default in `vim ~/.xinitrc`
+exec i3
 
 # install user-specific applications
 sudo pacman -S alacritty chromium
