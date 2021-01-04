@@ -11,3 +11,5 @@
   lol = log --graph --date=local --pretty=format:'%C(yellow)%h%Creset %cd %C(yellow)(%Creset%C(green)%an%Creset%C(yellow))%Creset %s%C(cyan)%d%Creset'
 [pull]
   rebase = false
+[credential]
+  helper = cache
