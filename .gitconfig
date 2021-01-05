@@ -1,7 +1,6 @@
 [core]
   editor = vim
-  pager = diff-so-fancy | less --tabs=4 -RFX
-  excludesfile = /Users/nate/.gitignore
+  pager = diff-so-fancy | less --tabs=3 -RFX
 [user]
   name = Nathaniel Inman
   email = nate@theoestudio.com
@@ -12,4 +11,4 @@
 [pull]
   rebase = false
 [credential]
-  helper = cache
+  helper = store
