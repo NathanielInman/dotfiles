@@ -8,12 +8,12 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `fd` is aliased in .zshrc as `searchFiles` and finds within directories filenames
 - `ripgrep` looks within files for strings
 - `git` is basic requirement for version control
-- `vim` is basic requirement for file editor
+- `gvim` is basic requirement for file editor, gvim instead of vim for clipboard in X11
 - `zsh` will be our default shell
 - `yay` is will sit ontop of Pacman as our package manager accessing AUR
 - `python-pip` will give us pip for python package management
 ```
-pacman -S diff-so-fancy htop lsd bat fd ripgrep git vim zsh yay python-pip
+pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip
 ```
 Now we install `n` for managing node instead of using pacman
 ```
