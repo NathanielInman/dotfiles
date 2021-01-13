@@ -235,8 +235,9 @@ exec i3
 
 # install user-specific applications
 # alacritty - fast terminal that uses gpu to render things
-# chromium - most people opt for FOSS like firefox, this is specifically for frontend dev, substitute if necessary
-sudo pacman -S alacritty chromium
+# chromium - most people opt for FOSS like firefox, substitute if necessary
+# streamdeck - device that sits on desktop with lcd keys
+sudo pacman -S alacritty chromium streamdeck
 
 # Grab alacritty theme
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/.alacritty.yml -o ~/
