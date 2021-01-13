@@ -214,7 +214,10 @@ passwd nate
 export EDITOR=vim
 
 # helpful non-user-specific applications
-pacman -S unzip ntp
+# ntp - (network-time-protocol) helps ensure we're always time synchronized
+# unzip - obviously helps us w/ zip files
+# numlockx - helps us default to enable/disable numlock on boot for i3
+pacman -S unzip ntp numlockx
 
 # ensure time synchronization service is started and activated
 systemctl enable ntpd.service --now
@@ -231,6 +234,8 @@ ExecStart=-/usr/bin/agetty --autologin nate --noclear %I $TERM
 exec i3
 
 # install user-specific applications
+# alacritty - fast terminal that uses gpu to render things
+# chromium - most people opt for FOSS like firefox, this is specifically for frontend dev, substitute if necessary
 sudo pacman -S alacritty chromium
 
 # Grab alacritty theme
