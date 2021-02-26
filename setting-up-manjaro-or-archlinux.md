@@ -184,11 +184,10 @@ vim /etc/pacman.conf
 # Now lets update everything:
 pacman -Syyu
 
-# Sound and bluetooth
+# Sound and bluetooth - will enable pulseaudio on user later
 Pacman -S alsa-utils pulseaudio-alsa pulseaudio-bluetooth bluez-utils
 systemctl start bluetooth.service
 systemctl enable bluetooth.service
-pulseaudio -vvv
 
 # Now for installing windowmanager stuff (i3)
 # sysstat is to show cpu usage and other percentages on cli
@@ -224,6 +223,10 @@ systemctl enable ntpd.service --now
 
 # login to user
 login
+
+# Let's enable pulseaudio for user
+systemctl --user enable pulseaudio
+systemctl --user start pulseaudio
 
 # Ensure we're automatically logged in, `systemctl edit getty@tty1.service` and add:
 [Service]
