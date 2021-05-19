@@ -11,7 +11,7 @@ Now for Vim and package manager
 ```
 sudo apt-get update
 sudo apt-get install vim tmux git
-git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 ```
 Now that vim and Vundler are installed, we can copy the `.vimrc` to the home directory.
 ```
