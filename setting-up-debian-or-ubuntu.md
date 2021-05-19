@@ -1,8 +1,7 @@
 ## Setting Up Debian Or Ubuntu
 Start with Node
 ```
-curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash -
-sudo apt-get install -y nodejs build-essential
+sudo apt install nodejs
 ```
 Now for Vim and package manager
 ```
