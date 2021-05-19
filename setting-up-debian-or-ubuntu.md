@@ -16,7 +16,6 @@ curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.vimrc -o
 Finally we setup zsh
 ```
 sudo apt-get install zsh
-chsh -s $(which zsh)
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 ```
 Download the personal theme to use with oh-my-zsh
