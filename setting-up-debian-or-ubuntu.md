@@ -1,7 +1,11 @@
 ## Setting Up Debian Or Ubuntu
-Start with Node
+Start with essentials like curl, or allowing numlock to work on boot
 ```
-sudo apt install nodejs build-essential
+sudo apt-get install build-essential numlockx
+```
+Now for language tools
+```
+sudo apt-get install nodejs
 ```
 Now for Vim and package manager
 ```
