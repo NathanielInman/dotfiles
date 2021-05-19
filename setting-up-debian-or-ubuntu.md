@@ -39,3 +39,18 @@ To reacquire the configuration without terminating the current session
 ```
 source ~/.zshrc
 ```
+Now lets add npm global ability
+```
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+# now open ~/.zshrc with vim and add "~/.npm-global/bin" to PATH
+source ~/.zshrc
+```
+Now let's add diff-so-fancy and `n` node version manager
+```
+npm i -g diff-so-fancy n
+```
+Add fd replacement
+```
+sudo apt install fd-find
+```
