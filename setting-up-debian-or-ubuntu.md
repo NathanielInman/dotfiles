@@ -3,6 +3,11 @@ Start with essentials like curl, or allowing numlock to work on boot
 ```
 sudo apt-get install build-essential numlockx
 ```
+Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
+```
+git config --global core.excludesFile '~/.gitignore'
+curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/.gitignore -o ~/.gitignore
+```
 Now for language tools
 ```
 sudo apt-get install nodejs
