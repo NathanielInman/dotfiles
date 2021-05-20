@@ -1,2 +1,2 @@
 #!/bin/sh
-feh --no-fehbg --bg-scale '/home/nate/Pictures/peaceful-blur-background-1x.jpg'
+feh --bg-scale '/home/nate/Pictures/arch-bg.jpg'
