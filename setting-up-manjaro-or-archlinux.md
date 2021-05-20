@@ -53,6 +53,10 @@ Now finally set up your zsh run commands file with the better one here.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
 ```
+Install node js stuff, we'll actually manage this with `n` and `npm` itself later on
+```
+yay -S nodejs npm
+```
 Now lets add npm global ability
 ```
 mkdir ~/.npm-global
