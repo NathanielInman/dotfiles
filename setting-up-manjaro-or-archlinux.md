@@ -187,6 +187,10 @@ mkdir ~/Sites #will hold our projects
 mkdir ~/Pictures #will hold backgrounds etc
 mkdir -p ~/.config/i3
 mkdir ~/.config/i3blocks
+mkdir ~/.config/kitty
+
+# Grab the configuration for kitty
+curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch/.kitty.conf -o ~/.config/kitty/kitty.conf
 
 # Grab the background and set its loader fehbg
 curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch-bg.jpg -o ~/Pictures/arch-bg.jpg
