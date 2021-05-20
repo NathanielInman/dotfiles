@@ -255,6 +255,9 @@ mkdir ~/.config/i3blocks
 curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch-bg.jpg -o ~/Pictures/arch-bg.jpg
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/fehbg -o ~/.fehbg
 
+# Grab transparency files for picom and load it
+curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch/.picom.conf -o ~/.picom.conf
+
 # Grab i3 configurations
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3.conf -o ~/.config/i3/config
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3blocks.conf -o ~/.config/i3blocks/config.conf
