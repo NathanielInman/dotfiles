@@ -54,3 +54,31 @@ Add fd replacement
 ```
 sudo apt install fd-find
 ```
+## i3 from scratch
+Make basic home folders
+```
+mkdir ~/Sites #will hold our projects
+mkdir ~/Pictures #will hold backgrounds etc
+mkdir -p ~/.config/i3
+mkdir ~/.config/i3blocks
+```
+Grab necessary packages for i3
+```
+sudo add-apt-repository ppa:kgilmer/speed-ricer
+sudo apt-get update
+sudo apt-get install i3 i3-gaps i3bar i3blocks i3status picom feh lm-sensors
+```
+Grab the background and set its loader fehbg
+```
+curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch-bg.jpg -o ~/Pictures/arch-bg.jpg
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/fehbg -o ~/.fehbg
+```
+Grab transparency files for picom and load it
+```
+curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch/.picom.conf -o ~/.picom.conf
+```
+Grab i3 configurations
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3.conf -o ~/.config/i3/config
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3blocks.conf -o ~/.config/i3blocks/config.conf
+```
