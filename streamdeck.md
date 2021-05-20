@@ -1,6 +1,6 @@
 # Setting up streamdeck
 ```
-yay -S streamdeck-ui
+yay -S streamdeck-ui flameshot
 ```
 then reboot
 ```
@@ -19,7 +19,11 @@ keylightctl discover
 ```
 now we can add the following commands to streamdeck (substitute your light ids used in discover)
 ```
-keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off
-keylightctl switch --light 8A95 on & keylightctl switch --light 8A95 on
+bash -c "keylightctl switch --light 8A95 on & keylightctl switch --light 9F74 on"
+bash -c "keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off"
 ```
 make sure to use the `on` and `off` icons you downloaded earlier
+While we're here, let's also set the icon for the `screencapture-icon.png` and setup the command:
+```
+bash -c "flameshot gui"
+```
