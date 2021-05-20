@@ -9,7 +9,7 @@ This repo contains configuration files for VIM, Tmux as well as minimal step-by-
     * [CLI Configuration](https://github.com/NathanielInman/dot-files/blob/master/setting-up-manjaro-or-archlinux.md#cli-configuration)
     * [Arch From Scratch](https://github.com/NathanielInman/dot-files/blob/master/setting-up-manjaro-or-archlinux.md#arch-from-scratch)
   * [Setting Up Debian Or Ubuntu](https://github.com/NathanielInman/dot-files/blob/master/setting-up-debian-or-ubuntu.md#setting-up-debian-or-ubuntu)
-    * [i3 From Scratch](https://github.com/NathanielInman/dot-files/blob/master/setting-up-debian-or-ubuntu.md#i3-from-scratch
+    * [i3 From Scratch](https://github.com/NathanielInman/dot-files/blob/master/setting-up-debian-or-ubuntu.md#i3-from-scratch)
   * [Basic Scripts](https://github.com/NathanielInman/dot-files/blob/master/basic-scripts.md#basic-scripts)
     * [Packaging](https://github.com/NathanielInman/dot-files/blob/master/basic-scripts.md#packaging)
     * [Deploying](https://github.com/NathanielInman/dot-files/blob/master/basic-scripts.md#deploying)
