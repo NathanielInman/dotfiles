@@ -252,8 +252,8 @@ mkdir -p ~/.config/i3
 mkdir ~/.config/i3blocks
 
 # Grab the background and set its loader fehbg
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/arch-bg.jpg -o ~/Pictures
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/fehbg -o ~/
+curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch-bg.jpg -o ~/Pictures/arch-bg.jpg
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/fehbg -o ~/.fehbg
 
 # Grab i3 configurations
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3.conf -o ~/.config/i3/config
