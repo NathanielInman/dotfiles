@@ -1,76 +1,4 @@
 ## Setting Up Manjaro Or Archlinux
-### CLI Configuration
-We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager.
-- `diff-so-fancy` helps make cli `git diff` look good (automatic)
-- `htop` is better version of `top` command (we alias it instead in .zshrc)
-- `lsd` is prettier version of `ls` command (we alias it instead in .zshrc)
-- `bat` is prettier version of `cat` command (we alias it instead in .zshrc)
-- `fd` is aliased in .zshrc as `searchFiles` and finds within directories filenames
-- `ripgrep` looks within files for strings
-- `git` is basic requirement for version control
-- `gvim` is basic requirement for file editor, gvim instead of vim for clipboard in X11
-- `zsh` will be our default shell
-- `yay` is will sit ontop of Pacman as our package manager accessing AUR
-- `python-pip` will give us pip for python package management
-```
-pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip
-```
-Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
-```
-git config --global core.excludesFile '~/.gitignore'
-curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/.gitignore -o ~/.gitignore
-git config --global user.email "nate@theoestudio.com"
-git config --global user.name "Nathaniel Inman"
-git config --global core.editor "vim"
-```
-Now we update our python package manager
-```
-pip3 install --upgrade pip
-```
-Now for installing vim package manager
-```
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-```
-Now that Vundler is installed, we can copy the `.vimrc` to the home directory and install plugins.
-```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.vimrc -o ~/.vimrc
-vim +PluginInstall +qall
-```
-Now for configuring the shell.
-```
-sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-```
-Lets ensure that zsh will have fish-like syntax highlighting & autocompletion
-```
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-```
-Download the personal theme to use with oh-my-zsh
-```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme -o ~/.oh-my-zsh/themes/pragmata.zsh-theme
-```
-Now finally set up your zsh run commands file with the better one here.
-```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
-```
-Install node js stuff, we'll actually manage this with `n` and `npm` itself later on
-```
-yay -S nodejs npm
-```
-Now lets add npm global ability
-```
-mkdir ~/.npm-global
-npm config set prefix '~/.npm-global'
-# now open ~/.zshrc with vim and add "~/.npm-global/bin" to PATH
-```
-Source it up.
-```
-source ~/.zshrc
-```
-Now install our node version manager and couple other helpful node things:
-```
-npm install -g npm npm-check-updates n
-```
 ### Arch From Scratch
 When all else fails, the best installation guide is [the official arch wiki](https://wiki.archlinux.org/index.php/installation_guide).
 
@@ -280,5 +208,84 @@ makepkg -si
 # Now install web browser
 yay -S google-chrome
 
-# Now perform all CLI steps
+# Now perform all CLI Configuration below
+```
+
+### CLI Configuration
+We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager.
+- `diff-so-fancy` helps make cli `git diff` look good (automatic)
+- `htop` is better version of `top` command (we alias it instead in .zshrc)
+- `lsd` is prettier version of `ls` command (we alias it instead in .zshrc)
+- `bat` is prettier version of `cat` command (we alias it instead in .zshrc)
+- `fd` is aliased in .zshrc as `searchFiles` and finds within directories filenames
+- `ripgrep` looks within files for strings
+- `git` is basic requirement for version control
+- `gvim` is basic requirement for file editor, gvim instead of vim for clipboard in X11
+- `zsh` will be our default shell
+- `yay` is will sit ontop of Pacman as our package manager accessing AUR
+- `python-pip` will give us pip for python package management
+```
+pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip
+```
+Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
+```
+git config --global core.excludesFile '~/.gitignore'
+curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/.gitignore -o ~/.gitignore
+git config --global user.email "nate@theoestudio.com"
+git config --global user.name "Nathaniel Inman"
+git config --global core.editor "vim"
+```
+Now we update our python package manager
+```
+pip3 install --upgrade pip
+```
+Now for installing vim package manager
+```
+git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+```
+Now that Vundler is installed, we can copy the `.vimrc` to the home directory and install plugins.
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.vimrc -o ~/.vimrc
+vim +PluginInstall +qall
+```
+Now for configuring the shell.
+```
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+```
+Lets ensure that zsh will have fish-like syntax highlighting & autocompletion
+```
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+```
+Download the personal theme to use with oh-my-zsh
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme -o ~/.oh-my-zsh/themes/pragmata.zsh-theme
+```
+Now finally set up your zsh run commands file with the better one here.
+```
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
+```
+Install node js stuff, we'll actually manage this with `n` and `npm` itself later on
+```
+yay -S nodejs npm
+```
+Now lets add npm global ability
+```
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+# now open ~/.zshrc with vim and add "~/.npm-global/bin" to PATH
+```
+If you are using `i3` and want to startx automatically on login add this as well to `.zshrc`
+```
+if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
+  exec startx
+fi
+```
+Source it up.
+```
+source ~/.zshrc
+```
+Now install our node version manager and couple other helpful node things:
+```
+npm install -g npm npm-check-updates n
 ```
