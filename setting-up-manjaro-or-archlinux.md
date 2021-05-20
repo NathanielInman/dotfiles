@@ -235,9 +235,11 @@ Before we start getting into stuff, lets ensure we're not commiting things we sh
 ```
 git config --global core.excludesFile '~/.gitignore'
 curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/.gitignore -o ~/.gitignore
+git config --global credential.helper store
 git config --global user.email "nate@theoestudio.com"
 git config --global user.name "Nathaniel Inman"
 git config --global core.editor "vim"
+git config --global pull.rebase false
 ```
 Now we update our python package manager
 ```
