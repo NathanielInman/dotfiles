@@ -289,3 +289,9 @@ Now install our node version manager and couple other helpful node things:
 ```
 npm install -g npm npm-check-updates n
 ```
+Now for any other essentials for arch
+- `slack-desktop` for work, quite a bit better than regular browser version
+- `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
+```
+yay -S slack-desktop pagraphcontrol-git
+```
