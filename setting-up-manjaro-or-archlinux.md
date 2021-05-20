@@ -88,6 +88,7 @@ cfdisk /dev/nvme1n1
 fdisk -l
 
 # now that the drives are partitioned lets setup raid 0
+# (if these cause issues: `sudo mdadm -Esv` or `sudo mdadm --stop /dev/md*` then `sudo mdadm --misc --scan --detail /dev/md0`)
 mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md0 /dev/nvme0n1p2 /dev/nvme1n1p1
 mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md1 /dev/nvme0n1p3 /dev/nvme1n1p2
 mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md2 /dev/nvme0n1p4 /dev/nvme1n1p3
@@ -186,7 +187,7 @@ umount -R /mnt
 reboot
 
 # Now after boot, login with `root` with the configured password and unncomment `multilib` within:
-# if u have issues with timing out due to /tmp, just remove it from fstab
+# if u have issues with timing out due to /tmp, just remove it from `/etc/fstab`
 vim /etc/pacman.conf
 
 # Now lets update everything:
@@ -203,12 +204,8 @@ Pacman -S xorg xorg-server xorg-xinit xterm i3-gaps i3blocks i3lock i3status dme
 
 # Before we can start i3 we need graphics drivers, validate what we're using
 lspci -v | grep -A1 -e VGA -e 3D
-pacman -Ss xf86-video # you can search for your driver this way
-pacman -S xf86-video-nouveau # this is my driver
-
-# We can make a login screen now instead of having to "xstart" each time
-pacman -S lightdm lightdm-gtk-greeter gnome-screensaver
-sudo systemctl enable lightdm.service
+pacman -Ss nvidia # you can search for your driver this way
+pacman -S nvidia nvidia-settings nvidia-utils # this is my driver stuff
 
 # The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
 useradd -m -g users -G wheel -s /bin/bash nate
@@ -217,7 +214,7 @@ passwd nate
 # Now ensure user is sudoer, vim `/etc/sudoers` and uncomment this line and :wq!
 %wheel ALL=(ALL) NOPASSWD: ALL
 
-# finally set the default editor for all users to vim save this to `vim/etc/profile.d/editor.sh`
+# finally set the default editor for all users to vim save this to `vim /etc/profile.d/editor.sh`
 export EDITOR=vim
 
 # helpful non-user-specific applications
@@ -245,13 +242,8 @@ ExecStart=-/usr/bin/agetty --autologin nate --noclear %I $TERM
 exec i3
 
 # install user-specific applications
-# alacritty - fast terminal that uses gpu to render things
-# chromium - most people opt for FOSS like firefox, substitute if necessary
-# streamdeck - device that sits on desktop with lcd keys
-sudo pacman -S alacritty chromium streamdeck
-
-# Grab alacritty theme
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/.alacritty.yml -o ~/
+# kitty - fast terminal that uses gpu to render things
+sudo pacman -S kitty
 
 # Make basic home folders
 mkdir ~/Sites #will hold our projects
@@ -269,4 +261,15 @@ curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch/.pic
 # Grab i3 configurations
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3.conf -o ~/.config/i3/config
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3blocks.conf -o ~/.config/i3blocks/config.conf
+
+# Now grab yay for AUR
+cd ~/Sites
+git clone https://aur.archlinux.org/yay-git.git
+cd yay-git
+makepkg -si
+
+# Now install web browser
+yay -S google-chrome
+
+# Now perform all CLI steps
 ```
