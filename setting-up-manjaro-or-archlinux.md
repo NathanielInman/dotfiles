@@ -23,14 +23,9 @@ git config --global user.email "nate@theoestudio.com"
 git config --global user.name "Nathaniel Inman"
 git config --global core.editor "vim"
 ```
-Now we install `n` for managing node instead of using pacman
-```
-curl -L https://git.io/n-install | bash
-```
-Now we update our python node package managers
+Now we update our python package manager
 ```
 pip3 install --upgrade pip
-npm install -g npm npm-check-updates
 ```
 Now for installing vim package manager
 ```
@@ -58,9 +53,19 @@ Now finally set up your zsh run commands file with the better one here.
 ```
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
 ```
-To have the theme available in the current terminal, source it up.
+Now lets add npm global ability
+```
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+# now open ~/.zshrc with vim and add "~/.npm-global/bin" to PATH
+```
+Source it up.
 ```
 source ~/.zshrc
+```
+Now install our node version manager and couple other helpful node things:
+```
+npm install -g npm npm-check-updates n
 ```
 ### Arch From Scratch
 When all else fails, the best installation guide is [the official arch wiki](https://wiki.archlinux.org/index.php/installation_guide).
