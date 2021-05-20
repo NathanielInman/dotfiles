@@ -10,6 +10,8 @@ This repo contains configuration files for VIM, Tmux as well as minimal step-by-
     * [CLI Configuration](https://github.com/NathanielInman/dot-files/blob/master/setting-up-manjaro-or-archlinux.md#cli-configuration)
   * [Setting Up Debian Or Ubuntu](https://github.com/NathanielInman/dot-files/blob/master/setting-up-debian-or-ubuntu.md#setting-up-debian-or-ubuntu)
     * [i3 From Scratch](https://github.com/NathanielInman/dot-files/blob/master/setting-up-debian-or-ubuntu.md#i3-from-scratch)
+  * [Streamdeck Linux](https://github.com/NathanielInman/dot-files/blob/master/streamdeck.md)
+  * [Fonts linux](https://github.com/NathanielInman/dot-files/blob/master/fonts.md)
   * [Basic Scripts](https://github.com/NathanielInman/dot-files/blob/master/basic-scripts.md#basic-scripts)
     * [Packaging](https://github.com/NathanielInman/dot-files/blob/master/basic-scripts.md#packaging)
     * [Deploying](https://github.com/NathanielInman/dot-files/blob/master/basic-scripts.md#deploying)
