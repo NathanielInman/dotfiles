@@ -3,7 +3,7 @@
 When all else fails, the best installation guide is [the official arch wiki](https://wiki.archlinux.org/index.php/installation_guide).
 
 ```
-# to start, lets ennsure the internet is connected and sync time
+# to start, lets ensure the internet is connected and sync time
 ping -c 3 google.com
 timedatectl set-ntp true
 
