@@ -15,6 +15,11 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 ```
 pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip
 ```
+Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
+```
+git config --global core.excludesFile '~/.gitignore'
+curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/.gitignore -o ~/.gitignore
+```
 Now we install `n` for managing node instead of using pacman
 ```
 curl -L https://git.io/n-install | bash
