@@ -1,6 +1,7 @@
 "----------------------------------------
 " Start general configurations
 "----------------------------------------
+set encoding=utf-8
 set term=screen-256color "ensure color compatibility matches tmux
 set nocompatible " don't lose new vim features due to compatibility
 set ts=2 sw=2 et " 2 space tabs (tabstop=2, shiftwidth=2, expandtab=true)
