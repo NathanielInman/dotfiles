@@ -228,8 +228,9 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `zsh` will be our default shell
 - `yay` is will sit ontop of Pacman as our package manager accessing AUR
 - `python-pip` will give us pip for python package management
+- `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
 ```
-pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip
+pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip xsel
 ```
 Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
 ```
