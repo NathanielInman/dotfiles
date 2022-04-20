@@ -299,6 +299,7 @@ npm install -g npm npm-check-updates n
 Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
+- `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
 ```
-yay -S slack-desktop pagraphcontrol-git feh
+yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels
 ```
