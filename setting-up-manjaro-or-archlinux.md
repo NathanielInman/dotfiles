@@ -228,8 +228,9 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `zsh` will be our default shell
 - `yay` is will sit ontop of Pacman as our package manager accessing AUR
 - `python-pip` will give us pip for python package management
+- `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
 ```
-pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip
+pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip xsel
 ```
 Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
 ```
@@ -291,13 +292,24 @@ Source it up.
 ```
 source ~/.zshrc
 ```
-Now install our node version manager and couple other helpful node things:
+Now install our nodejs version manager and couple other helpful node things. It may be worthwhile to also ensure you don't have to use `sudo` in order to install `npm` packages in the future, those lines follow.
 ```
 npm install -g npm npm-check-updates n
+
+# make cache folder (if missing) and take ownership
+sudo mkdir -p /usr/local/n
+sudo chown -R $(whoami) /usr/local/n
+
+# make sure the required folders exist (safe to execute even if they already exist)
+sudo mkdir -p /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
+
+# take ownership of Node.js install destination folders
+sudo chown -R $(whoami) /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
 ```
 Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
+- `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
 ```
-yay -S slack-desktop pagraphcontrol-git feh
+yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels
 ```
