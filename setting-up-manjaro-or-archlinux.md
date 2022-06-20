@@ -229,8 +229,9 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `yay` is will sit ontop of Pacman as our package manager accessing AUR
 - `python-pip` will give us pip for python package management
 - `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
+- `task` is a very simple cli todo app named taskwarrior
 ```
-pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip xsel
+pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip xsel task
 ```
 Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
 ```
@@ -310,6 +311,7 @@ Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
 - `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
+- `vit` is a TUI for taskwarrior
 ```
 yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels
 ```
