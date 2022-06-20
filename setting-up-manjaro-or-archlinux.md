@@ -203,10 +203,10 @@ curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch/.pic
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3.conf -o ~/.config/i3/config
 curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3blocks.conf -o ~/.config/i3blocks/config.conf
 
-# Now grab yay for AUR
+# Now grab paru for AUR, used to use yay but Rust ftw :)
 cd ~/Sites
-git clone https://aur.archlinux.org/yay-git.git
-cd yay-git
+git clone https://aur.archlinux.org/paru.git
+cd paru
 makepkg -si
 
 # Now install web browser

@@ -20,6 +20,8 @@ plugins=(git history zsh-syntax-highlighting zsh-autosuggestions)
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
 
 # My aliases
+alias yay='paru' # paru is rust, yay is go. alias due to muscle memory
+alias yeet='paru -Rcs' # always forget remove flags
 alias ssh='TERM=xterm-color ssh' # kitty does weird things, set it explicitly
 alias icat='kitty +kitten icat'
 alias gbclean=$'git branch --merged master | grep -v \'^[ *]*master$\' | xargs git branch -d'
