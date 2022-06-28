@@ -44,6 +44,7 @@ alias pbcopy='xsel --clipboard --input' # pbcopy < ./filename.txt (pb stands for
 alias pbpaste='xsel --clipboard --output' # pbpaste > ./filename.txt
 alias cal='rusti-cal'
 alias calendar='rusti-cal'
+alias weather='curl v2d.wttr.in'
 
 # Vim mode (default mode is insert)
 bindkey -v
