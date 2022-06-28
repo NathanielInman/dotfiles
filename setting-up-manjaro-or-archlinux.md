@@ -307,6 +307,15 @@ sudo mkdir -p /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
 # take ownership of Node.js install destination folders
 sudo chown -R $(whoami) /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
 ```
+Now we'll install Rust:
+```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+Now some rust utils:
+- `rusti-cal` is a better calendar
+```
+cargo install rusti-cal
+```
 Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
