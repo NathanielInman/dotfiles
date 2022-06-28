@@ -321,6 +321,7 @@ Now for any other essentials for arch
 - `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
 - `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
 - `vit` is a TUI for taskwarrior
+- `ncdu` NCurses Disk Usage shows what files/folders are occupying how much space
 ```
-yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels
+yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu
 ```
