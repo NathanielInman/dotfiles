@@ -3,7 +3,7 @@
 We need homebrew first as it's our main package manager
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew install diff-so-fancy htop lsd bat fd ripgrep git vim zsh tmux python reattach-to-user-namespace
+brew install diff-so-fancy htop exa bat fd ripgrep git vim zsh tmux python reattach-to-user-namespace
 ```
 Now we install `n` for managing node instead of using brew
 ```

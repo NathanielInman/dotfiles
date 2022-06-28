@@ -25,10 +25,10 @@ alias yeet='paru -Rcs' # always forget remove flags
 alias ssh='TERM=xterm-color ssh' # kitty does weird things, set it explicitly
 alias icat='kitty +kitten icat'
 alias gbclean=$'git branch --merged master | grep -v \'^[ *]*master$\' | xargs git branch -d'
-alias ls='lsd'
+alias ls='exa'
 alias search='rg'
 alias searchAround='rg -C'
-alias tree='lsd --tree'
+alias tree='exa --tree'
 alias cat='bat'
 alias rvimtmp='rm -i `find . | grep .swp$`'
 alias searchFiles='fd'

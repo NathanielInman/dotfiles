@@ -219,7 +219,7 @@ yay -S google-chrome
 We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager.
 - `diff-so-fancy` helps make cli `git diff` look good (automatic)
 - `htop` is better version of `top` command (we alias it instead in .zshrc)
-- `lsd` is prettier version of `ls` command (we alias it instead in .zshrc)
+- `exa` is prettier version of `ls` command (we alias it instead in .zshrc)
 - `bat` is prettier version of `cat` command (we alias it instead in .zshrc)
 - `fd` is aliased in .zshrc as `searchFiles` and finds within directories filenames
 - `ripgrep` looks within files for strings
@@ -231,7 +231,7 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
 - `task` is a very simple cli todo app named taskwarrior
 ```
-pacman -S diff-so-fancy htop lsd bat fd ripgrep git gvim zsh yay python-pip xsel task
+pacman -S diff-so-fancy htop exa bat fd ripgrep git gvim zsh yay python-pip xsel task
 ```
 Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
 ```
