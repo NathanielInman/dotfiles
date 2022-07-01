@@ -308,3 +308,7 @@ Now sync notes for `zk` into Sites:
 cd ~/Sites
 git clone https://github.com/nathanielinman/notes.git
 ```
+Now sync tasks for `taskwarrior` and `vit`:
+```
+git clone https://github.com/nathanielinman/tasks.git ~/.task
+```
