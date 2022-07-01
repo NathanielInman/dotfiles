@@ -218,7 +218,6 @@ yay -S google-chrome
 ### CLI Configuration
 We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager.
 - `diff-so-fancy` helps make cli `git diff` look good (automatic)
-- `htop` is better version of `top` command (we alias it instead in .zshrc)
 - `exa` is prettier version of `ls` command (we alias it instead in .zshrc)
 - `bat` is prettier version of `cat` command (we alias it instead in .zshrc)
 - `fd` is aliased in .zshrc as `searchFiles` and finds within directories filenames
@@ -231,7 +230,7 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
 - `task` is a very simple cli todo app named taskwarrior
 ```
-pacman -S diff-so-fancy htop exa bat fd ripgrep git gvim zsh yay python-pip xsel task
+pacman -S diff-so-fancy exa bat fd ripgrep git gvim zsh yay python-pip xsel task
 ```
 Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
 ```
@@ -322,6 +321,17 @@ Now for any other essentials for arch
 - `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
 - `vit` is a TUI for taskwarrior
 - `ncdu` NCurses Disk Usage shows what files/folders are occupying how much space
+- `nnn` is a filemanager for the terminal with workspaces and vim-like controls
+- `glow` is for cating out or reading markdown files in terminal
+- `glances` is better version of `top` command (we alias it instead in .zshrc)
+- `procs` is a better version of `ps` command (we alias it instead in .zshrc)
+- `tokei` analyzes a folders programming language, loc, comments, etc
+- `zoxide` allows jumpting to random folders, inspired by z and autojump
+- `fzf` is a fuzzy finder for files usable in vim or cli
+- `didyoumean` is a spell-checking app
+- `translate-shell` is a translation app
+- `udict` urban dictionary
+- `neofetch` cli info tool
 ```
-yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu
+yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch
 ```

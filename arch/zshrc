@@ -39,12 +39,14 @@ alias cat='bat'
 alias rvimtmp='rm -i `find . | grep .swp$`'
 alias searchFiles='fd'
 alias du='ncdu --color dark -rr -x --exclude .git --exclude node_modules'
-alias top='htop'
+alias top='glances'
 alias pbcopy='xsel --clipboard --input' # pbcopy < ./filename.txt (pb stands for pasteboard, see osx pbcopy man)
 alias pbpaste='xsel --clipboard --output' # pbpaste > ./filename.txt
 alias cal='rusti-cal'
 alias calendar='rusti-cal'
 alias weather='curl v2d.wttr.in'
+alias has="curl -sL https://git.io/_has | bash -s" # dependency checker to validate versions
+alias ps="procs"
 
 # Vim mode (default mode is insert)
 bindkey -v
@@ -60,3 +62,5 @@ close () {
   fi
 }
 
+# Plugin bootstraps
+eval "$(zoxide init zsh)"
