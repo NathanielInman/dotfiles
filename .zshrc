@@ -47,6 +47,7 @@ alias calendar='rusti-cal'
 alias weather='curl v2d.wttr.in'
 alias has="curl -sL https://git.io/_has | bash -s" # dependency checker to validate versions
 alias ps="procs"
+alias dict="sdcv"
 
 # Vim mode (default mode is insert)
 bindkey -v

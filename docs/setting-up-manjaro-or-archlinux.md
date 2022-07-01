@@ -292,6 +292,12 @@ Now for any other essentials for arch
 - `translate-shell` is a translation app
 - `udict` urban dictionary
 - `neofetch` cli info tool
+- `sdcv-git` cli dictionary
 ```
-yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch
+yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git
+```
+Now grab the dictionary file for sdcv:
+```
+sudo mkdir -p /usr/share/stardict/dic/
+sudo wget -c https://web.archive.org/web/20200630200122/http://download.huzheng.org/dict.org/stardict-dictd_www.dict.org_gcide-2.4.2.tar.bz2 -O /tmp/dict.tar.bz2 && sudo tar -xvjf /tmp/dict.tar.bz2 -C /usr/share/stardict/dic/
 ```
