@@ -11,6 +11,44 @@
 
 set $mod Mod4
 
+# set default monitors
+set $primary_monitor "DP-0"
+set $secondary_monitor "DP-1"
+
+# set first 6 default workspaces
+workspace 1 output $primary_monitor
+workspace 2 output $secondary_monitor
+workspace 3 output $primary_monitor
+workspace 4 output $primary_monitor
+workspace 5 output $primary_monitor
+workspace 6 output $primary_monitor
+workspace 7 output $primary_monitor
+workspace 8 output $primary_monitor
+workspace 9 output $primary_monitor
+workspace 10 output $primary_monitor
+
+# Define names for default workspaces for which we configure key bindings later on.
+# We use variables to avoid repeating the names in multiple places.
+set $ws1 "1:browser"
+set $ws2 "2:work"
+set $ws3 "3:au"
+set $ws4 "4:main"
+set $ws5 "5:notes"
+set $ws6 "6:todo"
+set $ws7 "7:code3"
+set $ws8 "8:code4"
+set $ws9 "9:code5"
+set $ws10 "10:code6"
+
+# assign default workspaces for certain apps
+assign [class="Google-chrome"] $ws1
+assign [class="Brave-browser"] $ws2
+assign [class="pagraphcontrol"] $ws2
+assign [class="streamdeck"] $ws2
+assign [class="zoom "] $ws2
+assign [class="Slack"] $ws2
+assign [class="tintin"] $ws3
+
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:PragmataPro Regular 8
@@ -19,20 +57,38 @@ font pango:PragmataPro Regular 8
 # screen before suspend. Use loginctl lock-session to lock your screen.
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 
-# ensure streamdeck autostart
-exec --no-startup-id streamdeck
+# ensure terminal opens on main workspace
+exec --no-startup-id sh -c 'sleep 0.1; i3-msg "workspace 4:main"'
+exec --no-startup-id sh -c 'sleep 0.2; kitty --config ~/.config/kitty/kitty.conf --directory ~/Sites'
+exec --no-startup-id sh -c 'sleep 0.3; neovide'
 
-# ensure pagraphcontrol autostart
-exec --no-startup-id pagraphcontrol
+# ensure zk note-taking app autostart
+exec --no-startup-id sh -c 'sleep 1.0; i3-msg "workspace 5:notes"'
+exec --no-startup-id sh -c 'sleep 1.1; kitty --config ~/.config/kitty/kitty.conf --directory ~/Sites/notes -e zk edit --interactive'
+exec --no-startup-id sh -c 'sleep 1.2; kitty --config ~/.config/kitty/kitty.conf --directory ~/Sites/notes'
 
-# ensure flameshot autostart
-exec --no-startup-id flameshot
+# ensure vit todo list autostart
+exec --no-startup-id sh -c 'sleep 2.0; i3-msg "workspace 6:todo; exec kitty --config ~/.config/kitty/kitty.conf -e vit"'
 
-# ensure zoom autostart
-exec --no-startup-id zoom
+# Workspace 2 startup
+exec --no-startup-id sh -c 'sleep 3.0; i3-msg "workspace 2:work"'
+exec --no-startup-id sh -c 'sleep 3.1; streamdeck'
+exec --no-startup-id sh -c 'sleep 3.2; pagraphcontrol'
+exec --no-startup-id sh -c 'sleep 3.3; flameshot'
+exec --no-startup-id sh -c 'sleep 3.4; zoom'
+exec --no-startup-id sh -c 'sleep 3.5; gpick'
+exec --no-startup-id sh -c 'sleep 3.6; slack'
+exec --no-startup-id sh -c 'sleep 3.7; i3-msg "workspace 2:work; layout stacking"'
 
-# ensure gpick autostart
-exec --no-startup-id gpick
+# Workspace 3 startup
+exec --no-startup-id sh -c 'sleep 4.0; i3-msg "workspace 3:au"'
+exec --no-startup-id sh -c 'sleep 4.1; kitty --config ~/.config/kitty/kitty.conf -e tail -n 100 -f au.communications'
+exec --no-startup-id sh -c 'sleep 4.2; kitty --config ~/.config/kitty/kitty.conf --class tintin -e tt++ ~/au-mardios.tintin'
+
+# ensure browser workspace starts up with chrome
+exec --no-startup-id sh -c 'sleep 5.0; i3-msg "workspace 1:browser"
+exec --no-startup-id sh -c 'sleep 5.1; google-chrome-stable gmail.com'
+exec --no-startup-id sh -c 'sleep 5.2; brave gmail.com'
 
 # ensure screensaver - this will just turn monitors off after time
 exec gnome-screensaver
@@ -123,19 +179,6 @@ bindsym $mod+a focus parent
 
 # focus the child container
 #bindsym $mod+d focus child
-
-# Define names for default workspaces for which we configure key bindings later on.
-# We use variables to avoid repeating the names in multiple places.
-set $ws1 "1:browser"
-set $ws2 "2:work"
-set $ws3 "3:au"
-set $ws4 "4:main"
-set $ws5 "5:code"
-set $ws6 "6:code2"
-set $ws7 "7:code3"
-set $ws8 "8:code4"
-set $ws9 "9:code5"
-set $ws10 "10:code6"
 
 # switch to workspace
 bindsym $mod+1 workspace number $ws1
