@@ -293,8 +293,9 @@ Now for any other essentials for arch
 - `udict` urban dictionary
 - `neofetch` cli info tool
 - `sdcv-git` cli dictionary
+- `xsv` is a cli for splitting/joining/analyzing csv files
 ```
-yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git
+yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv
 ```
 Now grab the dictionary file for sdcv:
 ```
