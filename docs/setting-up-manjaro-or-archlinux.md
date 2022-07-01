@@ -180,28 +180,17 @@ exec i3
 
 # install user-specific applications
 # kitty - fast terminal that uses gpu to render things
-sudo pacman -S kitty
+sudo pacman -S kitty stow
 
 # Make basic home folders
 mkdir ~/Sites #will hold our projects
 mkdir ~/Pictures #will hold backgrounds etc
-mkdir -p ~/.config/i3
-mkdir ~/.config/i3blocks
-mkdir ~/.config/kitty
 
-# Grab the configuration for kitty
-curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch/.kitty.conf -o ~/.config/kitty/kitty.conf
-
-# Grab the background and set its loader fehbg
-curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch-bg.jpg -o ~/Pictures/arch-bg.jpg
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/fehbg -o ~/.fehbg
-
-# Grab transparency files for picom and load it
-curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/arch/.picom.conf -o ~/.picom.conf
-
-# Grab i3 configurations
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3.conf -o ~/.config/i3/config
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/arch/i3blocks.conf -o ~/.config/i3blocks/config.conf
+# Now grab all of the dot files
+cd ~/Sites
+git clone https://github.com/nathanielinman/dot-files.git
+stow --dir=~=Sites/dot-files --target=~/
+# if at any point you want to remove the symlinks `stow -D .` from within the source repo folder
 
 # Now grab paru for AUR, used to use yay but Rust ftw :)
 cd ~/Sites
@@ -232,16 +221,6 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 ```
 pacman -S diff-so-fancy exa bat fd ripgrep git gvim zsh yay python-pip xsel task
 ```
-Before we start getting into stuff, lets ensure we're not commiting things we shouldn't
-```
-git config --global core.excludesFile '~/.gitignore'
-curl https://raw.githubusercontent.com/NathanielInman/dot-files/master/.gitignore -o ~/.gitignore
-git config --global credential.helper store
-git config --global user.email "nate@theoestudio.com"
-git config --global user.name "Nathaniel Inman"
-git config --global core.editor "vim"
-git config --global pull.rebase false
-```
 Now we update our python package manager
 ```
 pip3 install --upgrade pip
@@ -250,9 +229,8 @@ Now for installing vim package manager
 ```
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 ```
-Now that Vundler is installed, we can copy the `.vimrc` to the home directory and install plugins.
+Now that Vundler is installed, we can install all the plugins.
 ```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.vimrc -o ~/.vimrc
 vim +PluginInstall +qall
 ```
 Now for configuring the shell.
@@ -264,14 +242,6 @@ Lets ensure that zsh will have fish-like syntax highlighting & autocompletion
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 ```
-Download the personal theme to use with oh-my-zsh
-```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme -o ~/.oh-my-zsh/themes/pragmata.zsh-theme
-```
-Now finally set up your zsh run commands file with the better one here.
-```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.zshrc -o ~/.zshrc
-```
 Install node js stuff, we'll actually manage this with `n` and `npm` itself later on
 ```
 yay -S nodejs npm
@@ -281,16 +251,6 @@ Now lets add npm global ability
 mkdir ~/.npm-global
 npm config set prefix '~/.npm-global'
 # now open ~/.zshrc with vim and add "~/.npm-global/bin" to PATH
-```
-If you are using `i3` and want to startx automatically on login add this as well to `.zshrc`
-```
-if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
-  exec startx
-fi
-```
-Source it up.
-```
-source ~/.zshrc
 ```
 Now install our nodejs version manager and couple other helpful node things. It may be worthwhile to also ensure you don't have to use `sudo` in order to install `npm` packages in the future, those lines follow.
 ```

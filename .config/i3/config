@@ -60,7 +60,7 @@ floating_modifier $mod
 bindsym $mod+Return exec --no-startup-id kitty --config ~/.config/kitty/kitty.conf
 
 # start a terminal with vim open (scratchpad)
-bindsym $mod+v exec --no-startup-id kitty --config ~/.config/kitty/kitty.conf -e vim
+bindsym $mod+v exec --no-startup-id neovide
 
 # start a terminal with calculator open (R REPL)
 bindsym $mod+c exec --no-startup-id kitty --config ~/.config/kitty/kitty.conf -e R

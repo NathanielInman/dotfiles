@@ -1,14 +1,10 @@
 [core]
-  editor = vim
-  pager = diff-so-fancy | less --tabs=3 -RFX
+	excludesFile = ~/.gitignore
+	editor = vim
 [user]
-  name = Nathaniel Inman
-  email = nate@theoestudio.com
-[push]
-  default = simple
-[alias]
-  lol = log --graph --date=local --pretty=format:'%C(yellow)%h%Creset %cd %C(yellow)(%Creset%C(green)%an%Creset%C(yellow))%Creset %s%C(cyan)%d%Creset'
-[pull]
-  rebase = false
+	email = nate@theoestudio.com
+	name = Nathaniel Inman
 [credential]
-  helper = store
+	helper = store
+[pull]
+	rebase = false

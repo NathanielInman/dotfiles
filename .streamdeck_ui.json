@@ -1,0 +1,37 @@
+{
+    "streamdeck_ui_version": 1,
+    "state": {
+        "BL40J1B05555": {
+            "buttons": {
+                "0": {
+                    "0": {
+                        "icon": "/home/nate/Pictures/lightbulb-on.png",
+                        "command": "bash -c \"keylightctl switch --light 8A95 on & keylightctl switch --light 9F74 on\"",
+                        "keys": ""
+                    },
+                    "1": {
+                        "icon": "/home/nate/Pictures/lightbulb-off.png",
+                        "command": "bash -c \"keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off\"",
+                        "text": ""
+                    },
+                    "2": {
+                        "icon": "/home/nate/Pictures/screencapture-icon.png",
+                        "command": "bash -c \"flameshot gui\""
+                    },
+                    "3": {},
+                    "4": {},
+                    "5": {}
+                },
+                "1": {
+                    "0": {},
+                    "1": {},
+                    "2": {},
+                    "3": {},
+                    "4": {},
+                    "5": {}
+                }
+            },
+            "page": 0
+        }
+    }
+}
