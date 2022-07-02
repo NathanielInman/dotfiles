@@ -213,6 +213,7 @@ yay -S google-chrome
 
 ### CLI Configuration
 We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager.
+- `picom` is a compositor
 - `diff-so-fancy` helps make cli `git diff` look good (automatic)
 - `exa` is prettier version of `ls` command (we alias it instead in .zshrc)
 - `bat` is prettier version of `cat` command (we alias it instead in .zshrc)
@@ -226,7 +227,7 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
 - `task` is a very simple cli todo app named taskwarrior
 ```
-pacman -S diff-so-fancy exa bat fd ripgrep git gvim zsh yay python-pip xsel task
+yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh yay python-pip xsel task
 ```
 Now we update our python package manager
 ```

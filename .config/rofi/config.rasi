@@ -1,7 +1,9 @@
 /** Basic config file **/
 
 configuration {
-  show-icons:         true;
-  icon-theme:         "Papirus";
+  modi:       "window,drun,ssh";
+  show-icons: true;
+  font:       "PragmataPro 12";
+  icon-theme: "Papirus";
 }
 @theme "/home/nate/.local/share/rofi/themes/rounded-nord-dark.rasi"

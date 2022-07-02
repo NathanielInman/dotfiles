@@ -125,7 +125,9 @@ bindsym $mod+c exec --no-startup-id kitty --config ~/.config/kitty/kitty.conf -e
 bindsym $mod+Shift+q kill
 
 # A more modern dmenu replacement is rofi:
-bindsym $mod+d exec --no-startup-id rofi -modi drun,run -show drun
+bindsym $mod+d exec --no-startup-id rofi -show drun
+bindsym Control+d exec --no-startup-id rofi -show window
+bindsym $mod+Control+d exec --no-startup-id rofi -show ssh
 
 # change focus
 bindsym $mod+h focus left
