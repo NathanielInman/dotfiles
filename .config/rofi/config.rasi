@@ -1,0 +1,7 @@
+/** Basic config file **/
+
+configuration {
+  show-icons:         true;
+  icon-theme:         "Papirus";
+}
+@theme "/home/nate/.local/share/rofi/themes/rounded-nord-dark.rasi"
