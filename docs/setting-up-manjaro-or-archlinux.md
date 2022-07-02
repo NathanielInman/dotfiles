@@ -136,8 +136,15 @@ systemctl start bluetooth.service
 systemctl enable bluetooth.service
 
 # Now for installing windowmanager stuff (i3)
-# sysstat is to show cpu usage and other percentages on cli
-Pacman -S xorg xorg-server xorg-xinit xterm i3-gaps i3blocks i3lock i3status dmenu noto-fonts sysstat
+# xorg, xorg-server, xorg-xinit - display server
+# xterm - terminal emulator for X window system
+# i3-gaps - spaces between windows/containers on i3wm
+# i3blocks - status tray components
+# i3status - status tray
+# rofi - hotkey app opener overlay, alternative to dmenu & ulauncher
+# noto-fonts - emoji extras & base fonts
+# sysstat - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
+Pacman -S xorg xorg-server xorg-xinit xterm i3-gaps i3blocks i3lock i3status rofi noto-fonts sysstat
 
 # Before we can start i3 we need graphics drivers, validate what we're using
 lspci -v | grep -A1 -e VGA -e 3D
