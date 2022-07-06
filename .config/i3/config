@@ -126,7 +126,7 @@ bindsym $mod+Shift+q kill
 
 # A more modern dmenu replacement is rofi:
 bindsym $mod+d exec --no-startup-id rofi -show drun
-bindsym Control+d exec --no-startup-id rofi -show window
+bindsym $mod+w exec --no-startup-id rofi -show window
 bindsym $mod+Control+d exec --no-startup-id rofi -show ssh
 
 # change focus
