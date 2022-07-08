@@ -99,7 +99,7 @@ bcf boot add 1 fs0:\EFI\GRUB\grubx64.efi "My GRUB bootloader"
 
 # Now properly setup networking, substitute `FROSTY` for your computer name.
 pacman -S networkmanager
-systemctl enable NetworkManager
+systemctl enable NetworkManager --now
 echo FROSTYARCH > /etc/hostname
 
 # Now add the following within `vim /etc/hosts`:
@@ -133,8 +133,7 @@ pacman -Syyu
 
 # Sound and bluetooth - will enable pulseaudio on user later
 Pacman -S alsa-utils pulseaudio-alsa pulseaudio-bluetooth bluez-utils
-systemctl start bluetooth.service
-systemctl enable bluetooth.service
+systemctl enable bluetooth.service --now
 
 # Now for installing windowmanager stuff (i3)
 # xorg, xorg-server, xorg-xinit - display server
@@ -175,8 +174,7 @@ systemctl enable ntpd.service --now
 login
 
 # Let's enable pulseaudio for user
-systemctl --user enable pulseaudio
-systemctl --user start pulseaudio
+systemctl --user enable pulseaudio --now
 
 # Ensure we're automatically logged in, `systemctl edit getty@tty1.service` and add:
 [Service]
@@ -322,9 +320,9 @@ Now sync tasks for `taskwarrior` and `vit`:
 ```
 git clone https://github.com/nathanielinman/tasks.git ~/.task
 ```
-Now enable the cronie cron service for systemd
+Now enable the cronie cron service for systemd and start immediately
 ```
-sudo systemctl enable cronie.service
+sudo systemctl enable cronie.service --now
 ```
 cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit crontab with `crontab -e`. Go ahead and add those cron actions now to keep things synced:
 ```
