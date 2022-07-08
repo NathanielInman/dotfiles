@@ -329,6 +329,6 @@ sudo systemctl enable cronie.service
 cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit crontab with `crontab -e`. Go ahead and add those cron actions now to keep things synced:
 ```
 # `cron tab -e` then add the following lines to update both automatically hourly
-00 * * * * /home/nate/Sites/dot-files/scripts/cron-git-notes-auto-update.sh
-00 * * * * /home/nate/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh
+@hourly /home/nate/Sites/dot-files/scripts/cron-git-notes-auto-update.sh
+@hourly /home/nate/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh
 ```
