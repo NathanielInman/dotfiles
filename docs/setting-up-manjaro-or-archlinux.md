@@ -125,6 +125,7 @@ reboot
 
 # Now after boot, login with `root` with the configured password and unncomment `multilib` within:
 # if u have issues with timing out due to /tmp, just remove it from `/etc/fstab`
+sudo ln -s /usr/bin/vim /usr/bin/vi # make sure we always use vim instead of vi
 vim /etc/pacman.conf
 
 # Now lets update everything:
@@ -303,6 +304,7 @@ Now for any other essentials for arch
 - `sdcv-git` cli dictionary
 - `xsv` is a cli for splitting/joining/analyzing csv files
 - `zk` is a note-taking TUI with search built-in
+- `cronie` cron service to help sync any `notes` and `todo` repo changes automatically
 ```
 yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk
 ```
@@ -319,4 +321,14 @@ git clone https://github.com/nathanielinman/notes.git
 Now sync tasks for `taskwarrior` and `vit`:
 ```
 git clone https://github.com/nathanielinman/tasks.git ~/.task
+```
+Now enable the cronie cron service for systemd
+```
+sudo systemctl enable cronie.service
+```
+cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit crontab with `crontab -e`. Go ahead and add those cron actions now to keep things synced:
+```
+# `cron tab -e` then add the following lines to update both automatically hourly
+00 * * * * /home/nate/Sites/dot-files/scripts/cron-git-notes-auto-update.sh
+00 * * * * /home/nate/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh
 ```
