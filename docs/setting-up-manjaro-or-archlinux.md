@@ -303,6 +303,7 @@ Now for any other essentials for arch
 - `xsv` is a cli for splitting/joining/analyzing csv files
 - `zk` is a note-taking TUI with search built-in
 - `cronie` cron service to help sync any `notes` and `todo` repo changes automatically
+- `dog` is a DNS lookup cli info tool
 ```
 yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk
 ```
