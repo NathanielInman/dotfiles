@@ -331,3 +331,13 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 @hourly /home/nate/Sites/dot-files/scripts/cron-git-notes-auto-update.sh
 @hourly /home/nate/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh
 ```
+Finally we should make sure our `/etc/hosts` file is prioritized for blocking hosts if we want. Within `sudo vim /etc/nsswitch.conf` make sure the `files` attribute is before the others:
+```
+hosts: files mymachines resolve [!UNAVAIL=return] myhostname dns
+```
+Then we can add urls we want to block within it (for me, yandex - which i usually allow on pihole but not my work machine):
+```
+127.0.0.1 yandex.ru
+127.0.0.1 cdn.dzen.ru
+127.0.0.1 yabs.yandex.ru
+```
