@@ -12,6 +12,7 @@ set showmatch " set show matching parenthesis
 set mouse=a " Allow mouse scrolling (peer programming)
 set backspace=indent,eol,start " Allow backspace to work normally
 set number " Turn on line numbers
+set relativenumber " show relative line numbers
 set laststatus=2 " Always show statusline
 set list "Show invisible characters, next line specifies characters
 set belloff=all "Turn off the annoying audible error bell
@@ -30,7 +31,6 @@ Plugin 'airblade/vim-gitgutter' "See git + / - / ~ in gutter
 Plugin 'scrooloose/nerdtree' "File management
 Plugin 'Xuyuanp/nerdtree-git-plugin' "Shows modifications in nerdtree
 Plugin 'itchyny/lightline.vim' "pretty statusline
-Plugin 'myusuf3/numbers.vim' "Shows relative line numbers on normal mode
 Plugin 'ctrlpvim/ctrlp.vim' "Fuzzy file finder
 Plugin 'scrooloose/nerdcommenter' "Allows commenting of lines easier
 Plugin 'ap/vim-buftabline' "Allows the buffers as tabs
@@ -39,6 +39,7 @@ Plugin 'chr4/nginx.vim' "nginx sytax support
 Plugin 'arcticicestudio/nord-vim' "color scheme
 Plugin 'pangloss/vim-javascript' "Better tabbing in javascript
 Plugin 'posva/vim-vue' "vue file syntax support
+Plugin 'junegunn/goyo.vim' "distraction-free centering of file
 call vundle#end()
 
 filetype plugin indent on " Plugins default to indent
@@ -65,6 +66,10 @@ let mapleader="\<Space>"
 
 " Session management
 nnoremap <leader>s :ToggleWorkspace<CR>
+
+" Distraction-free editing
+nmap <leader>d :Goyo 80x75%<CR>:set showtabline=0<CR>
+nmap <leader>v :Goyo!<CR>:set showtabline=2<CR>
 
 " Open nerdtree and then open current file location in nerdtree
 nmap \ :NERDTreeToggle<CR>
