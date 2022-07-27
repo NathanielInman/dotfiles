@@ -281,8 +281,9 @@ Now some rust utils:
 - `rusti-cal` is a better calendar
 - `melt` is a way of easily extracting zip, gz, Z, bz2, tar, etc
 - `tidy-viewer` or "tv" is an easy way to preview csv files
+- `pueue` is a tool that helps manage a queue of shell commands (daemon is pueued)
 ```
-cargo install rusti-cal melt tidy-viewer
+cargo install rusti-cal melt tidy-viewer pueue
 ```
 Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
