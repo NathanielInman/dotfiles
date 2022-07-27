@@ -279,8 +279,10 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 Now some rust utils:
 - `rusti-cal` is a better calendar
+- `melt` is a way of easily extracting zip, gz, Z, bz2, tar, etc
+- `tidy-viewer` or "tv" is an easy way to preview csv files
 ```
-cargo install rusti-cal
+cargo install rusti-cal melt tidy-viewer
 ```
 Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
@@ -305,8 +307,9 @@ Now for any other essentials for arch
 - `cronie` cron service to help sync any `notes` and `todo` repo changes automatically
 - `dog` is a DNS lookup cli info tool
 - `sd` is a replacement for sed with sane regex instead
+- `onefetch` is a command that gets important stats on a git repo
 ```
-yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk
+yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk cronie dog sd onefetch
 ```
 Now grab the dictionary file for sdcv:
 ```

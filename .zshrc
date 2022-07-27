@@ -50,6 +50,7 @@ alias has="curl -sL https://git.io/_has | bash -s" # dependency checker to valid
 alias ps="procs"
 alias dict="sdcv"
 alias nnn="nnn -e" # open nnn with neovide as the editor
+alias tv="tidy-viewer" # easy way to preview csv files
 
 # Vim mode (default mode is insert)
 bindkey -v
