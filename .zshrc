@@ -10,6 +10,7 @@ export PATH=/usr/local/bin:~/.npm-global/bin:~/.local/bin:$HOME/bin:/usr/local/s
 export PATH=$(npm bin):$PATH
 export LANG=en_US.UTF-8
 export ZSH=$HOME/.oh-my-zsh
+export EDITOR=/usr/bin/neovide
 
 # Variable declaration used by oh-my-zsh
 ZSH_THEME="pragmata"
@@ -48,6 +49,7 @@ alias weather='curl v2d.wttr.in'
 alias has="curl -sL https://git.io/_has | bash -s" # dependency checker to validate versions
 alias ps="procs"
 alias dict="sdcv"
+alias nnn="nnn -e" # open nnn with neovide as the editor
 
 # Vim mode (default mode is insert)
 bindkey -v
