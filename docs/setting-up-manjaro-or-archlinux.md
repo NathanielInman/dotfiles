@@ -309,8 +309,10 @@ Now for any other essentials for arch
 - `dog` is a DNS lookup cli info tool
 - `sd` is a replacement for sed with sane regex instead
 - `onefetch` is a command that gets important stats on a git repo
+- `okular` is a pdf, epub, cbr, cbz etc minimal chrome reader
+- `cifs-utils` allows us to mount Samba network folders with fstab
 ```
-yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk cronie dog sd onefetch
+yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk cronie dog sd onefetch okular
 ```
 Now grab the dictionary file for sdcv:
 ```
@@ -345,4 +347,29 @@ Then we can add urls we want to block within it (for me, yandex - which i usuall
 127.0.0.1 yandex.ru
 127.0.0.1 cdn.dzen.ru
 127.0.0.1 yabs.yandex.ru
+```
+## Samba Mounting
+Provided you've installed `cifs-utils` already:
+```
+vim /etc/cifsauth
+```
+and add the following credentials for your samba share:
+```
+username=ninman
+password=fake
+```
+then we'll limit permissions:
+```
+sudo chmod 600 /etc/cifsauth
+```
+Now it's time to add the mount paths, run `sudo vim /etc/fstab` and add the following lines:
+```
+# Samba File Shares
+//192.168.1.51/ebooks /ebooks cifs credentials=/etc/cifsauth 0 0
+//192.168.1.51/video /video cifs credentials=/etc/cifsauth 0 0
+```
+If you want to reflect the shares immediately:
+```
+sudo systemctl daemon-reload
+sudo mount -a
 ```
