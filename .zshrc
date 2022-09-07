@@ -7,10 +7,14 @@ fi
 
 # User configuration
 export PATH=/usr/local/bin:~/.npm-global/bin:~/.local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
-export PATH=$(npm bin):$PATH
+export PATH=$HOME/.cargo/bin:$(npm bin):$PATH # rust and npm user bins
 export LANG=en_US.UTF-8
 export ZSH=$HOME/.oh-my-zsh
 export EDITOR=/usr/bin/neovide
+export NNN_OPTS="deH" # d = details, e = visual mode default, H = show hidden
+export NNN_FIFO=/tmp/nnn.fifo # temporary buffer for previews
+export NNN_PLUG='p:preview-tui' nnn
+export SPLIT='v' # split kitty vertically
 
 # Variable declaration used by oh-my-zsh
 ZSH_THEME="pragmata"
@@ -35,7 +39,7 @@ alias lx='ls -lbhHigUmuSa@' # all list and extended
 alias lS='exa -1' # just names
 alias search='rg'
 alias searchAround='rg -C'
-alias tree='broot -c :pt "$@"'
+alias tree='broot -c :pt "$@" -sdp'
 alias cat='bat'
 alias rvimtmp='rm -i `find . | grep .swp$`'
 alias searchFiles='fd'
@@ -43,14 +47,14 @@ alias du='ncdu --color dark -rr -x --exclude .git --exclude node_modules'
 alias top='glances'
 alias pbcopy='xsel --clipboard --input' # pbcopy < ./filename.txt (pb stands for pasteboard, see osx pbcopy man)
 alias pbpaste='xsel --clipboard --output' # pbpaste > ./filename.txt
-alias cal='rusti-cal'
 alias calendar='rusti-cal'
+alias cal='rusti-cal'
 alias weather='curl v2d.wttr.in'
 alias has="curl -sL https://git.io/_has | bash -s" # dependency checker to validate versions
 alias ps="procs"
 alias dict="sdcv"
-alias nnn="nnn -e" # open nnn with neovide as the editor
-alias tv="tidy-viewer" # easy way to preview csv files
+alias nnn="nnn -$NNN_OPTS" # d = details, e = visual mode
+alias tv="tidy-viewer" # an easy way to preview csv files
 
 # Vim mode (default mode is insert)
 bindkey -v

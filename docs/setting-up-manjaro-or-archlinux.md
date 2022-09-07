@@ -314,6 +314,10 @@ Now for any other essentials for arch
 ```
 yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk cronie dog sd onefetch okular
 ```
+You can now install all `nnn` plugins automatically with the following command:
+```
+curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs | sh
+```
 Now grab the dictionary file for sdcv:
 ```
 sudo mkdir -p /usr/share/stardict/dic/
