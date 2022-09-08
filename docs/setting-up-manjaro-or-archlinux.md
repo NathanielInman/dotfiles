@@ -287,6 +287,8 @@ cargo install rusti-cal melt tidy-viewer pueue
 ```
 Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
+- `feh` is an image viewer also used for backgrounds
+- `handlr` is used to set default applications for apps like `nnn`
 - `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
 - `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
 - `vit` is a TUI for taskwarrior
@@ -312,7 +314,15 @@ Now for any other essentials for arch
 - `okular` is a pdf, epub, cbr, cbz etc minimal chrome reader
 - `cifs-utils` allows us to mount Samba network folders with fstab
 ```
-yay -S slack-desktop pagraphcontrol-git feh ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk cronie dog sd onefetch okular
+yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nnn glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk cronie dog sd onefetch okular
+```
+You can now set any default applications you prefer:
+```
+handlr set .png feh.desktop
+```
+If you want to view pixel art with feh, it may make sense to force aliasing. `sudo vim /usr/share/applications/feh.desktop` and change `Exec` lint to be:
+```
+Exec=feh --start-at %u --force-aliasing
 ```
 You can now install all `nnn` plugins automatically with the following command:
 ```
