@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=nnn
+Comment=Terminal file manager
+Exec=env NNN_INFO=/tmp/nnn.fifo NNN_PLUG='p:preiew-tui;t:preview-tabbed' SPLIT='v' kitty --config /home/nate/.config/kitty/kitty.conf -e --single-instance nnn -deH
+Terminal=false
+Icon=nnn
+MimeType=inode/directory
+Categories=System;FileTools;FileManager;ConsoleOnly
+Keywords=File;Manager;Management;Explorer;Launcher

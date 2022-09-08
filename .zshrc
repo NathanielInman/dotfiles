@@ -13,7 +13,7 @@ export ZSH=$HOME/.oh-my-zsh
 export EDITOR=/usr/bin/neovide
 export NNN_OPTS="deH" # d = details, e = visual mode default, H = show hidden
 export NNN_FIFO=/tmp/nnn.fifo # temporary buffer for previews
-export NNN_PLUG='p:preview-tui' nnn
+export NNN_PLUG='p:preview-tui;t:preiew-tabbed' nnn
 export SPLIT='v' # split kitty vertically
 
 # Variable declaration used by oh-my-zsh
