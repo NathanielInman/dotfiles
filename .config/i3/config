@@ -53,9 +53,8 @@ assign [class="tintin"] $ws3
 # is used in the bar {} block below.
 font pango:PragmataPro Regular 8
 
-# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
-# screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+# Notification manager
+exec --no-startup-id dunst
 
 # ensure terminal opens on main workspace
 exec --no-startup-id sh -c 'sleep 0.1; i3-msg "workspace 4:main"'
