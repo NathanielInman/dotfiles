@@ -223,13 +223,14 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `git` is basic requirement for version control
 - `gvim` is basic requirement for file editor, gvim instead of vim for clipboard in X11
 - `zsh` will be our default shell
-- `yay` is will sit ontop of Pacman as our package manager accessing AUR
+- `dunst` this is a notification system, required for apps like slack to not crash
 - `python-pip` will give us pip for python package management
 - `pyenv` python version manager and virtual environment
 - `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
 - `task` is a very simple cli todo app named taskwarrior
+- `gnome-icon-theme` is a simple package of icons used for dunst
 ```
-yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh yay python-pip xsel task
+yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task gnome-icon-theme
 ```
 Now we update our python package manager
 ```
