@@ -371,6 +371,19 @@ Then we can add urls we want to block within it (for me, yandex - which i usuall
 127.0.0.1 cdn.dzen.ru
 127.0.0.1 yabs.yandex.ru
 ```
+Now we'll grab `snap` so we can grab `docker` and other things easily
+```
+cd ~/Sites
+git clone https://aur.archlinux.org/snapd.git
+cd snapd
+makepkg -si
+sudo systemctl enable --now snapd.socket
+sudo ln -s /var/lib/snapd/snap /snap
+```
+Finally we can grab some `snap` stuff we'll use when developing a lot
+```
+snap install colorpicker-app emote gnome-3-28-1804 gtk-common-themes snapd bare core18
+```
 ## Samba Mounting
 Provided you've installed `cifs-utils` already:
 ```
