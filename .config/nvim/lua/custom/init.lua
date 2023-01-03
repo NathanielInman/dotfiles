@@ -17,4 +17,5 @@ opt.listchars = {
 }
 opt.showmatch = true
 opt.smartcase = true
+opt.relativenumber = true
 vim.g.mapleader = ' '

@@ -7,7 +7,6 @@ M.disabled = {
     ['<leader>n'] = ''
   }
 }
-
 M.telescope = {
   n = {
     ['<leader>t'] = {':Telescope<CR>', 'Toggle main telescope window'},
@@ -27,7 +26,8 @@ M.nvimTree = {
     ['\\'] = {':NvimTreeToggle<CR>', 'Toggle NVim Tree'},
     ['<leader>\\'] = {':NvimTreeFindFile<CR>', 'Toggle Tree & Open At File'},
     ['<kEnter>'] = {'<CR>', 'Fix for hotkey to open file'},
-    ['<S-kEnter>'] = {'<S-CR>', 'Fix for shift+hotkey to open file'}
+    ['<S-kEnter>'] = {'<S-CR>', 'Fix for shift+hotkey to open file'},
+    ['<leader>cd'] = {':cd %:p:h<CR>:pwd<CR>'},
   }
 }
 

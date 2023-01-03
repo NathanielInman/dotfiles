@@ -53,6 +53,11 @@ return {
   },
   ['kyazdani42/nvim-tree.lua'] = {
     override_options = {
+      respect_buf_cwd = true,
+      update_focused_file = {
+        enable = true,
+        update_root = true,
+      },
       git = {
         enable = true
       },
