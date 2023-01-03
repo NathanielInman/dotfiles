@@ -72,7 +72,7 @@ exec --no-startup-id sh -c 'sleep 2.0; i3-msg "workspace 6:todo; exec kitty --co
 # Workspace 2 startup
 exec --no-startup-id sh -c 'sleep 3.0; i3-msg "workspace 2:work"'
 exec --no-startup-id sh -c 'sleep 3.1; streamdeck'
-exec --no-startup-id sh -c 'sleep 3.2; pagraphcontrol'
+exec --no-startup-id sh -c 'sleep 3.2; pagraphcontrol --no-sandbox'
 exec --no-startup-id sh -c 'sleep 3.3; flameshot'
 exec --no-startup-id sh -c 'sleep 3.4; zoom'
 exec --no-startup-id sh -c 'sleep 3.5; gpick'
@@ -87,10 +87,6 @@ exec --no-startup-id sh -c 'sleep 4.2; kitty --config ~/.config/kitty/kitty.conf
 # ensure browser workspace starts up with chrome
 exec --no-startup-id sh -c 'sleep 5.0; i3-msg "workspace 1:browser"
 exec --no-startup-id sh -c 'sleep 5.1; google-chrome-stable gmail.com'
-exec --no-startup-id sh -c 'sleep 5.2; brave gmail.com'
-
-# ensure screensaver - this will just turn monitors off after time
-exec gnome-screensaver
 
 # picom/compton for window transparency etc
 exec_always --no-startup-id picom --config ~/.picom.conf
@@ -111,6 +107,9 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# start a floating terminal with nothing open
+bindsym $mod+t exec --no-startup-id kitty --class kitty-floating --config ~/.config/kitty/kitty.conf
+
 # start a terminal with nothing open
 bindsym $mod+Return exec --no-startup-id kitty --config ~/.config/kitty/kitty.conf
 
@@ -125,7 +124,7 @@ bindsym $mod+Shift+q kill
 
 # A more modern dmenu replacement is rofi:
 bindsym $mod+d exec --no-startup-id rofi -show drun
-bindsym $mod+w exec --no-startup-id rofi -show window
+bindsym $mod+Control+w exec --no-startup-id rofi -show window
 bindsym $mod+Control+d exec --no-startup-id rofi -show ssh
 
 # change focus
@@ -246,6 +245,9 @@ for_window [class="^.*"] border pixel 2
 # Remove annoying zoom pop-ups when people share screen
 for_window [title="^zoom$" class="[zoom]*"] floating enabled
 for_window [title="^zoom$" class="[zoom]*"] move scratchpad
+
+# Allow kitty to be floated
+for_window [class="kitty-floating"] floating enabled
 
 # default gaps
 gaps inner 8
