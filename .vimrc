@@ -64,6 +64,10 @@ let g:ctrlp_working_path_mode = 'ra' " start nearest search dir @ root .git
 "---------------------------------------
 let mapleader="\<Space>"
 
+" Fix for ergodox & moonlander keyboards kEnter being  when in kitty
+map <Char-0xe046> <CR>
+imap <Char-0xe046> <CR>
+
 " Session management
 nnoremap <leader>s :ToggleWorkspace<CR>
 
