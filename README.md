@@ -1,8 +1,7 @@
+![arch linux badge](https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white) ![neovim badge](https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)
+
 # Dot-Files
 This repo contains configuration files for VIM, Tmux as well as minimal step-by-step bash instructions to install them. I frequently forget what certain configurations do so even the config files themselves contain basic comments of reminders for what everything does. I try to keep all dot files small, compact and purposeful.
-
-![arch linux badge](https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white) ![neovim badge](https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)
-[![nathanielinman's typing test profile](https://www.keyhero.com/static//badges/1603/typing-test-481109.png)](http://keyhero.com/profile/nathanielinman/?ba)
 
 ## Table of Contents
   * [Setting Up Archlinux](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-manjaro-or-archlinux.md#setting-up-manjaro-or-archlinux)
@@ -29,3 +28,4 @@ I'm a software engineer who makes Roguelikes for fun, enjoys WebGL, javascript, 
 
 ![basic summary](https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=nathanielinman&theme=vue)
 ![my top languages](https://github-readme-stats.vercel.app/api/top-langs/?username=nathanielinman)
+[![nathanielinman's typing test profile](https://www.keyhero.com/static//badges/1603/typing-test-481109.png)](http://keyhero.com/profile/nathanielinman/?ba)
