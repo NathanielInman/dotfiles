@@ -94,7 +94,7 @@ exec --no-startup-id sh -c 'sleep 5.0; i3-msg "workspace 1:browser"
 exec --no-startup-id sh -c 'sleep 5.1; google-chrome-stable gmail.com'
 
 # picom/compton for window transparency etc
-exec_always --no-startup-id picom --config ~/.picom.conf
+#exec_always --no-startup-id picom --config ~/.picom.conf
 
 # ensure numlock defaults to on
 exec_always --no-startup-id numlockx on
