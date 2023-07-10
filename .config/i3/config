@@ -44,8 +44,8 @@ set $ws10 "10:code6"
 assign [class="Google-chrome"] $ws1
 assign [class="Brave-browser"] $ws2
 assign [class="pagraphcontrol"] $ws2
-assign [class="streamdeck"] $ws2
-assign [class="zoom "] $ws2
+assign [class="Streamdeck UI"] $ws2
+assign [class="zoom"] $ws2
 assign [class="Slack"] $ws2
 assign [class="tintin"] $ws3
 
@@ -76,7 +76,7 @@ exec --no-startup-id sh -c 'sleep 2.0; i3-msg "workspace 6:todo; exec kitty --co
 
 # Workspace 2 startup
 exec --no-startup-id sh -c 'sleep 3.0; i3-msg "workspace 2:work"'
-exec --no-startup-id sh -c 'sleep 3.1; streamdeck'
+exec --no-startup-id sh -c 'sleep 3.1; /home/nate/.pyenv/shims/streamdeck'
 exec --no-startup-id sh -c 'sleep 3.2; pagraphcontrol --no-sandbox'
 exec --no-startup-id sh -c 'sleep 3.3; flameshot'
 exec --no-startup-id sh -c 'sleep 3.4; zoom'
@@ -246,10 +246,6 @@ popup_during_fullscreen smart
 
 # Disable window titlebar
 for_window [class="^.*"] border pixel 2
-
-# Remove annoying zoom pop-ups when people share screen
-for_window [title="^zoom$" class="[zoom]*"] floating enabled
-for_window [title="^zoom$" class="[zoom]*"] move scratchpad
 
 # Allow kitty to be floated
 for_window [class="kitty-floating"] floating enabled
