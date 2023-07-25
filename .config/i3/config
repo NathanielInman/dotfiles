@@ -45,6 +45,7 @@ assign [class="Google-chrome"] $ws1
 assign [class="Brave-browser"] $ws2
 assign [class="pagraphcontrol"] $ws2
 assign [class="Streamdeck UI"] $ws2
+assign [class="NordPass"] $ws2
 assign [class="zoom"] $ws2
 assign [class="Slack"] $ws2
 assign [class="tintin"] $ws3
@@ -57,6 +58,9 @@ font pango:PragmataPro Regular 8
 exec xset s off
 exec xset s noblank
 exec xset -dpms
+
+# This is a fix for zooms annotation window when sharing
+exec --no-startup-id xcompmgr -c -l0 -t0 -r0 -o.00
 
 # Notification manager
 exec --no-startup-id dunst
@@ -82,7 +86,8 @@ exec --no-startup-id sh -c 'sleep 3.3; flameshot'
 exec --no-startup-id sh -c 'sleep 3.4; zoom'
 exec --no-startup-id sh -c 'sleep 3.5; gpick'
 exec --no-startup-id sh -c 'sleep 3.6; slack'
-exec --no-startup-id sh -c 'sleep 3.7; i3-msg "workspace 2:work; layout stacking"'
+exec --no-startup-id sh -c 'sleep 3.7; nordpass'
+exec --no-startup-id sh -c 'sleep 3.8; i3-msg "workspace 2:work; layout stacking"'
 
 # Workspace 3 startup
 exec --no-startup-id sh -c 'sleep 4.0; i3-msg "workspace 3:au"'
