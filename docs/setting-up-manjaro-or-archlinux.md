@@ -233,8 +233,9 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
 - `task` is a very simple cli todo app named taskwarrior
 - `gnome-icon-theme` is a simple package of icons used for dunst
+- `nordpass` is a great password manager
 ```
-yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task gnome-icon-theme
+yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task gnome-icon-theme nordpass
 ```
 Now we update our python package manager
 ```
@@ -386,7 +387,7 @@ sudo ln -s /var/lib/snapd/snap /snap
 ```
 Finally we can grab some `snap` stuff we'll use when developing a lot
 ```
-snap install colorpicker-app emote gnome-3-28-1804 gtk-common-themes snapd bare core18 nordpass
+snap install colorpicker-app emote gnome-3-28-1804 gtk-common-themes snapd bare core18
 ```
 ## Samba Mounting
 Provided you've installed `cifs-utils` already:
