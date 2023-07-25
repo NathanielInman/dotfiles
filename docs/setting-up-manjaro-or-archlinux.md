@@ -165,7 +165,9 @@ export EDITOR=vim
 # ntp - (network-time-protocol) helps ensure we're always time synchronized
 # unzip - obviously helps us w/ zip files
 # numlockx - helps us default to enable/disable numlock on boot for i3
-pacman -S unzip ntp numlockx
+# gnome-keychain - helps us maintain a keychain across apps
+# libsecret - library necessary for gnome-keychain
+pacman -S unzip ntp numlockx gnome-keychain libsecret
 
 # ensure time synchronization service is started and activated
 systemctl enable ntpd.service --now
@@ -181,8 +183,10 @@ systemctl --user enable pulseaudio --now
 ExecStart=
 ExecStart=-/usr/bin/agetty --autologin nate --noclear %I $TERM
 
-# Now lets have it start by default in `vim ~/.xinitrc`
+# Now lets have it start by default in `vim ~/.xinitrc` as well as execute our keyring
 exec i3
+dbus-update-activation-environment --all
+gnome-keyring-daemon --start --components=secrets
 
 # install user-specific applications
 # kitty - fast terminal that uses gpu to render things
@@ -382,7 +386,7 @@ sudo ln -s /var/lib/snapd/snap /snap
 ```
 Finally we can grab some `snap` stuff we'll use when developing a lot
 ```
-snap install colorpicker-app emote gnome-3-28-1804 gtk-common-themes snapd bare core18
+snap install colorpicker-app emote gnome-3-28-1804 gtk-common-themes snapd bare core18 nordpass
 ```
 ## Samba Mounting
 Provided you've installed `cifs-utils` already:
