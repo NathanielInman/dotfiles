@@ -86,7 +86,7 @@ exec --no-startup-id sh -c 'sleep 3.3; flameshot'
 exec --no-startup-id sh -c 'sleep 3.4; zoom'
 exec --no-startup-id sh -c 'sleep 3.5; gpick'
 exec --no-startup-id sh -c 'sleep 3.6; slack'
-exec --no-startup-id sh -c 'sleep 3.7; nordpass'
+exec --no-startup-id sh -c 'sleep 3.7; dbus-update-activation-environment --all && gnome-keyring-daemon --start --components=secrets && nordpass'
 exec --no-startup-id sh -c 'sleep 3.8; i3-msg "workspace 2:work; layout stacking"'
 
 # Workspace 3 startup
@@ -97,6 +97,9 @@ exec --no-startup-id sh -c 'sleep 4.2; kitty --config ~/.config/kitty/kitty.conf
 # ensure browser workspace starts up with chrome
 exec --no-startup-id sh -c 'sleep 5.0; i3-msg "workspace 1:browser"
 exec --no-startup-id sh -c 'sleep 5.1; google-chrome-stable gmail.com'
+
+# Give enough time for user password to unlock keyring; otherwise I'll just do this manually later
+exec --no-startup-id sh -c 'sleep 15; nordpass'
 
 # picom/compton for window transparency etc
 #exec_always --no-startup-id picom --config ~/.picom.conf
