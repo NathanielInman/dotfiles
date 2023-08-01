@@ -49,6 +49,7 @@ assign [class="NordPass"] $ws2
 assign [class="zoom"] $ws2
 assign [class="Slack"] $ws2
 assign [class="tintin"] $ws3
+assign [class="obsidian"] $ws5
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -72,8 +73,7 @@ exec --no-startup-id sh -c 'sleep 0.3; neovide'
 
 # ensure zk note-taking app autostart
 exec --no-startup-id sh -c 'sleep 1.0; i3-msg "workspace 5:notes"'
-exec --no-startup-id sh -c 'sleep 1.1; kitty --config ~/.config/kitty/kitty.conf --directory ~/Sites/notes -e zk edit --interactive'
-exec --no-startup-id sh -c 'sleep 1.2; kitty --config ~/.config/kitty/kitty.conf --directory ~/Sites/notes'
+exec --no-startup-id sh -c 'sleep 1.1; obsidian'
 
 # ensure vit todo list autostart
 exec --no-startup-id sh -c 'sleep 2.0; i3-msg "workspace 6:todo; exec kitty --config ~/.config/kitty/kitty.conf -e vit"'

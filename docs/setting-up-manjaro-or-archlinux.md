@@ -320,7 +320,7 @@ Now for any other essentials for arch
 - `neofetch` cli info tool
 - `sdcv-git` cli dictionary
 - `xsv` is a cli for splitting/joining/analyzing csv files
-- `zk` is a note-taking TUI with search built-in
+- `obsidian` is a note-taking application leveraging zettelkasten
 - `cronie` cron service to help sync any `notes` and `todo` repo changes automatically
 - `dog` is a DNS lookup cli info tool
 - `sd` is a replacement for sed with sane regex instead
@@ -328,7 +328,7 @@ Now for any other essentials for arch
 - `okular` is a pdf, epub, cbr, cbz etc minimal chrome reader
 - `cifs-utils` allows us to mount Samba network folders with fstab
 ```
-yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nnn nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv zk cronie dog sd onefetch okular
+yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nnn nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular
 ```
 You can now set any default applications you prefer:
 ```
@@ -347,7 +347,7 @@ Now grab the dictionary file for sdcv:
 sudo mkdir -p /usr/share/stardict/dic/
 sudo wget -c https://web.archive.org/web/20200630200122/http://download.huzheng.org/dict.org/stardict-dictd_www.dict.org_gcide-2.4.2.tar.bz2 -O /tmp/dict.tar.bz2 && sudo tar -xvjf /tmp/dict.tar.bz2 -C /usr/share/stardict/dic/
 ```
-Now sync notes for `zk` into Sites:
+Now sync notes for `obsidian` into Sites:
 ```
 cd ~/Sites
 git clone https://github.com/nathanielinman/notes.git
