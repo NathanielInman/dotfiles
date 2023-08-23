@@ -8,12 +8,13 @@ fi
 # User configuration
 export PATH=/usr/local/bin:~/.npm-global/bin:~/.local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
 export PATH=$HOME/.cargo/bin:$(npm bin):$PATH # rust and npm user bins
+export PATH=$HOME/.pyenv/bin:$PATH # pyenv
 export LANG=en_US.UTF-8
 export ZSH=$HOME/.oh-my-zsh
 export EDITOR=/usr/bin/neovide
 export NNN_OPTS="deH" # d = details, e = visual mode default, H = show hidden
 export NNN_FIFO=/tmp/nnn.fifo # temporary buffer for previews
-export NNN_PLUG='p:preview-tui;t:preiew-tabbed' nnn
+export NNN_PLUG='p:preview-tui;t:preview-tabbed' nnn
 export SPLIT='v' # split kitty vertically
 
 # Variable declaration used by oh-my-zsh
@@ -53,8 +54,9 @@ alias weather='curl v2d.wttr.in'
 alias has="curl -sL https://git.io/_has | bash -s" # dependency checker to validate versions
 alias ps="procs"
 alias dict="sdcv"
-alias nnn="nnn -$NNN_OPTS" # d = details, e = visual mode
+alias nnn="nnn -$NNN_OPTS"
 alias tv="tidy-viewer" # an easy way to preview csv files
+alias gbprune="git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do git branch -D $branch; done"
 
 # Vim mode (default mode is insert)
 bindkey -v
@@ -70,5 +72,30 @@ close () {
   fi
 }
 
+# gitlab PR via cli
+prkraken () {
+  git push \
+    -o merge_request.create \
+    -o merge_request.target=master \
+    -o merge_request.title="$1" \
+    -o merge_request.description="$2" \
+    -o merge_request.assign="nathaniel.inman" \
+    -o merge_request.label="kraken" \
+    -o merge_request.remove_source_branch \
+    -o merge_request.draft \
+    --no-verify
+}
+
 # Plugin bootstraps
 eval "$(zoxide init zsh)"
+eval "$(pyenv init -)"
+
+# tintin
+alias au-jixx='tt++ ~/au-jixx.tintin'
+alias au-alleus='tt++ ~/au-alleus.tintin'
+alias au-mardios='tt++ ~/au-mardios.tintin'
+alias au-revna='tt++ ~/au-revna.tintin'
+
+# streamdeck command simplification
+alias lightson='keylightctl switch --light 8A95 on & keylightctl switch --light 9F74 on'
+alias lightsoff='keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off'
