@@ -56,12 +56,16 @@ alias ps="procs"
 alias dict="sdcv"
 alias nnn="nnn -$NNN_OPTS"
 alias tv="tidy-viewer" # an easy way to preview csv files
-alias gbprune="git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do git branch -D $branch; done"
 
 # Vim mode (default mode is insert)
 bindkey -v
 
 # My Functions
+gbprune () {
+  git fetch -p
+  BRANCHES=git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'
+  for branch in $BRANCHES; do git branch -D "$branch"; done
+}
 walk () {
   mkdir -p -- "$1" && cd -P -- "$1"
 }
@@ -72,7 +76,7 @@ close () {
   fi
 }
 
-# gitlab PR via cli
+# Gitlab PR via cli
 prkraken () {
   git push \
     -o merge_request.create \
@@ -99,3 +103,5 @@ alias au-revna='tt++ ~/au-revna.tintin'
 # streamdeck command simplification
 alias lightson='keylightctl switch --light 8A95 on & keylightctl switch --light 9F74 on'
 alias lightsoff='keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off'
+
+source /home/nate/.config/broot/launcher/bash/br
