@@ -10,8 +10,7 @@ M.disabled = {
 M.telescope = {
   n = {
     ['<leader>t'] = {':Telescope<CR>', 'Toggle main telescope window'},
-    ['<leader>fd'] = {':Telescope repo list<CR>', 'Show list of repos on machine'},
-    ['<leader>nn'] = {':NnnPicker<CR>', 'Show a telescope window of nnn'}
+    ['<leader>p'] = {':Telescope neoclip<CR>', 'Switch global buffer with previous yanks'}
   }
 }
 
@@ -25,8 +24,6 @@ M.nvimTree = {
   n = {
     ['\\'] = {':NvimTreeToggle<CR>', 'Toggle NVim Tree'},
     ['<leader>\\'] = {':NvimTreeFindFile<CR>', 'Toggle Tree & Open At File'},
-    ['<kEnter>'] = {'<CR>', 'Fix for hotkey to open file'},
-    ['<S-kEnter>'] = {'<S-CR>', 'Fix for shift+hotkey to open file'},
     ['<leader>cd'] = {':cd %:p:h<CR>:pwd<CR>'},
   }
 }

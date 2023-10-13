@@ -7,10 +7,11 @@ M.ui = {
     NnnNormal = { fg = '#ff0000'},
     NnnNormalNC = { fg = '#00ff00'},
     NnnBorder = { fg = '#00ffff'}
-  }
+  },
 }
 
+M.plugins = "custom.plugins"
+
 M.mappings = require('custom.mappings')
-M.plugins = require('custom.plugins')
 
 return M
