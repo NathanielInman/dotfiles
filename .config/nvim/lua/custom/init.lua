@@ -19,3 +19,7 @@ opt.showmatch = true
 opt.smartcase = true
 opt.relativenumber = true
 vim.g.mapleader = ' '
+vim.api.nvim_exec('language en_US.UTF-8', true)
+vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { underline = true })
+vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { underline = true })
+vim.api.nvim_set_hl(0, 'IlluminatedWordText', { underline = true })
