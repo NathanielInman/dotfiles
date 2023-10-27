@@ -389,6 +389,37 @@ Finally we can grab some `snap` stuff we'll use when developing a lot
 ```
 snap install colorpicker-app emote gnome-3-28-1804 gtk-common-themes snapd bare core18
 ```
+## Default Applications
+In order to ensure that `xdg-open` via rofi opens things in the right applications:
+```
+xdg-mime default neovide.desktop application/javascript
+xdg-mime default neovide.desktop application/json
+xdg-mime default neovide.desktop application/x-shellscript
+xdg-mime default neovide.desktop text/english
+xdg-mime default neovide.desktop text/plain
+xdg-mime default neovide.desktop text/x-c
+xdg-mime default neovide.desktop text/x-c++
+xdg-mime default neovide.desktop text/x-c++hdr
+xdg-mime default neovide.desktop text/x-c++src
+xdg-mime default neovide.desktop text/x-chdr
+xdg-mime default neovide.desktop text/x-csrc
+xdg-mime default neovide.desktop text/x-java
+xdg-mime default neovide.desktop text/x-makefile
+xdg-mime default neovide.desktop text/x-moc
+xdg-mime default neovide.desktop text/x-pascal
+xdg-mime default neovide.desktop text/x-tcl
+xdg-mime default neovide.desktop text/x-text
+xdg-mime default neovide.desktop text/xml
+```
+This will save things to your `~/.config/mimeapps.list` file. In order to see what mime a file is:
+```
+xdg-mime query ./ref/to/file.ext
+```
+In order to see what app will open a mime:
+```
+xdg-mime query default mimetype
+```
+
 ## Samba Mounting
 Provided you've installed `cifs-utils` already:
 ```
