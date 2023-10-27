@@ -419,6 +419,7 @@ In order to see what app will open a mime:
 ```
 xdg-mime query default mimetype
 ```
+If something isn't within your `~/.config/mimeapps.list` then `xdg-open` will look in `/usr/share/applications/mimeinfo.cache`
 
 ## Samba Mounting
 Provided you've installed `cifs-utils` already:
