@@ -7,8 +7,11 @@ fi
 
 # User configuration
 export PATH=/usr/local/bin:~/.npm-global/bin:~/.local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
-export PATH=$HOME/.cargo/bin:$(npm bin):$PATH # rust and npm user bins
-export PATH=$HOME/.pyenv/bin:$PATH # pyenv
+export PATH=$HOME/.cargo/bin:$PATH # rust bin
+export PATH=$(npm bin):$PATH # node bin
+export PATH=$HOME/.pyenv/bin:$PATH # python
+export PNPM_HOME=$HOME/.local/share/pnpm
+export PATH=$PNPM_HOME:$PATH # node path
 export LANG=en_US.UTF-8
 export ZSH=$HOME/.oh-my-zsh
 export EDITOR=/usr/bin/neovide
@@ -20,12 +23,13 @@ export SPLIT='v' # split kitty vertically
 # Variable declaration used by oh-my-zsh
 ZSH_THEME="pragmata"
 HIST_STAMPS="dd.mm.yyyy"
-plugins=(git history zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(git history zsh-syntax-highlighting zsh-autosuggestions fzf)
 
 # Start by inheriting default os oh-my-zsh (git aliases, etc)
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
 
 # My aliases
+alias p='pnpm' # pnpm is so difficult for the fingers
 alias yay='paru' # paru is rust, yay is go. alias due to muscle memory
 alias yeet='paru -Rcs' # always forget remove flags
 alias ssh='TERM=xterm-color ssh' # kitty does weird things, set it explicitly
@@ -74,20 +78,6 @@ close () {
   if [[ ! $REPLY =~ ^[Nn]$ ]] then
     rm -rf -- "$(pwd -P)" && cd ..
   fi
-}
-
-# Gitlab PR via cli
-prkraken () {
-  git push \
-    -o merge_request.create \
-    -o merge_request.target=master \
-    -o merge_request.title="$1" \
-    -o merge_request.description="$2" \
-    -o merge_request.assign="nathaniel.inman" \
-    -o merge_request.label="kraken" \
-    -o merge_request.remove_source_branch \
-    -o merge_request.draft \
-    --no-verify
 }
 
 # Plugin bootstraps
