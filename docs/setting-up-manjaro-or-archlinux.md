@@ -234,8 +234,12 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `task` is a very simple cli todo app named taskwarrior
 - `gnome-icon-theme` is a simple package of icons used for dunst
 - `nordpass` is a great password manager
+- `scc` breaks down LOC on a repo, broken by language
+- `duf` a better version of `df` (disk free utility)
+- `bandwhich` a bandwidth utilization monitor
+- `gping` ping multiple targets at the same time for comparison
 ```
-yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task gnome-icon-theme nordpass
+yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task gnome-icon-theme nordpass scc duf bandwhich gping
 ```
 Now we update our python package manager
 ```
