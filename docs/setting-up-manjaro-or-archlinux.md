@@ -331,6 +331,7 @@ Now for any other essentials for arch
 - `onefetch` is a command that gets important stats on a git repo
 - `okular` is a pdf, epub, cbr, cbz etc minimal chrome reader
 - `cifs-utils` allows us to mount Samba network folders with fstab
+- `usbutils` allows `lsusb` and other helpful minor functions
 ```
 yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nnn nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular
 ```
