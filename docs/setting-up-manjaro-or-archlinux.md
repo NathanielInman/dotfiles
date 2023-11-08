@@ -451,3 +451,10 @@ If you want to reflect the shares immediately:
 sudo systemctl daemon-reload
 sudo mount -a
 ```
+
+## Setting up Titan Security Key
+First validate udev is over version 188 with `sudo udevadm --version`, and if so in `sudo vim /etc/udev/rules.d/70-titan-key.rules`:
+```
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="18d1|096e", ATTRS{idProduct}=="5026|0858|085b", TAG+="uaccess"
+```
+then `:wq` and `sudo udevadm control --reload-rules`.
