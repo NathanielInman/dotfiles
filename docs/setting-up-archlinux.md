@@ -1,4 +1,4 @@
-# Setting Up Arch Linux
+# Setting Up Archlinux
 
 ## Arch From Scratch
 

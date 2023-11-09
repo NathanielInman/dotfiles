@@ -4,9 +4,14 @@
 This repo contains configuration files for VIM, Tmux as well as minimal step-by-step bash instructions to install them. I frequently forget what certain configurations do so even the config files themselves contain basic comments of reminders for what everything does. I try to keep all dot files small, compact and purposeful.
 
 ## Table of Contents
-  * [Setting Up Archlinux](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-manjaro-or-archlinux.md#setting-up-manjaro-or-archlinux)
-    * [Arch From Scratch](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-manjaro-or-archlinux.md#arch-from-scratch)
-    * [CLI Configuration](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-manjaro-or-archlinux.md#cli-configuration)
+  * [Setting Up Archlinux](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-archlinux)
+    * [Arch From Scratch](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#arch-from-scratch)
+    * [First Boot](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#first-boot)
+    * [CLI Configuration](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#cli-configuration)
+    * [Default Applications](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#default-applications)
+    * [Setting up Titan Security Key](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-titan-security-key)
+    * [Setting up Streamdeck](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-streamdeck)
+    * [Autostart Apps Using Systemd](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#autostart-apps-using-systemd)
   * [Setting Up Aws Users](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-aws-users.md#setting-up-aws-users)
   * [Setting Up Digital Ocean](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-digital-ocean.md#setting-up-digital-ocean)
   * [Setting Up MacOS](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-macos.md#setting-up-macos)
