@@ -1,16 +1,20 @@
-## Setting Up Manjaro Or Archlinux
-### Arch From Scratch
+# Setting Up Arch Linux
+
+## Arch From Scratch
+
 When all else fails, the best installation guide is [the official arch wiki](https://wiki.archlinux.org/index.php/installation_guide).
 
+To start, let's ensure the internet is connected and sync time
 ```
-# to start, lets ensure the internet is connected and sync time
 ping -c 3 google.com
 timedatectl set-ntp true
-
-# Use this to make sure you know your drive names, mine show `nvme0n1` and `nvme1n1`. I'll reference those going forward to stripe (RAID 0) those m.2 drives.
+```
+Use this to make sure you know your drive names, mine show `nvme0n1` and `nvme1n1`. I'll reference those going forward to stripe (RAID 0) those m.2 drives.
+```
 fdisk -l
-
-# Will be using GPT and partition 2 nvme drives based on their sizes. Your sizes may be different.
+```
+Will be using GPT and partition 2 nvme drives based on their sizes. Your sizes may be different.
+```
 cfdisk /dev/nvme0n1
 # create 500M
 # create 16G
@@ -23,46 +27,54 @@ cfdisk /dev/nvme1n1
 # create 15G
 # write and then quit
 fdisk -l
-
-# now that the drives are partitioned lets setup raid 0
-# (if these cause issues: `sudo mdadm -Esv` or `sudo mdadm --stop /dev/md*` then `sudo mdadm --misc --scan --detail /dev/md0`)
+```
+now that the drives are partitioned lets setup raid 0
+(if these cause issues: `sudo mdadm -Esv` or `sudo mdadm --stop /dev/md*` then `sudo mdadm --misc --scan --detail /dev/md0`)
+```
 mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md0 /dev/nvme0n1p2 /dev/nvme1n1p1
 mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md1 /dev/nvme0n1p3 /dev/nvme1n1p2
 mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md2 /dev/nvme0n1p4 /dev/nvme1n1p3
-
-# if last one fails for "cannot assemble multi-zone RAID0 with default_layout.. do this last line, and retry otherwise skip
+```
+if last one fails for "cannot assemble multi-zone RAID0 with default_layout.. do this last line, and retry otherwise skip
+```
 echo 1 > /sys/module/raid0/parameters/default_layout
-
-# Now lets validate those changes
+```
+Now lets validate those changes
+```
 lvmdiskscan
-
-# physical volumes
+```
+physical volumes
+```
 pvcreate /dev/md0
 pvcreate /dev/md1
 pvcreate /dev/md2
-
-# volume groups
+```
+volume groups
+```
 vgcreate vg_swap /dev/md0
 vgcreate vg_main /dev/md1
 vgcreate vg_tmp /dev/md2
 vgscan
-
-# logical volumes
+```
+logical volumes
+```
 lvcreate -l +100%FREE vg_swap -n swap
 lvcreate -L 60GiB vg_main -n rootfs
 lvcreate -l +100%FREE vg_main -n homefs
 lvcreate -l +100%FREE vg_tmp -n tmpfs
 lvscan
-
-# setup swap, ensure fat32 boot partition & declare ext4 elsewhere
+```
+setup swap, ensure fat32 boot partition & declare ext4 elsewhere
+```
 mkswap /dev/mapper/vg_swap-swap
 mkfs.ext4 /dev/mapper/vg_main-rootfs
 mkfs.ext4 /dev/mapper/vg_main-homefs
 mkfs.ext4 /dev/mapper/vg_tmp-tmpfs
 swapon /dev/mapper/vg_swap-swap
 mkfs.fat -F32 /dev/nvme0n1p1
-
-# now mount points
+```
+now mount points
+```
 mount /dev/mapper/vg_main-rootfs /mnt
 mkdir /mnt/home
 mkdir /mnt/tmp
@@ -71,20 +83,24 @@ mount /dev/mapper/vg_tmp-tmpfs /mnt/tmp
 pacstrap -i /mnt base base-devel linux linux-firmware lvm2 mdadm vim
 genfstab -U -p  /mnt >> /mnt/etc/fstab
 arch-chroot /mnt /bin/bash
-
-# Now uncomment "[en_US.UTF-8 UTF-8]"
+```
+Now uncomment "[en_US.UTF-8 UTF-8]"
+```
 vim /etc/locale.gen
 # it's :wq in-case you've been using emacs too long haha
-
-# Now configure local time
+```
+Now configure local time
+```
 locale-gen
 ln -sf /usr/share/zoneinfo/America/Chicago  /etc/localtime
 hwclock --systohc --utc
-
-# Now add `dm_mod` between the `()` on `MODULES` and add `mdadm_udev lvm2` between block & filesystems of `HOOKS=()` here:
+```
+Now add `dm_mod` between the `()` on `MODULES` and add `mdadm_udev lvm2` between block & filesystems of `HOOKS=()` here:
+```
 vim /etc/mkinitcpio.conf
-
-# Now setup grub:
+```
+Now setup grub:
+```
 mkinitcpio -p linux
 pacman -S grub efibootmgr
 mkdir /boot/efi
@@ -93,138 +109,166 @@ grub-install --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/boot/efi
 grub-mkconfig -o /boot/grub/grub.cfg
 mkdir /boot/efi/EFI/BOOT
 cp /boot/efi/EFI/GRUB/grubx64.efi /boot/efi/EFI/BOOT/BOOTX64.EFI
-
-# Now you'll add the following within `vim /boot/efi/startup.nsh`:
+````
+Now you'll add the following within `vim /boot/efi/startup.nsh`:
+```
 bcf boot add 1 fs0:\EFI\GRUB\grubx64.efi "My GRUB bootloader"
-
-# Now properly setup networking, substitute `FROSTY` for your computer name.
+```
+Now properly setup networking, substitute `FROSTY` for your computer name.
+```
 pacman -S networkmanager
 systemctl enable NetworkManager --now
 echo FROSTYARCH > /etc/hostname
-
-# Now add the following within `vim /etc/hosts`:
+```
+Now add the following within `vim /etc/hosts`:
+```
 127.0.0.1 localhost
 ::1       localhost
 127.0.1.1 FROSTYARCH.localdomain FROSTYARCH
-
-# newer machines, no eth0. config DHCP make sure to edit the proper `ip link` name
-# mine shows `enp5s0` for ethernet, `vim /etc/systemd/network/enp5s0` and write this:
+```
+newer machines, no eth0. config DHCP make sure to edit the proper `ip link` name
+mine shows `enp5s0` for ethernet, `vim /etc/systemd/network/enp5s0` and write this:
+```
 [Match]
 Name=en**
 
 [Network]
 DHCP=yes
-
-# Now setup password
+```
+Now setup password
+```
 passwd
-
-# Now lets wrap things up. after rebooting, boot to bios, ensure nvme raid is on and remove boot flash drive.
+```
+Now lets wrap things up. after rebooting, boot to bios, ensure nvme raid is on and remove boot flash drive.
+```
 exit
 umount -R /mnt
 reboot
+```
 
-# Now after boot, login with `root` with the configured password and unncomment `multilib` within:
-# if u have issues with timing out due to /tmp, just remove it from `/etc/fstab`
+## First Boot
+
+Now after boot, login with `root` with the configured password and unncomment `multilib` within:
+if u have issues with timing out due to /tmp, just remove it from `/etc/fstab`
+```
 sudo ln -s /usr/bin/vim /usr/bin/vi # make sure we always use vim instead of vi
 vim /etc/pacman.conf
-
-# Now lets update everything:
+```
+Now lets update everything:
+```
 pacman -Syyu
-
-# Sound and bluetooth - will enable pulseaudio on user later
+```
+Sound and bluetooth - will enable pulseaudio on user later
+```
 Pacman -S alsa-utils pulseaudio-alsa pulseaudio-bluetooth bluez-utils
 systemctl enable bluetooth.service --now
-
-# Now for installing windowmanager stuff (i3)
-# xorg, xorg-server, xorg-xinit - display server
-# xorg-xdpyinfo - shows information on the display server
-# xterm - terminal emulator for X window system
-# i3-gaps - spaces between windows/containers on i3wm
-# i3blocks - status tray components
-# i3status - status tray
-# rofi - hotkey app opener overlay, alternative to dmenu & ulauncher
-# noto-fonts - emoji extras & base fonts
-# sysstat - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
-# acpi - client for battery, power & thermal readings
-# xrandr - monitor setup with rotation, screen location etc
+```
+Now for installing windowmanager stuff (i3)
+- `xorg, xorg-server, xorg-xinit` - display server essentials
+- `xorg-xdpyinfo` - shows information on the display server
+- `xterm` - terminal emulator for X window system
+- `i3-gaps` - spaces between windows/containers on i3wm
+- `i3blocks` - status tray components
+- `i3status` - status tray
+- `rofi` - hotkey app opener overlay, alternative to dmenu & ulauncher
+- `noto-fonts` - emoji extras & base fonts
+- `sysstat` - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
+- `acpi` - client for battery, power & thermal readings
+- `xrandr` - monitor setup with rotation, screen location etc
+```
 Pacman -S xorg xorg-server xorg-xdpyinfo xorg-xinit xterm i3-gaps i3blocks i3lock i3status rofi noto-fonts sysstat acpi xrandr
-
-# Before we can start i3 we need graphics drivers, validate what we're using
+```
+Before we can start i3 we need graphics drivers, validate what we're using
+```
 lspci -v | grep -A1 -e VGA -e 3D
 pacman -Ss nvidia # you can search for your driver this way
 pacman -S nvidia nvidia-settings nvidia-utils # this is my driver stuff
-
-# If you have multiple monitors and need to set them up, here are some helpful commands
+```
+If you have multiple monitors and need to set them up, here are some helpful commands
+```
 xrandr # get the names of display ports or hdmi's that are connected
 xrandr --output DP-2 --left-of DP-0 # swap screens
 xrandr --output DP-0 --mode 2560x1440 # change resolutions
-
-# The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
+```
+The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
+```
 useradd -m -g users -G wheel -s /bin/bash nate
 passwd nate
-
-# Now ensure user is sudoer, vim `/etc/sudoers` and uncomment this line and :wq!
+```
+Now ensure user is sudoer, vim `/etc/sudoers` and uncomment this line and :wq!
+```
 %wheel ALL=(ALL) NOPASSWD: ALL
-
-# finally set the default editor for all users to vim save this to `vim /etc/profile.d/editor.sh`
+```
+finally set the default editor for all users to vim save this to `vim /etc/profile.d/editor.sh`
+```
 export EDITOR=vim
-
-# helpful non-user-specific applications
-# ntp - (network-time-protocol) helps ensure we're always time synchronized
-# unzip - obviously helps us w/ zip files
-# numlockx - helps us default to enable/disable numlock on boot for i3
-# gnome-keychain - helps us maintain a keychain across apps
-# libsecret - library necessary for gnome-keychain
+```
+helpful non-user-specific applications
+- `ntp` (network-time-protocol) helps ensure we're always time synchronized
+- `unzip` - obviously helps us w/ zip files
+- `numlockx` - helps us default to (dis/en)able numlock on boot for i3
+- `gnome-keychain` - helps us maintain a keychain across different apps
+- `libsecret` - library necessary for gnome-keychain
+```
 pacman -S unzip ntp numlockx gnome-keychain libsecret
-
-# ensure time synchronization service is started and activated
+```
+ensure time synchronization service is started and activated
+```
 systemctl enable ntpd.service --now
-
-# login to user
+```
+login to user
+```
 login
-
-# Let's enable pulseaudio for user
+```
+Let's enable pulseaudio for user
+```
 systemctl --user enable pulseaudio --now
-
-# Ensure we're automatically logged in, `systemctl edit getty@tty1.service` and add:
+```
+Ensure we're automatically logged in, `systemctl edit getty@tty1.service` and add:
+```
 [Service]
 ExecStart=
 ExecStart=-/usr/bin/agetty --autologin nate --noclear %I $TERM
-
-# Now lets have it start by default in `vim ~/.xinitrc` as well as execute our keyring
+```
+Now lets have it start by default in `vim ~/.xinitrc` as well as execute our keyring
+```
 exec i3
 dbus-update-activation-environment --all
 gnome-keyring-daemon --start --components=secrets
-
-# install user-specific applications
+```
+install user-specific applications
+```
 # kitty - fast terminal that uses gpu to render things
+# stow - gnu utility that loads up config files easily
 sudo pacman -S kitty stow
-
-# Make basic home folders
+```
+Make basic home folders
+```
 mkdir ~/Sites #will hold our projects
 mkdir ~/Pictures #will hold backgrounds etc
-
-# Now grab all of the dot files
+```
+Now grab all of the dot files
+```
 cd ~/Sites
 git clone https://github.com/nathanielinman/dot-files.git
 stow --dir=~=Sites/dot-files --target=~/
-# if at any point you want to remove the symlinks `stow -D .` from within the source repo folder
-# Feel free to manually copy any ./Sites/dot-files/usr/share/applications files
-# in order to setup things like `nnn` launching using rofi or hiding unused/unwanted apps
-
-# Now grab paru for AUR, used to use yay but Rust ftw :)
+```
+if at any point you want to remove the symlinks `stow -D .` from within the source repo folder
+Feel free to manually copy any ./Sites/dot-files/usr/share/applications files
+in order to setup things like `nnn` launching using rofi or hiding unused/unwanted apps.
+Now grab paru for AUR, used to use yay but Rust ftw :)
+```
 cd ~/Sites
 git clone https://aur.archlinux.org/paru.git
 cd paru
 makepkg -si
-
-# Now install web browser
+```
+Now install web browser
+```
 yay -S google-chrome
-
-# Now perform all CLI Configuration below
 ```
 
-### CLI Configuration
+## CLI Configuration
 We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager.
 - `picom` is a compositor
 - `diff-so-fancy` helps make cli `git diff` look good (automatic)
@@ -457,6 +501,7 @@ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="18d1|096e", ATTRS{idPr
 then `:wq` and `sudo udevadm control --reload-rules`.
 
 ## Setting up streamdeck
+./streamdeck_ui.json
 
 ## autostart apps using systemd
 https://github.com/jceb/dex
