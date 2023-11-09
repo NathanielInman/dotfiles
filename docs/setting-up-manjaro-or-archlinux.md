@@ -137,6 +137,7 @@ systemctl enable bluetooth.service --now
 
 # Now for installing windowmanager stuff (i3)
 # xorg, xorg-server, xorg-xinit - display server
+# xorg-xdpyinfo - shows information on the display server
 # xterm - terminal emulator for X window system
 # i3-gaps - spaces between windows/containers on i3wm
 # i3blocks - status tray components
@@ -144,12 +145,19 @@ systemctl enable bluetooth.service --now
 # rofi - hotkey app opener overlay, alternative to dmenu & ulauncher
 # noto-fonts - emoji extras & base fonts
 # sysstat - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
-Pacman -S xorg xorg-server xorg-xinit xterm i3-gaps i3blocks i3lock i3status rofi noto-fonts sysstat
+# acpi - client for battery, power & thermal readings
+# xrandr - monitor setup with rotation, screen location etc
+Pacman -S xorg xorg-server xorg-xdpyinfo xorg-xinit xterm i3-gaps i3blocks i3lock i3status rofi noto-fonts sysstat acpi xrandr
 
 # Before we can start i3 we need graphics drivers, validate what we're using
 lspci -v | grep -A1 -e VGA -e 3D
 pacman -Ss nvidia # you can search for your driver this way
 pacman -S nvidia nvidia-settings nvidia-utils # this is my driver stuff
+
+# If you have multiple monitors and need to set them up, here are some helpful commands
+xrandr # get the names of display ports or hdmi's that are connected
+xrandr --output DP-2 --left-of DP-0 # swap screens
+xrandr --output DP-0 --mode 2560x1440 # change resolutions
 
 # The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
 useradd -m -g users -G wheel -s /bin/bash nate
@@ -232,14 +240,14 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `pyenv` python version manager and virtual environment
 - `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
 - `task` is a very simple cli todo app named taskwarrior
-- `gnome-icon-theme` is a simple package of icons used for dunst
 - `nordpass` is a great password manager
 - `scc` breaks down LOC on a repo, broken by language
 - `duf` a better version of `df` (disk free utility)
 - `bandwhich` a bandwidth utilization monitor
 - `gping` ping multiple targets at the same time for comparison
+- `jq` is a command-line JSON processor
 ```
-yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task gnome-icon-theme nordpass scc duf bandwhich gping
+yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task nordpass scc duf bandwhich gping jq
 ```
 Now we update our python package manager
 ```
@@ -301,6 +309,7 @@ cargo install rusti-cal melt tidy-viewer pueue
 Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `feh` is an image viewer also used for backgrounds
+- `file-roller` is an gui archive manager, although mostly `tar` on cli, nice to have
 - `handlr` is used to set default applications for apps like `nnn`
 - `nsxiv` is an xembed image viewer for auto-updates by `nnn`
 - `mpv` is for xembed video viewers for auto-updates by `nnn`
@@ -330,12 +339,25 @@ Now for any other essentials for arch
 - `sd` is a replacement for sed with sane regex instead
 - `onefetch` is a command that gets important stats on a git repo
 - `okular` is a pdf, epub, cbr, cbz etc minimal chrome reader
-- `cifs-utils` allows us to mount Samba network folders with fstab
 - `usbutils` allows `lsusb` and other helpful minor functions
 - `peek` allows recording to `.gif`, `.mp4` etc
+- `thunar` is a slim file manager
+- `thunar-volman` is a slim volume manager for the thunar fm gui
+- `thunar-archive-plugin` is a slim shim for file roller integration with thunar
+- `gvfs` gnome virtual file system unlocks usb, trash can etc on thunar
+- `gvfs-smb` mounts samba networked filesystem volumes
+- `tumbler` unlocks generation of thumbnails for thunar
+- `libgsf` is a super fast image thumbnailer for `tumbler`
+- `lxappearance` is tiny a theme chooser for XFCE4
+- `galculator` is a simple scientific gtk calculator
+- `orchis-theme-git` is a simple XFCE4 & GTK dark theme
+- `qogir-icon-theme-git` is a simple package of icons used for dunst
+- `flameshot` is a better screenshot utility than `scrot`
+- `gthumb` is the best tiny app for browsing images
 ```
-yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nnn nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular cifs-utils usbutils peek
+yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nnn nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular cifs-utils usbutils peek thunar gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git qogir-icon-theme-git flameshot
 ```
+Now open up `lxappearance` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
 You can now set any default applications you prefer:
 ```
 handlr set .png feh.desktop
@@ -427,35 +449,14 @@ xdg-mime query default mimetype
 ```
 If something isn't within your `~/.config/mimeapps.list` then `xdg-open` will look in `/usr/share/applications/mimeinfo.cache`
 
-## Samba Mounting
-Provided you've installed `cifs-utils` already:
-```
-vim /etc/cifsauth
-```
-and add the following credentials for your samba share:
-```
-username=ninman
-password=fake
-```
-then we'll limit permissions:
-```
-sudo chmod 600 /etc/cifsauth
-```
-Now it's time to add the mount paths, run `sudo vim /etc/fstab` and add the following lines:
-```
-# Samba File Shares
-//192.168.1.51/ebooks /ebooks cifs credentials=/etc/cifsauth 0 0
-//192.168.1.51/video /video cifs credentials=/etc/cifsauth 0 0
-```
-If you want to reflect the shares immediately:
-```
-sudo systemctl daemon-reload
-sudo mount -a
-```
-
 ## Setting up Titan Security Key
 First validate udev is over version 188 with `sudo udevadm --version`, and if so in `sudo vim /etc/udev/rules.d/70-titan-key.rules`:
 ```
 KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="18d1|096e", ATTRS{idProduct}=="5026|0858|085b", TAG+="uaccess"
 ```
 then `:wq` and `sudo udevadm control --reload-rules`.
+
+## Setting up streamdeck
+
+## autostart apps using systemd
+https://github.com/jceb/dex

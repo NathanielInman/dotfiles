@@ -132,8 +132,8 @@ bindsym $mod+Return exec --no-startup-id kitty --config ~/.config/kitty/kitty.co
 # start a terminal with vim open (scratchpad)
 bindsym $mod+v exec xdg-open "$(rg --no-messages --files ~/Sites | rofi -threads 0 -dmenu -sort --sorting-method fzf -i -p "find")"
 
-# start a terminal with calculator open (R REPL)
-bindsym $mod+c exec --no-startup-id kitty --config ~/.config/kitty/kitty.conf -e R
+# start calculator
+bindsym $mod+c exec --no-startup-id galculator
 
 # kill focused window
 bindsym $mod+Shift+q kill
