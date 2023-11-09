@@ -6,7 +6,7 @@ local W="%{$fg_bold[white]%}"
 local R="%{$fg_bold[red]%}"
 local r="%{$reset_color%}"
 local B="%{$fg[blue]%}"
-local b="%{$fg[black]%}"
+local b="%{$FG[008]%}"
 local Y="%{$fg_bold[yellow]%}"
 local y="%{$fg[yellow]%}"
 local G="%{$fg_bold[green]%}"
@@ -44,7 +44,7 @@ function get_right_prompt() {
   local date_str="${B}%D{%Y/%m/%d}"
   local time_str="${B}%D{%H:%M}"
   local datetime_str="${date_str}${b}@${time_str}"
-  local full_str="${W}[${datetime_str}${W}]${r}"
+  local full_str="${b}[${datetime_str}${b}]${r}"
   if git rev-parse --git-dir > /dev/null 2> /dev/null; then
     echo -n "$(git_prompt_short_sha)${full_str}"
   else
@@ -105,5 +105,5 @@ ZSH_THEME_GIT_PROMPT_AHEAD="${W} "
 ZSH_THEME_GIT_PROMPT_BEHIND="${W} "
 
 # Format for git_prompt_long_sha() and git_prompt_short_sha()
-ZSH_THEME_GIT_PROMPT_SHA_BEFORE=" ${W}[${B}"
-ZSH_THEME_GIT_PROMPT_SHA_AFTER="${W}]"
+ZSH_THEME_GIT_PROMPT_SHA_BEFORE=" ${b}[${B}"
+ZSH_THEME_GIT_PROMPT_SHA_AFTER="${b}]"
