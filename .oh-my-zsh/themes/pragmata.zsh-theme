@@ -89,8 +89,8 @@ RPROMPT='$(get_right_prompt)'
 # Format for git_prompt_info()
 ZSH_THEME_GIT_PROMPT_PREFIX="${B}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="${r}"
-ZSH_THEME_GIT_PROMPT_DIRTY="${Y}"
-ZSH_THEME_GIT_PROMPT_CLEAN="${G}"
+ZSH_THEME_GIT_PROMPT_DIRTY=" ${Y}"
+ZSH_THEME_GIT_PROMPT_CLEAN=" ${G}"
 
 # Format for git_prompt_status()
 ZSH_THEME_GIT_PROMPT_ADDED="${G} "
