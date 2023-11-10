@@ -80,7 +80,7 @@ mkdir /mnt/home
 mkdir /mnt/tmp
 mount /dev/mapper/vg_main-homefs /mnt/home
 mount /dev/mapper/vg_tmp-tmpfs /mnt/tmp
-pacstrap -i /mnt base base-devel linux linux-firmware lvm2 mdadm vim
+pacstrap -i /mnt base base-devel linux linux-firmware lvm2 mdadm gvim
 genfstab -U -p  /mnt >> /mnt/etc/fstab
 arch-chroot /mnt /bin/bash
 ```
