@@ -1,7 +1,7 @@
 [![arch linux badge](https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white)](https://archlinux.org/) [![neovim badge](https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)](https://neovim.io/)
 
 # Dot-Files
-This contains all of my dot files and step-by-step instructions on how to build an Arch distribution similar to mine. Most configurations are detailed with comments. All dot files are purposefully compact and purposeful with little ricing.
+This contains all of my dot files and step-by-step instructions on how to build an Arch distribution similar to mine. Most configurations are detailed with comments. All dot files are purposefully compact with little ricing.
 
 ## Table of Contents
   * [Setting Up Archlinux](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-archlinux)
