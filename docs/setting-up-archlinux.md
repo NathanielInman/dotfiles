@@ -284,14 +284,13 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `pyenv` python version manager and virtual environment
 - `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
 - `task` is a very simple cli todo app named taskwarrior
-- `nordpass` is a great password manager
 - `scc` breaks down LOC on a repo, broken by language
 - `duf` a better version of `df` (disk free utility)
 - `bandwhich` a bandwidth utilization monitor
 - `gping` ping multiple targets at the same time for comparison
 - `jq` is a command-line JSON processor
 ```
-yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task nordpass scc duf bandwhich gping jq
+yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task scc duf bandwhich gping jq
 ```
 Now we update our python package manager
 ```
