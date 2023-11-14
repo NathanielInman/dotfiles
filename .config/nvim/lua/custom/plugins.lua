@@ -249,6 +249,7 @@ local plugins = {
         'regex',
         'rust',
         'scss',
+        'typescript',
         'vue',
         'yaml'
       }
