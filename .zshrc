@@ -94,4 +94,9 @@ alias au-revna='tt++ ~/au-revna.tintin'
 alias lightson='keylightctl switch --light 8A95 on & keylightctl switch --light 9F74 on'
 alias lightsoff='keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off'
 
-source /home/nate/.config/broot/launcher/bash/br
+# we want to use brew on OSX, and keep broot config only on Arch
+if uname -a | grep -q 'Darwin'; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+  source /home/nate/.config/broot/launcher/bash/br
+fi
