@@ -550,3 +550,17 @@ nmcli connection up connection_name --ask
 # deactivate the connection
 nmcli connection down connection_name
 ```
+If you have issues such as needing to auth over browser, here's how to do openvpn3:
+```bash
+# install openvpn
+yay -S openvpn3
+
+# show sessions
+openvpn3 sessions-list
+
+# make connection
+openvpn3 session-start --config ~/example.ovpn
+
+# disconnect from session
+openvpn3 session-manage --disconnect --path /net/openvpn/v3/sessions/___example__uid__real__one__in__sessions-list
+```
