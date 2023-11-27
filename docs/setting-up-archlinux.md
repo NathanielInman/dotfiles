@@ -531,3 +531,22 @@ bash -c "flameshot gui"
 
 ## autostart apps using systemd
 https://github.com/jceb/dex
+
+## Openvpn
+Instead of going down the route of openvpn3 which is super buggy, it's best to just use the built-in `nmcli` client similar to `docker`:
+```bash
+# add ability to add openvpn files to network manager
+yay -S extra/networkmanager-openvpn libnma
+
+# list connections
+nmcli connection
+
+# add a new openvpn connection
+nmcli connection import type openvpn file example.ovpn
+
+# activate the new connection (--ask is only helpful if there's a private key password)
+nmcli connection up connection_name --ask
+
+# deactivate the connection
+nmcli connection down connection_name
+```
