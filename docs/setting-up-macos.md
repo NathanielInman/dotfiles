@@ -2,8 +2,27 @@
 
 We need homebrew first as it's our main package manager
 ```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-brew install diff-so-fancy htop exa bat fd ripgrep git vim zsh tmux python reattach-to-user-namespace
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+Now we can install some basic apps
+- `diff-so-fancy`: git diffs look more beautiful
+- `htop`: alternative to `top` command that's more robust
+- `exa`: alternative to `ls` command that supports better colors and is faster
+- `bat`: alternative to `cat` command with colors & better perf
+- `fd`: alternative to `find` command except much faster
+- `ripgrep`: search tool to find text within files, very fast
+- `git`: every modern devs version control system, absolutely required
+- `vim`: my preferred ide when not using neovim (gvim on linux)
+- `zsh`: more robust than bash, fish-like conveniences with bash support
+- `tmux`: any laymans terminal multiplexer, i use screen hotkeys predominately
+- `python`: needed for data engineering & science, also req for many tools
+- `reattach-to-user-namespace`: required for tmux to reclaim sessions
+- `fzf`: fuzzy finder tool to help jumping around the system
+- `zoxide`: a better way of using [cd](https://github.com/ajeetdsouza/zoxide)
+- `pyenv`: python version management tool
+- `broot`: a command similar to `tree` to quickly visualize directories
+```
+brew install diff-so-fancy htop exa bat fd ripgrep git vim zsh tmux python reattach-to-user-namespace fzf zoxide pyenv broot
 ```
 Now we install `n` for managing node instead of using brew
 ```
@@ -43,7 +62,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 ```
 Download the personal theme to use with oh-my-zsh
 ```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/pragmata.zsh-theme -o ~/.oh-my-zsh/themes/pragmata.zsh-theme
+curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/.oh-my-zsh/themes/pragmata.zsh-theme -o ~/.oh-my-zsh/themes/pragmata.zsh-theme
 ```
 Now finally set up your zsh run commands file with the better one here.
 ```
