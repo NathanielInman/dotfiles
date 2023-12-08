@@ -269,7 +269,7 @@ yay -S google-chrome
 ```
 
 ## CLI Configuration
-We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager.
+We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager `pnpm`.
 - `picom` is a compositor
 - `diff-so-fancy` helps make cli `git diff` look good (automatic)
 - `exa` is prettier version of `ls` command (we alias it instead in .zshrc)
@@ -313,29 +313,11 @@ Lets ensure that zsh will have fish-like syntax highlighting & autocompletion
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 ```
-Install node js stuff, we'll actually manage this with `n` and `npm` itself later on
+Install node js package manager pnpm, this also manages our node versions now instead of `nvm` or `n`. After installing leverage it to install the latest or whatever versions required.
 ```
-yay -S nodejs npm
-```
-Now lets add npm global ability
-```
-mkdir ~/.npm-global
-npm config set prefix '~/.npm-global'
-# now open ~/.zshrc with vim and add "~/.npm-global/bin" to PATH
-```
-Now install our nodejs version manager and couple other helpful node things. It may be worthwhile to also ensure you don't have to use `sudo` in order to install `npm` packages in the future, those lines follow.
-```
-npm install -g npm npm-check-updates n
-
-# make cache folder (if missing) and take ownership
-sudo mkdir -p /usr/local/n
-sudo chown -R $(whoami) /usr/local/n
-
-# make sure the required folders exist (safe to execute even if they already exist)
-sudo mkdir -p /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
-
-# take ownership of Node.js install destination folders
-sudo chown -R $(whoami) /usr/local/bin /usr/local/lib /usr/local/include /usr/local/share
+yay -S pnpm
+pnpm env use --global lts
+pnpm env ls
 ```
 Now we'll install Rust:
 ```
