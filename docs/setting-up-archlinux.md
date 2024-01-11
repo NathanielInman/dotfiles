@@ -514,6 +514,15 @@ bash -c "flameshot gui"
 ## autostart apps using systemd
 https://github.com/jceb/dex
 
+## Nix
+Installing:
+```
+sh <(curl -L https://nixos.org/nix/install) --daemon
+```
+Now for nix packages:
+```
+nix-env -iA nixpkgs.overskride # bluetooth gui ontop of bluez
+```
 ## Openvpn
 Instead of going down the route of openvpn3 which is super buggy, it's best to just use the built-in `nmcli` client similar to `docker`:
 ```bash
