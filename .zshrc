@@ -6,9 +6,9 @@ if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
 fi
 
 # User configuration
-export PATH=/usr/local/bin:~/.npm-global/bin:~/.local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
+export PATH=/usr/local/bin:$HOME/.local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
+export PATH=$HOME/.npm-global/bin:$PATH # global node/npm bin
 export PATH=$HOME/.cargo/bin:$PATH # rust bin
-export PATH=$(npm bin):$PATH # node bin
 export PATH=$HOME/.pyenv/bin:$PATH # python
 export PNPM_HOME=$HOME/.local/share/pnpm
 export PATH=$PNPM_HOME:$PATH # node path
@@ -42,7 +42,7 @@ alias llm='ll --sort=modified' # list, long, sort by modification date
 alias la='ls -lbhHigUmuSa' # all list
 alias lx='ls -lbhHigUmuSa@' # all list and extended
 alias lS='exa -1' # just names
-alias search='rg'
+alias search='rg -F'
 alias searchAround='rg -C'
 alias tree='broot -c :pt "$@" -sdp'
 alias cat='bat'
@@ -66,9 +66,9 @@ bindkey -v
 
 # My Functions
 gbprune () {
+  gfa
   git fetch -p
-  BRANCHES=git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'
-  for branch in $BRANCHES; do git branch -D "$branch"; done
+  for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do git branch -D "$branch"; done
 }
 walk () {
   mkdir -p -- "$1" && cd -P -- "$1"
@@ -92,11 +92,10 @@ eval "$(zoxide init zsh)"
 eval "$(pyenv init -)"
 
 # tintin
-alias au-jixx='tt++ ~/au-jixx.tintin'
-alias au-alleus='tt++ ~/au-alleus.tintin'
-alias au-mardios='tt++ ~/au-mardios.tintin'
-alias au-revna='tt++ ~/au-revna.tintin'
+alias au-mardios='ssh nate@159.203.80.149 -t "tmux attach -t adventuresunlimited"'
 
 # streamdeck command simplification
 alias lightson='keylightctl switch --light 8A95 on & keylightctl switch --light 9F74 on'
 alias lightsoff='keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off'
+
+source /home/nate/.config/broot/launcher/bash/br

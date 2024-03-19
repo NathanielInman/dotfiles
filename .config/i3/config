@@ -73,7 +73,7 @@ exec --no-startup-id sh -c 'sleep 2.0; i3-msg "workspace 6:todo; exec kitty --co
 
 # Workspace 2 startup
 exec --no-startup-id sh -c 'sleep 3.0; i3-msg "workspace 2:work"'
-exec --no-startup-id sh -c 'sleep 3.1; /home/nate/.pyenv/shims/streamdeck'
+exec --no-startup-id sh -c 'sleep 3.1; /home/nate/.local/bin/streamdeck'
 exec --no-startup-id sh -c 'sleep 3.2; pagraphcontrol --no-sandbox'
 exec --no-startup-id sh -c 'sleep 3.3; flameshot'
 exec --no-startup-id sh -c 'sleep 3.4; zoom'
@@ -84,15 +84,11 @@ exec --no-startup-id sh -c 'sleep 3.8; i3-msg "workspace 2:work; layout stacking
 
 # Workspace 3 startup
 exec --no-startup-id sh -c 'sleep 4.0; i3-msg "workspace 3:au"'
-exec --no-startup-id sh -c 'sleep 4.1; kitty --config ~/.config/kitty/kitty.conf -e tail -n 100 -f au.communications'
-exec --no-startup-id sh -c 'sleep 4.2; kitty --config ~/.config/kitty/kitty.conf --class tintin -e tt++ ~/au-mardios.tintin'
+exec --no-startup-id sh -c 'sleep 4.1; kitty --config ~/.config/kitty/kitty.conf -e au-mardios'
 
 # ensure browser workspace starts up with chrome
 exec --no-startup-id sh -c 'sleep 5.0; i3-msg "workspace 1:browser"
-exec --no-startup-id sh -c 'sleep 5.1; google-chrome-stable gmail.com'
-
-# Give enough time for user password to unlock keyring; otherwise I'll just do this manually later
-exec --no-startup-id sh -c 'sleep 15; nordpass'
+exec --no-startup-id sh -c 'sleep 5.1; google-chrome-stable gmail.com --restore-last-session'
 
 # picom/compton for window transparency etc
 #exec_always --no-startup-id picom --config ~/.picom.conf
