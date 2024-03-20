@@ -289,8 +289,15 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `bandwhich` a bandwidth utilization monitor
 - `gping` ping multiple targets at the same time for comparison
 - `jq` is a command-line JSON processor
+- `xscreensaver` is a screensaver program
 ```
-yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task scc duf bandwhich gping jq
+yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task scc duf bandwhich gping jq xscreensaver
+```
+Now copy the xscreensaver service to systemd for the user and enable it, it will start on next restart
+```
+cp /usr/share/xscreensaver/xscreensaver.service ~/.config/systemd/user/
+systemctl --user enable xscreensaver
+# perhaps `vim ~/.config/systemd/user/` to add `--no-splash` to the `xscreensaver` command
 ```
 Now we update our python package manager
 ```
