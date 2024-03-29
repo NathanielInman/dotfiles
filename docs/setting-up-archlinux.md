@@ -383,6 +383,7 @@ Now some rust utils:
 cargo install rusti-cal melt tidy-viewer pueue
 ```
 Now for any other essentials for arch
+- `hyprpicker` wayland-based [eyedrop color picker](https://github.com/hyprwm/hyprpicker) similar to `gpick` except smaller
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `feh` is an image viewer also used for backgrounds
 - `file-roller` is an gui archive manager, although mostly `tar` on cli, nice to have
