@@ -163,13 +163,10 @@ Sound and bluetooth - will enable pulseaudio on user later
 Pacman -S alsa-utils pulseaudio-alsa pulseaudio-bluetooth bluez-utils
 systemctl enable bluetooth.service --now
 ```
-Now for installing windowmanager stuff (i3)
-- `xorg, xorg-server, xorg-xinit` - display server essentials
-- `xorg-xdpyinfo` - shows information on the display server
-- `xterm` - terminal emulator for X window system
-- `i3-gaps` - spaces between windows/containers on i3wm
-- `i3blocks` - status tray components
-- `i3status` - status tray
+Now for installing windowmanager stuff (hyprland)
+- `kitty` - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
+- `hyprland` - tiling window manager (previously I used i3)
+- `sddm` - simple desktop display manager to support hyprland
 - `rofi` - hotkey app opener overlay, alternative to dmenu & ulauncher
 - `noto-fonts` - emoji extras & base fonts
 - `sysstat` - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
@@ -177,6 +174,10 @@ Now for installing windowmanager stuff (i3)
 - `xrandr` - monitor setup with rotation, screen location etc
 ```
 Pacman -S xorg xorg-server xorg-xdpyinfo xorg-xinit xterm i3-gaps i3blocks i3lock i3status rofi noto-fonts sysstat acpi xrandr
+```
+Then enable `sddm`:
+```
+sudo systemctl enable sddm.service
 ```
 Before we can start i3 we need graphics drivers, validate what we're using
 ```
@@ -238,9 +239,8 @@ gnome-keyring-daemon --start --components=secrets
 ```
 install user-specific applications
 ```
-# kitty - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
 # stow - gnu utility that loads up config files easily
-sudo pacman -S kitty stow
+sudo pacman -S stow
 ```
 Make basic home folders
 ```
