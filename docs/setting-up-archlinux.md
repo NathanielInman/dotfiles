@@ -178,6 +178,8 @@ Pacman -S xorg xorg-server xorg-xdpyinfo xorg-xinit xterm i3-gaps i3blocks i3loc
 Then enable `sddm`:
 ```
 sudo systemctl enable sddm.service
+sudo mkdir -p /etc/sddm.conf.d
+sudo sh -c "echo $'[Autologin]\nUser=nate\nSession=Hyprland' > /etc/sddm.conf.d/sddm.conf"
 ```
 Before we can start i3 we need graphics drivers, validate what we're using
 ```
