@@ -160,29 +160,56 @@ pacman -Syyu
 ```
 Sound and bluetooth - will enable pulseaudio on user later
 - `alsa-utils` - command line alteration of audio levels on alsa's kernel level sound mixer
-- `pulseaudio-alsa` - allow pulseaudio to manage alsa levels as well
-- `pulseaudio-bluetooth` - connect bluetooth support to pulseaudio
+- `pipewire` - a new low-level multimedia framework compared to pulseaudio or alsa
+- `wireplumber` - a policy manager for pipewire, allowing lua plugins
+- `pipewire-audio` - the default audio server for pipewire
+- `pipewire-alsa` - provides support for older ALSA API applications
+- `pipewire-pulse` - provides support for older pulse audio API applications
 - `bluez` - bluetooth protocol stack
 - `bluez-utils` - provides bluetoothctl utility
 - `blueman` - a gui applet ontop of bluez to make bluetooth support easier
 ```
-Pacman -S alsa-utils pulseaudio-alsa pulseaudio-bluetooth bluez bluez-utils blueman
+Pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils blueman
+systemctl enable pipewire.socket pipewire-pulse.socket wireplubmer.service --now
+systemctl enable pipewire.service --now
 systemctl enable bluetooth.service --now
 ```
 Now for installing windowmanager stuff (hyprland)
+- `cliphist` - clipboard manager for wayland
 - `kitty` - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
 - `hyprland` - tiling window manager (previously I used i3)
+- `kvantum` - svg-based theme engine for qt6
 - `sddm` - simple desktop display manager to support hyprland
+- `qt5ct` - qt 5 configuration utility
+- `qt6ct` - qt 6 configuration utility
+- `qt6-svg` - classes for displaying the contents of svgs
 - `qt5-graphicaleffects` - support qt5 rendering layer effects for sddm & other apps
 - `qt5-quickcontrols2` - support quickcontrols rendering layer for sddm & other apps
 - `qt5-svg` - support svg within qt5 rendering layer for sddm & other apps
-- `rofi` - hotkey app opener overlay, alternative to dmenu & ulauncher
+- `rofi-lbonn-wayland-git` - hotkey app opener overlay, alternative to dmenu & ulauncher
+- `slurp` - select a region within a wayland compositor
+- `network-manager-applet` - gui layer for managing network apps & vpn
 - `noto-fonts` - emoji extras & base fonts
+- `adobe-source-code-pro-fonts` - additional fallback fonts
+- `otf-font-awesome` - additional fallback fonts
+- `ttf-droid` additional fallback fonts
+- `ttf-fira-code` additional fallback fonts
+- `ttf-jetbrains-mono` additional fallback fonts
+- `ttf-jetbrains-mono-nerd` additional fallback fonts
+- `swayidle` idle manager for wayland
+- `swaylock-effects-git` a fancy screen lock for wayland
+- `swaync` - alternative to dunst for notification management in wayland
+- `swww` - wayland wallpaper "woes"
+- `waybar` - similar to polybar or the oldschool i3bar, except for wayland
+- `wl-clipboard` - wayland clipboard manager
+- `wlogout` - a wayland logout menu
 - `sysstat` - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
 - `acpi` - client for battery, power & thermal readings
 - `xrandr` - monitor setup with rotation, screen location etc
+- `xdg-user-dirs` - help ensure well-known user directories are created automatically
+- `xdg-utils` - for helpful things such as mime detection
 ```
-Pacman -S xorg xorg-server xorg-xdpyinfo xorg-xinit xterm i3-gaps i3blocks i3lock i3status rofi noto-fonts sysstat acpi xrandr
+Pacman -S cliphist kitty hyprland kvantum sddm qt5ct qt6ct qt6-svg qt5-graphicaleffects qt5-quickcontrols2 qt5-svg rofi-lbonn-qayland-git slurp network-manager-applet notofonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swayidle swaylock-effects-git swaync swww waybar wl-clipboard wlogout sysstat acpi xrandr xdg-user-dirs xdg-utils
 ```
 Then enable `sddm`:
 ```
@@ -194,7 +221,7 @@ Before we can start i3 we need graphics drivers, validate what we're using
 ```
 lspci -v | grep -A1 -e VGA -e 3D
 ```
-Now acquire graphics packages:
+Now acquire graphics packages (if issues see [here](https://github.com/JaKooLit/Arch-Hyprland/blob/main/install-scripts/nvidia.sh)):
 - `nvidia` - core driver package alternative to nouveau
 - `nvidia-dkms` - we're not on maxwell so let's use this driver package
 - `nvidia-settings` - configure nvidia options through cli or gui
@@ -274,7 +301,7 @@ stow --dir=~=Sites/dot-files --target=~/
 ```
 if at any point you want to remove the symlinks `stow -D .` from within the source repo folder
 Feel free to manually copy any ./Sites/dot-files/usr/share/applications files
-in order to setup things like `nnn` launching using rofi or hiding unused/unwanted apps.
+in order to setup launching using rofi or hiding unused/unwanted apps.
 Now grab paru for AUR, used to use yay but Rust ftw :)
 ```
 cd ~/Sites
@@ -289,16 +316,15 @@ yay -S google-chrome
 
 ## CLI Configuration
 We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager `pnpm`.
-- `picom` is a compositor
+- `curl` helps make web requests from the command line
+- `wget` command helps acquire data from the web via the command line
 - `diff-so-fancy` helps make cli `git diff` look good (automatic)
 - `exa` is prettier version of `ls` command (we alias it instead in .zshrc)
 - `bat` is prettier version of `cat` command (we alias it instead in .zshrc)
 - `fd` is aliased in .zshrc as `searchFiles` and finds within directories filenames
 - `ripgrep` looks within files for strings
 - `git` is basic requirement for version control
-- `gvim` is basic requirement for file editor, gvim instead of vim for clipboard in X11
 - `zsh` will be our default shell
-- `dunst` this is a notification system, required for apps like slack to not crash
 - `python-pip` will give us pip for python package management
 - `pyenv` python version manager and virtual environment
 - `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
@@ -308,9 +334,8 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `bandwhich` a bandwidth utilization monitor
 - `gping` ping multiple targets at the same time for comparison
 - `jq` is a command-line JSON processor
-- `xscreensaver` is a screensaver program
 ```
-yay -S picom diff-so-fancy exa bat fd ripgrep git gvim zsh dunst python-pip xsel task scc duf bandwhich gping jq xscreensaver
+yay -S curl wget diff-so-fancy exa bat fd ripgrep git zsh python-pip pyenv xsel task scc duf bandwhich gping jq
 ```
 Now copy the xscreensaver service to systemd for the user and enable it, it will start on next restart
 ```
@@ -361,17 +386,10 @@ Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `feh` is an image viewer also used for backgrounds
 - `file-roller` is an gui archive manager, although mostly `tar` on cli, nice to have
-- `handlr` is used to set default applications for apps like `nnn`
-- `nsxiv` is an xembed image viewer for auto-updates by `nnn`
-- `mpv` is for xembed video viewers for auto-updates by `nnn`
-- `zathura` is a book viewer, usable by `nnn`
-- `zathura-pdf-poppler` is a pdf plugin for zathura, used by `nnn`
-- `tabbed` is a tabbable x window plugin used by `nnn`
 - `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
 - `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
 - `vit` is a TUI for taskwarrior
 - `ncdu` NCurses Disk Usage shows what files/folders are occupying how much space
-- `nnn` is a filemanager for the terminal with workspaces and vim-like controls
 - `glow` is for cating out or reading markdown files in terminal
 - `glances` is better version of `top` command (we alias it instead in .zshrc)
 - `procs` is a better version of `ps` command (we alias it instead in .zshrc)
@@ -404,11 +422,10 @@ Now for any other essentials for arch
 - `galculator` is a simple scientific gtk calculator
 - `orchis-theme-git` is a simple XFCE4 & GTK dark theme
 - `gtk-engine-murrine` helps with backwards-compatibility themes for gtk2
-- `qogir-icon-theme-git` is a simple package of icons used for dunst
 - `flameshot` is a better screenshot utility than `scrot`
 - `gthumb` is the best tiny app for browsing images
 ```
-yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nnn nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular cifs-utils usbutils peek thunar gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git qogir-icon-theme-git flameshot
+yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular cifs-utils usbutils peek thunar gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git qogir-icon-theme-git flameshot
 ```
 Now open up `lxappearance` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
 You can now set any default applications you prefer:
@@ -418,10 +435,6 @@ handlr set .png feh.desktop
 If you want to view pixel art with feh, it may make sense to force aliasing and auto zooming. `sudo vim /usr/share/applications/feh.desktop` and change `Exec` lint to be:
 ```
 Exec=feh --start-at %u --force-aliasing --auto-zoom
-```
-You can now install all `nnn` plugins automatically with the following command:
-```
-curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs | sh
 ```
 Now grab the dictionary file for sdcv:
 ```
