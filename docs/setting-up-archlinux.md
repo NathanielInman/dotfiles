@@ -159,14 +159,23 @@ Now lets update everything:
 pacman -Syyu
 ```
 Sound and bluetooth - will enable pulseaudio on user later
+- `alsa-utils` - command line alteration of audio levels on alsa's kernel level sound mixer
+- `pulseaudio-alsa` - allow pulseaudio to manage alsa levels as well
+- `pulseaudio-bluetooth` - connect bluetooth support to pulseaudio
+- `bluez` - bluetooth protocol stack
+- `bluez-utils` - provides bluetoothctl utility
+- `blueman` - a gui applet ontop of bluez to make bluetooth support easier
 ```
-Pacman -S alsa-utils pulseaudio-alsa pulseaudio-bluetooth bluez-utils
+Pacman -S alsa-utils pulseaudio-alsa pulseaudio-bluetooth bluez bluez-utils blueman
 systemctl enable bluetooth.service --now
 ```
 Now for installing windowmanager stuff (hyprland)
 - `kitty` - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
 - `hyprland` - tiling window manager (previously I used i3)
 - `sddm` - simple desktop display manager to support hyprland
+- `qt5-graphicaleffects` - support qt5 rendering layer effects for sddm & other apps
+- `qt5-quickcontrols2` - support quickcontrols rendering layer for sddm & other apps
+- `qt5-svg` - support svg within qt5 rendering layer for sddm & other apps
 - `rofi` - hotkey app opener overlay, alternative to dmenu & ulauncher
 - `noto-fonts` - emoji extras & base fonts
 - `sysstat` - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
@@ -184,7 +193,15 @@ sudo sh -c "echo $'[Autologin]\nUser=nate\nSession=Hyprland' > /etc/sddm.conf.d/
 Before we can start i3 we need graphics drivers, validate what we're using
 ```
 lspci -v | grep -A1 -e VGA -e 3D
-pacman -Ss nvidia # you can search for your driver this way
+```
+Now acquire graphics packages:
+- `nvidia` - core driver package alternative to nouveau
+- `nvidia-dkms` - we're not on maxwell so let's use this driver package
+- `nvidia-settings` - configure nvidia options through cli or gui
+- `nvidia-utils` - blacklist nouveau packages and other things
+- `libva` - hardware video acceleration offloads cpu usage to gpu
+- `libva-nvidia-driver-git` - translation layer for libva to nvidia
+```
 pacman -S nvidia nvidia-settings nvidia-utils # this is my driver stuff
 ```
 If you have multiple monitors and need to set them up, here are some helpful commands
@@ -378,6 +395,7 @@ Now for any other essentials for arch
 - `thunar` is a slim file manager
 - `thunar-volman` is a slim volume manager for the thunar fm gui
 - `thunar-archive-plugin` is a slim shim for file roller integration with thunar
+- `ffmpegthumbnailer` is a video thumbnail support for thunar
 - `gvfs` gnome virtual file system unlocks usb, trash can etc on thunar
 - `gvfs-smb` mounts samba networked filesystem volumes
 - `tumbler` unlocks generation of thumbnails for thunar
@@ -385,6 +403,7 @@ Now for any other essentials for arch
 - `lxappearance` is tiny a theme chooser for XFCE4
 - `galculator` is a simple scientific gtk calculator
 - `orchis-theme-git` is a simple XFCE4 & GTK dark theme
+- `gtk-engine-murrine` helps with backwards-compatibility themes for gtk2
 - `qogir-icon-theme-git` is a simple package of icons used for dunst
 - `flameshot` is a better screenshot utility than `scrot`
 - `gthumb` is the best tiny app for browsing images
