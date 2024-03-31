@@ -213,9 +213,23 @@ Pacman -S cliphist kitty hyprland kvantum sddm qt5ct qt6ct qt6-svg qt5-graphical
 ```
 Then enable `sddm`:
 ```
+# enable the service itself
 sudo systemctl enable sddm.service
+
+# ensure the directory is there before we make a config for it 
 sudo mkdir -p /etc/sddm.conf.d
+
+# create the autologin script
 sudo sh -c "echo $'[Autologin]\nUser=nate\nSession=Hyprland' > /etc/sddm.conf.d/sddm.conf"
+
+# now ensure that it doesn't display login on all monitors
+sudo sh -c "echo $'xrandr --output DP-2 --off' > /usr/share/sddm/scripts/Xsetup"
+```
+Now we can install hypr modules:
+```
+# this adds i3-like layouts such as stacking
+hyprpm add https://github.com/outfoxxed/hy3
+hyprpm update
 ```
 Before we can start i3 we need graphics drivers, validate what we're using
 ```
