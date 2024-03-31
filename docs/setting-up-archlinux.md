@@ -227,9 +227,8 @@ sudo sh -c "echo $'xrandr --output DP-2 --off' > /usr/share/sddm/scripts/Xsetup"
 ```
 Now we can install hypr modules:
 ```
-# this adds i3-like layouts such as stacking
-hyprpm add https://github.com/outfoxxed/hy3
 hyprpm update
+hyprpm add https://github.com/outfoxxed/hy3
 ```
 Before we can start i3 we need graphics drivers, validate what we're using
 ```
