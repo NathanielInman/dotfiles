@@ -175,19 +175,12 @@ systemctl enable pipewire.service --now
 systemctl enable bluetooth.service --now
 ```
 Now for installing windowmanager stuff (hyprland)
-- `cliphist` - clipboard manager for wayland
+- `xorg, xorg-server, xorg-xinit` - display server essentials
+- `xorg-xdpyinfo` - shows information on hte display server
+- `i3-gaps` - spaces between windows/containers on i3wm
+- `rofi` - hotkey app opener overlay, alternative to dmenu & ulauncher
 - `kitty` - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
-- `hyprland` - tiling window manager (previously I used i3)
-- `kvantum` - svg-based theme engine for qt6
 - `sddm` - simple desktop display manager to support hyprland
-- `qt5ct` - qt 5 configuration utility
-- `qt6ct` - qt 6 configuration utility
-- `qt6-svg` - classes for displaying the contents of svgs
-- `qt5-graphicaleffects` - support qt5 rendering layer effects for sddm & other apps
-- `qt5-quickcontrols2` - support quickcontrols rendering layer for sddm & other apps
-- `qt5-svg` - support svg within qt5 rendering layer for sddm & other apps
-- `rofi-lbonn-wayland-git` - hotkey app opener overlay, alternative to dmenu & ulauncher
-- `slurp` - select a region within a wayland compositor
 - `network-manager-applet` - gui layer for managing network apps & vpn
 - `noto-fonts` - emoji extras & base fonts
 - `adobe-source-code-pro-fonts` - additional fallback fonts
@@ -196,20 +189,14 @@ Now for installing windowmanager stuff (hyprland)
 - `ttf-fira-code` additional fallback fonts
 - `ttf-jetbrains-mono` additional fallback fonts
 - `ttf-jetbrains-mono-nerd` additional fallback fonts
-- `swayidle` idle manager for wayland
-- `swaylock-effects-git` a fancy screen lock for wayland
-- `swaync` - alternative to dunst for notification management in wayland
-- `swww` - wayland wallpaper "woes"
-- `waybar` - similar to polybar or the oldschool i3bar, except for wayland
-- `wl-clipboard` - wayland clipboard manager
-- `wlogout` - a wayland logout menu
+- `polybar` - better version of i3bar for X
 - `sysstat` - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
 - `acpi` - client for battery, power & thermal readings
 - `xrandr` - monitor setup with rotation, screen location etc
 - `xdg-user-dirs` - help ensure well-known user directories are created automatically
 - `xdg-utils` - for helpful things such as mime detection
 ```
-Pacman -S cliphist kitty hyprland kvantum sddm qt5ct qt6ct qt6-svg qt5-graphicaleffects qt5-quickcontrols2 qt5-svg rofi-lbonn-qayland-git slurp network-manager-applet notofonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swayidle swaylock-effects-git swaync swww waybar wl-clipboard wlogout sysstat acpi xrandr xdg-user-dirs xdg-utils
+Pacman -S xorg xorg-server xorg-xinit xorg-xdpyinfo i3-gaps rofi kitty sddm network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd polybar sysstat acpi xrandr xdg-user-dirs xdg-utils
 ```
 Then enable `sddm`:
 ```
@@ -224,11 +211,6 @@ sudo sh -c "echo $'[Autologin]\nUser=nate\nSession=Hyprland' > /etc/sddm.conf.d/
 
 # now ensure that it doesn't display login on all monitors
 sudo sh -c "echo $'xrandr --output DP-2 --off' > /usr/share/sddm/scripts/Xsetup"
-```
-Now we can install hypr modules:
-```
-hyprpm update
-hyprpm add https://github.com/outfoxxed/hy3
 ```
 Before we can start i3 we need graphics drivers, validate what we're using
 ```
