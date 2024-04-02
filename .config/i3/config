@@ -6,8 +6,8 @@ set $mod Mod4
 font pango:PragmataPro Regular 12
 
 # set default monitors
-set $primary_monitor "DP-0"
-set $secondary_monitor "DP-1"
+set $primary_monitor "DP-1"
+set $secondary_monitor "DP-2"
 
 # set first 6 default workspaces
 workspace 1 output $primary_monitor
@@ -84,14 +84,20 @@ exec --no-startup-id sh -c 'sleep 3.8; i3-msg "workspace 2:work; layout stacking
 
 # Workspace 3 startup
 exec --no-startup-id sh -c 'sleep 4.0; i3-msg "workspace 3:au"'
-exec --no-startup-id sh -c 'sleep 4.1; kitty --config ~/.config/kitty/kitty.conf -e au-mardios'
+exec --no-startup-id kitty --config /home/nate/.config/kitty/kitty.conf -e 'sleep 4.1; au-mardios'
 
 # ensure browser workspace starts up with chrome
 exec --no-startup-id sh -c 'sleep 5.0; i3-msg "workspace 1:browser"
 exec --no-startup-id sh -c 'sleep 5.1; google-chrome-stable gmail.com --restore-last-session'
 
+# Wait a while for the full startup to enable xscreensaver
+exec --no-startup-id sh -c 'sleep 30; systemctl start --user xscreensaver'
+
+# polybar loadout
+exec_always --no-startup-id polybar -r -c ~/.polybar.ini
+
 # picom/compton for window transparency etc
-#exec_always --no-startup-id picom --config ~/.picom.conf
+exec_always --no-startup-id picom -b --config ~/.picom.conf
 
 # ensure numlock defaults to on
 exec_always --no-startup-id numlockx on
@@ -242,6 +248,7 @@ bindsym $mod+r mode "resize"
 popup_during_fullscreen smart
 
 # Disable window titlebar
+default_border pixel 3
 for_window [class="^.*"] border pixel 3
 
 # Allow kitty to be floated
@@ -268,25 +275,3 @@ set $nord12 #d08770
 set $nord13 #ebcb8b
 set $nord14 #a3be8c
 set $nord15 #b48ead
-
-# start i3bar to display a worksace bar plus i3status
-bar {
-  i3bar_command i3bar
-  status_command i3blocks -c ~/.config/i3blocks/config.conf
-  position bottom
-  font pango:PragmataPro Regular 12
-  strip_workspace_numbers yes
-  separator_symbol "-"
-  workspace_buttons yes
-  tray_padding 0
-  tray_output primary
-
-  colors {
-    background $nord0
-    statusline $nord8
-    focused_workspace $nord3 $nord8
-    active_workspace $nord3 $nord8
-    inactive_workspace $nord8 $nord3
-    urgent_workspace $nord3 $nord15
-  }
-}
