@@ -11,4 +11,4 @@ fc-cache # clear the font cache
 fc-list | grep Pragmata  # validate it's there
 xfd -fa "PragmataPro Liga-18" # this will allow you to select special glyphs
 ```
-Instead of using `xfd` you can also view all of the glyphs [here](https://github.com/fabrizioschiavi/pragmatapro/blob/master/useful_files/All_chars.png)
+In order to paste a glyph into vim merely go into insert mode then `ctrl+v` followed by `u` then the character such that character `0x00f11c` would be `ctrl+v, u, f, 1, 1, c`.
