@@ -208,7 +208,7 @@ sudo systemctl enable sddm.service
 sudo mkdir -p /etc/sddm.conf.d
 
 # create the autologin script
-sudo sh -c "echo $'[Autologin]\nUser=nate\nSession=Hyprland' > /etc/sddm.conf.d/sddm.conf"
+sudo sh -c "echo $'[Autologin]\nUser=nate\nSession=Hyprland' > /etc/sddm.conf.d/autologin.conf"
 
 # now ensure that it doesn't display login on all monitors
 sudo sh -c "echo $'xrandr --output DP-2 --off' > /usr/share/sddm/scripts/Xsetup"
