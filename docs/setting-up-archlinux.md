@@ -174,14 +174,15 @@ systemctl enable pipewire.socket pipewire-pulse.socket wireplubmer.service --now
 systemctl enable pipewire.service --now
 systemctl enable bluetooth.service --now
 ```
-Now for installing windowmanager stuff (hyprland)
+Now for installing windowmanager stuff (i3)
 - `xorg, xorg-server, xorg-xinit` - display server essentials
 - `xorg-xdpyinfo` - shows information on hte display server
 - `i3-gaps` - spaces between windows/containers on i3wm
 - `rofi` - hotkey app opener overlay, alternative to dmenu & ulauncher
 - `kitty` - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
-- `sddm` - simple desktop display manager to support hyprland
+- `sddm` - simple desktop display manager to support i3
 - `network-manager-applet` - gui layer for managing network apps & vpn
+- `gnome-calendar` - allows viewing of gnome calendar through polybar
 - `noto-fonts` - emoji extras & base fonts
 - `adobe-source-code-pro-fonts` - additional fallback fonts
 - `otf-font-awesome` - additional fallback fonts
