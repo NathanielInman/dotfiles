@@ -6,7 +6,7 @@ set $mod Mod4
 font pango:PragmataPro Regular 12
 
 # set default monitors
-set $primary_monitor "DP-1"
+set $primary_monitor "DP-0"
 set $secondary_monitor "DP-2"
 
 # set first 6 default workspaces
@@ -36,22 +36,15 @@ set $ws10 "10:code6"
 
 # assign default workspaces for certain apps
 assign [class="Google-chrome"] $ws1
-assign [class="Brave-browser"] $ws2
 assign [class="pagraphcontrol"] $ws2
 assign [class="Streamdeck UI"] $ws2
-assign [class="NordPass"] $ws2
 assign [class="zoom"] $ws2
 assign [class="Slack"] $ws2
-assign [class="tintin"] $ws3
+assign [class="neovide"] $ws4
 assign [class="obsidian"] $ws5
 
 # prevent an app from taking focus, such as Zoom demanding focus all the time
 no_focus [all]
-
-# Disable screensaver, prevent blanking as well as power management saver
-exec xset s off
-exec xset s noblank
-exec xset -dpms
 
 # This is a fix for zooms annotation window when sharing
 exec --no-startup-id xcompmgr -c -l0 -t0 -r0 -o.00
@@ -59,36 +52,16 @@ exec --no-startup-id xcompmgr -c -l0 -t0 -r0 -o.00
 # Notification manager
 exec --no-startup-id dunst
 
-# ensure terminal opens on main workspace
-exec --no-startup-id sh -c 'sleep 0.1; i3-msg "workspace 4:main"'
-exec --no-startup-id sh -c 'sleep 0.2; kitty --config ~/.config/kitty/kitty.conf --directory ~/Sites'
-exec --no-startup-id sh -c 'sleep 0.3; neovide'
+# ensure monitors are relative correctly
+exec --no-startup-id sh -c 'xrandr --output DP-2 --right-of DP-0'
 
-# ensure zk note-taking app autostart
-exec --no-startup-id sh -c 'sleep 1.0; i3-msg "workspace 5:notes"'
-exec --no-startup-id sh -c 'sleep 1.1; obsidian'
-
-# ensure vit todo list autostart
-exec --no-startup-id sh -c 'sleep 2.0; i3-msg "workspace 6:todo; exec kitty --config ~/.config/kitty/kitty.conf -e vit"'
-
-# Workspace 2 startup
-exec --no-startup-id sh -c 'sleep 3.0; i3-msg "workspace 2:work"'
-exec --no-startup-id sh -c 'sleep 3.1; /home/nate/.local/bin/streamdeck'
-exec --no-startup-id sh -c 'sleep 3.2; pagraphcontrol --no-sandbox'
-exec --no-startup-id sh -c 'sleep 3.3; flameshot'
-exec --no-startup-id sh -c 'sleep 3.4; zoom'
-exec --no-startup-id sh -c 'sleep 3.5; gpick'
-exec --no-startup-id sh -c 'sleep 3.6; slack'
-exec --no-startup-id sh -c 'sleep 3.7; dbus-update-activation-environment --all && gnome-keyring-daemon --start --components=secrets && nordpass'
-exec --no-startup-id sh -c 'sleep 3.8; i3-msg "workspace 2:work; layout stacking"'
-
-# Workspace 3 startup
-exec --no-startup-id sh -c 'sleep 4.0; i3-msg "workspace 3:au"'
-exec --no-startup-id kitty --config /home/nate/.config/kitty/kitty.conf -e 'sleep 4.1; au-mardios'
-
-# ensure browser workspace starts up with chrome
-exec --no-startup-id sh -c 'sleep 5.0; i3-msg "workspace 1:browser"
-exec --no-startup-id sh -c 'sleep 5.1; google-chrome-stable gmail.com --restore-last-session'
+# Open up preconfigured workspaces
+exec --no-startup-id i3-msg 'workspace 1:browser; exec google-chrome-stable gmail.com --restore-last-session'
+exec --no-startup-id i3-msg 'workspace 2:work; layout stacking; exec /home/nate/.local/bin/streamdeck; exec pagraphcontrol --no-sandbox; exec flameshot; exec zoom; exec slack'
+exec --no-startup-id i3-msg 'workspace 3:au; exec kitty'
+exec --no-startup-id i3-msg 'workspace 4:main; exec kitty --directory ~/Sites; exec neovide ~/Sites/dot-files/README.md'
+exec --no-startup-id i3-msg 'workspace 5:notes; exec obsidian'
+exec --no-startup-id i3-msg 'workspace 6:todo; exec kitty -e vit'
 
 # Wait a while for the full startup to enable xscreensaver
 exec --no-startup-id sh -c 'sleep 30; systemctl start --user xscreensaver'

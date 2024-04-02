@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# automatically start i3 window manager
-if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
-  exec startx
-fi
-
 # User configuration
 export PATH=/usr/local/bin:$HOME/.local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
 export PATH=$HOME/.npm-global/bin:$PATH # global node/npm bin
