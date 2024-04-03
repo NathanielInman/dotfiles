@@ -179,6 +179,7 @@ Now for installing windowmanager stuff (i3)
 - `xorg-xdpyinfo` - shows information on hte display server
 - `i3-gaps` - spaces between windows/containers on i3wm
 - `rofi` - hotkey app opener overlay, alternative to dmenu & ulauncher
+- `dunst` - notification display app
 - `kitty` - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
 - `sddm` - simple desktop display manager to support i3
 - `network-manager-applet` - gui layer for managing network apps & vpn
