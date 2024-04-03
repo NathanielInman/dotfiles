@@ -55,7 +55,7 @@ while true; do
     done
 
     echo "⮮ $(print_bytes $down) ⮭ $(print_bytes $up)"
-    # echo "Download: $(print_bit $down) / Upload: $(print_bit $up)"
+    #echo "⮮ $(print_bit $down) ⮭ $(print_bit $up)"
 
     sleep $INTERVAL
 done
