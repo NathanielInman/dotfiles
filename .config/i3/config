@@ -1,5 +1,6 @@
 # modkey is windows key
 set $mod Mod4
+set $alt Mod1
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -23,21 +24,22 @@ workspace 10 output $primary_monitor
 
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
-set $ws1 "1:browser"
-set $ws2 "2:work"
-set $ws3 "3:au"
-set $ws4 "4:main"
-set $ws5 "5:notes"
-set $ws6 "6:todo"
-set $ws7 "7:code3"
-set $ws8 "8:code4"
-set $ws9 "9:code5"
-set $ws10 "10:code6"
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
 
 # assign default workspaces for certain apps
 assign [class="Google-chrome"] $ws1
 assign [class="pagraphcontrol"] $ws2
 assign [class="Streamdeck UI"] $ws2
+assign [class="streamdeck"] $ws2
 assign [class="zoom"] $ws2
 assign [class="Slack"] $ws2
 assign [class="neovide"] $ws4
@@ -52,16 +54,23 @@ exec --no-startup-id xcompmgr -c -l0 -t0 -r0 -o.00
 # Notification manager
 exec --no-startup-id dunst
 
+# Network manager
+exec --no-startup-id nm-applet
+
 # ensure monitors are relative correctly
 exec --no-startup-id sh -c 'xrandr --output DP-2 --right-of DP-0'
 
 # Open up preconfigured workspaces
-exec --no-startup-id i3-msg 'workspace 1:browser; exec google-chrome-stable gmail.com --restore-last-session'
-exec --no-startup-id i3-msg 'workspace 2:work; layout stacking; exec /home/nate/.local/bin/streamdeck; exec pagraphcontrol --no-sandbox; exec flameshot; exec zoom; exec slack'
-exec --no-startup-id i3-msg 'workspace 3:au; exec kitty'
-exec --no-startup-id i3-msg 'workspace 4:main; exec kitty --directory ~/Sites; exec neovide ~/Sites/dot-files/README.md'
-exec --no-startup-id i3-msg 'workspace 5:notes; exec obsidian'
-exec --no-startup-id i3-msg 'workspace 6:todo; exec kitty -e vit'
+exec --no-startup-id i3-msg 'workspace 1; exec google-chrome-stable gmail.com --restore-last-session'
+exec --no-startup-id i3-msg 'workspace 2; layout stacking; exec /home/nate/.local/bin/streamdeck; exec pagraphcontrol --no-sandbox; exec flameshot; exec zoom; exec slack'
+exec --no-startup-id i3-msg 'workspace 3; exec kitty'
+exec --no-startup-id i3-msg 'workspace 4; exec kitty --directory ~/Sites; exec neovide ~/Sites/dot-files/README.md'
+exec --no-startup-id i3-msg 'workspace 5; exec obsidian'
+exec --no-startup-id i3-msg 'workspace 6; exec kitty -e vit'
+
+# A few moments after launch we need to drop urgency on started windows
+# this removes the workspace error highlighting on startup
+exec --no-startup-id sh -c 'sleep 5; exec ~/.polybar-scripts/clear-i3-urgency.sh'
 
 # Wait a while for the full startup to enable xscreensaver
 exec --no-startup-id sh -c 'sleep 30; systemctl start --user xscreensaver'
@@ -96,6 +105,24 @@ bindsym $mod+Return exec --no-startup-id kitty --config ~/.config/kitty/kitty.co
 
 # start a terminal with vim open (scratchpad)
 bindsym $mod+v exec xdg-open "$(rg --no-messages --files ~/Sites | rofi -threads 0 -dmenu -sort --sorting-method fzf -i -p "find")"
+
+# open up screenshot utility flameshot
+bindsym $mod+p exec --no-startup-id sh -c 'flameshot gui'
+
+# open up the thunar file manager
+bindsym $mod+e exec --no-startup-id thunar
+
+# open up the hotkeys help window
+bindsym $mod+slash exec --no-startup-id sh -c '~/.polybar-scripts/hotkeys.sh'
+
+# open up the clipboard history
+bindsym $mod+$alt+v exec --no-startup-id sh -c '~/.polybar-scripts/clip-manager.sh'
+
+# open up the notification history
+bindsym $mod+n exec --no-startup-id sh -c '~/.polybar-scripts/notification-manager.sh'
+
+# toggle visibility of polybar
+bindsym $mod+b exec --no-startup-id sh -c 'polybar-msg cmd toggle'
 
 # start calculator
 bindsym $mod+c exec --no-startup-id galculator
@@ -141,10 +168,13 @@ bindsym $mod+Shift+apostrophe split v
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
 
+# trigger screensaver
+bindsym $mod+$alt+l exec --no-startup-id sh -c 'xscreensaver-command --activate'
+
 # change container layout (stacked, tabbed, toggle split)
 bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
-bindsym $mod+e layout toggle split
+bindsym $mod+x layout toggle split
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -226,6 +256,8 @@ for_window [class="^.*"] border pixel 3
 
 # Allow kitty to be floated
 for_window [class="kitty-floating"] floating enabled
+for_window [class="gnome-calendar"] floating enabled
+for_window [class="Yad"] floating enabled
 
 # default gaps
 gaps inner 8
