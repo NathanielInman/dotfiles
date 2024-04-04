@@ -45,9 +45,6 @@ assign [class="Slack"] $ws2
 assign [class="neovide"] $ws4
 assign [class="obsidian"] $ws5
 
-# prevent an app from taking focus, such as Zoom demanding focus all the time
-no_focus [all]
-
 # This is a fix for zooms annotation window when sharing
 exec --no-startup-id xcompmgr -c -l0 -t0 -r0 -o.00
 
@@ -56,6 +53,9 @@ exec --no-startup-id dunst
 
 # Network manager
 exec --no-startup-id nm-applet
+
+# Blueberry manager tray icon
+exec --no-startup-id blueberry-tray
 
 # ensure monitors are relative correctly
 exec --no-startup-id sh -c 'xrandr --output DP-2 --right-of DP-0'

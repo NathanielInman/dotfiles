@@ -167,9 +167,9 @@ Sound and bluetooth - will enable pulseaudio on user later
 - `pipewire-pulse` - provides support for older pulse audio API applications
 - `bluez` - bluetooth protocol stack
 - `bluez-utils` - provides bluetoothctl utility
-- `blueman` - a gui applet ontop of bluez to make bluetooth support easier
+- `blueberry` - a gui applet ontop of bluez to make bluetooth support easier
 ```
-Pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils blueman
+Pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils blueberry
 systemctl enable pipewire.socket pipewire-pulse.socket wireplubmer.service --now
 systemctl enable pipewire.service --now
 systemctl enable bluetooth.service --now
