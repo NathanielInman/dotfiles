@@ -4,13 +4,19 @@
 FORMAT=" %a %b %d  %H:%M"
 
 # Add the timezones of your choice. see `timedatectl list-timezones`.
+# This first timezone is ours and won't show the timezone in the bar,
+# the rest will display the timezone to clarify which we're looking at
 set -- "America/Chicago" "EET" "America/New_York"
 
 TIMEZONES_LENGTH=$#
 current_idx=1
 
 print_date() {
-  TZ=${current_timezone:?} date +"${FORMAT}" | echo "${current_timezone:?}: $(cat -)"
+  if [ $current_idx -eq 1 ]; then
+    TZ=${current_timezone:?} date +"${FORMAT}" | echo "$(cat -)"
+  else
+    TZ=${current_timezone:?} date +"${FORMAT}" | echo "${current_timezone:?}: $(cat -)"
+  fi
 }
 
 update_current_timezone() {
