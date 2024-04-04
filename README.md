@@ -24,6 +24,8 @@ This contains all of my dot files and step-by-step instructions on how to build 
     * [Reverse Proxy](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#reverse-proxy)
     * [Setting Up Mongodb](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#setting-up-mongodb)
     * [Global Git Ignore](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#global-git-ignore)
+  * [Linux Scripts](https://github.com/NathanielInman/dot-files/blob/master/docs/linux-scripts.md#linux-scripts)
+    * [Finding A Window](https://github.com/NathanielInman/dot-files/blob/master/docs/linux-scripts.md#finding-a-window) 
 
 ## Who Am I
 
