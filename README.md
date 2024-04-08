@@ -3,6 +3,8 @@
 # Dot-Files
 This contains all of my dot files and step-by-step instructions on how to build an Arch distribution similar to mine. Most configurations are detailed with comments. All dot files are purposefully compact with little ricing.
 
+![Full-screen Example of Desktop](/Pictures/fullscreen.png)
+
 ## Table of Contents
   * [Setting Up Archlinux](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-archlinux)
     * [Arch From Scratch](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#arch-from-scratch)
