@@ -1,33 +1,18 @@
-[![arch linux badge](https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white)](https://archlinux.org/) [![neovim badge](https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)](https://neovim.io/)
-
 # Dot-Files
 This contains all of my dot files and step-by-step instructions on how to build an Arch distribution similar to mine. Most configurations are detailed with comments. All dot files are purposefully compact with little ricing.
 
 ![Full-screen Example of Desktop](/Pictures/fullscreen.png)
 
-## Table of Contents
-  * [Setting Up Archlinux](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-archlinux)
-    * [Arch From Scratch](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#arch-from-scratch)
-    * [First Boot](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#first-boot)
-    * [CLI Configuration](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#cli-configuration)
-    * [Default Applications](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#default-applications)
-    * [Setting up Titan Security Key](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-titan-security-key)
-    * [Setting up Streamdeck](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-streamdeck)
-    * [Autostart Apps Using Systemd](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#autostart-apps-using-systemd)
-  * [Setting Up Aws Users](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-aws-users.md#setting-up-aws-users)
-  * [Setting Up Digital Ocean](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-digital-ocean.md#setting-up-digital-ocean)
-  * [Setting Up MacOS](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-macos.md#setting-up-macos)
-  * [Setting Up Debian Or Ubuntu](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-debian-or-ubuntu.md#setting-up-debian-or-ubuntu)
-  * [Pragmata Pro Font](https://github.com/NathanielInman/dot-files/blob/master/docs/fonts.md)
-  * [Basic Scripts](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#basic-scripts)
-    * [Packaging](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#packaging)
-    * [Deploying](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#deploying)
-    * [Monitoring Application](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#monitoring-application)
-    * [Reverse Proxy](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#reverse-proxy)
-    * [Setting Up Mongodb](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#setting-up-mongodb)
-    * [Global Git Ignore](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#global-git-ignore)
-  * [Linux Scripts](https://github.com/NathanielInman/dot-files/blob/master/docs/linux-scripts.md#linux-scripts)
-    * [Finding A Window](https://github.com/NathanielInman/dot-files/blob/master/docs/linux-scripts.md#finding-a-window) 
+> [!TIP]
+> Clicking on the icons above or below will lead directly to this repositories documentation on how to setup said operating system or tool.
+
+## My Everyday Stack
+
+[![arch linux badge](https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-archlinux) [![neovim badge](https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)](https://nvchad.com/)
+
+## My Common Stacks
+
+[![AWS](https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-aws-users.md#setting-up-aws-users) [![digital ocean badge](https://img.shields.io/badge/Digital_Ocean-0080FF?style=for-the-badge&logo=DigitalOcean&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-digital-ocean.md#setting-up-digital-ocean) [![mac os badge](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-macos.md#setting-up-macos) [![debian badge](https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-debian-or-ubuntu.md#setting-up-debian-or-ubuntu) [![ubuntu badge](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-debian-or-ubuntu.md#setting-up-debian-or-ubuntu) [![gnu bash badge](https://img.shields.io/badge/GNU%20Bash-4EAA25?style=for-the-badge&logo=GNU%20Bash&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#basic-scripts) [![linux badge](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://github.com/NathanielInman/dot-files/blob/master/docs/linux-scripts.md#linux-scripts) [![pragmata pro badge](https://img.shields.io/badge/pragmata%20pro-1BB91F?style=for-the-badge&logo=educative&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/fonts.md)
 
 ## Who Am I
 
