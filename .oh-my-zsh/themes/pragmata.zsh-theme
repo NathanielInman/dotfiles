@@ -20,11 +20,11 @@ local U="%{$fg_bold[$USERCOLOR]%}"
 # for an empty string.
 function check_git_prompt_info() {
   if git rev-parse --git-dir > /dev/null 2> /dev/null; then
-    if [[ -z $(git_prompt_info) ]]; then
-      echo "${B}detached-head${r}) $(git_prompt_status)
+    if [[ -z $(_omz_git_prompt_info) ]]; then
+      echo "${B}detached-head${r}) $(_omz_git_prompt_status)
 ${y}╰ "
     else
-      echo "$(git_prompt_info) $(git_prompt_status)
+      echo "$(_omz_git_prompt_info) $(_omz_git_prompt_status)
 %(?,${G}╰,${R}╰) "
     fi
   else

@@ -329,10 +329,12 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `scc` breaks down LOC on a repo, broken by language
 - `duf` a better version of `df` (disk free utility)
 - `bandwhich` a bandwidth utilization monitor
+- `cpu-x` a detailed benchmarking tool for linux similar to `cpu-z`
+- `fkill` a beautiful way to kill apps instead of `pkill`, `killall` etc
 - `gping` ping multiple targets at the same time for comparison
 - `jq` is a command-line JSON processor
 ```
-yay -S curl wget diff-so-fancy exa bat fd ripgrep git zsh python-pip pyenv xsel task scc duf bandwhich gping jq
+yay -S curl wget diff-so-fancy exa bat fd ripgrep git zsh python-pip pyenv xsel task scc duf bandwhich cpu-x fkill gping jq
 ```
 Now copy the xscreensaver service to systemd for the user and enable it, it will start on next restart
 ```
