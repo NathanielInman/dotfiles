@@ -4,7 +4,7 @@ This contains all of my dot files and step-by-step instructions on how to build 
 ![Full-screen Example of Desktop](/Pictures/fullscreen.png)
 
 > [!TIP]
-> Clicking on the icons above or below will lead directly to this repositories documentation on how to setup said operating system or tool.
+> Clicking on the icons below will lead directly to this repositories documentation on how to setup said operating system or tool.
 
 ## My Everyday Stack
 
