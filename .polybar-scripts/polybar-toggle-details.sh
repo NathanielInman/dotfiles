@@ -1,5 +1,5 @@
 #!/bin/bash
-polybar-msg action "#network_taffic.module_toggle"
+polybar-msg action "#network_traffic.module_toggle"
 polybar-msg action "#cpu_temp.module_toggle"
 polybar-msg action "#filesystem.module_toggle"
 polybar-msg action "#memory.module_toggle"
