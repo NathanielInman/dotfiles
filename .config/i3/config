@@ -22,6 +22,10 @@ workspace 8 output $primary_monitor
 workspace 9 output $primary_monitor
 workspace 10 output $primary_monitor
 
+# Fix for stacking layout gaps jumping with mousehover on hovers
+workspace 2 gaps inner 0
+workspace 2 gaps outer 8
+
 # Define names for default workspaces for which we configure key bindings later on.
 # We use variables to avoid repeating the names in multiple places.
 set $ws1 "1"
