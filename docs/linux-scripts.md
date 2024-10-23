@@ -10,3 +10,10 @@ xprop
 # this lets you test your attributes you're using within your apps to validate they're accurate
 xdotool search --onlyvisible --classname Zoom
 ```
+
+## Freeing up pacman yay or paru
+
+```
+paru -Scc
+sudo pacman -Scc
+```
