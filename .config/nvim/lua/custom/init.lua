@@ -9,7 +9,7 @@ local opt = vim.opt
 -- tabstop=2, shiftwidth=2 and expandtab = true defaults
 -- belloff=all is default in neovim
 -- mouse=a default
-opt.guifont = { 'PragmataPro', ':h14' }
+opt.guifont = 'PragmataPro Liga:h16'
 opt.list = true
 opt.listchars = {
   eol = '¬', nbsp = '¤', space = '⋅', trail = '•',
@@ -19,7 +19,7 @@ opt.showmatch = true
 opt.smartcase = true
 opt.relativenumber = true
 vim.g.mapleader = ' '
-vim.api.nvim_exec('language en_US.UTF-8', true)
+-- vim.api.nvim_exec('language en_US.UTF-8', true)
 vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { underline = true })
 vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { underline = true })
 vim.api.nvim_set_hl(0, 'IlluminatedWordText', { underline = true })
