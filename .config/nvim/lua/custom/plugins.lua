@@ -1,5 +1,20 @@
 local plugins = {
   {
+    'jose-elias-alvarez/null-ls.nvim',
+    event = 'VeryLazy',
+    opts = function()
+      return require 'custom.null-ls'
+    end
+  },
+  {
+    'williamboman/mason.nvim',
+    opts = {
+      ensure_installed = {
+        'eslint-lsp'
+      }
+    }
+  },
+  {
     'rmagatti/auto-session',
     lazy = false,
     config = function()
@@ -215,10 +230,10 @@ local plugins = {
           width = 0.5
         },
         on_open = function()
-          vim.opt.guifont = { 'PragmataPro', ':h18' }
+          vim.opt.guifont = { 'PragmataPro', ':h20' }
         end,
         on_close = function()
-          vim.opt.guifont = { 'PragmataPro', ':h14' }
+          vim.opt.guifont = { 'PragmataPro', ':h16' }
         end
       }
     end
