@@ -53,15 +53,15 @@ M.windows = {
 M.buffers = {
   n = {
     ['<leader>T'] = {':new<CR>', 'Create a new buffer tab'},
-    ['<leader>bl'] = {':bnext<CR>', 'Go to next buffer tab'},
-    ['<leader>bh'] = {':bprevious<CR>', 'Go to previous buffer tab'},
-    ['<leader>bq'] = {':bp <BAR> bd #<CR>', 'Quit current buffer tab'},
+    ['<leader>bl'] = {':BufferLineCycleNext<CR>', 'Go to next buffer tab'},
+    ['<leader>bh'] = {':BufferLineCyclePrev<CR>', 'Go to previous buffer tab'},
+    ['<leader>bq'] = {':Bdelete<CR>', 'Quit current buffer tab'},
     ['<leader>bpq'] = {':BufferLinePickClose<CR>', 'Choose a buffer to close'},
     ['<leader>bpj'] = {':BufferLinePick<CR>', 'Choose a buffer to jump to'},
     ['<leader>bml'] = {':BufferLineMoveNext<CR>', 'Move buffer to next spot'},
     ['<leader>bmh'] = {':BufferLineMovePrev<CR>', 'Move buffer to previous spot'},
     ['<leader>bt'] = {':BufferLineTogglePin<CR>', 'Toggle lock on buffer to keep in place'},
-    ['<leader>bs'] = {':ls<CR>', 'List buffer tabs'},
+    ['<leader>bs'] = {':Telescope buffers<CR>', 'List buffer tabs'},
   }
 }
 
