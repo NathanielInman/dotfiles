@@ -1,5 +1,16 @@
 local plugins = {
   {
+    'rmehri01/onenord.nvim',
+    lazy = false,
+    config = function()
+      return require('onenord').setup()
+    end
+  },
+  {
+    'famiu/bufdelete.nvim',
+    lazy = false
+  },
+  {
     'jose-elias-alvarez/null-ls.nvim',
     event = 'VeryLazy',
     opts = function()
