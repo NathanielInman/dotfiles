@@ -1,4 +1,14 @@
 return {
+  -- maintain a history of all yanks but set the default register to the global
+  -- clipboard so we can easily swap in-and-out of neovim with other apps
+  {
+    'ackslD/nvim-neoclip.lua',
+    config = function()
+      require('neoclip').setup {
+        default_register = '"',
+      }
+    end,
+  },
   -- this ensures buffers are deleted without messing up ui
   {
     'famiu/bufdelete.nvim',
@@ -184,24 +194,6 @@ return {
       }
     end,
   },
-  -- this allows the zooming in and out of windows with animations
-  -- to help supplement native window creation
-  {
-    'anuvyklack/windows.nvim',
-    dependencies = {
-      'anuvyklack/middleclass',
-      'anuvyklack/animation.nvim',
-    },
-    keys = {
-      { '<leader>sz', ':WindowsMaximize<CR>', 'Size the current window to zoom to max' },
-    },
-    config = function()
-      vim.o.minwidth = 10
-      vim.o.winminwidth = 10
-      vim.o.equalalways = false
-      require('windows').setup()
-    end,
-  },
   -- this hides the command bar on the bottom, and instead leverages neovims
   -- built-in hover panel features for a center command bar, as well as fancy
   -- notifications on the top-right instead of letting things slip through
@@ -238,16 +230,6 @@ return {
       }
     end,
   },
-  -- maintain a history of all yanks but set the default register to the global
-  -- clipboard so we can easily swap in-and-out of neovim with other apps
-  {
-    'ackslD/nvim-neoclip.lua',
-    config = function()
-      require('neoclip').setup {
-        default_register = '"',
-      }
-    end,
-  },
   -- zen mode is helpful for presentations at work as well as peer programming
   -- for those with less experience with vim so it's less distracting
   {
@@ -273,6 +255,18 @@ return {
   {
     'folke/which-key.nvim',
     disable = false,
+  },
+  {
+    'folke/trouble.nvim',
+    opts = {}, -- for default options, refer to the configuration section for custom setup.
+    cmd = 'Trouble',
+    keys = {
+      {
+        '<leader>xx',
+        '<cmd>Trouble diagnostics toggle<cr>',
+        desc = 'Diagnostics (Trouble)',
+      },
+    },
   },
   -- mostly simple webdev language support
   {
@@ -310,10 +304,14 @@ return {
       },
     },
   },
+  -- make life really easy with :LspInstall
   {
-    'stevearc/conform.nvim',
-    event = 'BufWritePre',
-    opts = require 'configs.conform',
+    'williamboman/mason-lspconfig.nvim',
+    config = function()
+      require('mason-lspconfig').setup {
+        ensure_installed = { 'html', 'cssls', 'ts_ls', 'volar', 'lua_ls' },
+      }
+    end,
   },
   {
     'neovim/nvim-lspconfig',
@@ -323,6 +321,12 @@ return {
   },
   -- mainly the default nvimtree (neovim nerdtree) but a little bit bigger
   -- and default for showing all files nomatter what
+  -- this formats the code on save
+  {
+    'stevearc/conform.nvim',
+    event = 'BufWritePre',
+    opts = require 'configs.conform',
+  },
   {
     'nvim-tree/nvim-tree.lua',
     dependencies = { 'nvim-web-devicons' },
