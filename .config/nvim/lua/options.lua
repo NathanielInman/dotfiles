@@ -1,3 +1,5 @@
+require 'nvchad.options'
+
 local opt = vim.opt
 
 -- Start general configurations
@@ -12,8 +14,14 @@ local opt = vim.opt
 opt.guifont = 'PragmataPro Liga:h16'
 opt.list = true
 opt.listchars = {
-  eol = '¬', nbsp = '¤', space = '⋅', trail = '•',
-  tab = '››', extends = '…', precedes = '…', conceal = '‡'
+  eol = '¬',
+  nbsp = '¤',
+  space = '⋅',
+  trail = '•',
+  tab = '››',
+  extends = '…',
+  precedes = '…',
+  conceal = '‡',
 }
 opt.showmatch = true
 opt.smartcase = true

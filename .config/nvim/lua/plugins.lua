@@ -1,30 +1,10 @@
-local plugins = {
-  {
-    'rmehri01/onenord.nvim',
-    lazy = false,
-    config = function()
-      return require('onenord').setup()
-    end
-  },
+return {
+  -- this ensures buffers are deleted without messing up ui
   {
     'famiu/bufdelete.nvim',
-    lazy = false
+    lazy = false,
   },
-  {
-    'jose-elias-alvarez/null-ls.nvim',
-    event = 'VeryLazy',
-    opts = function()
-      return require 'custom.null-ls'
-    end
-  },
-  {
-    'williamboman/mason.nvim',
-    opts = {
-      ensure_installed = {
-        'eslint-lsp'
-      }
-    }
-  },
+  -- this helps maintain sessions per folder
   {
     'rmagatti/auto-session',
     lazy = false,
@@ -32,73 +12,73 @@ local plugins = {
       require('auto-session').setup {
         log_level = 'error',
       }
-    end
+    end,
   },
   -- some basic overwrites to ensure the icons work properly with
   -- PragmataPro
   {
     'nvim-web-devicons',
-    config = function ()
+    config = function()
       require('nvim-web-devicons').setup {
         override_by_extension = {
           js = {
             icon = ' ',
             color = '#cbcb41',
-            name = 'js'
+            name = 'js',
           },
           jsx = {
             icon = ' ',
             color = '#cbcb41',
-            name = 'jsx'
+            name = 'jsx',
           },
           log = {
             icon = ' ',
             color = '#ffffff',
-            name = 'log'
+            name = 'log',
           },
           lua = {
             icon = ' ',
             color = '#51a0cf',
-            name = 'lua'
+            name = 'lua',
           },
           py = {
             icon = ' ',
             color = '#ffbc03',
-            name = 'py'
+            name = 'py',
           },
           styl = {
             icon = ' ',
             color = '#8dc149',
-            name = 'styl'
+            name = 'styl',
           },
           ts = {
             icon = ' ',
             color = '#519aba',
-            name = 'ts'
+            name = 'ts',
           },
           tsx = {
             icon = ' ',
             color = '#519aba',
-            name = 'tsx'
+            name = 'tsx',
           },
           json = {
             icon = ' ',
             color = '#cbcb41',
-            name = 'json'
+            name = 'json',
           },
           yml = {
             icon = ' ',
             color = '#6d8086',
-            name = 'yml'
+            name = 'yml',
           },
           vue = {
             icon = ' ',
             color = '#8dc149',
-            name = 'vue'
-          }
-        }
+            name = 'vue',
+          },
+        },
       }
-    end
+    end,
   },
   -- bufferline has been slightly altered so it coexists easily with
   -- the nordtheme as well as PragmataPro icons
@@ -107,32 +87,65 @@ local plugins = {
     lazy = false,
     version = '*',
     dependencies = 'nvim-tree/nvim-web-devicons',
-    config = function ()
+    config = function()
       require('bufferline').setup {
         options = {
-          separator_style = 'thick',
+          separator_style = 'thin',
           diagnostics = 'nvim_lsp',
           close_icon = '⮾',
           buffer_close_icon = '⮾',
           indicator = {
-            style = 'underline'
+            style = 'none',
           },
           offsets = {
             {
               filetype = 'NvimTree',
               text = 'File Explorer',
               text_align = 'center',
-              separator = true
-            }
+              separator = true,
+            },
           },
         },
         highlights = {
           fill = {
-            bg = '#2a303c'
-          }
-        }
+            bg = '#2a303c', -- inactive titlebar
+          },
+          background = {
+            bg = '#1e222a', -- inactive tabs
+          },
+          close_button = {
+            bg = '#1e222a',
+            fg = '#777777',
+          },
+          buffer_selected = {
+            bg = '#1e222a',
+          },
+          close_button_selected = {
+            bg = '#1e222a',
+            fg = '#777777',
+          },
+          error = {
+            bg = '#1e222a', -- LSP error
+          },
+          error_selected = {
+            bg = '#1e222a',
+          },
+          indicator_selected = {
+            bg = '#1e222a', -- separator closest
+          },
+          modified = {
+            bg = '#1e222a',
+          },
+          modified_selected = {
+            bg = '#1e222a', -- save icon
+          },
+          separator = {
+            bg = '#2a303c', -- separator furthest
+            fg = '#2a303c', -- separator close
+          },
+        },
       }
-    end
+    end,
   },
   -- tui to walk through commits easily and view diffs in neovim
   {
@@ -141,30 +154,30 @@ local plugins = {
       'nvim-lua/plenary.nvim',
       'nvim-telescope/telescope.nvim',
       'sindrets/diffview.nvim',
-      'ibhagwan/fzf-lua'
+      'ibhagwan/fzf-lua',
     },
     keys = {
-      { "<leader>gs", "<cmd>Neogit<cr>", desc = "Toggle neogit visibility"}
+      { '<leader>gs', '<cmd>Neogit<cr>', desc = 'Toggle neogit visibility' },
     },
-    config = true
+    config = true,
   },
   -- underline similar words to that under the cursor
   {
     'rrethy/vim-illuminate',
-    lazy = false
+    lazy = false,
   },
   -- easymotion jumping
   {
     'smoka7/hop.nvim',
     version = '*',
     keys = {
-      { '<leader><leader>', ':HopPattern<CR>', 'Start easymotion/hop pattern jumping'}
+      { '<leader><leader>', ':HopPattern<CR>', 'Start easymotion/hop pattern jumping' },
     },
     config = function()
       require('hop').setup {
-        keys = 'etovxqpdygfblzhckisuran'
+        keys = 'etovxqpdygfblzhckisuran',
       }
-    end
+    end,
   },
   -- this allows the zooming in and out of windows with animations
   -- to help supplement native window creation
@@ -172,17 +185,17 @@ local plugins = {
     'anuvyklack/windows.nvim',
     dependencies = {
       'anuvyklack/middleclass',
-      'anuvyklack/animation.nvim'
+      'anuvyklack/animation.nvim',
     },
     keys = {
-      { '<leader>sz', ':WindowsMaximize<CR>', 'Size the current window to zoom to max' }
+      { '<leader>sz', ':WindowsMaximize<CR>', 'Size the current window to zoom to max' },
     },
     config = function()
       vim.o.minwidth = 10
       vim.o.winminwidth = 10
       vim.o.equalalways = false
       require('windows').setup()
-    end
+    end,
   },
   -- this hides the command bar on the bottom, and instead leverages neovims
   -- built-in hover panel features for a center command bar, as well as fancy
@@ -193,32 +206,32 @@ local plugins = {
     event = 'VeryLazy',
     dependencies = {
       'MunifTanjim/nui.nvim',
-      'rcarriga/nvim-notify'
+      'rcarriga/nvim-notify',
     },
     config = function()
       require('noice').setup {
         lsp = {
           hover = {
-            enabled = false -- handled by nvchad
+            enabled = false, -- handled by nvchad
           },
           signature = {
-            enabled = false -- handled by nvchad
+            enabled = false, -- handled by nvchad
           },
           override = {
             ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
             ['vim.lsp.util.stylize_markdown'] = true,
-            ['cmp.entry.get_documentation'] = true
-          }
+            ['cmp.entry.get_documentation'] = true,
+          },
         },
         presets = {
           bottom_search = true,
           command_palette = true,
           long_message_to_split = true,
           inc_rename = false,
-          lsp_doc_border = false
-        }
+          lsp_doc_border = false,
+        },
       }
-    end
+    end,
   },
   -- maintain a history of all yanks but set the default register to the global
   -- clipboard so we can easily swap in-and-out of neovim with other apps
@@ -226,9 +239,9 @@ local plugins = {
     'ackslD/nvim-neoclip.lua',
     config = function()
       require('neoclip').setup {
-        default_register = '"'
+        default_register = '"',
       }
-    end
+    end,
   },
   -- zen mode is helpful for presentations at work as well as peer programming
   -- for those with less experience with vim so it's less distracting
@@ -238,23 +251,23 @@ local plugins = {
     config = function()
       require('zen-mode').setup {
         window = {
-          width = 0.5
+          width = 0.5,
         },
         on_open = function()
           vim.opt.guifont = { 'PragmataPro', ':h20' }
         end,
         on_close = function()
           vim.opt.guifont = { 'PragmataPro', ':h16' }
-        end
+        end,
       }
-    end
+    end,
   },
   -- sometimes we forget what the hotkeys are, this leverages telescope
   -- plugin to pop-up hotkeys if only part of it was clicked, or after
   -- simply hitting the <leader> key
   {
     'folke/which-key.nvim',
-    disable = false
+    disable = false,
   },
   -- mostly simple webdev language support
   {
@@ -277,9 +290,31 @@ local plugins = {
         'scss',
         'typescript',
         'vue',
-        'yaml'
-      }
-    }
+        'yaml',
+      },
+    },
+  },
+  -- styling and linting tools to get us insight
+  {
+    'williamboman/mason.nvim',
+    opts = {
+      ensure_installed = {
+        'prettier', -- used by conform
+        'typescript-language-server', -- used by conform, lspconfig
+        'lua-language-server', -- used by conform, lspconfig
+      },
+    },
+  },
+  {
+    'stevearc/conform.nvim',
+    event = 'BufWritePre',
+    opts = require 'configs.conform',
+  },
+  {
+    'neovim/nvim-lspconfig',
+    config = function()
+      require 'configs.lspconfig'
+    end,
   },
   -- mainly the default nvimtree (neovim nerdtree) but a little bit bigger
   -- and default for showing all files nomatter what
@@ -291,25 +326,23 @@ local plugins = {
         respect_buf_cwd = true,
         update_focused_file = {
           enable = true,
-          update_root = true
+          update_root = true,
         },
         view = {
-          width = 50
+          width = 50,
         },
         renderer = {
-          highlight_git = true
+          highlight_git = true,
         },
         actions = {
           open_file = {
-            quit_on_open = true
-          }
+            quit_on_open = true,
+          },
         },
         filters = {
-          git_ignored = false
-        }
+          git_ignored = false,
+        },
       }
-    end
-  }
+    end,
+  },
 }
-
-return plugins
