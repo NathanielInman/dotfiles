@@ -424,8 +424,9 @@ Now for any other essentials for arch
 - `gtk-engine-murrine` helps with backwards-compatibility themes for gtk2
 - `flameshot` is a better screenshot utility than `scrot`
 - `gthumb` is the best tiny app for browsing images
+- `vscode-langservers-extracted` unlocks all lsp servers for neovim
 ```
-yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular cifs-utils usbutils peek thunar gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git qogir-icon-theme-git flameshot
+yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular cifs-utils usbutils peek thunar gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git qogir-icon-theme-git flameshot vscode-langservers-extracted
 ```
 Now open up `lxappearance` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
 You can now set any default applications you prefer:
