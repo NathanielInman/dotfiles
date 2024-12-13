@@ -111,10 +111,10 @@ return {
             bg = '#2a303c', -- inactive titlebar
           },
           background = {
-            bg = '#1e222a', -- inactive tabs
+            bg = '#2a303c', -- inactive tabs
           },
           close_button = {
-            bg = '#1e222a',
+            bg = '#2a303c',
             fg = '#777777',
           },
           buffer_selected = {
@@ -125,16 +125,21 @@ return {
             fg = '#777777',
           },
           error = {
-            bg = '#1e222a', -- LSP error
+            bg = '#2a303c', -- LSP error
+            fg = '#ffc0b9',
           },
           error_selected = {
             bg = '#1e222a',
+          },
+          hint = {
+            bg = '#2a303c',
+            fg = '#a6dbff',
           },
           indicator_selected = {
             bg = '#1e222a', -- separator closest
           },
           modified = {
-            bg = '#1e222a',
+            bg = '#2a303c',
           },
           modified_selected = {
             bg = '#1e222a', -- save icon
