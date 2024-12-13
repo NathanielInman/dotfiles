@@ -15,6 +15,17 @@ map('n', '<leader>zm', ':ZenMode<CR>', { desc = 'Toggle ZenMode' })
 map('n', '\\', ':NvimTreeToggle<CR>', { desc = 'Toggle NVim Tree' })
 map('n', '<leader>\\', ':NvimTreeFindFile<CR>', { desc = 'Toggle Tree & Open At File' })
 map('n', '<leader>cd', ':cd %:p:h<CR>:pwd<CR>')
+map('n', '<leader>cc', ':Shades<CR>', { desc = 'Color check shades' })
+map('n', '<leader>ch', ':Huefy<CR>', { desc = 'Color check hues' })
+map({ 'n', 'v' }, '<RightMouse>', function()
+  vim.cmd.exec '"normal! \\<RightMouse>"'
+
+  require('plenary.reload').reload_module 'menus'
+  require('plenary.reload').reload_module 'menu'
+
+  local options = vim.bo.ft == 'NvimTree' and 'nvimtree' or 'default'
+  require('menu').open(options, { mouse = true })
+end, {})
 
 -- Windows
 map('n', '<leader>nj', ':rightbelow sb #<CR>', { desc = 'Open window to the bottom' })
