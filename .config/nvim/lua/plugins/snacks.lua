@@ -32,7 +32,7 @@ return {
         desc = 'Toggle Zen Mode',
       },
       {
-        '<leader>Z',
+        '<leader>mz',
         function()
           Snacks.zen.zoom()
         end,

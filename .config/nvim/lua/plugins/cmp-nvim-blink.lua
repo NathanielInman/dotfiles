@@ -79,6 +79,23 @@ return {
           enabled = vim.g.ai_cmp,
         },
       },
+      -- https://github.com/Saghen/blink.cmp/blob/main/docs/configuration/keymap.md
+      keymap = {
+        preset = 'default',
+        ['<Tab>'] = {
+          function(cmp)
+            if cmp.snippet_active() then
+              return cmp.accept()
+            else
+              return cmp.select_and_accept()
+            end
+          end,
+          'snippet_forward',
+          'fallback',
+        },
+        ['<Up>'] = { 'select_prev', 'fallback' },
+        ['<Down>'] = { 'select_next', 'fallback' },
+      },
       signature = { enabled = true },
       sources = {
         default = { 'lsp', 'path', 'snippets', 'buffer' },
