@@ -46,8 +46,7 @@ assign [class="Streamdeck UI"] $ws2
 assign [class="streamdeck"] $ws2
 assign [class="zoom"] $ws2
 assign [class="Slack"] $ws2
-assign [class="neovide"] $ws4
-assign [class="obsidian"] $ws5
+assign [class="Discord"] $ws2
 
 # This is a fix for zooms annotation window when sharing
 exec --no-startup-id xcompmgr -c -l0 -t0 -r0 -o.00
@@ -66,11 +65,13 @@ exec --no-startup-id sh -c 'xrandr --output DP-2 --right-of DP-0'
 
 # Open up preconfigured workspaces
 exec --no-startup-id i3-msg 'workspace 1; exec google-chrome-stable gmail.com --restore-last-session'
-exec --no-startup-id i3-msg 'workspace 2; layout stacking; exec /home/nate/.local/bin/streamdeck; exec pagraphcontrol --no-sandbox; exec flameshot; exec zoom; exec slack'
+exec --no-startup-id i3-msg 'workspace 2; layout stacking; exec pagraphcontrol --no-sandbox; exec flameshot; exec zoom; exec slack; exec discord'
 exec --no-startup-id i3-msg 'workspace 3; exec kitty'
-exec --no-startup-id i3-msg 'workspace 4; exec kitty --directory ~/Sites; exec neovide ~/Sites/dot-files/README.md'
-exec --no-startup-id i3-msg 'workspace 5; exec obsidian'
 exec --no-startup-id i3-msg 'workspace 6; exec kitty -e vit'
+
+exec --no-startup-id sh -c 'sleep 2; i3-msg "workspace 4; exec neovide ~/Sites/dot-files/README.md"'
+exec --no-startup-id sh -c 'sleep 5; i3-msg "workspace 5; exec neovide ~/Sites/notes/digitalturbine/dt_frontend_todos.md"'
+exec --no-startup-id sh -c 'sleep 10; i3-msg "workspace 2; exec /home/nate/.local/bin/streamdeck"'
 
 # A few moments after launch we need to drop urgency on started windows
 # this removes the workspace error highlighting on startup
