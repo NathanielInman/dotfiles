@@ -12,6 +12,10 @@ local opt = vim.opt
 -- belloff=all is default in neovim
 -- mouse=a default
 opt.guifont = 'PragmataPro Liga:h16'
+
+-- enable list mode and swap some normally hidden chars
+-- for those that can help distinguish between them
+-- for identifying compiler errors or other anomalies
 opt.list = true
 opt.listchars = {
   eol = '¬',
@@ -23,10 +27,23 @@ opt.listchars = {
   precedes = '…',
   conceal = '‡',
 }
+
+-- highlight the matched bracket
 opt.showmatch = true
+
+-- smartly ignore case restrictions in the case ignorecase is on
+-- and search includes a capitalized character
 opt.smartcase = true
+
+-- enable relative line numbers
 opt.relativenumber = true
+
+-- make sure the cursor isn't at the end of screen when scrolling
+opt.scrolloff = 15
+
+-- the only configuration parameter that matters
 vim.g.mapleader = ' '
+
 -- vim.api.nvim_exec('language en_US.UTF-8', true)
 vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { underline = true })
 vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { underline = true })
