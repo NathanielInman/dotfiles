@@ -56,10 +56,13 @@ map('n', '<leader>mf', '<CMD>WindowsMaximize<CR>', { desc = 'Toggle focus the cu
 
 -- Buffers
 map('n', '<leader>bn', ':new<CR>', { desc = 'Create a new buffer tab' })
-map('n', '<leader>bl', ':bnext<CR>', { desc = 'Goto next buffer tab' })
-map('n', '<leader>bh', ':bprevious<CR>', { desc = 'Goto previous buffer tab' })
+map('n', '<leader>bl', function()
+  require('nvchad.tabufline').next()
+end, { desc = 'Goto next buffer tab' })
+map('n', '<leader>bh', function()
+  require('nvchad.tabufline').prev()
+end, { desc = 'Goto previous buffer tab' })
 map('n', '<leader>bq', ':Bdelete<CR>', { desc = 'Quit current buffer tab' })
-map('n', '<leader>bp', ':bp<CR>', { desc = 'Choose a buffer to jump to' })
 map('n', '<leader>bs', ':FzfLua buffers<CR>', { desc = 'List buffer tabs' })
 
 -- LSP Mappings
