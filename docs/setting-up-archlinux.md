@@ -390,6 +390,7 @@ Now for any other essentials for arch
 - `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
 - `vit` is a TUI for taskwarrior
 - `ncdu` NCurses Disk Usage shows what files/folders are occupying how much space
+- `lazygit` is tui controls for beautiful git as well as nvim
 - `glow` is for cating out or reading markdown files in terminal
 - `glances` is better version of `top` command (we alias it instead in .zshrc)
 - `procs` is a better version of `ps` command (we alias it instead in .zshrc)
@@ -426,7 +427,7 @@ Now for any other essentials for arch
 - `gthumb` is the best tiny app for browsing images
 - `vscode-langservers-extracted` unlocks all lsp servers for neovim
 ```
-yay -S slack-desktop pagraphcontrol-git feh handlr ttf-joypixels ncdu nsxi zathura zathura-pdf-poppler mpv tabbed glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular cifs-utils usbutils peek thunar gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git qogir-icon-theme-git flameshot vscode-langservers-extracted
+yay -S gpick slack-desktop feh file-roller pagraphcontrol-git ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils peek thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine flameshot gthumb vscode-langservers-extracted
 ```
 Now open up `lxappearance` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
 You can now set any default applications you prefer:
