@@ -384,6 +384,7 @@ cargo install rusti-cal melt tidy-viewer pueue
 Now for any other essentials for arch
 - `gpick` color picker
 - `slack-desktop` for work, quite a bit better than regular browser version
+- `discord` for games and communication with friends and family
 - `feh` is an image viewer also used for backgrounds
 - `file-roller` is an gui archive manager, although mostly `tar` on cli, nice to have
 - `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
@@ -427,7 +428,7 @@ Now for any other essentials for arch
 - `gthumb` is the best tiny app for browsing images
 - `vscode-langservers-extracted` unlocks all lsp servers for neovim
 ```
-yay -S gpick slack-desktop feh file-roller pagraphcontrol-git ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils peek thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine flameshot gthumb vscode-langservers-extracted
+yay -S gpick slack-desktop discord feh file-roller pagraphcontrol-git ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils peek thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine flameshot gthumb vscode-langservers-extracted
 ```
 Now open up `lxappearance` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
 You can now set any default applications you prefer:
