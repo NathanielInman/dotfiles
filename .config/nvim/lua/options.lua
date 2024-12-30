@@ -48,3 +48,21 @@ vim.g.mapleader = ' '
 vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { underline = true })
 vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { underline = true })
 vim.api.nvim_set_hl(0, 'IlluminatedWordText', { underline = true })
+
+-- neovim terminal colors
+vim.g.terminal_color_0 = '#3b4252'
+vim.g.terminal_color_1 = '#bf616a'
+vim.g.terminal_color_2 = '#a3be8c'
+vim.g.terminal_color_3 = '#ebcb8b'
+vim.g.terminal_color_4 = '#81a1c1'
+vim.g.terminal_color_5 = '#b48ead'
+vim.g.terminal_color_6 = '#88c0d0'
+vim.g.terminal_color_7 = '#e5e9f0'
+vim.g.terminal_color_8 = '#4c566a'
+vim.g.terminal_color_9 = '#bf616a'
+vim.g.terminal_color_10 = '#a3be8c'
+vim.g.terminal_color_11 = '#ebcb8b'
+vim.g.terminal_color_12 = '#81a1c1'
+vim.g.terminal_color_13 = '#b48ead'
+vim.g.terminal_color_14 = '#8fbcbb'
+vim.g.terminal_color_15 = '#eceff4'

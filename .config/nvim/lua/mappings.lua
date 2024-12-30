@@ -65,5 +65,11 @@ end, { desc = 'Goto previous buffer tab' })
 map('n', '<leader>bq', ':Bdelete<CR>', { desc = 'Quit current buffer tab' })
 map('n', '<leader>bs', ':FzfLua buffers<CR>', { desc = 'List buffer tabs' })
 
+-- Terminals
+map('t', '<C-j>', '<C-\\><C-n><C-w>j', { desc = 'Jump from terminal to window below' })
+map('t', '<C-l>', '<C-\\><C-n><C-w>l', { desc = 'Jump from terminal to right window' })
+map('t', '<C-h>', '<C-\\><C-n><C-w>h', { desc = 'Jump from terminal to left window' })
+map('t', '<C-k>', '<C-\\><C-n><C-w>k', { desc = 'Jump from terminal to window above' })
+
 -- LSP Mappings
 map('n', 'gD', vim.lsp.buf.declaration, { desc = 'Go to declaration' })
