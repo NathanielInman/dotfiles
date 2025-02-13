@@ -37,8 +37,8 @@ alias llm='ll --sort=modified' # list, long, sort by modification date
 alias la='ls -lbhHigUmuSa' # all list
 alias lx='ls -lbhHigUmuSa@' # all list and extended
 alias lS='exa -1' # just names
-alias search='rg -F'
-alias searchAround='rg -C'
+alias search='rg -F --hidden --max-columns=120'
+alias searchAround='rg --hidden --max-columns=120 -C'
 alias tree='broot -c :pt "$@" -sdp'
 alias cat='bat'
 alias rvimtmp='rm -i `find . | grep .swp$`'
@@ -75,13 +75,6 @@ close () {
   fi
 }
 
-# we want to use brew on OSX, and keep broot config only on Arch
-if uname -a | grep -q 'Darwin'; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-else
-  source /home/nate/.config/broot/launcher/bash/br
-fi
-
 # Plugin bootstraps
 eval "$(zoxide init zsh)"
 eval "$(pyenv init -)"
@@ -93,4 +86,9 @@ alias au-mardios='ssh nate@159.203.80.149 -t "tmux attach -t adventuresunlimited
 alias lightson='keylightctl switch --light 8A95 on & keylightctl switch --light 9F74 on'
 alias lightsoff='keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off'
 
-source /home/nate/.config/broot/launcher/bash/br
+# we want to use brew on OSX, and keep broot config only on Arch
+if uname -a | grep -q 'Darwin'; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+  source /home/nate/.config/broot/launcher/bash/br
+fi
