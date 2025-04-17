@@ -4,7 +4,9 @@ return {
     ft = 'json',
     dependencies = 'MunifTanjim/nui.nvim',
     config = function()
-      require('package-info').setup {}
+      require('package-info').setup {
+        package_manager = 'pnpm',
+      }
     end,
   },
 }
