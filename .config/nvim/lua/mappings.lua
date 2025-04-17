@@ -73,3 +73,6 @@ map('t', '<C-k>', '<C-\\><C-n><C-w>k', { desc = 'Jump from terminal to window ab
 
 -- LSP Mappings
 map('n', 'gD', vim.lsp.buf.declaration, { desc = 'Go to declaration' })
+
+-- Markdown
+map('n', '<leader>mt', ':RenderMarkdown toggle<CR>', { desc = 'Toggle markdown preview' })
