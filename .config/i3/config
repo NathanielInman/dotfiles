@@ -264,6 +264,23 @@ for_window [class="kitty-floating"] floating enabled
 for_window [class="gnome-calendar"] floating enabled
 for_window [class="Yad"] floating enabled
 
+# Prevent zoom from taking focus
+for_window [class="(.*join\?action\=join.*|.*zoom.*)"] floating disable
+for_window [class="(.*join\?action\=join.*|.*zoom.*)" title="Zoom - Licensed Account"] floating disable
+for_window [class="(.*join\?action\=join.*|.*zoom.*)" title="Zoom - Free Account"] floating disable
+for_window [class="(.*join\?action\=join.*|.*zoom.*)" title="Zoom Webinar"] floating disable
+for_window [class="(.*join\?action\=join.*|.*zoom.*)" title="Zoom Meeting"] floating disable
+for_window [class="(.*join\?action\=join.*|.*zoom.*)" title="Meeting"] floating disable
+
+# Prevent zoom from grabbing mouse attention on the second monitor with chats
+no_focus [class="(.*join\?action\=join.*|.*zoom.*)"]
+no_focus [class="(.*join\?action\=join.*|.*zoom.*)" title="Zoom Workplace - Licensed account"]
+no_focus [class="(.*join\?action\=join.*|.*zoom.*)" title="Zoom - Licensed Account"]
+no_focus [class="(.*join\?action\=join.*|.*zoom.*)" title="Zoom - Free Account"]
+no_focus [class="(.*join\?action\=join.*|.*zoom.*)" title="Zoom Meeting"]
+no_focus [class="(.*join\?action\=join.*|.*zoom.*)" title="Zoom Webinar"]
+no_focus [class="(.*join\?action\=join.*|.*zoom.*)" title="Meeting"]
+
 # default gaps
 gaps inner 8
 gaps outer 0
