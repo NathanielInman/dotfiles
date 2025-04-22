@@ -192,6 +192,7 @@ Now for installing windowmanager stuff (i3)
 - `ttf-jetbrains-mono` additional fallback fonts
 - `ttf-jetbrains-mono-nerd` additional fallback fonts
 - `polybar` - better version of i3bar for X
+- `bc` - tiny precision calculator used for netstats averaging
 - `sysstat` - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
 - `acpi` - client for battery, power & thermal readings
 - `xrandr` - monitor setup with rotation, screen location etc
