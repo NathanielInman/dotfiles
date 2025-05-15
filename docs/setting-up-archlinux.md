@@ -180,7 +180,7 @@ Now for installing windowmanager stuff (i3)
 - `i3-gaps` - spaces between windows/containers on i3wm
 - `rofi` - hotkey app opener overlay, alternative to dmenu & ulauncher
 - `dunst` - notification display app
-- `kitty` - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
+- `wezterm` - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
 - `sddm` - simple desktop display manager to support i3
 - `network-manager-applet` - gui layer for managing network apps & vpn
 - `gnome-calendar` - allows viewing of gnome calendar through polybar
@@ -199,7 +199,7 @@ Now for installing windowmanager stuff (i3)
 - `xdg-user-dirs` - help ensure well-known user directories are created automatically
 - `xdg-utils` - for helpful things such as mime detection
 ```
-Pacman -S xorg xorg-server xorg-xinit xorg-xdpyinfo i3-gaps rofi kitty sddm network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd polybar sysstat acpi xrandr xdg-user-dirs xdg-utils
+Pacman -S xorg xorg-server xorg-xinit xorg-xdpyinfo i3-gaps rofi wezterm sddm network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd polybar sysstat acpi xrandr xdg-user-dirs xdg-utils
 ```
 Then enable `sddm`:
 ```
@@ -389,7 +389,7 @@ Now for any other essentials for arch
 - `feh` is an image viewer also used for backgrounds
 - `file-roller` is an gui archive manager, although mostly `tar` on cli, nice to have
 - `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
-- `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
+- `ttf-joypixels` adds support for emoji's within wezterm terminal and elsewhere
 - `vit` is a TUI for taskwarrior
 - `ncdu` NCurses Disk Usage shows what files/folders are occupying how much space
 - `lazygit` is tui controls for beautiful git as well as nvim
