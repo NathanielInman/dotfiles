@@ -116,7 +116,7 @@
                                 "icon": "/home/nate/Pictures/network-list.svg",
                                 "keys": "",
                                 "write": "",
-                                "command": "bash -c \"kitty --class kitty-floating --config ~/.config/kitty/kitty.conf -d ~ --hold sh -c \\\"openvpn3 sessions-list\\\"\"",
+                                "command": "bash -c \"wezterm --class float -d ~ --hold sh -c \\\"openvpn3 sessions-list\\\"\"",
                                 "brightness_change": 0,
                                 "switch_page": 0,
                                 "switch_state": 0,

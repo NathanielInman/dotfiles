@@ -66,8 +66,8 @@ exec --no-startup-id sh -c 'xrandr --output DP-2 --right-of DP-0'
 # Open up preconfigured workspaces
 exec --no-startup-id i3-msg 'workspace 1; exec google-chrome-stable gmail.com --restore-last-session'
 exec --no-startup-id i3-msg 'workspace 2; layout stacking; exec pagraphcontrol --no-sandbox; exec flameshot; exec zoom; exec slack; exec discord'
-exec --no-startup-id i3-msg 'workspace 3; exec kitty'
-exec --no-startup-id i3-msg 'workspace 6; exec kitty -e vit'
+exec --no-startup-id i3-msg 'workspace 3; exec wezterm'
+exec --no-startup-id i3-msg 'workspace 6; exec wezterm -e vit'
 
 exec --no-startup-id sh -c 'sleep 2; i3-msg "workspace 4; exec neovide ~/Sites/dot-files/README.md"'
 exec --no-startup-id sh -c 'sleep 5; i3-msg "workspace 5; exec neovide ~/Sites/notes/digitalturbine/dt_frontend_todos.md"'
@@ -103,10 +103,10 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 floating_modifier $mod
 
 # start a floating terminal with nothing open
-bindsym $mod+t exec --no-startup-id kitty --class kitty-floating --config ~/.config/kitty/kitty.conf
+bindsym $mod+t exec --no-startup-id wezterm --class float
 
 # start a terminal with nothing open
-bindsym $mod+Return exec --no-startup-id kitty --config ~/.config/kitty/kitty.conf
+bindsym $mod+Return exec --no-startup-id wezterm
 
 # start a terminal with vim open (scratchpad)
 bindsym $mod+v exec xdg-open "$(rg --no-messages --files ~/Sites | rofi -threads 0 -dmenu -sort --sorting-method fzf -i -p "find")"
@@ -259,8 +259,8 @@ popup_during_fullscreen smart
 default_border pixel 3
 for_window [class="^.*"] border pixel 3
 
-# Allow kitty to be floated
-for_window [class="kitty-floating"] floating enabled
+# Allow terminal and others to be floated
+for_window [class="float"] floating enabled
 for_window [class="gnome-calendar"] floating enabled
 for_window [class="Yad"] floating enabled
 
