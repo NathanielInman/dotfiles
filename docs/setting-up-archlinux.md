@@ -670,6 +670,10 @@ xdg-mime query default mimetype
 
 If something isn't within your `~/.config/mimeapps.list` then `xdg-open` will look in `/usr/share/applications/mimeinfo.cache`
 
+## Make shutdown and reboot faster
+
+add `use_lvmetad = 0` to `/etc/lvm/lvm.conf`
+
 ## Setting up Titan Security Key
 
 First validate udev is over version 188 with `sudo udevadm --version`, and if so in `sudo vim /etc/udev/rules.d/70-titan-key.rules`:
