@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Actions:
+# CTRL Del to delete an entry
+# ALT Del to wipe clipboard contents
+
+while true; do
+  result=$(
+    rofi -dmenu \
+      -kb-custom-1 "Control-Delete" \
+      -kb-custom-2 "Alt-Delete" \
+      -config ~/.config/rofi/config.rasi < <(cliphist list | sort -n)
+  )
+
+  case "$?" in
+    1)
+      exit
+      ;;
+    0)
+      case "$result" in
+        "")
+          continue
+          ;;
+        *)
+          cliphist decode <<<"$result" | xsel --clipboard --input
+          exit
+          ;;
+      esac
+      ;;
+    10)
+      cliphist delete <<<"$result"
+      ;;
+    11)
+      cliphist wipe
+      ;;
+  esac
+done
