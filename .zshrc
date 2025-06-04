@@ -24,6 +24,8 @@ plugins=(git history zsh-syntax-highlighting zsh-autosuggestions fzf)
 source $HOME/.oh-my-zsh/oh-my-zsh.sh
 
 # My aliases
+alias vim='nvim' # old habits die hard
+alias vi='nvim' # older habits die even harder
 alias p='pnpm' # pnpm is so difficult for the fingers
 alias yay='paru' # paru is rust, yay is go. alias due to muscle memory
 alias yeet='paru -Rcs' # always forget remove flags
@@ -49,7 +51,7 @@ alias pbcopy='xsel --clipboard --input' # pbcopy < ./filename.txt (pb stands for
 alias pbpaste='xsel --clipboard --output' # pbpaste > ./filename.txt
 alias calendar='rusti-cal'
 alias cal='rusti-cal'
-alias weather='curl v2d.wttr.in'
+alias weather='curl https://v2d.wttr.in/~oak+grove+missouri'
 alias has="curl -sL https://git.io/_has | bash -s" # dependency checker to validate versions
 alias ps="procs"
 alias dict="sdcv"
