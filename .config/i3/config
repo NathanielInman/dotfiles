@@ -42,11 +42,9 @@ set $ws10 "10"
 # assign default workspaces for certain apps
 assign [class="Google-chrome"] $ws1
 assign [class="pagraphcontrol"] $ws2
-assign [class="Streamdeck UI"] $ws2
-assign [class="streamdeck"] $ws2
 assign [class="zoom"] $ws2
 assign [class="Slack"] $ws2
-assign [class="Discord"] $ws2
+assign [class="Discord"] $ws3
 
 # This is a fix for zooms annotation window when sharing
 exec --no-startup-id xcompmgr -c -l0 -t0 -r0 -o.00
@@ -65,13 +63,12 @@ exec --no-startup-id sh -c 'xrandr --output DP-2 --right-of DP-0'
 
 # Open up preconfigured workspaces
 exec --no-startup-id i3-msg 'workspace 1; exec google-chrome-stable gmail.com --restore-last-session'
-exec --no-startup-id i3-msg 'workspace 2; layout stacking; exec pagraphcontrol --no-sandbox; exec flameshot; exec zoom; exec slack; exec discord'
-exec --no-startup-id i3-msg 'workspace 3; exec wezterm'
-exec --no-startup-id i3-msg 'workspace 6; exec wezterm -e vit'
+exec --no-startup-id i3-msg 'workspace 2; layout stacking; exec pagraphcontrol --no-sandbox; exec flameshot; exec zoom; exec slack'
+exec --no-startup-id i3-msg 'workspace 3; exec discord'
+exec --no-startup-id i3-msg 'workspace 6; exec wezterm start -e vit'
 
-exec --no-startup-id sh -c 'sleep 2; i3-msg "workspace 4; exec neovide ~/Sites/dot-files/README.md"'
-exec --no-startup-id sh -c 'sleep 5; i3-msg "workspace 5; exec neovide ~/Sites/notes/digitalturbine/dt_frontend_todos.md"'
-exec --no-startup-id sh -c 'sleep 10; i3-msg "workspace 2; exec /home/nate/.local/bin/streamdeck"'
+exec --no-startup-id sh -c 'sleep 2; i3-msg "workspace 4; exec neovide ~/.zshrc"'
+exec --no-startup-id sh -c 'sleep 5; i3-msg "workspace 5; exec neovide ~/Sites/notes/dt_frontend_todos.md"'
 
 # A few moments after launch we need to drop urgency on started windows
 # this removes the workspace error highlighting on startup
@@ -103,7 +100,7 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 floating_modifier $mod
 
 # start a floating terminal with nothing open
-bindsym $mod+t exec --no-startup-id wezterm --class float
+bindsym $mod+t exec --no-startup-id wezterm start --class float
 
 # start a terminal with nothing open
 bindsym $mod+Return exec --no-startup-id wezterm
