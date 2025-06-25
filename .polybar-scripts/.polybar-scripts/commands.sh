@@ -54,3 +54,4 @@ yad --width=$dynamic_width --height=$dynamic_height \
 "pueue" "shell execution queue tool" \
 "feh" "image viewer tool" \
 "bandwhich" "bandwidth utilization monitor" \
+"vfox" "aternative to asdf that manages prog lang tools" \
