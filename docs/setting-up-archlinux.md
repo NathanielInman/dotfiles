@@ -548,9 +548,10 @@ Now for any other essentials for arch
 - `gthumb` is the best tiny app for browsing images
 - `vscode-langservers-extracted` unlocks all lsp servers for neovim
 - `inxi` is a system information tool that shows everything in one place, like HWiNFO for windows
+- `vfox` is a version management tool for multiple programming languages
 
 ```
-yay -S gpick slack-desktop discord feh file-roller pagraphcontrol-git ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils peek thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine flameshot gthumb vscode-langservers-extracted inxi
+yay -S gpick slack-desktop discord feh file-roller pagraphcontrol-git ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils peek thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine flameshot gthumb vscode-langservers-extracted inxi vfox
 ```
 
 Now open up `lxappearance` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
