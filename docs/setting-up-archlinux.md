@@ -415,11 +415,12 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `curl` helps make web requests from the command line
 - `wget` command helps acquire data from the web via the command line
 - `diff-so-fancy` helps make cli `git diff` look good (automatic)
-- `exa` is prettier version of `ls` command (we alias it instead in .zshrc)
+- `eza` is prettier version of `ls` command (we alias it instead in .zshrc)
 - `bat` is prettier version of `cat` command (we alias it instead in .zshrc)
 - `fd` is aliased in .zshrc as `searchFiles` and finds within directories filenames
 - `ripgrep` looks within files for strings
 - `git` is basic requirement for version control
+- `git-delta` by dandavison is an amazing pager tool for git diffs
 - `zsh` will be our default shell
 - `python-pip` will give us pip for python package management
 - `pyenv` python version manager and virtual environment
@@ -433,9 +434,10 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `jq` is a command-line JSON processor
 
 ```
-yay -S curl wget diff-so-fancy exa bat fd ripgrep git zsh python-pip pyenv xsel task scc duf bandwhich fkill gping jq
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git zsh python-pip pyenv xsel task scc duf bandwhich fkill gping jq
 ```
 
+Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
 Now copy the xscreensaver service to systemd for the user and enable it, it will start on next restart
 
 ```
@@ -549,9 +551,11 @@ Now for any other essentials for arch
 - `vscode-langservers-extracted` unlocks all lsp servers for neovim
 - `inxi` is a system information tool that shows everything in one place, like HWiNFO for windows
 - `vfox` is a version management tool for multiple programming languages
+- `yazi` a faster version of `nnn` with simple controls (file viewer on cli)
+- `fselect` is a SQL-like querying tool for the filesystem
 
 ```
-yay -S gpick slack-desktop discord feh file-roller pagraphcontrol-git ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils peek thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine flameshot gthumb vscode-langservers-extracted inxi vfox
+yay -S gpick slack-desktop discord feh file-roller pagraphcontrol-git ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils peek thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine flameshot gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
 Now open up `lxappearance` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
