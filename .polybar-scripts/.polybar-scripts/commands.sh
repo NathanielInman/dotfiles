@@ -55,3 +55,5 @@ yad --width=$dynamic_width --height=$dynamic_height \
 "feh" "image viewer tool" \
 "bandwhich" "bandwidth utilization monitor" \
 "vfox" "aternative to asdf that manages prog lang tools" \
+"fselect" "SQL-like file search, fselect name where name ~= 'nate'"
+"yazi" "a better version of nnn as a file browser"
