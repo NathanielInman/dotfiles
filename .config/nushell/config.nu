@@ -52,7 +52,7 @@ alias lx = eza -lbhHigUmuSa@ # all list and extended
 alias lS = eza -1 # just names
 alias search = rg -F --hidden --max-columns=120
 alias searchAround = rg --hidden --max-columns=120 -C
-alias tree = broot -sdp
+alias tree = broot -c :pt "#@" -sdp
 alias cat = bat
 alias rvimtmp = rm -i `find . | grep .swp$`
 alias searchFiles = fd
@@ -60,7 +60,7 @@ alias du = ncdu --color dark -rr -x --exclude .git --exclude node_modules
 alias top = glances
 alias calendar = rusti-cal
 alias cal = calendar
-alias weather = curl https://v2d.wttr.in/~oak+grove+missouri
+alias weather = curl https://v2d.wttr.in/~oak+grove+missouri?u
 alias has = curl -sL https://git.io/_has | bash -s
 alias ps = procs
 alias dict = sdcv

@@ -385,9 +385,8 @@ mkdir ~/Pictures #will hold backgrounds etc
 Now grab all of the dot files
 
 ```
-cd ~/Sites
-git clone https://github.com/nathanielinman/dot-files.git
-stow --dir=~=Sites/dot-files --target=~/
+cd ~/Sites && git clone https://github.com/nathanielinman/dot-files.git
+stow . --target=/home/nate
 ```
 
 if at any point you want to remove the symlinks `stow -D .` from within the source repo folder
