@@ -18,7 +18,6 @@ export EDITOR=/usr/bin/neovide
 export SPLIT='v' # split kitty vertically
 
 # Variable declaration used by oh-my-zsh
-ZSH_THEME="pragmata"
 HIST_STAMPS="dd.mm.yyyy"
 plugins=(git history zsh-syntax-highlighting zsh-autosuggestions fzf)
 
@@ -53,7 +52,7 @@ alias pbcopy='xsel --clipboard --input' # pbcopy < ./filename.txt (pb stands for
 alias pbpaste='xsel --clipboard --output' # pbpaste > ./filename.txt
 alias calendar='rusti-cal'
 alias cal='calendar'
-alias weather='curl https://v2d.wttr.in/~oak+grove+missouri?u'
+alias weather='curl https://v2d.wttr.in/~oak+grove+missouri'
 alias has="curl -sL https://git.io/_has | bash -s" # dependency checker to validate versions
 alias ps="procs"
 alias dict="sdcv"
@@ -102,3 +101,4 @@ fi
 . "$HOME/.atuin/bin/env"
 
 eval "$(atuin init zsh)"
+eval "$(starship init zsh)"
