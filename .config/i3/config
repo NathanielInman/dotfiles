@@ -44,7 +44,7 @@ assign [class="Google-chrome"] $ws1
 assign [class="pagraphcontrol"] $ws2
 assign [class="zoom"] $ws2
 assign [class="Slack"] $ws2
-assign [class="Discord"] $ws3
+assign [class="discord"] $ws3
 
 # This is a fix for zooms annotation window when sharing
 exec --no-startup-id xcompmgr -c -l0 -t0 -r0 -o.00
@@ -65,7 +65,6 @@ exec --no-startup-id sh -c 'xrandr --output DP-2 --right-of DP-0'
 exec --no-startup-id i3-msg 'workspace 1; exec google-chrome-stable gmail.com --restore-last-session'
 exec --no-startup-id i3-msg 'workspace 2; layout stacking; exec pagraphcontrol --no-sandbox; exec flameshot; exec zoom; exec slack'
 exec --no-startup-id i3-msg 'workspace 3; exec discord'
-exec --no-startup-id i3-msg 'workspace 6; exec wezterm start -e vit'
 
 exec --no-startup-id sh -c 'sleep 2; i3-msg "workspace 4; exec neovide ~/.zshrc"'
 exec --no-startup-id sh -c 'sleep 5; i3-msg "workspace 5; exec neovide ~/Sites/notes/dt_frontend_todos.md"'
