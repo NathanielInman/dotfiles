@@ -1,4 +1,5 @@
 return {
+  ---@class snacks.Config
   {
     'folke/snacks.nvim',
     priority = 1000,
@@ -21,6 +22,9 @@ return {
         notification = {
           -- wo = { wrap = true } -- Wrap notifications
         },
+      },
+      picker = {
+        ui_select = true,
       },
     },
     keys = {

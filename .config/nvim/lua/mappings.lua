@@ -3,7 +3,6 @@ local map = vim.keymap.set
 -- Core
 map('n', '<leader>L', ':Lazy<CR>', { desc = 'Open lazy plugin manager' })
 map('n', '<leader>T', ':FzfLua<CR>', { desc = 'Toggle main telescope window' })
-map('n', '<leader>zm', ':ZenMode<CR>', { desc = 'Toggle ZenMode' })
 map('n', '\\', ':NvimTreeToggle<CR>', { desc = 'Toggle NVim Tree' })
 map('n', '<leader>\\', ':NvimTreeFindFile<CR>', { desc = 'Toggle Tree & Open At File' })
 map('n', '<leader>cd', ':cd %:p:h<CR>:pwd<CR>')
@@ -13,6 +12,14 @@ map('n', '<leader>ff', ':FzfLua files<CR>', { desc = 'Find files with fzf' })
 map('n', '<leader>fl', ':FzfLua files<CR>', { desc = 'Find lines with fzf' })
 
 -- Menus
+map('n', '<Esc>', function()
+  local api = require 'nvim-tree.api'
+  local is_open = api.tree.is_visible()
+
+  if is_open then
+    api.tree.close()
+  end
+end, { desc = 'Escape Nvim Tree' })
 map({ 'n', 'v' }, '<RightMouse>', function()
   vim.cmd.exec '"normal! \\<RightMouse>"'
 

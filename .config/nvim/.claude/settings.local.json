@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(prettier --help:*)",
+      "Bash(~/.local/share/nvim/mason/bin/prettier:*)",
+      "Bash(nvim:*)",
+      "Bash(cat:*)",
+      "Bash(rsync:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

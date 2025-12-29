@@ -6,6 +6,7 @@ return {
     config = function()
       require('package-info').setup {
         package_manager = 'pnpm',
+        notifications = false,
       }
     end,
   },

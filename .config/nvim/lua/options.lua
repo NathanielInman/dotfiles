@@ -2,6 +2,9 @@ require 'nvchad.options'
 
 local opt = vim.opt
 
+-- Disable neovim's built-in markdown 4-space indentation
+vim.g.markdown_recommended_style = 0
+
 -- Start general configurations
 -- autoindent is default to on in neovim
 -- backspace=indent,eol,start is default on neovim
@@ -28,6 +31,9 @@ opt.listchars = {
   conceal = '‡',
 }
 
+-- views can only be fully collapsed with the global statusline
+opt.laststatus = 3
+
 -- highlight the matched bracket
 opt.showmatch = true
 
@@ -40,6 +46,9 @@ opt.relativenumber = true
 
 -- make sure the cursor isn't at the end of screen when scrolling
 opt.scrolloff = 15
+
+-- ensure when sessions are loaded all settings are loaded
+opt.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal'
 
 -- the only configuration parameter that matters
 vim.g.mapleader = ' '

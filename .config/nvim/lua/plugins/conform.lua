@@ -13,12 +13,12 @@ return {
         css = { 'prettier' },
         scss = { 'prettier' },
         html = { 'prettier' },
-        json = { 'prettier' },
+        json = { 'jq' },
         vue = { 'prettier' },
       },
       formatters = {
         prettier = {
-          prepend_args = { '--print-width 80' },
+          prepend_args = { '--print-width', '80', '--bracket-same-line', 'false', '--single-attribute-per-line', '--tab-width', '2' },
         },
       },
       format_on_save = {

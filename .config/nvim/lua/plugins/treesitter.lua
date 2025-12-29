@@ -12,6 +12,7 @@ return {
         'html',
         'javascript',
         'lua',
+        'elixir',
         'vim',
         'markdown',
         'markdown_inline',

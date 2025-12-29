@@ -1,7 +1,7 @@
 return {
   base46 = {
     theme = 'onedark',
-    theme_toggle = { 'onedark', 'ayu_dark' },
+    theme_toggle = { 'onedark', 'github_light' },
     hl_override = {
       Comment = { italic = true },
       ['@comment'] = { italic = true },

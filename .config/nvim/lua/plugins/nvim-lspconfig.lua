@@ -3,7 +3,6 @@ return {
   {
     'neovim/nvim-lspconfig',
     config = function()
-      local lspconfig = require 'lspconfig'
       local nvlsp = require 'nvchad.configs.lspconfig'
       local map = vim.keymap.set
 
@@ -25,7 +24,7 @@ return {
         map('n', '<leader>ra', require 'nvchad.lsp.renamer', opts 'NvRenamer')
         map({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts 'Code action')
       end
-      lspconfig.html.setup {
+      vim.lsp.config('html', {
         on_attach = nvlsp.on_attach,
         on_init = nvlsp.on_init,
         capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
@@ -37,8 +36,8 @@ return {
           },
           provideFormatter = true,
         },
-      }
-      lspconfig.cssls.setup {
+      })
+      vim.lsp.config('cssls', {
         on_attach = nvlsp.on_attach,
         on_init = nvlsp.on_init,
         capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
@@ -50,13 +49,13 @@ return {
           less = { validate = true },
           scss = { validate = true },
         },
-      }
-      lspconfig.ts_ls.setup {
+      })
+      vim.lsp.config('ts_ls', {
         on_attach = nvlsp.on_attach,
         on_init = nvlsp.on_init,
         capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
-      }
-      lspconfig.volar.setup {
+      })
+      vim.lsp.config('volar', {
         on_attach = nvlsp.on_attach,
         on_init = nvlsp.on_init,
         capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
@@ -65,12 +64,12 @@ return {
             hybridMode = false,
           },
         },
-      }
-      lspconfig.markdown_oxide.setup {
+      })
+      vim.lsp.config('markdown_oxide', {
         on_attach = nvlsp.on_attach,
         on_init = nvlsp.on_init,
         capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
-      }
+      })
     end,
   },
 }
