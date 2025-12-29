@@ -2,3 +2,4 @@ Session.vim
 *.swp
 *.swo
 .claude/
+history.txt

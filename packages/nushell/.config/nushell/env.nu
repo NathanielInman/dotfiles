@@ -19,8 +19,7 @@
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
 mkdir ~/.cache/carapace
 carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
-export-env { $env.GL_TOKEN = 'REDACTED' }
-export-env { $env.GOOGLE_CLOUD_PROJECT = 'ignite-microservices-dev-e1' }
+# GL_TOKEN and GOOGLE_CLOUD_PROJECT set via local environment
 export-env { $env.PNPM_HOME = $"($env.HOME)/.local/share/pnpm" }
 export-env { $env.PATH = ($env.PATH | split row (char esep) | prepend $env.PNPM_HOME ) }
 def lightson [] {
