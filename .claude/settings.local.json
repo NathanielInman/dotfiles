@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(file:*)",
+      "Bash(stow:*)",
+      "Bash(chmod:*)",
+      "Bash(./install.sh:*)"
+    ]
+  }
+}

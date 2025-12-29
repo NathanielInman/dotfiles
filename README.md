@@ -3,6 +3,72 @@ This contains all of my dot files and step-by-step instructions on how to build 
 
 ![Full-screen Example of Desktop](/Pictures/fullscreen.png)
 
+## Installation
+
+This repository uses [GNU Stow](https://www.gnu.org/software/stow/) for managing symlinks.
+
+### Prerequisites
+
+```bash
+# Arch Linux
+sudo pacman -S stow
+
+# Debian/Ubuntu
+sudo apt install stow
+
+# macOS
+brew install stow
+```
+
+### Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/NathanielInman/dot-files.git ~/Sites/dot-files
+cd ~/Sites/dot-files
+
+# List available packages
+./install.sh -l
+
+# Install all packages
+./install.sh -a
+
+# Install specific packages
+./install.sh nvim zsh starship
+
+# Uninstall a package
+./install.sh -u nvim
+
+# Restow after pulling updates
+./install.sh -r nvim
+```
+
+### Available Packages
+
+| Package | Description |
+|---------|-------------|
+| `broot` | File explorer |
+| `dunst` | Notification daemon |
+| `flameshot` | Screenshot tool |
+| `git` | Git configuration |
+| `gpick` | Color picker |
+| `hyprland` | Wayland compositor |
+| `i3` | X11 window manager |
+| `kitty` | Terminal emulator |
+| `neofetch` | System info display |
+| `nushell` | Modern shell |
+| `nvim` | NeoVim with NvChad |
+| `picom` | X11 compositor |
+| `polybar` | Status bar |
+| `rofi` | Application launcher |
+| `starship` | Shell prompt |
+| `streamdeck` | Stream Deck config |
+| `taskwarrior` | Task management |
+| `vim` | Vim configuration |
+| `wallpaper` | Wallpaper script |
+| `wezterm` | Terminal emulator |
+| `zsh` | Zsh + Oh-My-Zsh theme |
+
 > [!TIP]
 > Clicking on the icons below will lead directly to this repositories documentation on how to setup said operating system or tool.
 

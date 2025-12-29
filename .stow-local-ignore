@@ -1,4 +1,10 @@
 \.git
-usr
+\.aws
+\.claude
 docs
 scripts
+usr
+Pictures
+install\.sh
+README\.md
+\.stow-local-ignore
