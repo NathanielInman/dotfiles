@@ -1,0 +1,13 @@
+# Override stow defaults to allow .gitignore to be stowed
+RCS
+CVS
+\.svn
+_darcs
+\.hg
+^\.git$
+\.gitmodules
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+^/COPYING
