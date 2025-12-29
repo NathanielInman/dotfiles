@@ -6,6 +6,7 @@
 set -e
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PACKAGES_DIR="$DOTFILES_DIR/packages"
 TARGET_DIR="$HOME"
 
 # Colors
@@ -15,20 +16,12 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# All available packages (directories that contain dotfiles)
+# All available packages (directories in packages/)
 get_packages() {
     local packages=()
-    for dir in "$DOTFILES_DIR"/*/; do
+    for dir in "$PACKAGES_DIR"/*/; do
         dir_name=$(basename "$dir")
-        # Skip non-package directories
-        case "$dir_name" in
-            docs|scripts|usr|Pictures|.git|.aws|.claude)
-                continue
-                ;;
-            *)
-                packages+=("$dir_name")
-                ;;
-        esac
+        packages+=("$dir_name")
     done
     echo "${packages[@]}"
 }
@@ -71,7 +64,7 @@ list_packages() {
 
 is_stowed() {
     local pkg="$1"
-    local pkg_dir="$DOTFILES_DIR/$pkg"
+    local pkg_dir="$PACKAGES_DIR/$pkg"
 
     # Check for root-level dotfiles
     for item in "$pkg_dir"/.*; do
@@ -103,7 +96,7 @@ stow_package() {
     local action="$2"
     local dry_run="$3"
 
-    local stow_opts=("-v" "-t" "$TARGET_DIR" "-d" "$DOTFILES_DIR")
+    local stow_opts=("-v" "-t" "$TARGET_DIR" "-d" "$PACKAGES_DIR")
 
     if [[ "$dry_run" == "true" ]]; then
         stow_opts+=("-n")

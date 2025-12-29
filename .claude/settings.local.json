@@ -5,7 +5,9 @@
       "Bash(file:*)",
       "Bash(stow:*)",
       "Bash(chmod:*)",
-      "Bash(./install.sh:*)"
+      "Bash(./install.sh:*)",
+      "Bash(git config:*)",
+      "Bash(cat:*)"
     ]
   }
 }
