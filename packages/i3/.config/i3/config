@@ -52,6 +52,9 @@ exec --no-startup-id xcompmgr -c -l0 -t0 -r0 -o.00
 # Notification manager
 exec --no-startup-id dunst
 
+# Clipboard manager (cliphist with clipnotify for X11)
+exec --no-startup-id ~/.polybar-scripts/clipboard-watcher.sh
+
 # Network manager
 exec --no-startup-id nm-applet
 
