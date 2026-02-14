@@ -1,0 +1,165 @@
+{
+  "layer": "top",
+  "position": "bottom",
+  "height": 24,
+  "spacing": 0,
+  "modules-left": [
+    "hyprland/workspaces",
+    "hyprland/window"
+  ],
+  "modules-right": [
+    "custom/currently-playing",
+    "pulseaudio",
+    "group/details",
+    "custom/keylights",
+    "custom/openvpn-start",
+    "custom/openvpn-kill",
+    "custom/openvpn-list",
+    "custom/silence-notifications",
+    "custom/hotkeys",
+    "custom/commands",
+    "custom/timezone",
+    "tray"
+  ],
+
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "1": "",
+      "2": "",
+      "3": "",
+      "4": "",
+      "5": "",
+      "6": ""
+    },
+    "persistent-workspaces": {
+      "*": 6
+    }
+  },
+
+  "hyprland/window": {
+    "max-length": 60,
+    "separate-outputs": true
+  },
+
+  "custom/currently-playing": {
+    "exec": "~/.config/waybar/scripts/currently-playing.sh",
+    "interval": 3,
+    "on-click": "playerctl previous",
+    "on-click-right": "playerctl next",
+    "on-click-middle": "playerctl play-pause"
+  },
+
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": " muted",
+    "format-icons": {
+      "default": ["", "", ""]
+    },
+    "on-click": "pavucontrol"
+  },
+
+  "group/details": {
+    "orientation": "horizontal",
+    "drawer": {
+      "transition-duration": 300,
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "custom/toggle-details",
+      "custom/network-traffic",
+      "temperature",
+      "disk",
+      "memory",
+      "cpu",
+      "custom/public-ip"
+    ]
+  },
+
+  "custom/toggle-details": {
+    "format": "",
+    "tooltip-format": "Toggle details"
+  },
+
+  "custom/network-traffic": {
+    "exec": "~/.config/waybar/scripts/network-traffic.sh",
+    "return-type": "",
+    "tail": true
+  },
+
+  "temperature": {
+    "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
+    "input-filename": "temp1_input",
+    "format": " {temperatureC}°C",
+    "critical-temperature": 85,
+    "interval": 5
+  },
+
+  "disk": {
+    "path": "/home",
+    "format": " {percentage_used}%",
+    "interval": 25
+  },
+
+  "memory": {
+    "format": " {percentage}%",
+    "interval": 5
+  },
+
+  "cpu": {
+    "format": " {usage}%",
+    "interval": 5
+  },
+
+  "custom/public-ip": {
+    "exec": "~/.config/waybar/scripts/public-ip.sh",
+    "interval": 60
+  },
+
+  "custom/keylights": {
+    "exec": "~/.config/waybar/scripts/keylights.sh",
+    "interval": 5,
+    "on-click": "~/.config/waybar/scripts/keylights-toggle.sh"
+  },
+
+  "custom/openvpn-start": {
+    "format": "",
+    "on-click": "openvpn3 session-start --config ~/dt.ovpn"
+  },
+
+  "custom/openvpn-kill": {
+    "format": "",
+    "on-click": "openvpn3 session-manage --disconnect --config ~/dt.ovpn"
+  },
+
+  "custom/openvpn-list": {
+    "format": "",
+    "on-click": "ghostty --class=float -e zsh -c 'openvpn3 sessions-list; sleep 2'"
+  },
+
+  "custom/silence-notifications": {
+    "exec": "if [ \"$(swaync-client -D)\" = 'true' ]; then echo ''; else echo ''; fi",
+    "interval": 1,
+    "on-click": "swaync-client -d -sw"
+  },
+
+  "custom/hotkeys": {
+    "format": "⌨",
+    "on-click": "~/.config/waybar/scripts/hotkeys.sh"
+  },
+
+  "custom/commands": {
+    "format": "",
+    "on-click": "~/.config/waybar/scripts/commands.sh"
+  },
+
+  "custom/timezone": {
+    "exec": "~/.config/waybar/scripts/timezone.sh",
+    "tail": true,
+    "on-click": "kill -USR1 $(pgrep -f 'waybar/scripts/timezone.sh')"
+  },
+
+  "tray": {
+    "spacing": 8
+  }
+}

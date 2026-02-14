@@ -1,0 +1,105 @@
+/* Nord-themed SwayNC */
+
+* {
+  font-family: "PragmataPro Liga", monospace;
+  font-size: 14px;
+}
+
+.control-center {
+  background: #2e3440;
+  border: 2px solid #4c566a;
+  border-radius: 6px;
+  color: #d8dee9;
+}
+
+.control-center .notification-row {
+  border-bottom: 1px solid #3b4252;
+}
+
+.notification {
+  background: #3b4252;
+  border: 1px solid #4c566a;
+  border-radius: 6px;
+  margin: 4px;
+  padding: 8px;
+  color: #d8dee9;
+}
+
+.notification .summary {
+  color: #81a1c1;
+  font-weight: bold;
+}
+
+.notification .body {
+  color: #d8dee9;
+}
+
+.notification .time {
+  color: #4c566a;
+}
+
+.notification.critical {
+  border-color: #bf616a;
+}
+
+.notification.low {
+  border-color: #4c566a;
+}
+
+.close-button {
+  background: #434c5e;
+  color: #d8dee9;
+  border-radius: 4px;
+  border: none;
+  padding: 2px 8px;
+}
+
+.close-button:hover {
+  background: #bf616a;
+}
+
+.control-center .widget-title {
+  color: #81a1c1;
+  font-weight: bold;
+  margin: 8px;
+}
+
+.control-center .widget-title button {
+  background: #434c5e;
+  color: #d8dee9;
+  border-radius: 4px;
+  border: none;
+  padding: 4px 12px;
+}
+
+.control-center .widget-title button:hover {
+  background: #bf616a;
+}
+
+.control-center .widget-dnd {
+  margin: 8px;
+  color: #d8dee9;
+}
+
+.control-center .widget-dnd > switch {
+  background: #434c5e;
+  border-radius: 12px;
+}
+
+.control-center .widget-dnd > switch:checked {
+  background: #81a1c1;
+}
+
+.control-center .widget-dnd > switch slider {
+  background: #d8dee9;
+  border-radius: 50%;
+}
+
+.widget-inhibitors {
+  margin: 8px;
+  color: #d8dee9;
+}
+
+.floating-notifications {
+  background: transparent;
+}

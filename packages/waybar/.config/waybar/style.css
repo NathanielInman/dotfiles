@@ -1,0 +1,144 @@
+/* Nord-themed Waybar */
+
+* {
+  font-family: "PragmataPro Liga", monospace;
+  font-size: 18px;
+  min-height: 0;
+}
+
+window#waybar {
+  background: #282A2E;
+  color: #C5C8C6;
+  border-radius: 6px;
+}
+
+window#waybar.hidden {
+  opacity: 0.2;
+}
+
+/* Module defaults */
+#workspaces,
+#window,
+#custom-currently-playing,
+#pulseaudio,
+#custom-toggle-details,
+#custom-network-traffic,
+#temperature,
+#disk,
+#memory,
+#cpu,
+#custom-public-ip,
+#custom-keylights,
+#custom-openvpn-start,
+#custom-openvpn-kill,
+#custom-openvpn-list,
+#custom-silence-notifications,
+#custom-hotkeys,
+#custom-commands,
+#custom-timezone,
+#tray {
+  padding: 0 6px;
+  border-right: 1px solid #4c566a;
+}
+
+/* Workspaces */
+#workspaces button {
+  padding: 0 6px;
+  color: #C5C8C6;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+}
+
+#workspaces button:hover {
+  background: #373B41;
+}
+
+#workspaces button.active {
+  border-bottom: 3px solid #81a1c1;
+}
+
+#workspaces button.urgent {
+  background: #bf616a;
+}
+
+/* Window title */
+#window {
+  color: #C5C8C6;
+}
+
+/* Currently playing */
+#custom-currently-playing {
+  color: #ebcb8b;
+}
+
+/* Pulseaudio */
+#pulseaudio {
+  color: #a3be8c;
+}
+
+#pulseaudio.muted {
+  color: #4c566a;
+}
+
+/* Toggle details button */
+#custom-toggle-details {
+  color: #a3be8c;
+}
+
+/* Network traffic */
+#custom-network-traffic {
+  color: #81a1c1;
+}
+
+/* Temperature */
+#temperature {
+  color: #81a1c1;
+}
+
+#temperature.critical {
+  color: #bf616a;
+}
+
+/* Disk, memory, cpu */
+#disk,
+#memory,
+#cpu {
+  color: #81a1c1;
+}
+
+/* Public IP */
+#custom-public-ip {
+  color: #81a1c1;
+}
+
+/* Keylights, openvpn, notifications, hotkeys, commands */
+#custom-keylights,
+#custom-openvpn-start,
+#custom-openvpn-kill,
+#custom-openvpn-list,
+#custom-silence-notifications,
+#custom-hotkeys,
+#custom-commands {
+  color: #a3be8c;
+}
+
+/* Timezone / clock */
+#custom-timezone {
+  color: #b48ead;
+}
+
+/* Tray */
+#tray {
+  border-right: none;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+  -gtk-icon-effect: highlight;
+  background: #bf616a;
+}
