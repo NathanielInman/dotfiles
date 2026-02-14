@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# automatically start i3 window manager
-#if [ -z "${DISPLAY}" ] && [ "${XDG_VTNR}" -eq 1 ]; then
-#  exec startx
-#fi
+# Auto-start Hyprland on tty1 login
+if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
+  exec start-hyprland
+fi
 
 # User configuration
 export PATH=/usr/local/bin:$HOME/.local/bin:$HOME/bin:/usr/local/sbin:$HOME/n/bin:$PATH
@@ -15,7 +15,7 @@ export PATH=$PNPM_HOME:$PATH # node path
 export LANG=en_US.UTF-8
 export ZSH=$HOME/.oh-my-zsh
 export EDITOR=/usr/bin/neovide
-export SPLIT='v' # split kitty vertically
+export SPLIT='v' # split terminal vertically
 
 # Variable declaration used by oh-my-zsh
 HIST_STAMPS="dd.mm.yyyy"
@@ -30,8 +30,8 @@ alias vi='nvim' # older habits die even harder
 alias p='pnpm' # pnpm is so difficult for the fingers
 alias yay='paru' # paru is rust, yay is go. alias due to muscle memory
 alias yeet='paru -Rcs' # always forget remove flags
-alias ssh='TERM=xterm-color ssh' # kitty does weird things, set it explicitly
-alias icat='kitty +kitten icat'
+alias ssh='TERM=xterm-color ssh' # some terminals need this set explicitly
+alias icat='chafa'
 alias gbclean=$'git branch --merged master | grep -v \'^[ *]*master$\' | xargs git branch -d'
 alias ls='eza' # 1:1 ls replacement
 alias l='ls -lbF' # list, size, type
@@ -48,8 +48,8 @@ alias rvimtmp='rm -i `find . | grep .swp$`'
 alias searchFiles='fd'
 alias du='ncdu --color dark -rr -x --exclude .git --exclude node_modules'
 alias top='glances'
-alias pbcopy='xsel --clipboard --input' # pbcopy < ./filename.txt (pb stands for pasteboard, see osx pbcopy man)
-alias pbpaste='xsel --clipboard --output' # pbpaste > ./filename.txt
+alias pbcopy='wl-copy' # pbcopy < ./filename.txt (pb stands for pasteboard, see osx pbcopy man)
+alias pbpaste='wl-paste' # pbpaste > ./filename.txt
 alias calendar='rusti-cal'
 alias cal='calendar'
 alias weather='curl https://v2d.wttr.in/~oak+grove+missouri'

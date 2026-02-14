@@ -64,7 +64,7 @@ let g:ctrlp_working_path_mode = 'ra' " start nearest search dir @ root .git
 "---------------------------------------
 let mapleader="\<Space>"
 
-" Fix for ergodox & moonlander keyboards kEnter being  when in kitty
+" Fix for ergodox & moonlander keyboards kEnter being  in some terminals
 cmap <Char-0xe046> <CR>
 nmap <Char-0xe046> <CR>
 vmap <Char-0xe046> <CR>
