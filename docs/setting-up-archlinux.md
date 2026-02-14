@@ -222,53 +222,47 @@ systemctl enable pipewire.service --now
 systemctl enable bluetooth.service --now
 ```
 
-Now for installing windowmanager stuff (i3)
+Now for installing window manager stuff (Hyprland)
 
-- `xorg, xorg-server, xorg-xinit` - display server essentials
-- `xorg-xdpyinfo` - shows information on hte display server
-- `i3-gaps` - spaces between windows/containers on i3wm
-- `rofi` - hotkey app opener overlay, alternative to dmenu & ulauncher
-- `dunst` - notification display app
-- `wezterm` - fast terminal that uses gpu to render things, supports ligatures unlike `alacritty`
-- `sddm` - simple desktop display manager to support i3
+- `hyprland` - tiling Wayland compositor with dynamic tiling, animations, and scripting
+- `waybar` - highly customizable bar for Wayland compositors
+- `rofi-wayland` - hotkey app opener overlay, Wayland-native fork of rofi
+- `dunst` - notification display app (works on Wayland)
+- `swaync` - notification center with history panel for Wayland
+- `ghostty` - fast GPU-accelerated terminal emulator with ligature support
 - `network-manager-applet` - gui layer for managing network apps & vpn
-- `gnome-calendar` - allows viewing of gnome calendar through polybar
 - `noto-fonts` - emoji extras & base fonts
 - `adobe-source-code-pro-fonts` - additional fallback fonts
 - `otf-font-awesome` - additional fallback fonts
-- `ttf-droid` additional fallback fonts
-- `ttf-fira-code` additional fallback fonts
-- `ttf-jetbrains-mono` additional fallback fonts
-- `ttf-jetbrains-mono-nerd` additional fallback fonts
-- `polybar` - better version of i3bar for X
+- `ttf-droid` - additional fallback fonts
+- `ttf-fira-code` - additional fallback fonts
+- `ttf-jetbrains-mono` - additional fallback fonts
+- `ttf-jetbrains-mono-nerd` - additional fallback fonts
+- `swww` - wallpaper daemon for Wayland
+- `wl-clipboard` - command-line clipboard utilities for Wayland (wl-copy, wl-paste)
+- `cliphist` - clipboard history manager for Wayland
+- `grim` - screenshot utility for Wayland
+- `slurp` - region selection tool for Wayland screenshots
+- `swappy` - screenshot annotation tool
+- `swaylock` - screen locker for Wayland
+- `swayidle` - idle management daemon for Wayland
+- `pamixer` - pulseaudio/pipewire CLI mixer
+- `playerctl` - MPRIS media player controller
+- `brightnessctl` - brightness control utility
+- `xdg-desktop-portal-hyprland` - desktop portal backend for Hyprland
+- `qt5-wayland` - Qt5 Wayland platform plugin
+- `qt6-wayland` - Qt6 Wayland platform plugin
 - `bc` - tiny precision calculator used for netstats averaging
-- `sysstat` - iostat, isag, mpstat, pidstat, sadf, sar (cpu usage etc on cli)
-- `acpi` - client for battery, power & thermal readings
-- `xrandr` - monitor setup with rotation, screen location etc
 - `xdg-user-dirs` - help ensure well-known user directories are created automatically
 - `xdg-utils` - for helpful things such as mime detection
 
 ```
-Pacman -S xorg xorg-server xorg-xinit xorg-xdpyinfo i3-gaps rofi wezterm sddm network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd polybar sysstat acpi xrandr xdg-user-dirs xdg-utils
+pacman -S hyprland waybar rofi-wayland dunst swaync ghostty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard cliphist grim slurp swappy swaylock swayidle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
 ```
 
-Then enable `sddm`:
+No display manager is needed. Hyprland auto-launches via `.zshrc` when logging in on tty1, and getty autologin handles the login (configured below).
 
-```
-# enable the service itself
-sudo systemctl enable sddm.service
-
-# ensure the directory is there before we make a config for it
-sudo mkdir -p /etc/sddm.conf.d
-
-# create the autologin script
-sudo sh -c "echo $'[Autologin]\nUser=nate\nSession=Hyprland' > /etc/sddm.conf.d/autologin.conf"
-
-# now ensure that it doesn't display login on all monitors
-sudo sh -c "echo $'xrandr --output DP-2 --off' > /usr/share/sddm/scripts/Xsetup"
-```
-
-Before we can start i3 we need graphics drivers, validate what we're using
+Before we can start Hyprland we need graphics drivers, validate what we're using
 
 ```
 lspci -v | grep -A1 -e VGA -e 3D
@@ -290,9 +284,17 @@ pacman -S nvidia nvidia-settings nvidia-utils # this is my driver stuff
 If you have multiple monitors and need to set them up, here are some helpful commands
 
 ```
-xrandr # get the names of display ports or hdmi's that are connected
-xrandr --output DP-2 --left-of DP-0 # swap screens
-xrandr --output DP-0 --mode 2560x1440 # change resolutions
+hyprctl monitors # list all connected monitors with names, resolutions, positions
+```
+
+Monitor configuration is handled in `~/.config/hypr/hyprland.conf`:
+
+```
+monitor = DP-1, preferred, auto, 1
+monitor = DP-2, preferred, auto, 1
+# or with explicit resolution/position:
+# monitor = DP-1, 2560x1440@144, 0x0, 1
+# monitor = DP-2, 2560x1440@144, 2560x0, 1
 ```
 
 The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
@@ -318,12 +320,13 @@ helpful non-user-specific applications
 
 - `ntp` (network-time-protocol) helps ensure we're always time synchronized
 - `unzip` - obviously helps us w/ zip files
-- `numlockx` - helps us default to (dis/en)able numlock on boot for i3
 - `gnome-keychain` - helps us maintain a keychain across different apps
 - `libsecret` - library necessary for gnome-keychain
 
+Note: `numlockx` is not needed - Hyprland handles numlock via `input { numlock_by_default = 1 }` in hyprland.conf
+
 ```
-pacman -S unzip ntp numlockx gnome-keychain libsecret
+pacman -S unzip ntp gnome-keychain libsecret
 ```
 
 ensure time synchronization service is started and activated
@@ -338,10 +341,10 @@ login to user
 login
 ```
 
-Let's enable pulseaudio for user
+Let's enable pipewire for the user (pipewire replaces pulseaudio as the sound server, `pamixer` is the CLI mixer)
 
 ```
-systemctl --user enable pulseaudio --now
+systemctl --user enable pipewire pipewire-pulse wireplumber --now
 ```
 
 Now make sure we disable suspend on idle and pause on idle power saving options. We do this because when zoom is quiet, sometimes it takes a second or two to wake up the pipewire sink and the beginning of sentences could be completely missed.
@@ -360,13 +363,35 @@ ExecStart=
 ExecStart=-/usr/bin/agetty --autologin nate --noclear %I $TERM
 ```
 
-Now lets have it start by default in `vim ~/.xinitrc` as well as execute our keyring
+Hyprland auto-launches from `.zshrc` when on tty1 (no display manager needed). The dbus setup is handled in `hyprland.conf` via `exec-once`:
 
 ```
-exec i3
-dbus-update-activation-environment --all
-gnome-keyring-daemon --start --components=secrets
+# These are already in hyprland.conf:
+exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
 ```
+
+Since we're not using a display manager, PAM won't automatically unlock the GNOME keyring on login. Add the following lines to `/etc/pam.d/login` to fix this:
+
+```
+auth       optional     pam_gnome_keyring.so        # add after the auth include
+session    optional     pam_gnome_keyring.so auto_start  # add after the session include
+```
+
+The full file should look like:
+
+```
+#%PAM-1.0
+
+auth       requisite    pam_nologin.so
+auth       include      system-local-login
+auth       optional     pam_gnome_keyring.so
+account    include      system-local-login
+session    include      system-local-login
+session    optional     pam_gnome_keyring.so auto_start
+password   include      system-local-login
+```
+
+No `~/.xinitrc` is needed for Wayland.
 
 install user-specific applications
 
@@ -386,10 +411,17 @@ Now grab all of the dot files
 
 ```
 cd ~/Sites && git clone https://github.com/nathanielinman/dot-files.git
-stow . --target=/home/nate
+cd dot-files
 ```
 
-if at any point you want to remove the symlinks `stow -D .` from within the source repo folder
+Install stow packages for the Wayland setup:
+
+```
+cd packages
+stow -t ~ hyprland waybar swaylock swaync dunst rofi ghostty zsh git nvim starship wallpaper
+```
+
+if at any point you want to remove the symlinks `stow -D <package>` from within the packages folder
 Feel free to manually copy any ./Sites/dot-files/usr/share/applications files
 in order to setup launching using rofi or hiding unused/unwanted apps.
 Now grab paru for AUR, used to use yay but Rust ftw :)
@@ -423,7 +455,7 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `zsh` will be our default shell
 - `python-pip` will give us pip for python package management
 - `pyenv` python version manager and virtual environment
-- `xsel` will allow "clipboard" input and outputs via cli. see alias pbcopy & pbpaste aliases in .zshrc
+- `wl-clipboard` provides `wl-copy` and `wl-paste` for clipboard input/output on Wayland. see alias pbcopy & pbpaste aliases in .zshrc
 - `task` is a very simple cli todo app named taskwarrior
 - `scc` breaks down LOC on a repo, broken by language
 - `duf` a better version of `df` (disk free utility)
@@ -433,17 +465,20 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `jq` is a command-line JSON processor
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git zsh python-pip pyenv xsel task scc duf bandwhich fkill gping jq
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git zsh python-pip pyenv wl-clipboard task scc duf bandwhich fkill gping jq
 ```
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
-Now copy the xscreensaver service to systemd for the user and enable it, it will start on next restart
+
+Screen locking is handled by `swaylock` and idle management by `swayidle`. Both are configured in `hyprland.conf`:
 
 ```
-cp /usr/share/xscreensaver/xscreensaver.service ~/.config/systemd/user/
-systemctl --user enable xscreensaver
-# perhaps `vim ~/.config/systemd/user/` to add `--no-splash` to the `xscreensaver` command
+# Already in hyprland.conf exec-once:
+exec-once = swayidle -w timeout 900 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on'
+# Lock screen via SUPER+Alt+L which runs swaylock
 ```
+
+The swaylock config is at `~/.config/swaylock/config` (Nord-themed, installed via stow).
 
 Now we update our python package manager
 
@@ -503,13 +538,12 @@ cargo install rusti-cal melt tidy-viewer pueue
 
 Now for any other essentials for arch
 
-- `gpick` color picker
+- `hyprpicker` Wayland-native color picker
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `discord` for games and communication with friends and family
-- `feh` is an image viewer also used for backgrounds
+- `feh` is an image viewer (wallpapers are now handled by swww)
 - `file-roller` is an gui archive manager, although mostly `tar` on cli, nice to have
-- `pagraphcontrol-git` like amixer but pretty and allows enabling/adjusting things at runtime
-- `ttf-joypixels` adds support for emoji's within wezterm terminal and elsewhere
+- `ttf-joypixels` adds support for emoji's within ghostty terminal and elsewhere
 - `vit` is a TUI for taskwarrior
 - `ncdu` NCurses Disk Usage shows what files/folders are occupying how much space
 - `lazygit` is tui controls for beautiful git as well as nvim
@@ -532,7 +566,7 @@ Now for any other essentials for arch
 - `onefetch` is a command that gets important stats on a git repo
 - `okular` is a pdf, epub, cbr, cbz etc minimal chrome reader
 - `usbutils` allows `lsusb` and other helpful minor functions
-- `peek` allows recording to `.gif`, `.mp4` etc
+- `hyprpicker` is a Wayland-native color picker (replaces gpick on X11)
 - `thunar` is a slim file manager
 - `thunar-volman` is a slim volume manager for the thunar fm gui
 - `thunar-archive-plugin` is a slim shim for file roller integration with thunar
@@ -541,11 +575,11 @@ Now for any other essentials for arch
 - `gvfs-smb` mounts samba networked filesystem volumes
 - `tumbler` unlocks generation of thumbnails for thunar
 - `libgsf` is a super fast image thumbnailer for `tumbler`
-- `lxappearance` is tiny a theme chooser for XFCE4
+- `lxappearance` is tiny a theme chooser for GTK (alternatively use `nwg-look` for a Wayland-native option)
 - `galculator` is a simple scientific gtk calculator
 - `orchis-theme-git` is a simple XFCE4 & GTK dark theme
 - `gtk-engine-murrine` helps with backwards-compatibility themes for gtk2
-- `flameshot` is a better screenshot utility than `scrot`
+- `kooha` is a Wayland-native screen recorder (replaces peek)
 - `gthumb` is the best tiny app for browsing images
 - `vscode-langservers-extracted` unlocks all lsp servers for neovim
 - `inxi` is a system information tool that shows everything in one place, like HWiNFO for windows
@@ -554,7 +588,7 @@ Now for any other essentials for arch
 - `fselect` is a SQL-like querying tool for the filesystem
 
 ```
-yay -S gpick slack-desktop discord feh file-roller pagraphcontrol-git ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils peek thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine flameshot gthumb vscode-langservers-extracted inxi vfox yazi fselect
+yay -S hyprpicker slack-desktop discord feh file-roller ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
 Now open up `lxappearance` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
@@ -631,9 +665,50 @@ sudo ln -s /var/lib/snapd/snap /snap
 
 Finally we can grab some `snap` stuff we'll use when developing a lot
 
+Note: `colorpicker-app` may not work well on Wayland - use `hyprpicker` instead as a Wayland-native color picker. `emote` should work under XWayland.
+
 ```
-snap install colorpicker-app emote gnome-3-28-1804 gtk-common-themes snapd bare core18
+snap install emote gnome-3-28-1804 gtk-common-themes snapd bare core18
 ```
+
+## Hyprland Plugin Setup
+
+Install plugins from the official hyprland-plugins repo:
+
+```
+hyprpm update
+hyprpm add https://github.com/hyprwm/hyprland-plugins
+hyprpm enable hyprscrolling hyprbars
+```
+
+- `hyprscrolling` - scrolling/column-based window layout (like PaperWM)
+- `hyprbars` - window title bars with close/fullscreen/float buttons
+
+Plugin config is in `hyprland.conf` under the `plugin { ... }` block.
+
+## Stow Packages
+
+The following stow packages should be installed for the Wayland setup:
+
+```
+cd ~/Sites/dot-files/packages
+stow -t ~ hyprland waybar swaylock swaync dunst rofi ghostty zsh git nvim starship wallpaper
+```
+
+| Package | Description |
+|---------|-------------|
+| `hyprland` | Hyprland compositor config with hyprscrolling |
+| `waybar` | Bottom bar with system info, scripts, and workspaces |
+| `swaylock` | Nord-themed lock screen |
+| `swaync` | Notification center with history |
+| `dunst` | Simple notification daemon |
+| `rofi` | Application launcher and clipboard manager |
+| `ghostty` | Terminal emulator |
+| `zsh` | Shell configuration with aliases and plugins |
+| `git` | Git configuration with delta pager |
+| `nvim` | Neovim configuration |
+| `starship` | Cross-shell prompt |
+| `wallpaper` | Desktop wallpaper |
 
 ## Default Applications
 
@@ -724,26 +799,13 @@ make sure to use the `on` and `off` icons you downloaded earlier
 While we're here, let's also set the icon for the `screencapture-icon.png` and setup the command:
 
 ```
-bash -c "flameshot gui"
+bash -c "grim -g \"$(slurp)\" - | swappy -f -"
 ```
 
 ## autostart apps using systemd
 
 https://github.com/jceb/dex
 
-## Nix
-
-Installing:
-
-```
-sh <(curl -L https://nixos.org/nix/install) --daemon
-```
-
-Now for nix packages:
-
-```
-nix-env -iA nixpkgs.overskride # bluetooth gui ontop of bluez
-```
 
 ## Openvpn
 
