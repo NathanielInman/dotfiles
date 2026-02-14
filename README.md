@@ -54,7 +54,7 @@ cd ~/Sites/dot-files
 | `gpick` | Color picker |
 | `hyprland` | Wayland compositor |
 | `i3` | X11 window manager |
-| `kitty` | Terminal emulator |
+| `ghostty` | Terminal emulator |
 | `neofetch` | System info display |
 | `nushell` | Modern shell |
 | `nvim` | NeoVim with NvChad |
@@ -66,7 +66,7 @@ cd ~/Sites/dot-files
 | `taskwarrior` | Task management |
 | `vim` | Vim configuration |
 | `wallpaper` | Wallpaper script |
-| `wezterm` | Terminal emulator |
+| `ghostty` | Terminal emulator |
 | `zsh` | Zsh + Oh-My-Zsh theme |
 
 > [!TIP]
