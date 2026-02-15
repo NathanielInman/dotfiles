@@ -47,7 +47,7 @@ yad --width=$dynamic_width --height=$dynamic_height \
 " o" "Open emoji picker" "(rofi-emoji)" \
 " b" "Toggle visibility of waybar" "(waybar)" \
 " Alt l" "Trigger the lock screen" "(swaylock)" \
-" Alt v" "Launch clipboard manager" "(cliphist)" \
+" Alt v" "Launch clipboard manager" "(copyq)" \
 " p" "Open area-specific screenshot tool" "(grim+slurp)" \
 " n" "Launch notification center" "(swaync)" \
 " d" "Search for an application to run" "(rofi)" \
