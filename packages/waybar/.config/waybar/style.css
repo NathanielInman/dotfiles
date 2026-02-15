@@ -86,7 +86,7 @@ window#waybar.hidden {
 
 /* Toggle details button */
 #custom-toggle-details {
-  color: #a3be8c;
+  color: #88c0d0;
 }
 
 /* Network traffic */
@@ -115,12 +115,20 @@ window#waybar.hidden {
   color: #81a1c1;
 }
 
-/* Keylights, openvpn, notifications, hotkeys, commands */
+/* Keylights, notifications, hotkeys, commands */
 #custom-keylights,
-#custom-vpn,
 #custom-silence-notifications,
 #custom-hotkeys,
 #custom-commands {
+  color: #a3be8c;
+}
+
+/* VPN status */
+#custom-vpn.connected {
+  color: #50fa7b;
+}
+
+#custom-vpn.disconnected {
   color: #a3be8c;
 }
 
@@ -136,12 +144,12 @@ window#waybar.hidden {
 
 /* Wallpaper button */
 #custom-wallpaper {
-  color: #88c0d0;
+  color: #a3be8c;
 }
 
 /* Power menu */
 #custom-power-menu {
-  color: #bf616a;
+  color: #a3be8c;
 }
 
 /* Timezone / clock */
