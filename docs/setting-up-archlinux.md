@@ -240,7 +240,8 @@ Now for installing window manager stuff (Hyprland)
 - `ttf-jetbrains-mono-nerd` - additional fallback fonts
 - `swww` - wallpaper daemon for Wayland
 - `wl-clipboard` - command-line clipboard utilities for Wayland (wl-copy, wl-paste)
-- `cliphist` - clipboard history manager for Wayland
+- `copyq` - clipboard manager with searchable history and system tray
+- `blueman` - Bluetooth manager with system tray applet
 - `grim` - screenshot utility for Wayland
 - `slurp` - region selection tool for Wayland screenshots
 - `swappy` - screenshot annotation tool
@@ -257,7 +258,7 @@ Now for installing window manager stuff (Hyprland)
 - `xdg-utils` - for helpful things such as mime detection
 
 ```
-pacman -S hyprland waybar rofi-wayland dunst swaync ghostty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard cliphist grim slurp swappy swaylock swayidle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+pacman -S hyprland waybar rofi-wayland dunst swaync ghostty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq blueman grim slurp swappy swaylock swayidle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
 ```
 
 No display manager is needed. Hyprland auto-launches via `.zshrc` when logging in on tty1, and getty autologin handles the login (configured below).
