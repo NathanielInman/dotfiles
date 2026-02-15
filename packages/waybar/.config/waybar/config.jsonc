@@ -9,8 +9,8 @@
   ],
   "modules-right": [
     "custom/currently-playing",
-    "pulseaudio",
     "group/details",
+    "pulseaudio",
     "custom/screen-record",
     "custom/pomodoro",
     "custom/keylights",
@@ -139,7 +139,8 @@
     "exec": "~/.config/waybar/scripts/vpn.sh",
     "interval": 5,
     "on-click": "~/.config/waybar/scripts/vpn.sh toggle",
-    "on-click-right": "~/.config/waybar/scripts/vpn.sh list"
+    "on-click-right": "~/.config/waybar/scripts/vpn.sh list",
+    "return-type": "json"
   },
   "custom/screen-record": {
     "exec": "if [ -f /tmp/screen-record.pid ]; then echo '⏺'; fi",

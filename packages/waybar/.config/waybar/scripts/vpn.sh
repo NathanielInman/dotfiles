@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#\!/usr/bin/env bash
 
 CONFIG="$HOME/dt.ovpn"
 
@@ -23,9 +23,9 @@ case "$1" in
     ;;
   *)
     if openvpn3 sessions-list 2>/dev/null | grep -q 'Path:'; then
-      echo '󰖂'
+      echo '{"text": "", "class": "connected"}'
     else
-      echo '󰖃'
+      echo '{"text": "", "class": "disconnected"}'
     fi
     ;;
 esac
