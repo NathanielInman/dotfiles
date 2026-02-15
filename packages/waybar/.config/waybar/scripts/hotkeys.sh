@@ -42,6 +42,9 @@ yad --width=$dynamic_width --height=$dynamic_height \
 " enter" "Opens a terminal" "(ghostty)" \
 " v" "Opens rofi file browser" "(rofi)" \
 " c" "Start a calculator" "(galculator)" \
+" r" "Toggle screen recording" "(wf-recorder)" \
+" i" "Pick color from screen to clipboard" "(hyprpicker)" \
+" o" "Open emoji picker" "(rofi-emoji)" \
 " b" "Toggle visibility of waybar" "(waybar)" \
 " Alt l" "Trigger the lock screen" "(swaylock)" \
 " Alt v" "Launch clipboard manager" "(cliphist)" \
@@ -63,13 +66,13 @@ yad --width=$dynamic_width --height=$dynamic_height \
 " Shift #" "Move focused window to specified workspace 0-9" "(hyprland)" \
 " Ctrl l" "Move current workspace to monitor on the right" "(hyprland)" \
 " Ctrl h" "Move current workspace to monitor on the left" "(hyprland)" \
-" Shift e" "Exit Hyprland" "(hyprland)" \
-" r" "Toggle resizing mode on current window" "(hyprland)" \
 " ." "Scroll columns right" "(hyprscrolling)" \
 " ," "Scroll columns left" "(hyprscrolling)" \
 " Shift ." "Move window to right column" "(hyprscrolling)" \
 " Shift ," "Move window to left column" "(hyprscrolling)" \
 " Ctrl f" "Fit focused column to screen" "(hyprscrolling)" \
 " Ctrl Shift f" "Fit all visible columns" "(hyprscrolling)" \
+" w" "Cycle column wider" "(hyprscrolling)" \
+" Shift w" "Cycle column narrower" "(hyprscrolling)" \
 " =" "Cycle column wider" "(hyprscrolling)" \
 " -" "Cycle column narrower" "(hyprscrolling)" \
