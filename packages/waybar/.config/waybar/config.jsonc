@@ -11,17 +11,18 @@
     "custom/currently-playing",
     "pulseaudio",
     "group/details",
+    "custom/screen-record",
+    "custom/pomodoro",
     "custom/keylights",
-    "custom/openvpn-start",
-    "custom/openvpn-kill",
-    "custom/openvpn-list",
+    "custom/vpn",
     "custom/silence-notifications",
+    "custom/wallpaper",
     "custom/hotkeys",
     "custom/commands",
+    "custom/power-menu",
     "custom/timezone",
     "tray"
   ],
-
   "hyprland/workspaces": {
     "format": "{icon}",
     "format-icons": {
@@ -36,12 +37,10 @@
       "*": 6
     }
   },
-
   "hyprland/window": {
     "max-length": 60,
     "separate-outputs": true
   },
-
   "custom/currently-playing": {
     "exec": "~/.config/waybar/scripts/currently-playing.sh",
     "interval": 3,
@@ -49,16 +48,18 @@
     "on-click-right": "playerctl next",
     "on-click-middle": "playerctl play-pause"
   },
-
   "pulseaudio": {
     "format": "{icon} {volume}%",
     "format-muted": " muted",
     "format-icons": {
-      "default": ["", "", ""]
+      "default": [
+        "",
+        "",
+        ""
+      ]
     },
     "on-click": "pavucontrol"
   },
-
   "group/details": {
     "orientation": "horizontal",
     "drawer": {
@@ -75,18 +76,15 @@
       "custom/public-ip"
     ]
   },
-
   "custom/toggle-details": {
     "format": "",
     "tooltip-format": "Toggle details"
   },
-
   "custom/network-traffic": {
     "exec": "~/.config/waybar/scripts/network-traffic.sh",
     "return-type": "",
     "tail": true
   },
-
   "temperature": {
     "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
     "input-filename": "temp1_input",
@@ -94,72 +92,76 @@
     "critical-temperature": 85,
     "interval": 5
   },
-
   "disk": {
     "path": "/home",
     "format": " {percentage_used}%",
     "interval": 25
   },
-
   "memory": {
     "format": " {percentage}%",
     "interval": 5
   },
-
   "cpu": {
     "format": " {usage}%",
     "interval": 5
   },
-
   "custom/public-ip": {
     "exec": "~/.config/waybar/scripts/public-ip.sh",
     "interval": 60
   },
-
   "custom/keylights": {
     "exec": "~/.config/waybar/scripts/keylights.sh",
     "interval": 5,
     "on-click": "~/.config/waybar/scripts/keylights-toggle.sh"
   },
-
-  "custom/openvpn-start": {
-    "format": "",
-    "on-click": "openvpn3 session-start --config ~/dt.ovpn"
-  },
-
-  "custom/openvpn-kill": {
-    "format": "",
-    "on-click": "openvpn3 session-manage --disconnect --config ~/dt.ovpn"
-  },
-
-  "custom/openvpn-list": {
-    "format": "",
-    "on-click": "ghostty --class=float -e zsh -c 'openvpn3 sessions-list; sleep 2'"
-  },
-
   "custom/silence-notifications": {
     "exec": "if [ \"$(swaync-client -D)\" = 'true' ]; then echo ''; else echo ''; fi",
     "interval": 1,
     "on-click": "swaync-client -d -sw"
   },
-
   "custom/hotkeys": {
     "format": "⌨",
     "on-click": "~/.config/waybar/scripts/hotkeys.sh"
   },
-
   "custom/commands": {
     "format": "",
     "on-click": "~/.config/waybar/scripts/commands.sh"
   },
-
   "custom/timezone": {
     "exec": "~/.config/waybar/scripts/timezone.sh",
     "tail": true,
     "on-click": "kill -USR1 $(pgrep -f 'waybar/scripts/timezone.sh')"
   },
-
   "tray": {
     "spacing": 8
+  },
+  "custom/vpn": {
+    "exec": "~/.config/waybar/scripts/vpn.sh",
+    "interval": 5,
+    "on-click": "~/.config/waybar/scripts/vpn.sh toggle",
+    "on-click-right": "~/.config/waybar/scripts/vpn.sh list"
+  },
+  "custom/screen-record": {
+    "exec": "if [ -f /tmp/screen-record.pid ]; then echo '⏺'; fi",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/screen-record.sh",
+    "tooltip-format": "Toggle screen recording"
+  },
+  "custom/pomodoro": {
+    "exec": "~/.config/waybar/scripts/pomodoro.sh",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/pomodoro.sh toggle",
+    "on-click-right": "~/.config/waybar/scripts/pomodoro.sh reset",
+    "return-type": "json"
+  },
+  "custom/wallpaper": {
+    "format": "",
+    "on-click": "swww img \"$(find ~/Pictures/wallpapers -type f | shuf -n 1)\" --transition-type fade --transition-duration 2",
+    "tooltip-format": "Random wallpaper"
+  },
+  "custom/power-menu": {
+    "format": "⏻",
+    "on-click": "~/.config/waybar/scripts/power-menu.sh",
+    "tooltip-format": "Power menu"
   }
 }
