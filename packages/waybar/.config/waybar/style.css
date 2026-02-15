@@ -29,12 +29,14 @@ window#waybar.hidden {
 #cpu,
 #custom-public-ip,
 #custom-keylights,
-#custom-openvpn-start,
-#custom-openvpn-kill,
-#custom-openvpn-list,
+#custom-vpn,
+#custom-screen-record,
+#custom-pomodoro,
 #custom-silence-notifications,
+#custom-wallpaper,
 #custom-hotkeys,
 #custom-commands,
+#custom-power-menu,
 #custom-timezone,
 #tray {
   padding: 0 6px;
@@ -115,13 +117,31 @@ window#waybar.hidden {
 
 /* Keylights, openvpn, notifications, hotkeys, commands */
 #custom-keylights,
-#custom-openvpn-start,
-#custom-openvpn-kill,
-#custom-openvpn-list,
+#custom-vpn,
 #custom-silence-notifications,
 #custom-hotkeys,
 #custom-commands {
   color: #a3be8c;
+}
+
+/* Screen recording indicator */
+#custom-screen-record {
+  color: #bf616a;
+}
+
+/* Pomodoro timer */
+#custom-pomodoro {
+  color: #d08770;
+}
+
+/* Wallpaper button */
+#custom-wallpaper {
+  color: #88c0d0;
+}
+
+/* Power menu */
+#custom-power-menu {
+  color: #bf616a;
 }
 
 /* Timezone / clock */
