@@ -162,7 +162,7 @@
   },
   "custom/wallpaper": {
     "format": "",
-    "on-click": "swww img \"$(find ~/Pictures/wallpapers -type f | shuf -n 1)\" --transition-type fade --transition-duration 2",
+    "on-click": "pkill -USR1 -f wallpaper.sh",
     "tooltip-format": "Random wallpaper"
   },
   "custom/power-menu": {
