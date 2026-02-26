@@ -1,0 +1,25 @@
+/* Flat tab style for bottom placement — removes AdwTabBar's curved shape */
+tabbar tabbox {
+  background-color: #2E3440;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+tabbar tabbox tab {
+  background-color: #2E3440;
+  border-radius: 0;
+  margin: 0;
+  padding: 4px 8px;
+  border-right: 1px solid #3B4252;
+  color: #D8DEE9;
+}
+
+tabbar tabbox tab:selected {
+  background-color: #3B4252;
+  color: #ECEFF4;
+}
+
+tabbar tabbox tab:hover:not(:selected) {
+  background-color: #434C5E;
+}
