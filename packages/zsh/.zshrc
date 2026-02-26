@@ -103,3 +103,5 @@ fi
 
 eval "$(atuin init zsh --disable-up-arrow)"
 eval "$(starship init zsh)"
+
+source /home/nate/.config/broot/launcher/bash/br
