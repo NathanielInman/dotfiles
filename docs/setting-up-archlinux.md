@@ -456,7 +456,6 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `python-pip` will give us pip for python package management
 - `pyenv` python version manager and virtual environment
 - `wl-clipboard` provides `wl-copy` and `wl-paste` for clipboard input/output on Wayland. see alias pbcopy & pbpaste aliases in .zshrc
-- `task` is a very simple cli todo app named taskwarrior
 - `scc` breaks down LOC on a repo, broken by language
 - `duf` a better version of `df` (disk free utility)
 - `bandwhich` a bandwidth utilization monitor
@@ -465,7 +464,7 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `jq` is a command-line JSON processor
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git zsh python-pip pyenv wl-clipboard task scc duf bandwhich fkill gping jq
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq
 ```
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
@@ -542,7 +541,6 @@ Now for any other essentials for arch
 - `discord` for games and communication with friends and family
 - `file-roller` is an gui archive manager, although mostly `tar` on cli, nice to have
 - `ttf-joypixels` adds support for emoji's within ghostty terminal and elsewhere
-- `vit` is a TUI for taskwarrior
 - `ncdu` NCurses Disk Usage shows what files/folders are occupying how much space
 - `lazygit` is tui controls for beautiful git as well as nvim
 - `glow` is for cating out or reading markdown files in terminal
@@ -554,7 +552,7 @@ Now for any other essentials for arch
 - `didyoumean` is a spell-checking app
 - `translate-shell` is a translation app
 - `udict` urban dictionary
-- `neofetch` cli info tool
+- `fastfetch` cli system info tool (actively maintained neofetch replacement)
 - `sdcv-git` cli dictionary
 - `xsv` is a cli for splitting/joining/analyzing csv files
 - `obsidian` is a note-taking application leveraging zettelkasten
@@ -584,7 +582,7 @@ Now for any other essentials for arch
 - `fselect` is a SQL-like querying tool for the filesystem
 
 ```
-yay -S slack-desktop discord file-roller ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
+yay -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
 Now open up `nwg-look` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
@@ -603,12 +601,6 @@ cd ~/Sites
 git clone https://github.com/nathanielinman/notes.git
 ```
 
-Now sync tasks for `taskwarrior` and `vit`:
-
-```
-git clone https://github.com/nathanielinman/tasks.git ~/.task
-```
-
 Now enable the cronie cron service for systemd and start immediately
 
 ```
@@ -620,7 +612,6 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 ```
 # `cron tab -e` then add the following lines to update both automatically hourly
 @hourly /home/nate/Sites/dot-files/scripts/cron-git-notes-auto-update.sh
-@hourly /home/nate/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh
 ```
 
 Finally we should make sure our `/etc/hosts` file is prioritized for blocking hosts if we want. Within `sudo vim /etc/nsswitch.conf` make sure the `files` attribute is before the others:
@@ -727,45 +718,6 @@ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="18d1|096e", ATTRS{idPr
 ```
 
 then `:wq` and `sudo udevadm control --reload-rules`.
-
-## Setting up streamdeck
-
-```
-yay -S streamdeck-ui
-```
-
-then reboot
-
-```
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/lightbulb-off.png -o ~/Pictures/lightbulb-off.png
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/lightbulb-on.png -o ~/Pictures/lightbulb-on.png
-curl https://raw.githubusercontent.com/NathanielInman/Dot-Files/master/screencapture-icon.png -o ~/Pictures/screencapture-icon.png
-cd ~/Sites
-git clone https://github.com/endocrimes/keylightctl.git
-cd keylightctl
-make build
-sudo cp ./dist/linux_amd64/keylightctl /usr/bin
-```
-
-now we'll discover any lights on the network
-
-```
-keylightctl discover
-```
-
-now we can add the following commands to streamdeck (substitute your light ids used in discover)
-
-```
-bash -c "keylightctl switch --light 8A95 on & keylightctl switch --light 9F74 on"
-bash -c "keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off"
-```
-
-make sure to use the `on` and `off` icons you downloaded earlier
-While we're here, let's also set the icon for the `screencapture-icon.png` and setup the command:
-
-```
-bash -c "grim -g \"$(slurp)\" - | swappy -f -"
-```
 
 ## autostart apps using systemd
 

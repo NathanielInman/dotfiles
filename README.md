@@ -1,28 +1,17 @@
 # Dot-Files
+
 This contains all of my dot files and step-by-step instructions on how to build an Arch distribution similar to mine. Most configurations are detailed with comments. All dot files are purposefully compact with little ricing.
 
 ![Full-screen Example of Desktop](/Pictures/fullscreen.png)
 
 ## Installation
 
-This repository uses [GNU Stow](https://www.gnu.org/software/stow/) for managing symlinks.
-
-### Prerequisites
+Aside from referencing the configuration files directly, you can use stow to automatically install any one or multiple of the configurations in this repository. This repository uses [GNU Stow](https://www.gnu.org/software/stow/) for managing symlinks.
 
 ```bash
-# Arch Linux
+# Packages are 'installed' by merely symlinking the files to their destinations
 sudo pacman -S stow
 
-# Debian/Ubuntu
-sudo apt install stow
-
-# macOS
-brew install stow
-```
-
-### Quick Start
-
-```bash
 # Clone the repository
 git clone https://github.com/NathanielInman/dot-files.git ~/Sites/dot-files
 cd ~/Sites/dot-files
@@ -45,26 +34,22 @@ cd ~/Sites/dot-files
 
 ### Available Packages
 
-| Package | Description |
-|---------|-------------|
-| `broot` | File explorer |
-| `ghostty` | Terminal emulator |
-| `git` | Git configuration |
-| `gpick` | Color picker |
-| `hyprland` | Wayland compositor |
-| `neofetch` | System info display |
-| `nushell` | Modern shell |
-| `nvim` | NeoVim with NvChad |
-| `rofi` | Application launcher |
-| `starship` | Shell prompt |
-| `streamdeck` | Stream Deck config |
-| `swaylock` | Screen locker |
-| `swaync` | Notification center |
-| `taskwarrior` | Task management |
-| `vim` | Vim configuration |
-| `wallpaper` | Wallpaper via swww |
-| `waybar` | Status bar |
-| `zsh` | Zsh + Oh-My-Zsh theme |
+| Package       | Description           |
+| ------------- | --------------------- |
+| `ghostty`     | Terminal emulator     |
+| `git`         | Git configuration     |
+| `gpick`       | Color picker          |
+| `hyprland`    | Wayland compositor    |
+| `nushell`     | Modern shell          |
+| `nvim`        | NeoVim with NvChad    |
+| `rofi`        | Application launcher  |
+| `starship`    | Shell prompt          |
+| `swaylock`    | Screen locker         |
+| `swaync`      | Notification center   |
+| `vim`         | Vim configuration     |
+| `wallpaper`   | Wallpaper via swww    |
+| `waybar`      | Status bar            |
+| `zsh`         | Zsh + Oh-My-Zsh theme |
 
 > [!TIP]
 > Clicking on the icons below will lead directly to this repositories documentation on how to setup said operating system or tool.
