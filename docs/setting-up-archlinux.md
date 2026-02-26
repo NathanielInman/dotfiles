@@ -227,7 +227,6 @@ Now for installing window manager stuff (Hyprland)
 - `hyprland` - tiling Wayland compositor with dynamic tiling, animations, and scripting
 - `waybar` - highly customizable bar for Wayland compositors
 - `rofi-wayland` - hotkey app opener overlay, Wayland-native fork of rofi
-- `dunst` - notification display app (works on Wayland)
 - `swaync` - notification center with history panel for Wayland
 - `ghostty` - fast GPU-accelerated terminal emulator with ligature support
 - `network-manager-applet` - gui layer for managing network apps & vpn
@@ -258,7 +257,7 @@ Now for installing window manager stuff (Hyprland)
 - `xdg-utils` - for helpful things such as mime detection
 
 ```
-pacman -S hyprland waybar rofi-wayland dunst swaync ghostty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq blueman grim slurp swappy swaylock swayidle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+pacman -S hyprland waybar rofi-wayland swaync ghostty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq blueman grim slurp swappy swaylock swayidle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
 ```
 
 No display manager is needed. Hyprland auto-launches via `.zshrc` when logging in on tty1, and getty autologin handles the login (configured below).
@@ -298,7 +297,7 @@ monitor = DP-2, preferred, auto, 1
 # monitor = DP-2, 2560x1440@144, 2560x0, 1
 ```
 
-The following is outdated, but sets up a window manager to get started, substitute `nate` for your name:
+Now create your user, substitute `nate` for your name:
 
 ```
 useradd -m -g users -G wheel -s /bin/bash nate
@@ -419,7 +418,7 @@ Install stow packages for the Wayland setup:
 
 ```
 cd packages
-stow -t ~ hyprland waybar swaylock swaync dunst rofi ghostty zsh git nvim starship wallpaper
+stow -t ~ hyprland waybar swaylock swaync rofi ghostty zsh git nvim starship wallpaper
 ```
 
 if at any point you want to remove the symlinks `stow -D <package>` from within the packages folder
@@ -539,10 +538,8 @@ cargo install rusti-cal melt tidy-viewer pueue
 
 Now for any other essentials for arch
 
-- `hyprpicker` Wayland-native color picker
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `discord` for games and communication with friends and family
-- `feh` is an image viewer (wallpapers are now handled by swww)
 - `file-roller` is an gui archive manager, although mostly `tar` on cli, nice to have
 - `ttf-joypixels` adds support for emoji's within ghostty terminal and elsewhere
 - `vit` is a TUI for taskwarrior
@@ -567,7 +564,6 @@ Now for any other essentials for arch
 - `onefetch` is a command that gets important stats on a git repo
 - `okular` is a pdf, epub, cbr, cbz etc minimal chrome reader
 - `usbutils` allows `lsusb` and other helpful minor functions
-- `hyprpicker` is a Wayland-native color picker (replaces gpick on X11)
 - `thunar` is a slim file manager
 - `thunar-volman` is a slim volume manager for the thunar fm gui
 - `thunar-archive-plugin` is a slim shim for file roller integration with thunar
@@ -576,7 +572,6 @@ Now for any other essentials for arch
 - `gvfs-smb` mounts samba networked filesystem volumes
 - `tumbler` unlocks generation of thumbnails for thunar
 - `libgsf` is a super fast image thumbnailer for `tumbler`
-- `lxappearance` is tiny a theme chooser for GTK (alternatively use `nwg-look` for a Wayland-native option)
 - `galculator` is a simple scientific gtk calculator
 - `orchis-theme-git` is a simple XFCE4 & GTK dark theme
 - `gtk-engine-murrine` helps with backwards-compatibility themes for gtk2
@@ -589,21 +584,10 @@ Now for any other essentials for arch
 - `fselect` is a SQL-like querying tool for the filesystem
 
 ```
-yay -S hyprpicker slack-desktop discord feh file-roller ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf lxappearance galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
+yay -S slack-desktop discord file-roller ttf-joypixels vit ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict neofetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
-Now open up `lxappearance` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
-You can now set any default applications you prefer:
-
-```
-handlr set .png feh.desktop
-```
-
-If you want to view pixel art with feh, it may make sense to force aliasing and auto zooming. `sudo vim /usr/share/applications/feh.desktop` and change `Exec` lint to be:
-
-```
-Exec=feh --start-at %u --force-aliasing --auto-zoom
-```
+Now open up `nwg-look` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
 
 Now grab the dictionary file for sdcv:
 
@@ -653,25 +637,6 @@ Then we can add urls we want to block within it (for me, yandex - which i usuall
 127.0.0.1 yabs.yandex.ru
 ```
 
-Now we'll grab `snap` so we can grab `docker` and other things easily
-
-```
-cd ~/Sites
-git clone https://aur.archlinux.org/snapd.git
-cd snapd
-makepkg -si
-sudo systemctl enable --now snapd.socket
-sudo ln -s /var/lib/snapd/snap /snap
-```
-
-Finally we can grab some `snap` stuff we'll use when developing a lot
-
-Note: `colorpicker-app` may not work well on Wayland - use `hyprpicker` instead as a Wayland-native color picker. `emote` should work under XWayland.
-
-```
-snap install emote gnome-3-28-1804 gtk-common-themes snapd bare core18
-```
-
 ## Hyprland Plugin Setup
 
 Install plugins from the official hyprland-plugins repo:
@@ -693,7 +658,7 @@ The following stow packages should be installed for the Wayland setup:
 
 ```
 cd ~/Sites/dot-files/packages
-stow -t ~ hyprland waybar swaylock swaync dunst rofi ghostty zsh git nvim starship wallpaper
+stow -t ~ hyprland waybar swaylock swaync rofi ghostty zsh git nvim starship wallpaper
 ```
 
 | Package | Description |
@@ -702,7 +667,6 @@ stow -t ~ hyprland waybar swaylock swaync dunst rofi ghostty zsh git nvim starsh
 | `waybar` | Bottom bar with system info, scripts, and workspaces |
 | `swaylock` | Nord-themed lock screen |
 | `swaync` | Notification center with history |
-| `dunst` | Simple notification daemon |
 | `rofi` | Application launcher and clipboard manager |
 | `ghostty` | Terminal emulator |
 | `zsh` | Shell configuration with aliases and plugins |
