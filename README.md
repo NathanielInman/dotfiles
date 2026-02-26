@@ -46,7 +46,6 @@ cd ~/Sites/dot-files
 | `swaylock`    | Screen locker         |
 | `swaync`      | Notification center   |
 | `vim`         | Vim configuration     |
-| `wallpaper`   | Wallpaper via swww    |
 | `waybar`      | Status bar            |
 | `zsh`         | Zsh + Oh-My-Zsh theme |
 
