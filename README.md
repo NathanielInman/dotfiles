@@ -48,25 +48,22 @@ cd ~/Sites/dot-files
 | Package | Description |
 |---------|-------------|
 | `broot` | File explorer |
-| `dunst` | Notification daemon |
-| `flameshot` | Screenshot tool |
+| `ghostty` | Terminal emulator |
 | `git` | Git configuration |
 | `gpick` | Color picker |
 | `hyprland` | Wayland compositor |
-| `i3` | X11 window manager |
-| `ghostty` | Terminal emulator |
 | `neofetch` | System info display |
 | `nushell` | Modern shell |
 | `nvim` | NeoVim with NvChad |
-| `picom` | X11 compositor |
-| `polybar` | Status bar |
 | `rofi` | Application launcher |
 | `starship` | Shell prompt |
 | `streamdeck` | Stream Deck config |
+| `swaylock` | Screen locker |
+| `swaync` | Notification center |
 | `taskwarrior` | Task management |
 | `vim` | Vim configuration |
-| `wallpaper` | Wallpaper script |
-| `ghostty` | Terminal emulator |
+| `wallpaper` | Wallpaper via swww |
+| `waybar` | Status bar |
 | `zsh` | Zsh + Oh-My-Zsh theme |
 
 > [!TIP]
