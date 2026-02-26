@@ -38,7 +38,6 @@ cd ~/Sites/dot-files
 | ------------- | --------------------- |
 | `ghostty`     | Terminal emulator     |
 | `git`         | Git configuration     |
-| `gpick`       | Color picker          |
 | `hyprland`    | Wayland compositor    |
 | `nushell`     | Modern shell          |
 | `nvim`        | NeoVim with NvChad    |
