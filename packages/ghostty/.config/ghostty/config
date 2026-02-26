@@ -2,5 +2,6 @@ font-family = PragmataPro Liga
 font-size = 16
 theme = Nord
 gtk-tabs-location = bottom
+gtk-custom-css = tabs.css
 gtk-titlebar = false
 window-decoration = false
