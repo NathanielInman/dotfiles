@@ -12,6 +12,7 @@
     "group/details",
     "pulseaudio",
     "custom/voxtype",
+    "custom/meeting-record",
     "custom/screen-record",
     "custom/pomodoro",
     "custom/keylights",
@@ -151,9 +152,21 @@
   "custom/voxtype": {
     "exec": "voxtype status --follow --format json",
     "return-type": "json",
-    "format": "{}",
+    "format": "{icon}",
+    "format-icons": {
+      "idle": "󰍬",
+      "recording": "󰑊",
+      "transcribing": "⏳",
+      "stopped": "󰍭"
+    },
     "tooltip": true,
     "on-click": "voxtype record toggle"
+  },
+  "custom/meeting-record": {
+    "exec": "if [ -f /tmp/meeting-record.pid ]; then echo '󰻞'; fi",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/meeting-record.sh toggle",
+    "tooltip-format": "Toggle meeting recording"
   },
   "custom/screen-record": {
     "exec": "if [ -f /tmp/screen-record.pid ]; then echo '⏺'; fi",
