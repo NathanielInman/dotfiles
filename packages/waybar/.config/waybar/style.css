@@ -31,6 +31,7 @@ window#waybar.hidden {
 #custom-keylights,
 #custom-vpn,
 #custom-voxtype,
+#custom-meeting-record,
 #custom-screen-record,
 #custom-pomodoro,
 #custom-silence-notifications,
@@ -134,7 +135,9 @@ window#waybar.hidden {
 }
 
 /* Screen recording indicator */
-#custom-voxtype {
+#custom-voxtype,
+#custom-voxtype.idle,
+#custom-voxtype.stopped {
   color: #a3be8c;
 }
 
@@ -146,13 +149,17 @@ window#waybar.hidden {
   color: #ebcb8b;
 }
 
+#custom-meeting-record {
+  color: #bf616a;
+}
+
 #custom-screen-record {
   color: #bf616a;
 }
 
 /* Pomodoro timer */
 #custom-pomodoro {
-  color: #d08770;
+  color: #a3be8c;
 }
 
 /* Wallpaper button */

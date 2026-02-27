@@ -535,6 +535,24 @@ Now some rust utils:
 cargo install rusti-cal melt tidy-viewer pueue
 ```
 
+## Voxtype (Push-to-Talk Voice-to-Text)
+
+- `voxtype-bin` - push-to-talk voice-to-text tool for Linux, optimized for Wayland
+- `wtype` - keyboard simulation for Wayland (recommended by voxtype)
+
+```
+yay -S voxtype-bin wtype
+```
+
+Run the initial setup to download the Whisper model and configure GPU acceleration:
+
+```
+voxtype setup
+voxtype setup gpu --enable  # optional, requires vulkan-icd-loader
+```
+
+Voxtype runs as a daemon and is bound to F13 (code:191) as push-to-talk in `hyprland.conf`. The waybar module shows recording/transcribing status. A meeting recording script (`~/.config/waybar/scripts/meeting-record.sh`) captures audio to 15-minute WAV chunks for later batch transcription via `voxtype transcribe`, toggled with F14 (code:192).
+
 Now for any other essentials for arch
 
 - `slack-desktop` for work, quite a bit better than regular browser version
