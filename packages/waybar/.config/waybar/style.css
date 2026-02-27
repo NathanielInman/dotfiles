@@ -30,6 +30,7 @@ window#waybar.hidden {
 #custom-public-ip,
 #custom-keylights,
 #custom-vpn,
+#custom-voxtype,
 #custom-screen-record,
 #custom-pomodoro,
 #custom-silence-notifications,
@@ -133,6 +134,18 @@ window#waybar.hidden {
 }
 
 /* Screen recording indicator */
+#custom-voxtype {
+  color: #a3be8c;
+}
+
+#custom-voxtype.recording {
+  color: #bf616a;
+}
+
+#custom-voxtype.transcribing {
+  color: #ebcb8b;
+}
+
 #custom-screen-record {
   color: #bf616a;
 }

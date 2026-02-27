@@ -76,3 +76,5 @@ yad --width=$dynamic_width --height=$dynamic_height \
 " Shift w" "Cycle column narrower" "(hyprscrolling)" \
 " =" "Cycle column wider" "(hyprscrolling)" \
 " -" "Cycle column narrower" "(hyprscrolling)" \
+" LMB drag" "Move floating window" "(hyprland)" \
+" RMB drag" "Resize floating window" "(hyprland)" \

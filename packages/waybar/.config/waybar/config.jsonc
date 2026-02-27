@@ -11,6 +11,7 @@
     "custom/currently-playing",
     "group/details",
     "pulseaudio",
+    "custom/voxtype",
     "custom/screen-record",
     "custom/pomodoro",
     "custom/keylights",
@@ -146,6 +147,13 @@
     "on-click": "~/.config/waybar/scripts/vpn.sh toggle",
     "on-click-right": "~/.config/waybar/scripts/vpn.sh list",
     "return-type": "json"
+  },
+  "custom/voxtype": {
+    "exec": "voxtype status --follow --format json",
+    "return-type": "json",
+    "format": "{}",
+    "tooltip": true,
+    "on-click": "voxtype record toggle"
   },
   "custom/screen-record": {
     "exec": "if [ -f /tmp/screen-record.pid ]; then echo '⏺'; fi",
