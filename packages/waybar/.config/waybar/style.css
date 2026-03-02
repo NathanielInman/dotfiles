@@ -117,8 +117,16 @@ window#waybar.hidden {
   color: #81a1c1;
 }
 
-/* Keylights, notifications, hotkeys, commands */
-#custom-keylights,
+/* Keylights */
+#custom-keylights.on {
+  color: #50fa7b;
+}
+
+#custom-keylights.off {
+  color: #a3be8c;
+}
+
+/* Notifications, hotkeys, commands */
 #custom-silence-notifications,
 #custom-hotkeys,
 #custom-commands {
