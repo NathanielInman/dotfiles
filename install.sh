@@ -37,6 +37,7 @@ usage() {
     echo "  -u, --unstow    Uninstall (unstow) packages"
     echo "  -r, --restow    Restow packages (useful after updates)"
     echo "  -n, --dry-run   Show what would be done without making changes"
+    echo "  -s, --setup-system  Run optional system-level configuration (requires sudo)"
     echo "  -h, --help      Show this help message"
     echo ""
     echo "Examples:"
@@ -46,6 +47,7 @@ usage() {
     echo "  $0 -u nvim             # Uninstall nvim package"
     echo "  $0 -r nvim             # Restow nvim (after pulling updates)"
     echo "  $0 -n -a               # Dry-run: show what would be installed"
+    echo "  $0 -s                  # Run system-level configuration prompts"
     echo ""
 }
 
@@ -118,6 +120,33 @@ stow_package() {
     esac
 }
 
+setup_system() {
+    echo -e "${BLUE}System-level configuration${NC}"
+    echo ""
+
+    # OpenVPN3 + systemd-resolved DNS integration
+    if command -v openvpn3 &> /dev/null && command -v openvpn3-admin &> /dev/null; then
+        local current_config
+        current_config=$(sudo cat /var/lib/openvpn3/netcfg.json 2>/dev/null || echo "")
+        if echo "$current_config" | grep -q '"systemd_resolved" : true'; then
+            echo -e "  ${GREEN}[configured]${NC} openvpn3 systemd-resolved DNS"
+        else
+            echo -n -e "  ${YELLOW}[available]${NC} Configure openvpn3 to use systemd-resolved for DNS? [y/N] "
+            read -r answer
+            if [[ "$answer" =~ ^[Yy]$ ]]; then
+                sudo mkdir -p /var/lib/openvpn3
+                sudo openvpn3-admin netcfg-service --config-set systemd-resolved true
+                echo -e "  ${GREEN}[configured]${NC} openvpn3 systemd-resolved DNS"
+            else
+                echo -e "  ${YELLOW}[skipped]${NC} openvpn3 systemd-resolved DNS"
+            fi
+        fi
+    fi
+
+    echo ""
+    echo -e "${GREEN}System configuration complete!${NC}"
+}
+
 # Parse arguments
 ACTION="install"
 DRY_RUN="false"
@@ -140,6 +169,10 @@ while [[ $# -gt 0 ]]; do
         -r|--restow)
             ACTION="restow"
             shift
+            ;;
+        -s|--setup-system)
+            setup_system
+            exit 0
             ;;
         -n|--dry-run)
             DRY_RUN="true"
