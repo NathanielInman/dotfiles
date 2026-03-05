@@ -6,7 +6,7 @@ FORMAT=" %a %b %d  %H:%M"
 # Add the timezones of your choice. see `timedatectl list-timezones`.
 # This first timezone is ours and won't show the timezone in the bar,
 # the rest will display the timezone to clarify which we're looking at
-set -- "America/Chicago" "EET" "America/New_York"
+set -- "America/Chicago" "EET" "GMT"
 
 TIMEZONES_LENGTH=$#
 current_idx=1

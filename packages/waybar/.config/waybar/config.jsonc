@@ -138,7 +138,8 @@
   "custom/timezone": {
     "exec": "~/.config/waybar/scripts/timezone.sh",
     "tail": true,
-    "on-click": "kill -USR1 $(pgrep -f 'waybar/scripts/timezone.sh')"
+    "on-click": "kill -USR1 $(pgrep -f 'waybar/scripts/timezone.sh')",
+    "on-click-right": "gnome-calendar"
   },
   "tray": {
     "spacing": 8
