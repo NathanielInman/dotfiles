@@ -1,0 +1,25 @@
+window#osd {
+    border-radius: 999px;
+    background-color: rgba(46, 52, 64, 0.9);
+}
+
+window#osd #container {
+    margin: 16px;
+}
+
+window#osd image,
+window#osd label {
+    color: #d8dee9;
+}
+
+window#osd progressbar trough {
+    background-color: rgba(216, 222, 233, 0.2);
+    border-radius: 999px;
+    min-height: 6px;
+}
+
+window#osd progressbar progress {
+    background-color: #81a1c1;
+    border-radius: 999px;
+    min-height: 6px;
+}

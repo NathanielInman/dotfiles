@@ -226,7 +226,8 @@ Now for installing window manager stuff (Hyprland)
 
 - `hyprland` - tiling Wayland compositor with dynamic tiling, animations, and scripting
 - `waybar` - highly customizable bar for Wayland compositors
-- `rofi-wayland` - hotkey app opener overlay, Wayland-native fork of rofi
+- `walker` - Wayland-native GTK4 application launcher (requires `elephant` provider daemon)
+- `elephant-all` - general-purpose data provider daemon for walker (includes all providers)
 - `swaync` - notification center with history panel for Wayland
 - `ghostty` - fast GPU-accelerated terminal emulator with ligature support
 - `network-manager-applet` - gui layer for managing network apps & vpn
@@ -244,8 +245,8 @@ Now for installing window manager stuff (Hyprland)
 - `grim` - screenshot utility for Wayland
 - `slurp` - region selection tool for Wayland screenshots
 - `swappy` - screenshot annotation tool
-- `swaylock` - screen locker for Wayland
-- `swayidle` - idle management daemon for Wayland
+- `hyprlock` - screen locker for Hyprland
+- `hypridle` - idle management daemon for Hyprland
 - `pamixer` - pulseaudio/pipewire CLI mixer
 - `playerctl` - MPRIS media player controller
 - `brightnessctl` - brightness control utility
@@ -257,7 +258,8 @@ Now for installing window manager stuff (Hyprland)
 - `xdg-utils` - for helpful things such as mime detection
 
 ```
-pacman -S hyprland waybar rofi-wayland swaync ghostty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq blueman grim slurp swappy swaylock swayidle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+pacman -S hyprland waybar swaync ghostty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq blueman grim slurp swappy hyprlock hypridle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+yay -S walker elephant-all
 ```
 
 No display manager is needed. Hyprland auto-launches via `.zshrc` when logging in on tty1, and getty autologin handles the login (configured below).
@@ -418,12 +420,12 @@ Install stow packages for the Wayland setup:
 
 ```
 cd packages
-stow -t ~ hyprland waybar swaylock swaync rofi ghostty zsh git nvim starship wallpaper
+stow -t ~ hyprland waybar swaync walker ghostty zsh git nvim starship wallpaper
 ```
 
 if at any point you want to remove the symlinks `stow -D <package>` from within the packages folder
 Feel free to manually copy any ./Sites/dot-files/usr/share/applications files
-in order to setup launching using rofi or hiding unused/unwanted apps.
+in order to setup launching using walker or hiding unused/unwanted apps.
 Now grab paru for AUR, used to use yay but Rust ftw :)
 
 ```
@@ -469,15 +471,7 @@ yay -S curl wget diff-so-fancy eza bat fd ripgrep git zsh python-pip pyenv wl-cl
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
 
-Screen locking is handled by `swaylock` and idle management by `swayidle`. Both are configured in `hyprland.conf`:
-
-```
-# Already in hyprland.conf exec-once:
-exec-once = swayidle -w timeout 900 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on'
-# Lock screen via SUPER+Alt+L which runs swaylock
-```
-
-The swaylock config is at `~/.config/swaylock/config` (Nord-themed, installed via stow).
+Screen locking is handled by `hyprlock` and idle management by `hypridle`. Both configs live in `~/.config/hypr/` (installed via the hyprland stow package). Lock screen is triggered manually via SUPER+Alt+L.
 
 Now we update our python package manager
 
@@ -667,16 +661,15 @@ The following stow packages should be installed for the Wayland setup:
 
 ```
 cd ~/Sites/dot-files/packages
-stow -t ~ hyprland waybar swaylock swaync rofi ghostty zsh git nvim starship wallpaper
+stow -t ~ hyprland waybar swaync walker ghostty zsh git nvim starship wallpaper
 ```
 
 | Package | Description |
 |---------|-------------|
-| `hyprland` | Hyprland compositor config with hyprscrolling |
+| `hyprland` | Hyprland compositor config with hyprscrolling, hyprlock, and hypridle |
 | `waybar` | Bottom bar with system info, scripts, and workspaces |
-| `swaylock` | Nord-themed lock screen |
 | `swaync` | Notification center with history |
-| `rofi` | Application launcher and clipboard manager |
+| `walker` | Application launcher with file browser, symbols, and window switcher |
 | `ghostty` | Terminal emulator |
 | `zsh` | Shell configuration with aliases and plugins |
 | `git` | Git configuration with delta pager |
@@ -686,7 +679,7 @@ stow -t ~ hyprland waybar swaylock swaync rofi ghostty zsh git nvim starship wal
 
 ## Default Applications
 
-In order to ensure that `xdg-open` via rofi opens things in the right applications:
+In order to ensure that `xdg-open` opens things in the right applications:
 
 ```
 xdg-mime default neovide.desktop application/javascript

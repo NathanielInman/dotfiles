@@ -6,6 +6,9 @@ return {
     opts = {
       events = { 'BufWritePost', 'BufReadPost', 'InsertLeave' },
       linters_by_ft = {
+        go = {
+          'golangcilint',
+        },
         javascript = {
           'eslint_d',
         },
@@ -56,7 +59,14 @@ return {
         ctx.dirname = vim.fn.fnamemodify(ctx.filename, ':h')
         names = vim.tbl_filter(function(name)
           local linter = lint.linters[name]
-          return linter and not (type(linter) == 'table' and linter.condition and not linter.condition(ctx))
+          if not linter or (type(linter) == 'table' and linter.condition and not linter.condition(ctx)) then
+            return false
+          end
+          -- Skip linters whose binary is not found on PATH
+          if type(linter) == 'table' and linter.cmd and vim.fn.executable(linter.cmd) == 0 then
+            return false
+          end
+          return true
         end, names)
 
         -- run any linters that were found

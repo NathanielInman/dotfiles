@@ -40,17 +40,18 @@ yad --width=$dynamic_width --height=$dynamic_height \
 " t" "Opens a floating terminal" "(ghostty)" \
 " e" "Opens a file manager" "(thunar)" \
 " enter" "Opens a terminal" "(ghostty)" \
-" v" "Opens rofi file browser" "(rofi)" \
+" v" "Opens file browser" "(walker)" \
 " c" "Start a calculator" "(galculator)" \
 " r" "Toggle screen recording" "(wf-recorder)" \
 " i" "Pick color from screen to clipboard" "(hyprpicker)" \
-" o" "Open emoji picker" "(rofi-emoji)" \
+" o" "Open symbol/emoji picker" "(walker)" \
 " b" "Toggle visibility of waybar" "(waybar)" \
-" Alt l" "Trigger the lock screen" "(swaylock)" \
+" Alt l" "Trigger the lock screen" "(hyprlock)" \
 " Alt v" "Launch clipboard manager" "(copyq)" \
 " p" "Open area-specific screenshot tool" "(grim+slurp)" \
 " n" "Launch notification center" "(swaync)" \
-" d" "Search for an application to run" "(rofi)" \
+" d" "Search for an application to run" "(walker)" \
+"Alt Tab" "Switch between windows" "(walker)" \
 " Shift Q" "Close the focused window" "(hyprland)" \
 " h" "Change focus to tile on the left" "(hyprland)" \
 " j" "Change focus to tile below current" "(hyprland)" \

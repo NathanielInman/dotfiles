@@ -2,7 +2,8 @@
 # Take a screenshot with grim+slurp+swappy, then symlink the latest as current.png
 
 DIR="$HOME/Pictures/Screenshots"
-CURRENT="$DIR/current.png"
+CURRENT="$HOME/Downloads/current.png"
+LAST="$HOME/Downloads/last.png"
 
 # Record newest file before screenshot
 before=$(ls -t "$DIR"/swappy-*.png 2>/dev/null | head -1)
@@ -14,5 +15,9 @@ after=$(ls -t "$DIR"/swappy-*.png 2>/dev/null | head -1)
 
 # If a new file appeared, update the symlink
 if [[ -n "$after" && "$after" != "$before" ]]; then
+    # Move current to last before updating
+    if [[ -L "$CURRENT" ]]; then
+        ln -sf "$(readlink "$CURRENT")" "$LAST"
+    fi
     ln -sf "$after" "$CURRENT"
 fi
