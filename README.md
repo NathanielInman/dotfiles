@@ -36,7 +36,7 @@ cd ~/Sites/dot-files
 
 | Package       | Description           |
 | ------------- | --------------------- |
-| `ghostty`     | Terminal emulator     |
+| `wezterm`     | Terminal emulator     |
 | `git`         | Git configuration     |
 | `hyprland`    | Wayland compositor    |
 | `nushell`     | Modern shell          |

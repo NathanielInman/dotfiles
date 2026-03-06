@@ -37,9 +37,9 @@ yad --width=$dynamic_width --height=$dynamic_height \
     --timeout-indicator=bottom \
 "ESC" "close this app" "" "=" "SUPER KEY (Windows Key)" "(SUPER KEY)" \
 " /" "Opens this help window" "(hotkeys)" \
-" t" "Opens a floating terminal" "(ghostty)" \
+" t" "Opens a floating terminal" "(wezterm)" \
 " e" "Opens a file manager" "(thunar)" \
-" enter" "Opens a terminal" "(ghostty)" \
+" enter" "Opens a terminal" "(wezterm)" \
 " v" "Opens file browser" "(walker)" \
 " c" "Start a calculator" "(galculator)" \
 " r" "Toggle screen recording" "(wf-recorder)" \
