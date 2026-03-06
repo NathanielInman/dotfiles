@@ -18,7 +18,17 @@ config.keys = {
     key = 'LeftArrow',
     mods = 'CTRL|SHIFT',
     action = wezterm.action.ActivateTabRelative(-1)
-  }
+  },
+  {
+    key = 'V',
+    mods = 'CTRL|SHIFT',
+    action = wezterm.action_callback(function(window, pane)
+      local handle = io.popen('wl-paste')
+      local clipboard = handle:read('*a')
+      handle:close()
+      window:perform_action(act.SendString(clipboard), pane)
+    end),
+  },
 }
 config.colors = {
   tab_bar = {
