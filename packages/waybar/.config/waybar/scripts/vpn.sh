@@ -19,7 +19,7 @@ case "$1" in
     fi
     ;;
   list)
-    ghostty --title=float-term -e zsh -c 'openvpn3 sessions-list; sleep 3'
+    wezterm start --class float-term -- zsh -c 'openvpn3 sessions-list; sleep 3'
     ;;
   *)
     if openvpn3 sessions-list 2>/dev/null | grep -q 'Path:'; then
