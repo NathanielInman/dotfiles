@@ -236,7 +236,7 @@ Now for installing window manager stuff (Hyprland)
 - `walker` - Wayland-native GTK4 application launcher (requires `elephant` provider daemon)
 - `elephant-all` - general-purpose data provider daemon for walker (includes all providers)
 - `swaync` - notification center with history panel for Wayland
-- `wezterm` - GPU-accelerated terminal emulator with ligature support and Lua config
+- `kitty` - GPU-accelerated terminal emulator with ligature support
 - `network-manager-applet` - gui layer for managing network apps & vpn
 - `noto-fonts` - emoji extras & base fonts
 - `adobe-source-code-pro-fonts` - additional fallback fonts
@@ -265,7 +265,7 @@ Now for installing window manager stuff (Hyprland)
 - `xdg-utils` - for helpful things such as mime detection
 
 ```
-pacman -S hyprland waybar swaync wezterm network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq blueman grim slurp swappy hyprlock hypridle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+pacman -S hyprland waybar swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq blueman grim slurp swappy hyprlock hypridle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
 yay -S walker elephant-all
 ```
 
@@ -427,7 +427,7 @@ Install stow packages for the Wayland setup:
 
 ```
 cd packages
-stow -t ~ hyprland waybar swaync walker wezterm zsh git nvim starship wallpaper
+stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship wallpaper
 ```
 
 if at any point you want to remove the symlinks `stow -D <package>` from within the packages folder
@@ -559,7 +559,7 @@ Now for any other essentials for arch
 - `slack-desktop` for work, quite a bit better than regular browser version
 - `discord` for games and communication with friends and family
 - `file-roller` is an gui archive manager, although mostly `tar` on cli, nice to have
-- `ttf-joypixels` adds support for emoji's within wezterm terminal and elsewhere
+- `ttf-joypixels` adds support for emoji's within kitty terminal and elsewhere
 - `ncdu` NCurses Disk Usage shows what files/folders are occupying how much space
 - `lazygit` is tui controls for beautiful git as well as nvim
 - `glow` is for cating out or reading markdown files in terminal
@@ -668,7 +668,7 @@ The following stow packages should be installed for the Wayland setup:
 
 ```
 cd ~/Sites/dot-files/packages
-stow -t ~ hyprland waybar swaync walker wezterm zsh git nvim starship wallpaper
+stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship wallpaper
 ```
 
 | Package | Description |
@@ -677,7 +677,7 @@ stow -t ~ hyprland waybar swaync walker wezterm zsh git nvim starship wallpaper
 | `waybar` | Bottom bar with system info, scripts, and workspaces |
 | `swaync` | Notification center with history |
 | `walker` | Application launcher with file browser, symbols, and window switcher |
-| `wezterm` | Terminal emulator |
+| `kitty` | Terminal emulator |
 | `zsh` | Shell configuration with aliases and plugins |
 | `git` | Git configuration with delta pager |
 | `nvim` | Neovim configuration |

@@ -19,7 +19,7 @@ case "$1" in
     fi
     ;;
   list)
-    wezterm start --class float-term -- zsh -c 'openvpn3 sessions-list; sleep 3'
+    kitty --class float-term -- zsh -c 'openvpn3 sessions-list; sleep 3'
     ;;
   *)
     if openvpn3 sessions-list 2>/dev/null | grep -q 'Path:'; then
