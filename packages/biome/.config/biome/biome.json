@@ -1,0 +1,116 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "es5",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSameLine": false,
+      "bracketSpacing": true
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "trailingCommas": "none"
+    }
+  },
+  "css": {
+    "formatter": {
+      "enabled": true
+    },
+    "linter": {
+      "enabled": true
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noConsole": "error",
+        "noDebugger": "error",
+        "noDoubleEquals": "error",
+        "noExplicitAny": "off",
+        "useIterableCallbackReturn": "error",
+        "noShadowRestrictedNames": "error",
+        "noImplicitAnyLet": "error",
+        "noAssignInExpressions": "error",
+        "noNonNullAssertedOptionalChain": "error",
+        "noRedeclare": "error"
+      },
+      "style": {
+        "useBlockStatements": "error",
+        "noNestedTernary": "error",
+        "noParameterAssign": "error",
+        "useTemplate": "error",
+        "noNonNullAssertion": "error",
+        "useConsistentArrayType": {
+          "level": "error",
+          "options": {
+            "syntax": "shorthand"
+          }
+        },
+        "noUnusedTemplateLiteral": "error",
+        "useExportType": "error",
+        "useImportType": "error"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": {
+            "maxAllowedComplexity": 15
+          }
+        }
+      },
+      "performance": {
+        "noAccumulatingSpread": "error"
+      },
+      "security": {
+        "noGlobalEval": "error"
+      },
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noUnusedImports": "error"
+      }
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on"
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.spec.*", "**/*.test.*", "**/vitest.setup.*"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
+          }
+        }
+      }
+    }
+  ]
+}

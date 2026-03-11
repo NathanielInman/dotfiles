@@ -12,6 +12,7 @@ return {
       require('mason').setup(opts)
 
       local ensure_installed = {
+        'biome', -- used by nvim-lint, conform
         'eslint_d', -- used by nvim-lint
         'gofumpt', -- used by conform
         'goimports', -- used by conform

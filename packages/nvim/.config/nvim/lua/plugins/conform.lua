@@ -7,19 +7,26 @@ return {
       formatters_by_ft = {
         go = { 'goimports', 'gofumpt' },
         lua = { 'stylua' },
-        javascript = { 'prettier' },
-        typescript = { 'prettier' },
+        javascript = { 'biome' },
+        typescript = { 'biome' },
+        javascriptreact = { 'biome' },
+        typescriptreact = { 'biome' },
+        css = { 'biome' },
+        json = { 'biome' },
+        vue = { 'biome' },
         markdown = { 'prettier' },
         yaml = { 'prettier' },
-        css = { 'prettier' },
         scss = { 'prettier' },
         html = { 'prettier' },
-        json = { 'jq' },
-        vue = { 'prettier' },
       },
       formatters = {
-        prettier = {
-          prepend_args = { '--print-width', '80', '--bracket-same-line', 'false', '--single-attribute-per-line', '--tab-width', '2' },
+        biome = {
+          -- use umbrella config as fallback when no local biome.json exists
+          require_cwd = false,
+          cwd = function()
+            local root = vim.fs.root(0, { 'biome.json', 'biome.jsonc' })
+            return root or vim.env.HOME .. '/.config/biome'
+          end,
         },
       },
       format_on_save = {
