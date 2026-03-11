@@ -10,16 +10,25 @@ return {
           'golangcilint',
         },
         javascript = {
-          'eslint_d',
+          'biomejs',
         },
         typescript = {
-          'eslint_d',
+          'biomejs',
         },
         javascriptreact = {
-          'eslint_d',
+          'biomejs',
         },
         typescriptreact = {
-          'eslint_d',
+          'biomejs',
+        },
+        vue = {
+          'biomejs',
+        },
+        css = {
+          'biomejs',
+        },
+        json = {
+          'biomejs',
         },
       },
     },
@@ -28,6 +37,18 @@ return {
       local lint = require 'lint'
 
       lint.linters_by_ft = opts.linters_by_ft
+
+      -- configure biome to use global config as fallback
+      local biomejs = lint.linters.biomejs
+      if biomejs then
+        biomejs.args = {
+          'lint',
+          '--config-path',
+          function()
+            return vim.fs.root(0, { 'biome.json', 'biome.jsonc' }) or (vim.env.HOME .. '/.config/biome')
+          end,
+        }
+      end
       function C.debounce(ms, fn)
         local timer = vim.uv.new_timer()
         return function(...)
@@ -63,7 +84,9 @@ return {
             return false
           end
           -- Skip linters whose binary is not found on PATH
-          if type(linter) == 'table' and linter.cmd and vim.fn.executable(linter.cmd) == 0 then
+          local cmd = type(linter) == 'table' and linter.cmd
+          if type(cmd) == 'function' then cmd = cmd() end
+          if cmd and type(cmd) == 'string' and vim.fn.executable(cmd) == 0 then
             return false
           end
           return true
