@@ -55,7 +55,7 @@ return {
         on_init = nvlsp.on_init,
         capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
       })
-      vim.lsp.config('volar', {
+      vim.lsp.config('vue_ls', {
         on_attach = nvlsp.on_attach,
         on_init = nvlsp.on_init,
         capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
@@ -98,7 +98,7 @@ return {
         capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
       })
 
-      vim.lsp.enable { 'html', 'cssls', 'ts_ls', 'volar', 'gopls', 'rust_analyzer', 'markdown_oxide' }
+      vim.lsp.enable { 'html', 'cssls', 'ts_ls', 'vue_ls', 'gopls', 'rust_analyzer', 'markdown_oxide' }
     end,
   },
 }

@@ -5,7 +5,7 @@ return {
     event = 'VeryLazy',
     config = function()
       require('mason-lspconfig').setup {
-        ensure_installed = { 'gopls', 'html', 'cssls', 'rust_analyzer', 'ts_ls', 'volar', 'lua_ls', 'markdown-oxide' },
+        ensure_installed = { 'gopls', 'html', 'cssls', 'rust_analyzer', 'ts_ls', 'vue_ls', 'lua_ls', 'markdown_oxide' },
       }
     end,
   },
