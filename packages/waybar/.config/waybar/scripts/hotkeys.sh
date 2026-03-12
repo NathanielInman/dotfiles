@@ -46,7 +46,7 @@ yad --width=$dynamic_width --height=$dynamic_height \
 " i" "Pick color from screen to clipboard" "(hyprpicker)" \
 " o" "Open symbol/emoji picker" "(walker)" \
 " b" "Toggle visibility of waybar" "(waybar)" \
-" Alt l" "Trigger the lock screen" "(hyprlock)" \
+" Escape" "Trigger the lock screen" "(hyprlock)" \
 " Alt v" "Launch clipboard manager" "(copyq)" \
 " p" "Open area-specific screenshot tool" "(grim+slurp)" \
 " n" "Launch notification center" "(swaync)" \
@@ -65,16 +65,14 @@ yad --width=$dynamic_width --height=$dynamic_height \
 " Shift space" "Toggle focused window between tiling and floating" "(hyprland)" \
 " #" "Change focused workspace to specified number 0-9" "(hyprland)" \
 " Shift #" "Move focused window to specified workspace 0-9" "(hyprland)" \
-" Ctrl l" "Move current workspace to monitor on the right" "(hyprland)" \
-" Ctrl h" "Move current workspace to monitor on the left" "(hyprland)" \
-" ." "Scroll columns right" "(hyprscrolling)" \
-" ," "Scroll columns left" "(hyprscrolling)" \
-" Shift ." "Move window to right column" "(hyprscrolling)" \
-" Shift ," "Move window to left column" "(hyprscrolling)" \
+" Alt ]" "Move current workspace to monitor on the right" "(hyprland)" \
+" Alt [" "Move current workspace to monitor on the left" "(hyprland)" \
+" Ctrl l" "Scroll columns right" "(hyprscrolling)" \
+" Ctrl h" "Scroll columns left" "(hyprscrolling)" \
+" Alt l" "Move window to right column" "(hyprscrolling)" \
+" Alt h" "Move window to left column" "(hyprscrolling)" \
 " Ctrl f" "Fit focused column to screen" "(hyprscrolling)" \
-" Ctrl Shift f" "Fit all visible columns" "(hyprscrolling)" \
-" w" "Cycle column wider" "(hyprscrolling)" \
-" Shift w" "Cycle column narrower" "(hyprscrolling)" \
+" Alt f" "Fit all visible columns" "(hyprscrolling)" \
 " =" "Cycle column wider" "(hyprscrolling)" \
 " -" "Cycle column narrower" "(hyprscrolling)" \
 " LMB drag" "Move floating window" "(hyprland)" \
