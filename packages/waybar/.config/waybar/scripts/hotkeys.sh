@@ -73,7 +73,6 @@ yad --width=$dynamic_width --height=$dynamic_height \
 " Alt h" "Move window to left column" "(hyprscrolling)" \
 " Ctrl f" "Fit focused column to screen" "(hyprscrolling)" \
 " Alt f" "Fit all visible columns" "(hyprscrolling)" \
-" =" "Cycle column wider" "(hyprscrolling)" \
-" -" "Cycle column narrower" "(hyprscrolling)" \
+" =" "Cycle column width (0.33 → 0.5 → 0.67 → 1.0)" "(hyprscrolling)" \
 " LMB drag" "Move floating window" "(hyprland)" \
 " RMB drag" "Resize floating window" "(hyprland)" \
