@@ -84,6 +84,10 @@ close () {
 eval "$(zoxide init zsh)"
 eval "$(pyenv init -)"
 
+# det33 godot
+alias compass='cd ~/Sites/det33-godot && dotnet build && godot-mono --path . res://Scenes/Test/CompassTest.tscn'
+alias det33='cd ~/Sites/det33-godot && dotnet build && godot-mono --path . res://Scenes/Main/Boot.tscn'
+
 # tintin
 alias au-mardios='ssh nate@159.203.80.149 -t "tmux attach -t adventuresunlimited"'
 
