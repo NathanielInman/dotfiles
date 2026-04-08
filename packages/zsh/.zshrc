@@ -87,12 +87,13 @@ eval "$(pyenv init -)"
 # det33 godot
 alias compass='cd ~/Sites/det33-godot && dotnet build && godot-mono --path . res://Scenes/Test/CompassTest.tscn'
 alias det33='cd ~/Sites/det33-godot && dotnet build && godot-mono --path . res://Scenes/Main/Boot.tscn'
+alias gym='cd ~/Sites/det33-godot && dotnet build && godot-mono --path . res://Scenes/Test/AbilityTest.tscn'
 
 # tintin
 alias au-mardios='ssh nate@159.203.80.149 -t "tmux attach -t adventuresunlimited"'
 
 # streamdeck command simplification
-alias lightson='keylightctl switch --light 8A95 on & keylightctl switch --light 9F74 on'
+alias lightson='keylightctl switch --light 8A95 --brightness 3 on & keylightctl switch --light 9F74 --brightness 50 on'
 alias lightsoff='keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off'
 
 # we want to use brew on OSX, and keep broot config only on Arch
