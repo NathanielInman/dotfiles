@@ -15,7 +15,7 @@ fetch_wallpaper() {
     if [[ -n "$url" ]]; then
         curl -sL -o "$WALLPAPER" "$url"
         if [[ -s "$WALLPAPER" ]]; then
-            swww img "$WALLPAPER" --transition-type fade --transition-duration 2
+            awww img "$WALLPAPER" --transition-type fade --transition-duration 2
         fi
     fi
 }
