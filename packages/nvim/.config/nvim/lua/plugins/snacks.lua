@@ -9,6 +9,7 @@ return {
       bigfile = { enabled = true },
       dashboard = { enabled = true },
       indent = { enabled = true },
+      scope = { enabled = false },
       input = { enabled = true },
       notifier = {
         enabled = true,
