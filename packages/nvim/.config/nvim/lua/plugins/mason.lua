@@ -19,6 +19,8 @@ return {
         'golangci-lint', -- used by nvim-lint
         'gopls', -- used by lspconfig
         'lua-language-server', -- used by conform, lspconfig
+        'omnisharp', -- used by lspconfig
+        'csharpier', -- used by conform
         'rust-analyzer', -- used by lspconfig
         'prettier', -- used by conform
         'typescript-language-server', -- used by conform, lspconfig
