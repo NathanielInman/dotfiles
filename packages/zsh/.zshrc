@@ -80,6 +80,48 @@ close () {
   fi
 }
 
+# Route `claude` to personal vs work profile based on the current git remote.
+# Work is any repo whose origin lives under gitlab.com/digitalturbine — it
+# authenticates via gcloud/Vertex with its own CLAUDE_CONFIG_DIR so tokens
+# never cross with the personal OAuth login. Override with --work / --personal.
+claude () {
+  local profile=""
+  local -a args=()
+  for arg in "$@"; do
+    case "$arg" in
+      --work) profile=work ;;
+      --personal) profile=personal ;;
+      *) args+=("$arg") ;;
+    esac
+  done
+
+  if [[ -z "$profile" ]]; then
+    local remote
+    remote=$(git remote get-url origin 2>/dev/null)
+    if [[ "$remote" == https://gitlab.com/digitalturbine/* || "$remote" == git@gitlab.com:digitalturbine/* ]]; then
+      profile=work
+    else
+      profile=personal
+    fi
+  fi
+
+  if [[ "$profile" == work ]]; then
+    print -P "%B%F{black}%K{yellow}                                                  %k%f%b"
+    print -P "%B%F{black}%K{yellow}   ██  WORK  ·  digitalturbine (Vertex)        ██ %k%f%b"
+    print -P "%B%F{black}%K{yellow}                                                  %k%f%b"
+    CLAUDE_CONFIG_DIR="$HOME/.claude-work" \
+    CLAUDE_CODE_USE_VERTEX=1 \
+    CLOUD_ML_REGION=global \
+    ANTHROPIC_VERTEX_PROJECT_ID=ss-shared-ai-code-assist \
+      command claude "${args[@]}"
+  else
+    print -P "%B%F{white}%K{blue}                                                  %k%f%b"
+    print -P "%B%F{white}%K{blue}   ██  PERSONAL  ·  nate (OAuth)               ██ %k%f%b"
+    print -P "%B%F{white}%K{blue}                                                  %k%f%b"
+    command claude "${args[@]}"
+  fi
+}
+
 # Plugin bootstraps
 eval "$(zoxide init zsh)"
 eval "$(pyenv init -)"
