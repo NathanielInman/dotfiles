@@ -1,0 +1,14 @@
+# Rebuild hyprpm plugins after Hyprland upgrades so the next boot
+# doesn't complain about outdated plugin headers.
+#
+# Installed by ./install.sh -s (username is substituted at install time).
+
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = hyprland
+
+[Action]
+Description = Updating hyprpm plugins for new Hyprland version
+When = PostTransaction
+Exec = /usr/bin/su __USER__ -c "/usr/bin/hyprpm update"

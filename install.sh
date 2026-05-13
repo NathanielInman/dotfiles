@@ -143,6 +143,24 @@ setup_system() {
         fi
     fi
 
+    # hyprpm pacman hook — rebuild plugins after Hyprland upgrades
+    if command -v hyprpm &> /dev/null; then
+        local hook_src="$DOTFILES_DIR/etc/pacman.d/hooks/hyprpm.hook"
+        local hook_dst="/etc/pacman.d/hooks/hyprpm.hook"
+        if [[ -f "$hook_dst" ]] && sudo grep -q "su $USER -c" "$hook_dst" 2>/dev/null; then
+            echo -e "  ${GREEN}[configured]${NC} hyprpm pacman hook"
+        else
+            echo -n -e "  ${YELLOW}[available]${NC} Install pacman hook to rebuild hyprpm plugins after Hyprland upgrades? [y/N] "
+            read -r answer
+            if [[ "$answer" =~ ^[Yy]$ ]]; then
+                sed "s/__USER__/$USER/g" "$hook_src" | sudo install -Dm644 /dev/stdin "$hook_dst"
+                echo -e "  ${GREEN}[configured]${NC} hyprpm pacman hook"
+            else
+                echo -e "  ${YELLOW}[skipped]${NC} hyprpm pacman hook"
+            fi
+        fi
+    fi
+
     echo ""
     echo -e "${GREEN}System configuration complete!${NC}"
 }
