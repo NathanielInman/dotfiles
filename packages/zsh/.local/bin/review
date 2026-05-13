@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# Review a GitLab MR with Claude (Vertex). Writes a timestamped Markdown
+# file to ~/Downloads and updates ~/Downloads/{current,last}.md symlinks
+# the same way the screenshot script does for PNGs.
+#
+# Requires: GL_TOKEN exported, gcloud auth set up for Vertex, jq, curl, claude.
+
+set -euo pipefail
+
+# Slug → numeric project ID. Add or remove entries here as you gain access
+# to repos. The slug is the last path segment before /-/merge_requests/.
+get_project_id() {
+    case "$1" in
+        appmanagement)         echo "31025090" ;;
+        OneAdminUI)            echo "67946870" ;;
+        partner-portal-basics) echo "31024835" ;;
+        inventory-ui)          echo "53878100" ;;
+        *)                     echo ""         ;;
+    esac
+}
+
+if [[ -z "${GL_TOKEN:-}" ]]; then
+    echo "❌ GL_TOKEN is not set. Export it first."
+    exit 1
+fi
+
+echo -n "🔗 Paste the GitLab MR URL: "
+read -r MR_URL
+
+PROJECT_SLUG=$(echo "$MR_URL" | sed -n 's|.*/\([^/]*\)/-/merge_requests/.*|\1|p')
+MR_ID=$(echo "$MR_URL" | sed -n 's|.*/merge_requests/\([0-9]*\).*|\1|p')
+PROJECT_ID=$(get_project_id "$PROJECT_SLUG")
+
+echo "------------------------------------------"
+echo "🔍 Slug:  [$PROJECT_SLUG]"
+echo "🔢 MR ID: [$MR_ID]"
+
+if [[ -z "$PROJECT_ID" ]]; then
+    echo "❌ Slug '$PROJECT_SLUG' not in mapping. Edit get_project_id() in $0."
+    exit 1
+fi
+if [[ -z "$MR_ID" ]]; then
+    echo "❌ Could not find a numeric MR ID in that URL."
+    exit 1
+fi
+
+echo "🎯 Project ID: $PROJECT_ID"
+echo "------------------------------------------"
+echo "🚀 Fetching changes..."
+
+RESPONSE=$(curl --silent --header "PRIVATE-TOKEN: ${GL_TOKEN}" \
+    "https://gitlab.com/api/v4/projects/${PROJECT_ID}/merge_requests/${MR_ID}/changes")
+
+ERROR_MSG=$(echo "$RESPONSE" | jq -r '.message // empty')
+if [[ -n "$ERROR_MSG" ]]; then
+    echo "❌ GitLab API Error: $ERROR_MSG"
+    exit 1
+fi
+
+DIFF_DATA=$(echo "$RESPONSE" | jq -r '.changes[] | "File: " + .new_path + "\nDiff:\n" + .diff')
+if [[ -z "$DIFF_DATA" || "$DIFF_DATA" == "null" ]]; then
+    echo "⚠️  No changes found. (Is the MR empty?)"
+    exit 1
+fi
+
+echo "🧠 AI is analyzing the code..."
+
+read -r -d '' SYSTEM_PROMPT << 'EOM' || true
+You are a senior software engineer doing a code review focused on maintainability, clarity, and architecture — not syntax.
+
+Review the code across these dimensions:
+
+1. **Complexity** — Does it violate Single Responsibility? Are there deeply nested conditions that could be flattened?
+2. **Naming** — Do names communicate *what* and *why*? Flag vague names (`data`, `temp`, `handleStuff`) and suggest alternatives.
+3. **Duplication** — Flag copy-pasted logic and over-abstraction equally.
+4. **Function design** — One job per function. Flag functions >20–30 lines, >3–4 params, or hidden side effects.
+5. **Control flow** — Flag redundant conditions, missing guard clauses, unhandled edge cases, and magic values.
+6. **Error handling** — Are failures handled, or does code assume the happy path? Are async states covered?
+7. **State** — Is state as local as possible? Is derived state stored redundantly? Any unexpected mutations?
+8. **Coupling** — Is this hard to change or test in isolation? Does it rely on non-obvious global state?
+
+---
+
+**For each issue, output:**
+- **Location**: where in the code
+- **Issue**: what's wrong
+- **Why it matters**: impact on maintainability
+- **Suggestion**: concrete fix with example if helpful
+
+**At the end:**
+- Top 3 most critical issues
+- Maintainability score (1–10) with one-sentence rationale
+
+Be direct. Skip praise. Focus on what makes the code better.
+EOM
+
+OUT_DIR="$HOME/Downloads"
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+OUTPUT_FILE="$OUT_DIR/review_${PROJECT_SLUG}_mr${MR_ID}_${TIMESTAMP}.md"
+CURRENT="$OUT_DIR/current.md"
+LAST="$OUT_DIR/last.md"
+
+CLAUDE_CODE_USE_VERTEX=1 \
+CLOUD_ML_REGION=global \
+ANTHROPIC_VERTEX_PROJECT_ID=ss-shared-ai-code-assist \
+    claude -p "$SYSTEM_PROMPT
+
+$DIFF_DATA" > "$OUTPUT_FILE"
+
+# Promote current → last, then point current at the new file.
+if [[ -L "$CURRENT" ]]; then
+    ln -sf "$(readlink "$CURRENT")" "$LAST"
+fi
+ln -sf "$OUTPUT_FILE" "$CURRENT"
+
+echo "------------------------------------------"
+echo "✅ Saved: $OUTPUT_FILE"
+echo "🔗 ~/Downloads/current.md → $OUTPUT_FILE"
+echo "------------------------------------------"
