@@ -152,3 +152,25 @@ eval "$(atuin init zsh --disable-up-arrow)"
 eval "$(starship init zsh)"
 
 source /home/nate/.config/broot/launcher/bash/br
+
+# bun completions
+[ -s "/home/nate/.bun/_bun" ] && source "/home/nate/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+alias claude-mem='/home/nate/.bun/bin/bun "/home/nate/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+
+# pnpm
+export PNPM_HOME="/home/nate/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+jiratransitions() {
+  curl -s -u "$JIRA_USERNAME:$JIRA_API_TOKEN" \
+    "https://digital-turbine.atlassian.net/rest/api/3/issue/$1/transitions" \
+    | jq -r '.transitions[] | "\(.id)\t\(.name)"'
+}
