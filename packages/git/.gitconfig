@@ -6,6 +6,7 @@
 	email = nate@theoestudio.com
 	name = Nathaniel Inman
 [credential]
+	helper = glab
 	helper = store
 [pull]
 	rebase = false
