@@ -106,6 +106,9 @@ genfstab -U -p  /mnt >> /mnt/etc/fstab
 arch-chroot /mnt /bin/bash
 ```
 
+> [!IMPORTANT]
+> Use UUIDs for **every** entry in `/etc/fstab` — including `/boot`. NVMe enumeration order (`nvme0` vs `nvme1`) is not stable across boots, so a device path like `/dev/nvme0n1p1` can silently point at the wrong disk after a reboot and drop you into recovery. The `-U` flag on `genfstab` handles this, but double-check the `/boot` line afterward. Find UUIDs with `lsblk -f` or `blkid`.
+
 Now uncomment "[en_US.UTF-8 UTF-8]"
 
 ```

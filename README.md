@@ -48,6 +48,10 @@ cd ~/Sites/dot-files
 | `waybar`      | Status bar            |
 | `zsh`         | Zsh + Oh-My-Zsh theme |
 
+System-level files that can't be stowed (because they live outside `$HOME`) are tracked under `etc/` and `usr/` as copies. Install them via `./install.sh -s`, which prompts for each one. Currently covers:
+
+- `etc/pacman.d/hooks/hyprpm.hook` — rebuilds hyprpm plugins automatically after Hyprland upgrades so boot doesn't complain about outdated plugin headers.
+
 > [!TIP]
 > Clicking on the icons below will lead directly to this repositories documentation on how to setup said operating system or tool.
 
