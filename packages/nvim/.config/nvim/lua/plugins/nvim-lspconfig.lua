@@ -92,13 +92,27 @@ return {
           },
         },
       })
+      vim.lsp.config('omnisharp', {
+        on_attach = nvlsp.on_attach,
+        on_init = nvlsp.on_init,
+        capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
+        settings = {
+          FormattingOptions = {
+            EnableEditorConfigSupport = true,
+          },
+          RoslynExtensionsOptions = {
+            EnableAnalyzersSupport = true,
+            EnableImportCompletion = true,
+          },
+        },
+      })
       vim.lsp.config('markdown_oxide', {
         on_attach = nvlsp.on_attach,
         on_init = nvlsp.on_init,
         capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
       })
 
-      vim.lsp.enable { 'html', 'cssls', 'ts_ls', 'vue_ls', 'gopls', 'rust_analyzer', 'markdown_oxide' }
+      vim.lsp.enable { 'html', 'cssls', 'ts_ls', 'vue_ls', 'gopls', 'rust_analyzer', 'omnisharp', 'markdown_oxide' }
     end,
   },
 }

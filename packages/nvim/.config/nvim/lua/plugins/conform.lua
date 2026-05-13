@@ -5,6 +5,7 @@ return {
     event = 'BufWritePre',
     opts = {
       formatters_by_ft = {
+        cs = { 'csharpier' },
         go = { 'goimports', 'gofumpt' },
         lua = { 'stylua' },
         javascript = { 'biome' },
