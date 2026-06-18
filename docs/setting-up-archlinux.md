@@ -2,215 +2,32 @@
 
 ## Install Method
 
-**FROSTYARCH was installed with [`archinstall`](https://wiki.archlinux.org/title/Archinstall)**, not the manual RAID0 path below. `archinstall` is the recommended primary path; the manual "From Scratch" section is kept only as an optional reference for a future from-scratch dual-drive build.
+**FROSTYARCH was installed with [`archinstall`](https://wiki.archlinux.org/title/Archinstall).** It handles partitioning, filesystem, bootloader, swap, locale, networking, and user creation — so the old manual cfdisk/mdadm/LVM/grub flow is gone. Just pick the right options in the installer.
 
-The layout `archinstall` produced on this machine:
+### Selections to choose during archinstall
 
-| Thing | This machine |
-|---|---|
-| Drive | Single `nvme0n1` for the system (the second NVMe `nvme1n1` is a separate btrfs volume for `~/Sites`) |
-| Filesystem | **btrfs** on LVM (`ArchinstallVg-root`, subvol `@`) |
-| Swap | **zram** (`zram0`) — no swap partition |
-| Bootloader | **limine** (`/boot/limine/limine.conf`) — *not* grub; the grub / `startup.nsh` steps below do not apply |
-| Microcode | `amd-ucode` (installed by archinstall) |
-| Locale / timezone | `en_US.UTF-8`, `US/Central` (set during archinstall) |
+- **Mirror region** — your country
+- **Locale** — language `en_US.UTF-8`, keymap `us`
+- **Timezone** — `America/Chicago` (US/Central)
+- **Disk configuration** — select **`nvme0n1` only**, best-effort default partitioning, filesystem **btrfs** (with subvolumes). Leave `nvme1n1` untouched — it becomes the separate `~/Sites` drive afterward.
+- **Disk encryption** — none (this machine is unencrypted by choice)
+- **Bootloader** — **Limine**
+- **Swap** — enable **zram**
+- **Hostname** — `FROSTYARCH`
+- **Root password** — set one (or leave unset; tty1 autologin + NOPASSWD sudo are configured in First Boot)
+- **User account** — create `nate` and mark it a **superuser** (adds it to `wheel`)
+- **Profile** — **Minimal** (no desktop environment; Hyprland is installed manually below)
+- **Audio** — **Pipewire**
+- **Kernels** — `linux`
+- **Network configuration** — **systemd-networkd** (i.e. *not* NetworkManager; the networkd default works on wired). Note: `network-manager-applet` in the Hyprland package list below is then an unused no-op — harmless, remove if you like.
+- **Additional packages** — optional (e.g. `git vim`); microcode (`amd-ucode`) is auto-detected
+
+The resulting layout: single `nvme0n1`, **btrfs** on LVM (`ArchinstallVg-root`, subvol `@`), **zram** swap, **limine** bootloader, `amd-ucode`.
 
 > [!IMPORTANT]
 > Use UUIDs for **every** `/etc/fstab` entry, including `/boot` — NVMe enumeration order (`nvme0` vs `nvme1`) is not stable across reboots. Find them with `lsblk -f` or `blkid`.
 
 After `archinstall` finishes, continue at [First Boot](#first-boot).
-
-## Manual Install From Scratch (RAID0 — optional)
-
-> Skip this entire section if you used `archinstall` (recommended above). It is kept only as a reference for a from-scratch dual-drive RAID0 build; this machine does **not** use RAID0, btrfs+zram+limine replaced it.
-
-When all else fails, the best installation guide is [the official arch wiki](https://wiki.archlinux.org/index.php/installation_guide).
-
-To start, let's ensure the internet is connected and sync time
-
-```
-ping -c 3 google.com
-timedatectl set-ntp true
-```
-
-Use this to make sure you know your drive names, mine show `nvme0n1` and `nvme1n1`. I'll reference those going forward to stripe (RAID 0) those m.2 drives.
-
-```
-fdisk -l
-```
-
-Will be using GPT and partition 2 nvme drives based on their sizes. Your sizes may be different.
-
-```
-cfdisk /dev/nvme0n1
-# create 500M
-# create 16G
-# create 900G
-# create 15G
-# write and then quit
-cfdisk /dev/nvme1n1
-# create 16G
-# create 900G
-# create 15G
-# write and then quit
-fdisk -l
-```
-
-now that the drives are partitioned lets setup raid 0
-(if these cause issues: `sudo mdadm -Esv` or `sudo mdadm --stop /dev/md*` then `sudo mdadm --misc --scan --detail /dev/md0`)
-
-```
-mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md0 /dev/nvme0n1p2 /dev/nvme1n1p1
-mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md1 /dev/nvme0n1p3 /dev/nvme1n1p2
-mdadm --create --verbose --level=0 --metadata=1.2 --chunk=128 --raid-devices=2 /dev/md2 /dev/nvme0n1p4 /dev/nvme1n1p3
-```
-
-if last one fails for "cannot assemble multi-zone RAID0 with default_layout.. do this last line, and retry otherwise skip
-
-```
-echo 1 > /sys/module/raid0/parameters/default_layout
-```
-
-Now lets validate those changes
-
-```
-lvmdiskscan
-```
-
-physical volumes
-
-```
-pvcreate /dev/md0
-pvcreate /dev/md1
-pvcreate /dev/md2
-```
-
-volume groups
-
-```
-vgcreate vg_swap /dev/md0
-vgcreate vg_main /dev/md1
-vgcreate vg_tmp /dev/md2
-vgscan
-```
-
-logical volumes
-
-```
-lvcreate -l +100%FREE vg_swap -n swap
-lvcreate -L 60GiB vg_main -n rootfs
-lvcreate -l +100%FREE vg_main -n homefs
-lvcreate -l +100%FREE vg_tmp -n tmpfs
-lvscan
-```
-
-setup swap, ensure fat32 boot partition & declare ext4 elsewhere
-
-```
-mkswap /dev/mapper/vg_swap-swap
-mkfs.ext4 /dev/mapper/vg_main-rootfs
-mkfs.ext4 /dev/mapper/vg_main-homefs
-mkfs.ext4 /dev/mapper/vg_tmp-tmpfs
-swapon /dev/mapper/vg_swap-swap
-mkfs.fat -F32 /dev/nvme0n1p1
-```
-
-now mount points
-
-```
-mount /dev/mapper/vg_main-rootfs /mnt
-mkdir /mnt/home
-mkdir /mnt/tmp
-mount /dev/mapper/vg_main-homefs /mnt/home
-mount /dev/mapper/vg_tmp-tmpfs /mnt/tmp
-pacstrap -i /mnt base base-devel linux linux-firmware lvm2 mdadm gvim
-genfstab -U -p  /mnt >> /mnt/etc/fstab
-arch-chroot /mnt /bin/bash
-```
-
-> [!IMPORTANT]
-> Use UUIDs for **every** entry in `/etc/fstab` — including `/boot`. NVMe enumeration order (`nvme0` vs `nvme1`) is not stable across boots, so a device path like `/dev/nvme0n1p1` can silently point at the wrong disk after a reboot and drop you into recovery. The `-U` flag on `genfstab` handles this, but double-check the `/boot` line afterward. Find UUIDs with `lsblk -f` or `blkid`.
-
-Now uncomment "[en_US.UTF-8 UTF-8]"
-
-```
-vim /etc/locale.gen
-# it's :wq in-case you've been using emacs too long haha
-```
-
-Now configure local time
-
-```
-locale-gen
-ln -sf /usr/share/zoneinfo/America/Chicago  /etc/localtime
-hwclock --systohc --utc
-```
-
-Now add `dm_mod` between the `()` on `MODULES` and add `mdadm_udev lvm2` between block & filesystems of `HOOKS=()` here:
-
-```
-vim /etc/mkinitcpio.conf
-```
-
-Now setup grub:
-
-```
-mkinitcpio -p linux
-pacman -S grub efibootmgr
-mkdir /boot/efi
-mount /dev/nvme0n1p1 /boot/efi
-grub-install --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/boot/efi
-grub-mkconfig -o /boot/grub/grub.cfg
-mkdir /boot/efi/EFI/BOOT
-cp /boot/efi/EFI/GRUB/grubx64.efi /boot/efi/EFI/BOOT/BOOTX64.EFI
-```
-
-Now you'll add the following within `vim /boot/efi/startup.nsh`:
-
-```
-bcf boot add 1 fs0:\EFI\GRUB\grubx64.efi "My GRUB bootloader"
-```
-
-Now properly setup networking, substitute `FROSTY` for your computer name.
-
-```
-pacman -S networkmanager
-systemctl enable NetworkManager --now
-echo FROSTYARCH > /etc/hostname
-```
-
-Now add the following within `vim /etc/hosts`:
-
-```
-127.0.0.1 localhost
-::1       localhost
-127.0.1.1 FROSTYARCH.localdomain FROSTYARCH
-```
-
-newer machines, no eth0. config DHCP make sure to edit the proper `ip link` name
-mine shows `enp5s0` for ethernet, `vim /etc/systemd/network/enp5s0` and write this:
-
-```
-[Match]
-Name=en**
-
-[Network]
-DHCP=yes
-```
-
-Now setup password
-
-```
-passwd
-```
-
-Now lets wrap things up. after rebooting, boot to bios, ensure nvme raid is on and remove boot flash drive.
-
-```
-exit
-umount -R /mnt
-reboot
-```
 
 ## First Boot
 
@@ -362,17 +179,11 @@ monitor = DP-2, preferred, auto, 1
 # monitor = DP-2, 2560x1440@144, 2560x0, 1
 ```
 
-Now create your user, substitute `nate` for your name:
+Your user (`nate`) was created during archinstall and added to `wheel`. For passwordless sudo, add a drop-in rule (safer than editing `/etc/sudoers` directly; `visudo -c` validates it):
 
 ```
-useradd -m -g users -G wheel -s /bin/bash nate
-passwd nate
-```
-
-Now ensure user is sudoer, vim `/etc/sudoers` and uncomment this line and :wq!
-
-```
-%wheel ALL=(ALL) NOPASSWD: ALL
+echo '%wheel ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/10-wheel-nopasswd
+sudo visudo -c
 ```
 
 finally set the default editor for all users to vim save this to `vim /etc/profile.d/editor.sh`
