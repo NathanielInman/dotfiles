@@ -1,0 +1,7 @@
+# Runtime/installed artifacts that leak into the repo because ~/.local and
+# ~/.oh-my-zsh are stow-symlinked into packages/zsh. These are installed at
+# setup time (not dotfiles), so keep them out of version control.
+packages/zsh/.local/share/
+packages/zsh/.local/state/
+packages/zsh/.local/bin/claude
+packages/zsh/.oh-my-zsh/custom/plugins/
