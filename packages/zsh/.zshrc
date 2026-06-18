@@ -81,9 +81,9 @@ close () {
 }
 
 # Route `claude` to personal vs work profile based on the current git remote.
-# Work is any repo whose origin lives under gitlab.com/digitalturbine — it
-# authenticates via gcloud/Vertex with its own CLAUDE_CONFIG_DIR so tokens
-# never cross with the personal OAuth login. Override with --work / --personal.
+# Work is any repo whose origin lives under gitlab.com/digitalturbine — it runs
+# against the work Claude subscription with its own CLAUDE_CONFIG_DIR so its
+# OAuth login never crosses with the personal one. Override with --work / --personal.
 claude () {
   local profile=""
   local -a args=()
@@ -107,12 +107,9 @@ claude () {
 
   if [[ "$profile" == work ]]; then
     print -P "%B%F{black}%K{yellow}                                                  %k%f%b"
-    print -P "%B%F{black}%K{yellow}   ██  WORK  ·  digitalturbine (Vertex)        ██ %k%f%b"
+    print -P "%B%F{black}%K{yellow}   ██  WORK  ·  digitalturbine (subscription)  ██%k%f%b"
     print -P "%B%F{black}%K{yellow}                                                  %k%f%b"
     CLAUDE_CONFIG_DIR="$HOME/.claude-work" \
-    CLAUDE_CODE_USE_VERTEX=1 \
-    CLOUD_ML_REGION=global \
-    ANTHROPIC_VERTEX_PROJECT_ID=ss-shared-ai-code-assist \
       command claude "${args[@]}"
   else
     print -P "%B%F{white}%K{blue}                                                  %k%f%b"
