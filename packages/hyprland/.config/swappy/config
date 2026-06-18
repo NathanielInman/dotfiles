@@ -1,0 +1,10 @@
+[Default]
+# Send swappy's "save" (download) button output to the directory that
+# ~/.config/hypr/scripts/screenshot.sh watches, so it can update the
+# ~/Downloads/current.png and ~/Downloads/last.png symlinks.
+save_dir=$HOME/Pictures/Screenshots
+save_filename_format=swappy-%Y%m%d-%H%M%S.png
+# Open with the drawing/tools panel already visible.
+show_panel=true
+# Auto-close swappy immediately after the Save Surface / copy action.
+early_exit=true
