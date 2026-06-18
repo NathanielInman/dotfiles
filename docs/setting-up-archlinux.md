@@ -307,16 +307,44 @@ lspci -v | grep -A1 -e VGA -e 3D
 
 Now acquire graphics packages (if issues see [here](https://github.com/JaKooLit/Arch-Hyprland/blob/main/install-scripts/nvidia.sh)):
 
-- `nvidia` - core driver package alternative to nouveau
-- `nvidia-dkms` - we're not on maxwell so let's use this driver package
+> The proprietary `nvidia` / `nvidia-dkms` packages no longer exist in current Arch — only the **open kernel modules** remain. Use `nvidia-open`, which is correct for Turing (GTX 1650) and newer.
+
+- `nvidia-open` - open NVIDIA kernel modules (replaces `nvidia`/`nvidia-dkms`)
 - `nvidia-settings` - configure nvidia options through cli or gui
-- `nvidia-utils` - blacklist nouveau packages and other things
+- `nvidia-utils` - userspace libraries and tools
 - `libva` - hardware video acceleration offloads cpu usage to gpu
-- `libva-nvidia-driver-git` - translation layer for libva to nvidia
+- `libva-nvidia-driver` - translation layer for libva to nvidia (now in **extra**, no `-git`)
+- `egl-wayland` - EGLStream-based Wayland external platform
 
 ```
-pacman -S nvidia nvidia-settings nvidia-utils # this is my driver stuff
+pacman -S nvidia-open nvidia-utils nvidia-settings libva libva-nvidia-driver egl-wayland
 ```
+
+Configure the modules for Wayland/KMS so the framebuffer comes up early and survives suspend:
+
+```
+# /etc/mkinitcpio.conf — load the modules early and DROP the kms hook (stops nouveau)
+MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
+# HOOKS=(... remove 'kms' ...)
+
+# /etc/modprobe.d/nvidia.conf
+options nvidia_drm modeset=1 fbdev=1
+options nvidia NVreg_PreserveVideoMemoryAllocations=1
+
+# /etc/modprobe.d/nouveau-blacklist.conf
+blacklist nouveau
+
+# /boot/limine/limine.conf — append to the kernel cmdline
+nvidia_drm.modeset=1 nvidia_drm.fbdev=1
+```
+
+Regenerate the initramfs and reboot to activate the modules:
+
+```
+mkinitcpio -P
+```
+
+The Wayland env vars (`LIBVA_DRIVER_NAME=nvidia`, `GBM_BACKEND=nvidia-drm`, etc.) are exported by the `start-hyprland` launcher (`scripts/start-hyprland`, install to `/usr/local/bin/start-hyprland`), which `.zshrc` runs on tty1 login.
 
 If you have multiple monitors and need to set them up, here are some helpful commands
 
