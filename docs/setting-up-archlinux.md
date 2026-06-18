@@ -86,7 +86,7 @@ Now for installing window manager stuff (Hyprland)
 - `ttf-fira-code` - additional fallback fonts
 - `ttf-jetbrains-mono` - additional fallback fonts
 - `ttf-jetbrains-mono-nerd` - additional fallback fonts
-- `swww` - wallpaper daemon for Wayland
+- `awww` - wallpaper daemon for Wayland (fork of swww; binaries `awww`/`awww-daemon`, which the configs call)
 - `wl-clipboard` - command-line clipboard utilities for Wayland (wl-copy, wl-paste)
 - `copyq` - clipboard manager with searchable history and system tray
 - `blueman` - Bluetooth manager with system tray applet
@@ -109,7 +109,7 @@ Now for installing window manager stuff (Hyprland)
 - `hyprpicker` - screen color picker bound to Super+I
 
 ```
-pacman -S hyprland waybar swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+pacman -S hyprland waybar swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
 yay -S walker elephant-all
 ```
 
@@ -301,7 +301,7 @@ Install stow packages for the Wayland setup:
 
 ```
 cd packages
-stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship wallpaper
+stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim
 ```
 
 if at any point you want to remove the symlinks `stow -D <package>` from within the packages folder
@@ -356,12 +356,6 @@ Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` t
 
 Screen locking is handled by `hyprlock` and idle management by `hypridle`. Both configs live in `~/.config/hypr/` (installed via the hyprland stow package). Lock screen is triggered manually via SUPER+Alt+L.
 
-Now we update our python package manager
-
-```
-pip3 install --upgrade pip
-```
-
 Now for installing vim package manager
 
 ```
@@ -395,11 +389,14 @@ pnpm env use --global lts
 pnpm env ls
 ```
 
-Now we'll install Rust:
+Now we'll install Rust via the `rustup` toolchain manager (the `rustup` package, not the curl installer):
 
 ```
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+pacman -S rustup
+rustup default stable
 ```
+
+> If you built `paru` from source earlier, it may have pulled the `rust` package, which **conflicts with `rustup`**. Remove it first (`pacman -R rust`) before installing `rustup`.
 
 Now some rust utils:
 
@@ -448,7 +445,7 @@ Now for any other essentials for arch
 - `translate-shell` is a translation app
 - `udict` urban dictionary
 - `fastfetch` cli system info tool (actively maintained neofetch replacement)
-- `sdcv-git` cli dictionary
+- `sdcv` cli dictionary
 - `xsv` is a cli for splitting/joining/analyzing csv files
 - `obsidian` is a note-taking application leveraging zettelkasten
 - `cronie` cron service to help sync any `notes` and `todo` repo changes automatically
@@ -477,7 +474,7 @@ Now for any other essentials for arch
 - `fselect` is a SQL-like querying tool for the filesystem
 
 ```
-yay -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv-git xsv obsidian cronie dog sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
+yay -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv xsv obsidian cronie dog sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
 Now open up `nwg-look` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
@@ -544,7 +541,7 @@ The following stow packages should be installed for the Wayland setup:
 
 ```
 cd ~/Sites/dot-files/packages
-stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship wallpaper
+stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim
 ```
 
 | Package | Description |
@@ -558,7 +555,7 @@ stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship wallpaper
 | `git` | Git configuration with delta pager |
 | `nvim` | Neovim configuration |
 | `starship` | Cross-shell prompt |
-| `wallpaper` | Desktop wallpaper |
+| `vim` | Vim configuration |
 
 ## Default Applications
 
