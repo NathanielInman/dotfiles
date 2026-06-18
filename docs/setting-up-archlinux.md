@@ -266,9 +266,12 @@ Now for installing window manager stuff (Hyprland)
 - `bc` - tiny precision calculator used for netstats averaging
 - `xdg-user-dirs` - help ensure well-known user directories are created automatically
 - `xdg-utils` - for helpful things such as mime detection
+- `yad` - GTK dialog tool; powers the waybar hotkeys (⌨) and commands cheat-sheet buttons
+- `wf-recorder` - screen recording backend for the Super+R / waybar screen-record script
+- `hyprpicker` - screen color picker bound to Super+I
 
 ```
-pacman -S hyprland waybar swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq blueman grim slurp swappy hyprlock hypridle pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+pacman -S hyprland waybar swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd swww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
 yay -S walker elephant-all
 ```
 
@@ -463,6 +466,8 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `fd` is aliased in .zshrc as `searchFiles` and finds within directories filenames
 - `ripgrep` looks within files for strings
 - `git` is basic requirement for version control
+- `github-cli` provides the `gh` command for GitHub from the terminal (auth, PRs, issues)
+- `glab` is the GitLab CLI, the GitLab equivalent of `gh`
 - `git-delta` by dandavison is an amazing pager tool for git diffs
 - `zsh` will be our default shell
 - `python-pip` will give us pip for python package management
@@ -476,7 +481,7 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `jq` is a command-line JSON processor
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq
 ```
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
