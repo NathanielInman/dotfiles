@@ -1,6 +1,28 @@
 # Setting Up Archlinux
 
-## Arch From Scratch
+## Install Method
+
+**FROSTYARCH was installed with [`archinstall`](https://wiki.archlinux.org/title/Archinstall)**, not the manual RAID0 path below. `archinstall` is the recommended primary path; the manual "From Scratch" section is kept only as an optional reference for a future from-scratch dual-drive build.
+
+The layout `archinstall` produced on this machine:
+
+| Thing | This machine |
+|---|---|
+| Drive | Single `nvme0n1` for the system (the second NVMe `nvme1n1` is a separate btrfs volume for `~/Sites`) |
+| Filesystem | **btrfs** on LVM (`ArchinstallVg-root`, subvol `@`) |
+| Swap | **zram** (`zram0`) — no swap partition |
+| Bootloader | **limine** (`/boot/limine/limine.conf`) — *not* grub; the grub / `startup.nsh` steps below do not apply |
+| Microcode | `amd-ucode` (installed by archinstall) |
+| Locale / timezone | `en_US.UTF-8`, `US/Central` (set during archinstall) |
+
+> [!IMPORTANT]
+> Use UUIDs for **every** `/etc/fstab` entry, including `/boot` — NVMe enumeration order (`nvme0` vs `nvme1`) is not stable across reboots. Find them with `lsblk -f` or `blkid`.
+
+After `archinstall` finishes, continue at [First Boot](#first-boot).
+
+## Manual Install From Scratch (RAID0 — optional)
+
+> Skip this entire section if you used `archinstall` (recommended above). It is kept only as a reference for a from-scratch dual-drive RAID0 build; this machine does **not** use RAID0, btrfs+zram+limine replaced it.
 
 When all else fails, the best installation guide is [the official arch wiki](https://wiki.archlinux.org/index.php/installation_guide).
 
@@ -730,10 +752,6 @@ xdg-mime query default mimetype
 ```
 
 If something isn't within your `~/.config/mimeapps.list` then `xdg-open` will look in `/usr/share/applications/mimeinfo.cache`
-
-## Make shutdown and reboot faster
-
-add `use_lvmetad = 0` to `/etc/lvm/lvm.conf`
 
 ## Setting up Titan Security Key
 
