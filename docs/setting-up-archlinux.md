@@ -347,12 +347,13 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `gping` ping multiple targets at the same time for comparison
 - `jq` is a command-line JSON processor
 - `google-cloud-cli` provides the `gcloud` command for managing Google Cloud from the terminal (the `gsutil` and `bq` tools are split into the optional `google-cloud-cli-gsutil` and `google-cloud-cli-bq` packages)
+- `aws-cli-v2` provides the `aws` command for managing Amazon Web Services from the terminal (reads credentials from the stowed `~/.aws/config` and `~/.aws/credentials`)
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq google-cloud-cli
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq google-cloud-cli aws-cli-v2
 ```
 
-After installing, authenticate and set your default project with `gcloud init` (or `gcloud auth login`).
+After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). The AWS CLI reads the credentials stowed under `~/.aws/`; run `aws sts get-caller-identity` to confirm it can authenticate (or `aws configure` to set keys up fresh).
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
 
@@ -521,6 +522,22 @@ Then we can add urls we want to block within it (for me, yandex - which i usuall
 127.0.0.1 cdn.dzen.ru
 127.0.0.1 yabs.yandex.ru
 ```
+
+## Claude Code statusline
+
+The repo ships `scripts/statusline-command.sh` — a custom Claude Code statusline (dir · git branch · model · context % · usage window · cost · session duration). It uses only `jq` plus a cached, bounded call to Anthropic's usage API with your own OAuth token, and honors `CLAUDE_CONFIG_DIR` so the personal and work profiles each read their own credentials/cache.
+
+Wire it into each Claude config dir's `settings.json`. A running session won't pick up a newly-added `statusLine` — start a fresh `claude` to see it.
+
+```bash
+for dir in ~/.claude ~/.claude-work; do
+  mkdir -p "$dir"; f="$dir/settings.json"; [ -f "$f" ] || echo '{}' > "$f"
+  jq --arg cmd "$HOME/Sites/dot-files/scripts/statusline-command.sh" \
+     '.statusLine = {type:"command", command:$cmd}' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+done
+```
+
+The `claude` shell function (`.zshrc`) routes work repos (gitlab.com/digitalturbine) to the `~/.claude-work` profile and everything else to personal, each with its own subscription login — see the function for details.
 
 ## Hyprland Plugin Setup
 
