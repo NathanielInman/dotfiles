@@ -346,10 +346,13 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `fkill` a beautiful way to kill apps instead of `pkill`, `killall` etc
 - `gping` ping multiple targets at the same time for comparison
 - `jq` is a command-line JSON processor
+- `google-cloud-cli` provides the `gcloud` command for managing Google Cloud from the terminal (the `gsutil` and `bq` tools are split into the optional `google-cloud-cli-gsutil` and `google-cloud-cli-bq` packages)
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq google-cloud-cli
 ```
+
+After installing, authenticate and set your default project with `gcloud init` (or `gcloud auth login`).
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
 
@@ -633,9 +636,11 @@ nmcli connection down connection_name
 
 If you have issues such as needing to auth over browser, here's how to do openvpn3:
 
+> **Build note:** openvpn3's test suite fails inside makepkg's sandbox — the dbus `request-queue-test` aborts (SIGABRT) because there's no session bus. The build itself is fine, so skip the checks with `--nocheck`. The web/SSO auth step then opens the login in your existing browser session (where you're already signed into your IdP), so it completes automatically.
+
 ```bash
-# install openvpn
-yay -S openvpn3
+# install openvpn (skip the dbus test that fails in the build sandbox)
+paru -S openvpn3 --nocheck
 
 # show sessions
 openvpn3 sessions-list
