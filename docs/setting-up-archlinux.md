@@ -52,7 +52,7 @@ pacman -S pacman-contrib
 systemctl enable paccache.timer --now
 ```
 
-Sound and bluetooth - will enable pulseaudio on user later
+Sound and bluetooth. PipeWire replaces PulseAudio and is enabled **per-user** later (not system-wide), so here we only install the stack and enable bluetooth at the system level.
 
 - `alsa-utils` - command line alteration of audio levels on alsa's kernel level sound mixer
 - `pipewire` - a new low-level multimedia framework compared to pulseaudio or alsa
@@ -62,12 +62,11 @@ Sound and bluetooth - will enable pulseaudio on user later
 - `pipewire-pulse` - provides support for older pulse audio API applications
 - `bluez` - bluetooth protocol stack
 - `bluez-utils` - provides bluetoothctl utility
-- `blueberry` - a gui applet ontop of bluez to make bluetooth support easier
+- `blueberry` - bluetooth GUI applet (**AUR** — install with `yay`, not pacman)
 
 ```
-Pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils blueberry
-systemctl enable pipewire.socket pipewire-pulse.socket wireplubmer.service --now
-systemctl enable pipewire.service --now
+pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils
+yay -S blueberry
 systemctl enable bluetooth.service --now
 ```
 
@@ -223,12 +222,20 @@ Let's enable pipewire for the user (pipewire replaces pulseaudio as the sound se
 systemctl --user enable pipewire pipewire-pulse wireplumber --now
 ```
 
-Now make sure we disable suspend on idle and pause on idle power saving options. We do this because when zoom is quiet, sometimes it takes a second or two to wake up the pipewire sink and the beginning of sentences could be completely missed.
+Now disable node suspend/idle (when zoom is quiet, the pipewire sink can take a second or two to wake up and clip the start of sentences). The `pw-metadata` runtime commands don't survive a reboot, so use a **persistent WirePlumber drop-in** instead:
 
 ```
-pw-metadata -n settings 0 node.suspend-on-idle false
-pw-metadata -n settings 0 node.pause-on-idle false
-systemctl --user restart wireplumber.service && systemctl --user restart pipewire.service pipewire-pulse.service
+mkdir -p ~/.config/wireplumber/wireplumber.conf.d
+cat > ~/.config/wireplumber/wireplumber.conf.d/50-no-suspend.conf <<'EOF'
+# Disable node suspend/idle so the start of audio (e.g. Zoom) isn't clipped.
+monitor.alsa.rules = [
+  {
+    matches = [ { node.name = "~alsa_output.*" } { node.name = "~alsa_input.*" } ]
+    actions = { update-props = { session.suspend-timeout-seconds = 0 } }
+  }
+]
+EOF
+systemctl --user restart wireplumber.service
 ```
 
 Ensure we're automatically logged in, `systemctl edit getty@tty1.service` and add:
