@@ -10,7 +10,9 @@ model=$(echo "$input" | jq -r '.model.display_name')
 # ============================================
 # Usage API with caching (30 second refresh)
 # ============================================
-USAGE_CACHE="$HOME/.claude/.usage_cache.json"
+# Honor CLAUDE_CONFIG_DIR so personal vs work profiles read their own creds/usage
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+USAGE_CACHE="$CLAUDE_DIR/.usage_cache.json"
 CACHE_MAX_AGE=30
 
 get_usage_data() {
@@ -26,7 +28,7 @@ get_usage_data() {
 
     # Refresh cache if older than CACHE_MAX_AGE seconds
     if [ $age -gt $CACHE_MAX_AGE ] || [ ! -f "$USAGE_CACHE" ]; then
-        local token=$(jq -r '.claudeAiOauth.accessToken // empty' "$HOME/.claude/.credentials.json" 2>/dev/null)
+        local token=$(jq -r '.claudeAiOauth.accessToken // empty' "$CLAUDE_DIR/.credentials.json" 2>/dev/null)
         if [ -n "$token" ]; then
             curl -s --max-time 2 \
                 -H "Accept: application/json" \
