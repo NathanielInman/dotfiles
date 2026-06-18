@@ -31,8 +31,7 @@ After `archinstall` finishes, continue at [First Boot](#first-boot).
 
 ## First Boot
 
-Now after boot, login with `root` with the configured password and unncomment `multilib` within:
-if u have issues with timing out due to /tmp, just remove it from `/etc/fstab`
+Now after boot, login with the configured password and uncomment `multilib` within:
 
 ```
 sudo ln -s /usr/bin/vim /usr/bin/vi # make sure we always use vim instead of vi
