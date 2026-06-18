@@ -6,8 +6,9 @@
 	email = nate@theoestudio.com
 	name = Nathaniel Inman
 [credential]
-	helper = glab
 	helper = store
+[credential "https://gitlab.com"]
+	helper = !glab auth git-credential
 [pull]
 	rebase = false
 [push]
