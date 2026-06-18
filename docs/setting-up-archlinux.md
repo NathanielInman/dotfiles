@@ -453,6 +453,7 @@ Now for any other essentials for arch
 - `obsidian` is a note-taking application leveraging zettelkasten
 - `cronie` cron service to help sync any `notes` and `todo` repo changes automatically
 - `dog` is a DNS lookup cli info tool
+- `bind` provides the standard `dig` (plus `host`/`nslookup`) DNS tools that scripts and tooling reach for; the `named` server it ships stays disabled
 - `sd` is a replacement for sed with sane regex instead
 - `onefetch` is a command that gets important stats on a git repo
 - `okular` is a pdf, epub, cbr, cbz etc minimal chrome reader
@@ -477,7 +478,7 @@ Now for any other essentials for arch
 - `fselect` is a SQL-like querying tool for the filesystem
 
 ```
-yay -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv xsv obsidian cronie dog sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
+yay -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv xsv obsidian cronie dog bind sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
 Now open up `nwg-look` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
