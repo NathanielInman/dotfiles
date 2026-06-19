@@ -348,12 +348,54 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `jq` is a command-line JSON processor
 - `google-cloud-cli` provides the `gcloud` command for managing Google Cloud from the terminal (the `gsutil` and `bq` tools are split into the optional `google-cloud-cli-gsutil` and `google-cloud-cli-bq` packages)
 - `aws-cli-v2` provides the `aws` command for managing Amazon Web Services from the terminal (reads credentials from the stowed `~/.aws/config` and `~/.aws/credentials`)
+- `jira-cli` is the AUR package providing the `jira` command for Atlassian Jira from the terminal (issues, sprints, boards); authenticate with `jira init`
+- `trcli` is the TestRail CLI for reporting automated test results to TestRail — it is a Python package (not in the Arch repos), so it is installed with `pipx` rather than on the `yay` line below (see the next step)
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq google-cloud-cli aws-cli-v2
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq google-cloud-cli aws-cli-v2 jira-cli
 ```
 
-After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). The AWS CLI reads the credentials stowed under `~/.aws/`; run `aws sts get-caller-identity` to confirm it can authenticate (or `aws configure` to set keys up fresh).
+After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). The AWS CLI reads the credentials stowed under `~/.aws/`; run `aws sts get-caller-identity` to confirm it can authenticate (or `aws configure` to set keys up fresh). Sign in to the git forges with `gh auth login` and `glab auth login`.
+
+`trcli` is not packaged for Arch, so install it in an isolated environment with `pipx` (which keeps it off the system Python). `python-pipx` comes from the official repos:
+
+```
+sudo pacman -S --needed python-pipx
+pipx install trcli
+```
+
+This drops the `trcli` binary in `~/.local/bin` (already on `PATH` via `.zshrc`); verify with `trcli --help` (`TestRail CLI v1.15.0`).
+
+### First-run authentication for the service CLIs
+
+The pattern for both `jira` and `trcli` is the same: **secrets (API tokens, passwords) are exported from `~/.zshenv`**, while non-secret config (servers, default projects) lives in each tool's own config directory. `~/.zshenv` is deliberately **not** stowed and never committed, so no credentials land in this repo — only the method below is documented here. Placeholders like `<token>` are stand-ins; substitute real values locally.
+
+**TestRail (`trcli`)** has no login step — it reads everything from `TR_CLI_`-prefixed environment variables (its `auto_envvar_prefix`). Add these to `~/.zshenv`:
+
+```
+export TR_CLI_HOST=https://YOURCO.testrail.io
+export TR_CLI_USERNAME=you@example.com
+export TR_CLI_PASSWORD=<password>   # or TR_CLI_KEY=<api-key> if the instance requires API keys
+```
+
+Every command then picks them up automatically; you only add `--project "<name>"` per run. Confirm auth with a read-only API call (expect `200`):
+
+```
+curl -s -o /dev/null -w "%{http_code}\n" -u "$TR_CLI_USERNAME:$TR_CLI_PASSWORD" \
+  "$TR_CLI_HOST/index.php?/api/v2/get_projects"
+```
+
+**Jira (`jira-cli`)** splits auth in two. The API token comes from the `JIRA_API_TOKEN` environment variable — the *only* secret it reads, and note there is **no** env var for the server URL — while server, login, default project and board are written to `~/.config/.jira/.config.yml` by the `jira init` wizard.
+
+1. Generate a token. Jira Cloud: <https://id.atlassian.com/manage-profile/security/api-tokens>. Self-hosted Server/DC: a Personal Access Token from your Jira profile (basic auth there also still accepts your account password — Cloud does not, it requires a token).
+2. Export it in `~/.zshenv`:
+
+   ```
+   export JIRA_API_TOKEN=<token>
+   ```
+
+3. With that token present in the shell (`source ~/.zshenv` or open a fresh terminal first — `init` needs it set), run `jira init`: choose `cloud` or `local`, enter the server URL, login email, auth type (`basic` for Cloud, `bearer` for a Server/DC PAT), and a default project/board.
+4. Verify with `jira me` or `jira issue list`.
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
 

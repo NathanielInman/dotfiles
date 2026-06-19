@@ -4,4 +4,5 @@
 packages/zsh/.local/share/
 packages/zsh/.local/state/
 packages/zsh/.local/bin/claude
+packages/zsh/.local/bin/trcli
 packages/zsh/.oh-my-zsh/custom/plugins/
