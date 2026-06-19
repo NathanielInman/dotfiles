@@ -368,6 +368,24 @@ pipx install trcli
 
 This drops the `trcli` binary in `~/.local/bin` (already on `PATH` via `.zshrc`); verify with `trcli --help` (`TestRail CLI v1.15.0`).
 
+### Neovim language toolchains
+
+The Neovim config installs language servers, formatters and linters automatically
+via `mason` on first launch. A few of those are thin clients that need a language
+runtime present on the system (mason installs the server, not the runtime):
+
+- `jdk-openjdk` — required by the Java language server (`jdtls`)
+- `dotnet-sdk` — required by the C# server (`roslyn`) and formatter (`csharpier`)
+- `elixir` — required by the Elixir server (`lexical`) and `mix format` (pulls Erlang/OTP)
+
+```
+pacman -S jdk-openjdk dotnet-sdk elixir
+```
+
+Rust tooling (`rust-analyzer`, `rustfmt`, `clippy`) comes from the `rustup` install
+later in this guide. Everything else (`gopls`, `lua-language-server`, `biome`,
+`prettier`, `markdown_oxide`, `markdownlint`, etc.) is handled entirely by mason.
+
 ### First-run authentication for the service CLIs
 
 The pattern for both `jira` and `trcli` is the same: **secrets (API tokens, passwords) are exported from `~/.zshenv`**, while non-secret config (servers, default projects) lives in each tool's own config directory. `~/.zshenv` is deliberately **not** stowed and never committed, so no credentials land in this repo — only the method below is documented here. Placeholders like `<token>` are stand-ins; substitute real values locally.
