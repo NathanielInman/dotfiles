@@ -36,6 +36,9 @@ map({ 'n', 'v' }, '<leader>e', function()
   local light = 'catppuccin-latte'
   vim.cmd.colorscheme((vim.g.colors_name == light) and 'catppuccin-mocha' or light)
 end, { desc = 'Toggle light/dark theme' })
+map('n', '<leader>uC', function()
+  Snacks.picker.colorschemes()
+end, { desc = 'Pick colorscheme' })
 
 -- Windows
 map('n', '<leader>nj', ':rightbelow sb #<CR>', { desc = 'Open window to the bottom' })

@@ -34,7 +34,21 @@ return {
     },
     config = function(_, opts)
       require('catppuccin').setup(opts)
-      vim.cmd.colorscheme 'catppuccin'
+
+      local persist = require 'configs.theme-persist'
+
+      -- Persist any colorscheme change (toggle, picker, manual :colorscheme).
+      vim.api.nvim_create_autocmd('ColorScheme', {
+        callback = function(ev)
+          persist.save(ev.match or vim.g.colors_name)
+        end,
+      })
+
+      -- Restore the last-used scheme, falling back to catppuccin if it's gone.
+      local saved = persist.load()
+      if not (saved and pcall(vim.cmd.colorscheme, saved)) then
+        vim.cmd.colorscheme 'catppuccin'
+      end
     end,
   },
 }
