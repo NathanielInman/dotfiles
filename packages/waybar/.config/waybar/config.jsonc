@@ -77,7 +77,9 @@
       "custom/toggle-details",
       "custom/network-traffic",
       "temperature",
-      "disk",
+      "disk#root",
+      "disk#sites",
+      "custom/rime-disk",
       "memory",
       "cpu",
       "custom/public-ip"
@@ -99,9 +101,21 @@
     "critical-temperature": 85,
     "interval": 5
   },
-  "disk": {
-    "path": "/home",
-    "format": " {percentage_used}%",
+  "disk#root": {
+    "path": "/",
+    "format": " System {used}/{total}",
+    "tooltip-format": "Root (/): {used} used · {free} free · {total} total ({percentage_used}%)",
+    "interval": 25
+  },
+  "disk#sites": {
+    "path": "/home/nate/Sites",
+    "format": " Sites {used}/{total}",
+    "tooltip-format": "Sites (/home/nate/Sites): {used} used · {free} free · {total} total ({percentage_used}%)",
+    "interval": 25
+  },
+  "custom/rime-disk": {
+    "exec": "~/.config/waybar/scripts/rime-disk.sh",
+    "return-type": "json",
     "interval": 25
   },
   "memory": {
