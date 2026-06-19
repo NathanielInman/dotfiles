@@ -493,7 +493,7 @@ Now for any other essentials for arch
 - `sdcv` cli dictionary
 - `xsv` is a cli for splitting/joining/analyzing csv files
 - `obsidian` is a note-taking application leveraging zettelkasten
-- `cronie` cron service to help sync any `notes` and `todo` repo changes automatically
+- `cronie` cron service to help sync any `notes` and `todo` repo changes automatically, and to run the [nightly `~/Sites` backup](./sites-nightly-backup.md)
 - `dog` is a DNS lookup cli info tool
 - `bind` provides the standard `dig` (plus `host`/`nslookup`) DNS tools that scripts and tooling reach for; the `named` server it ships stays disabled
 - `sd` is a replacement for sed with sane regex instead
@@ -550,7 +550,11 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 ```
 # `cron tab -e` then add the following lines to update both automatically hourly
 @hourly /home/nate/Sites/dot-files/scripts/cron-git-notes-auto-update.sh
+# nightly safety net so no uncommitted ~/Sites work is ever lost to a dead disk
+0 3 * * * /home/nate/Sites/dot-files/scripts/cron-sites-nightly-backup.sh
 ```
+
+The nightly backup is documented in full in [`docs/sites-nightly-backup.md`](./sites-nightly-backup.md): owned repos get an atomic conventional commit + push on the current branch, every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote.
 
 Finally we should make sure our `/etc/hosts` file is prioritized for blocking hosts if we want. Within `sudo vim /etc/nsswitch.conf` make sure the `files` attribute is before the others:
 

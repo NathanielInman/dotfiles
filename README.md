@@ -52,6 +52,13 @@ System-level files that can't be stowed (because they live outside `$HOME`) are 
 
 - `etc/pacman.d/hooks/hyprpm.hook` — rebuilds hyprpm plugins automatically after Hyprland upgrades so boot doesn't complain about outdated plugin headers.
 
+## Automation
+
+`scripts/` holds a few cron helpers (set up via `crontab -e`, see [docs/setting-up-archlinux.md](docs/setting-up-archlinux.md)):
+
+- `cron-git-notes-auto-update.sh` / `cron-git-tasks-auto-update.sh` — keep the `notes` and `todo` repos synced hourly.
+- `cron-sites-nightly-backup.sh` — a 3am safety net so no uncommitted work in `~/Sites` is ever lost to a dead disk. Owned repos get an atomic commit + push on the current branch; every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote. Full write-up: [docs/sites-nightly-backup.md](docs/sites-nightly-backup.md).
+
 > [!TIP]
 > Clicking on the icons below will lead directly to this repositories documentation on how to setup said operating system or tool.
 
