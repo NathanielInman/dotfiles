@@ -1,0 +1,17 @@
+# topgrade — one command to upgrade everything (pacman + AUR, rustup/cargo,
+# pnpm, oh-my-zsh, vim/nvim plugins, etc.). topgrade auto-detects each tool,
+# so this file is intentionally minimal: it only pins the choices this repo
+# already makes elsewhere. Run with `topgrade`; see `topgrade --help`.
+
+[misc]
+# Tidy caches after upgrading (paccache, cargo, etc.) — matches the
+# paccache.timer cleanup set up in docs/setting-up-archlinux.md.
+cleanup = true
+# gcloud is installed via pacman (google-cloud-cli), so its own
+# `gcloud components update` refuses ("managed by an external package
+# manager") — pacman already upgrades it in the System step. Skip it.
+disable = ["gcloud"]
+
+[linux]
+# Use paru for both repo and AUR upgrades (yay is aliased to paru here).
+arch_package_manager = "paru"

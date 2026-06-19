@@ -44,6 +44,7 @@ cd ~/Sites/dot-files
 | `walker`      | Application launcher  |
 | `starship`    | Shell prompt          |
 | `swaync`      | Notification center   |
+| `topgrade`    | Upgrade-everything cfg |
 | `vim`         | Vim configuration     |
 | `waybar`      | Status bar            |
 | `zsh`         | Zsh + Oh-My-Zsh theme |

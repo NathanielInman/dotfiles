@@ -300,7 +300,7 @@ Install stow packages for the Wayland setup:
 
 ```
 cd packages
-stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim
+stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade
 ```
 
 if at any point you want to remove the symlinks `stow -D <package>` from within the packages folder
@@ -474,6 +474,28 @@ Now some rust utils:
 cargo install rusti-cal melt tidy-viewer pueue
 ```
 
+### topgrade (upgrade everything)
+
+`topgrade` is a single command that walks every package manager and tool on this
+machine and updates each one — `pacman`/AUR (via `paru`), `rustup` + `cargo`
+binaries, `pnpm`, oh-my-zsh and its plugins, `vim`/`nvim` plugins, and more. It
+replaces having to remember the individual `pacman -Syyu`, `cargo install-update`,
+`pnpm update`, etc. invocations. It's an AUR package (not in the official repos):
+
+```
+paru -S topgrade
+```
+
+Its config is the stowed `topgrade` package — a deliberately minimal
+`~/.config/topgrade.toml` that just pins the choices made elsewhere in this guide
+(use `paru` as the AUR helper, run cache cleanup after upgrades). topgrade
+auto-detects everything else, so there's nothing more to configure. Run it any
+time with:
+
+```
+topgrade
+```
+
 ## Voxtype (Push-to-Talk Voice-to-Text)
 
 - `voxtype-bin` - push-to-talk voice-to-text tool for Linux, optimized for Wayland
@@ -627,7 +649,7 @@ The following stow packages should be installed for the Wayland setup:
 
 ```
 cd ~/Sites/dot-files/packages
-stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim
+stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade
 ```
 
 | Package | Description |
@@ -641,6 +663,7 @@ stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim
 | `git` | Git configuration with delta pager |
 | `nvim` | Neovim configuration |
 | `starship` | Cross-shell prompt |
+| `topgrade` | Minimal `topgrade.toml` (pins paru as the AUR helper, enables cleanup) |
 | `vim` | Vim configuration |
 
 ## Default Applications
