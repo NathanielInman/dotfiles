@@ -25,6 +25,7 @@ window#waybar.hidden {
 #custom-network-traffic,
 #temperature,
 #disk,
+#custom-rime-disk,
 #memory,
 #cpu,
 #custom-public-ip,
@@ -107,9 +108,19 @@ window#waybar.hidden {
 
 /* Disk, memory, cpu */
 #disk,
+#custom-rime-disk,
 #memory,
 #cpu {
   color: #81a1c1;
+}
+
+/* Rime SMB share: dim when not mounted, red-ish when NAS is unreachable */
+#custom-rime-disk.idle {
+  color: #4c566a;
+}
+
+#custom-rime-disk.offline {
+  color: #bf616a;
 }
 
 /* Public IP */
