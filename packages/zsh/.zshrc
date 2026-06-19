@@ -11,7 +11,7 @@ export PATH=$HOME/.npm-global/bin:$PATH # global node/npm bin
 export PATH=$HOME/.cargo/bin:$PATH # rust bin
 export PATH=$HOME/.pyenv/bin:$PATH # python
 export PNPM_HOME=$HOME/.local/share/pnpm
-export PATH=$PNPM_HOME:$PATH # node path
+export PATH=$PNPM_HOME/bin:$PATH # pnpm 11 links global bins into $PNPM_HOME/bin
 export LANG=en_US.UTF-8
 export ZSH=$HOME/.oh-my-zsh
 export EDITOR=/usr/bin/neovide
@@ -162,8 +162,8 @@ alias claude-mem='/home/nate/.bun/bin/bun "/home/nate/.claude/plugins/marketplac
 # pnpm
 export PNPM_HOME="/home/nate/.local/share/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
 jiratransitions() {
