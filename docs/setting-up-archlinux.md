@@ -346,13 +346,15 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `fkill` a beautiful way to kill apps instead of `pkill`, `killall` etc
 - `gping` ping multiple targets at the same time for comparison
 - `jq` is a command-line JSON processor
+- `neovim` is the primary editor; its config is the stowed `nvim` package
+- `tree-sitter-cli` is required by nvim-treesitter's `main` branch to generate and compile parsers (it uses the already-installed `nodejs` for the `generate` step). Without it, treesitter cannot build parsers and opening files fails with parser/query mismatch errors such as `Query error: Invalid field name "operator"`. After install, parsers are built with `:TSUpdate` (or automatically via `require('nvim-treesitter').install(...)` in the nvim config)
 - `google-cloud-cli` provides the `gcloud` command for managing Google Cloud from the terminal (the `gsutil` and `bq` tools are split into the optional `google-cloud-cli-gsutil` and `google-cloud-cli-bq` packages)
 - `aws-cli-v2` provides the `aws` command for managing Amazon Web Services from the terminal (reads credentials from the stowed `~/.aws/config` and `~/.aws/credentials`)
 - `jira-cli` is the AUR package providing the `jira` command for Atlassian Jira from the terminal (issues, sprints, boards); authenticate with `jira init`
 - `trcli` is the TestRail CLI for reporting automated test results to TestRail — it is a Python package (not in the Arch repos), so it is installed with `pipx` rather than on the `yay` line below (see the next step)
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq google-cloud-cli aws-cli-v2 jira-cli
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 jira-cli
 ```
 
 After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). The AWS CLI reads the credentials stowed under `~/.aws/`; run `aws sts get-caller-identity` to confirm it can authenticate (or `aws configure` to set keys up fresh). Sign in to the git forges with `gh auth login` and `glab auth login`.
