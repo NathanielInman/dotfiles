@@ -21,7 +21,9 @@ return {
 
       return {
         options = {
-          theme = 'catppuccin',
+          -- 'auto' derives colors from the active colorscheme, so it follows
+          -- the catppuccin latte/mocha toggle automatically
+          theme = 'auto',
           globalstatus = true, -- matches laststatus=3
           section_separators = { left = '', right = '' },
           component_separators = { left = '', right = '' },

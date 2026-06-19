@@ -3,6 +3,7 @@ return {
   -- clipboard so we can easily swap in-and-out of neovim with other apps
   {
     'ackslD/nvim-neoclip.lua',
+    event = 'VeryLazy',
     config = function()
       require('neoclip').setup {
         default_register = '"',

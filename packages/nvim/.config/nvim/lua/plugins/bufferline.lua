@@ -14,7 +14,7 @@ return {
             { filetype = 'NvimTree', text = 'File Explorer', highlight = 'Directory', separator = true },
           },
         },
-        highlights = require('catppuccin.groups.integrations.bufferline').get(),
+        highlights = require('catppuccin.special.bufferline').get_theme(),
       }
     end,
   },
