@@ -200,11 +200,12 @@ helpful non-user-specific applications
 - `unzip` - obviously helps us w/ zip files
 - `gnome-keychain` - helps us maintain a keychain across different apps
 - `libsecret` - library necessary for gnome-keychain
+- `seahorse` - GUI to manage the keyring; **required** to blank the login keyring password for autologin auto-unlock (see the autologin keyring step below)
 
 Note: `numlockx` is not needed - Hyprland handles numlock via `input { numlock_by_default = 1 }` in hyprland.conf
 
 ```
-pacman -S unzip ntp gnome-keychain libsecret
+pacman -S unzip ntp gnome-keychain libsecret seahorse
 ```
 
 ensure time synchronization service is started and activated
@@ -279,7 +280,7 @@ password   include      system-local-login
 
 **Autologin caveat — blank the login keyring password.** `pam_gnome_keyring` can only auto-unlock the keyring when it captures your login password at the `auth` step. With getty `--autologin` no password is ever entered, so the keyring stays locked and you get prompted to unlock it manually after boot. The fix is to give the login keyring an **empty** password so `gnome-keyring-daemon` unlocks it automatically:
 
-1. Open **Seahorse** (`seahorse`, the "Passwords and Keys" app).
+1. Install and open **Seahorse** (`pacman -S seahorse`, the "Passwords and Keys" app).
 2. In the sidebar right-click the **Login** keyring (here it's stored as `~/.local/share/keyrings/Default_Keyring.keyring`) → **Change Password**.
 3. Enter the current passphrase, leave the new password **blank**, confirm, and accept the "store unencrypted" warning.
 
