@@ -4,6 +4,7 @@ return {
   -- mid-motion, on a timeout a dialog will help remind next possible motions
   {
     'folke/which-key.nvim',
-    disable = false,
+    event = 'VeryLazy',
+    opts = {},
   },
 }

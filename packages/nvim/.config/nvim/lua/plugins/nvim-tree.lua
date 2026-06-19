@@ -3,6 +3,9 @@ return {
   -- and default for showing all files nomatter what
   {
     'nvim-tree/nvim-tree.lua',
+    -- NvChad used to supply the load trigger; with defaults.lazy=true we must
+    -- declare our own or the commands/api never register.
+    lazy = false,
     dependencies = { 'nvim-web-devicons' },
     config = function()
       local HEIGHT_RATIO = 0.8
