@@ -2,7 +2,7 @@
 
 # Auto-start Hyprland on tty1 login
 if [ -z "$DISPLAY" ] && [ -z "$WAYLAND_DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-  exec start-hyprland
+  exec hypr-launch
 fi
 
 # User configuration

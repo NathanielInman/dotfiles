@@ -1,0 +1,20 @@
+#!/bin/bash
+# NVIDIA + Wayland environment, then hand off to Hyprland's own watchdog launcher.
+# Installed to a PATH location (e.g. /usr/local/bin/hypr-launch) and invoked by
+# ~/.zshrc on tty1 login via `exec hypr-launch`.
+#
+# NOTE: this MUST NOT be named `start-hyprland` — Hyprland ships its own launcher
+# binary at /usr/bin/start-hyprland (a crash watchdog). A same-named script in
+# /usr/local/bin shadows it on PATH, so Hyprland would warn that it was started
+# "without start-hyprland". We set the env, then exec the real watchdog by path.
+export LIBVA_DRIVER_NAME=nvidia
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+export NVD_BACKEND=direct
+export GBM_BACKEND=nvidia-drm
+export ELECTRON_OZONE_PLATFORM_HINT=auto
+export MOZ_ENABLE_WAYLAND=1
+export QT_QPA_PLATFORM=wayland
+export XDG_CURRENT_DESKTOP=Hyprland
+export XDG_SESSION_TYPE=wayland
+export XDG_SESSION_DESKTOP=Hyprland
+exec /usr/bin/start-hyprland
