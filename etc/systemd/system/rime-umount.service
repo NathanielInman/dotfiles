@@ -1,0 +1,27 @@
+[Unit]
+# Force-unmount the Rime TrueNAS CIFS share (//192.168.1.51/private -> ~/Rime)
+# early on shutdown, while networking is still up.
+#
+# Without this, systemd tears the network down before the CIFS unmount, so the
+# kernel blocks ~180s waiting for the now-unreachable server
+# ("CIFS: VFS: \\192.168.1.51 has not responded in 180 seconds") before force-
+# killing every other mount — a multi-minute shutdown hang.
+#
+# We keep DefaultDependencies (so systemd auto-adds Conflicts/Before=shutdown.target,
+# which is what guarantees ExecStop runs on shutdown). After=network.target
+# remote-fs.target means this unit is stopped *before* the network and mount units
+# go away, and Before=umount.target means the lazy+force umount beats the generic
+# filesystem unmount — detaching the share immediately instead of blocking on the
+# dead server.
+Description=Force-unmount Rime CIFS share on shutdown before network teardown
+After=network.target remote-fs.target
+Before=umount.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/true
+ExecStop=-/usr/bin/umount -f -l /home/nate/Rime
+
+[Install]
+WantedBy=multi-user.target

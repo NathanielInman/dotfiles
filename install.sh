@@ -161,6 +161,45 @@ setup_system() {
         fi
     fi
 
+    # Hyprland launcher — sets NVIDIA/Wayland env then execs Hyprland's own
+    # watchdog (/usr/bin/start-hyprland). Must be named hypr-launch, NOT
+    # start-hyprland, or it shadows Hyprland's launcher on PATH.
+    local launch_src="$DOTFILES_DIR/scripts/hypr-launch"
+    local launch_dst="/usr/local/bin/hypr-launch"
+    if [[ -x "$launch_dst" ]] && cmp -s "$launch_src" "$launch_dst"; then
+        echo -e "  ${GREEN}[configured]${NC} hypr-launch launcher"
+    else
+        echo -n -e "  ${YELLOW}[available]${NC} Install Hyprland launcher to $launch_dst? [y/N] "
+        read -r answer
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
+            sudo install -Dm755 "$launch_src" "$launch_dst"
+            # Remove the old same-named wrapper that shadowed /usr/bin/start-hyprland.
+            [[ -e /usr/local/bin/start-hyprland ]] && sudo rm -f /usr/local/bin/start-hyprland
+            echo -e "  ${GREEN}[configured]${NC} hypr-launch launcher"
+        else
+            echo -e "  ${YELLOW}[skipped]${NC} hypr-launch launcher"
+        fi
+    fi
+
+    # rime-umount.service — force-unmount the Rime CIFS share early on shutdown
+    # so the kernel doesn't block ~180s on the unreachable server (shutdown hang).
+    local rime_src="$DOTFILES_DIR/etc/systemd/system/rime-umount.service"
+    local rime_dst="/etc/systemd/system/rime-umount.service"
+    if [[ -f "$rime_dst" ]] && cmp -s "$rime_src" "$rime_dst" && systemctl is-enabled rime-umount.service &>/dev/null; then
+        echo -e "  ${GREEN}[configured]${NC} rime-umount shutdown service"
+    else
+        echo -n -e "  ${YELLOW}[available]${NC} Install rime-umount shutdown service (avoids CIFS shutdown hang)? [y/N] "
+        read -r answer
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
+            sudo install -Dm644 "$rime_src" "$rime_dst"
+            sudo systemctl daemon-reload
+            sudo systemctl enable rime-umount.service
+            echo -e "  ${GREEN}[configured]${NC} rime-umount shutdown service"
+        else
+            echo -e "  ${YELLOW}[skipped]${NC} rime-umount shutdown service"
+        fi
+    fi
+
     echo ""
     echo -e "${GREEN}System configuration complete!${NC}"
 }

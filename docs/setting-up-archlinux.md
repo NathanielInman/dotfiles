@@ -159,7 +159,11 @@ Regenerate the initramfs and reboot to activate the modules:
 mkinitcpio -P
 ```
 
-The Wayland env vars (`LIBVA_DRIVER_NAME=nvidia`, `GBM_BACKEND=nvidia-drm`, etc.) are exported by the `start-hyprland` launcher (`scripts/start-hyprland`, install to `/usr/local/bin/start-hyprland`), which `.zshrc` runs on tty1 login.
+The Wayland env vars (`LIBVA_DRIVER_NAME=nvidia`, `GBM_BACKEND=nvidia-drm`, etc.) are exported by the `hypr-launch` launcher (`scripts/hypr-launch`, install to `/usr/local/bin/hypr-launch`), which `.zshrc` runs on tty1 login. It sets the env and then `exec`s Hyprland's own watchdog launcher at `/usr/bin/start-hyprland` (shipped by the `hyprland` package).
+
+> **Do not name this script `start-hyprland`.** Hyprland 0.55+ ships its own launcher binary at `/usr/bin/start-hyprland` (a crash watchdog), and launching `Hyprland` directly bypasses it — Hyprland then warns `WARNING: Hyprland is being launched without start-hyprland. This is highly advised against.` A script named `start-hyprland` in `/usr/local/bin` shadows the real one on PATH, so we name ours `hypr-launch` and call the watchdog by absolute path.
+
+`install.sh`'s system-config step installs `hypr-launch` to `/usr/local/bin/` and removes any stale `/usr/local/bin/start-hyprland`.
 
 If you have multiple monitors and need to set them up, here are some helpful commands
 
@@ -272,6 +276,14 @@ session    include      system-local-login
 session    optional     pam_gnome_keyring.so auto_start
 password   include      system-local-login
 ```
+
+**Autologin caveat — blank the login keyring password.** `pam_gnome_keyring` can only auto-unlock the keyring when it captures your login password at the `auth` step. With getty `--autologin` no password is ever entered, so the keyring stays locked and you get prompted to unlock it manually after boot. The fix is to give the login keyring an **empty** password so `gnome-keyring-daemon` unlocks it automatically:
+
+1. Open **Seahorse** (`seahorse`, the "Passwords and Keys" app).
+2. In the sidebar right-click the **Login** keyring (here it's stored as `~/.local/share/keyrings/Default_Keyring.keyring`) → **Change Password**.
+3. Enter the current passphrase, leave the new password **blank**, confirm, and accept the "store unencrypted" warning.
+
+The keyring now auto-unlocks on every autologin with no prompt. (Secrets are stored unencrypted on disk — acceptable here because the disk is the trust boundary on a single-user autologin workstation.) If the keyring holds nothing you care about, you can instead delete `~/.local/share/keyrings/*` and a fresh blank keyring is created on next login.
 
 No `~/.xinitrc` is needed for Wayland.
 
@@ -597,6 +609,28 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 ```
 
 The nightly backup is documented in full in [`docs/sites-nightly-backup.md`](./sites-nightly-backup.md): owned repos get an atomic conventional commit + push on the current branch, every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote.
+
+### Network storage — Rime (TrueNAS SMB share)
+
+The TrueNAS box at `192.168.1.51` exposes a `private` SMB share, mounted at `~/Rime` via a systemd **automount** (mounts on first access, not at boot, so a powered-off NAS never blocks boot). Credentials live in a root-only file. In `/etc/fstab`:
+
+```
+//192.168.1.51/private  /home/nate/Rime  cifs  credentials=/etc/cifs-credentials/rime,uid=1000,gid=982,file_mode=0664,dir_mode=0775,iocharset=utf8,nofail,_netdev,x-systemd.automount,noauto  0 0
+```
+
+```
+# /etc/cifs-credentials/rime  (chmod 600, root-owned)
+username=ninman
+password=<smb-password>
+```
+
+**Shutdown hang fix.** CIFS mounts hang shutdown: systemd tears the network down before unmounting the share, so the kernel blocks ~180s waiting on the now-unreachable server (`CIFS: VFS: \\192.168.1.51 has not responded in 180 seconds`) before force-killing every other mount — a multi-minute freeze. The fix is a oneshot service that force-lazy-unmounts the share early in shutdown, while the network is still up. It's tracked at [`etc/systemd/system/rime-umount.service`](../etc/systemd/system/rime-umount.service) and installed + enabled by `install.sh`'s system-config step:
+
+```
+sudo install -Dm644 etc/systemd/system/rime-umount.service /etc/systemd/system/rime-umount.service
+sudo systemctl daemon-reload
+sudo systemctl enable rime-umount.service
+```
 
 Finally we should make sure our `/etc/hosts` file is prioritized for blocking hosts if we want. Within `sudo vim /etc/nsswitch.conf` make sure the `files` attribute is before the others:
 
