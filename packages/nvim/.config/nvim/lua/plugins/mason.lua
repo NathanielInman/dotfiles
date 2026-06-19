@@ -6,9 +6,13 @@ return {
     event = 'VeryLazy',
     opts = {
       PATH = 'prepend',
+      -- Crashdummyy registry provides the `roslyn` C# server (roslyn.nvim)
+      registries = {
+        'github:mason-org/mason-registry',
+        'github:Crashdummyy/mason-registry',
+      },
     },
     config = function(_, opts)
-      dofile(vim.g.base46_cache .. 'mason')
       require('mason').setup(opts)
 
       local ensure_installed = {
@@ -19,13 +23,17 @@ return {
         'golangci-lint', -- used by nvim-lint
         'gopls', -- used by lspconfig
         'lua-language-server', -- used by conform, lspconfig
-        'omnisharp', -- used by lspconfig
-        'csharpier', -- used by conform
-        'rust-analyzer', -- used by lspconfig
+        'roslyn', -- C# LSP (roslyn.nvim)
+        'csharpier', -- C# formatter (conform)
+        'jdtls', -- Java LSP (nvim-jdtls)
+        'google-java-format', -- Java formatter (conform)
+        'lexical', -- Elixir LSP (lspconfig)
+        'rust-analyzer', -- used by rustaceanvim
         'prettier', -- used by conform
         'typescript-language-server', -- used by conform, lspconfig
         'vue-language-server', -- used by conform
-        'markdown_oxide', -- used for blink
+        -- markdown_oxide LSP is installed via mason-lspconfig (server-name mapping)
+        'markdownlint', -- markdown linter (nvim-lint)
       }
 
       local mr = require 'mason-registry'

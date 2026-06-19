@@ -22,29 +22,20 @@ map('n', '<Esc>', function()
 end, { desc = 'Escape Nvim Tree' })
 map({ 'n', 'v' }, '<RightMouse>', function()
   vim.cmd.exec '"normal! \\<RightMouse>"'
-
-  require('plenary.reload').reload_module 'menus'
-  require('plenary.reload').reload_module 'menu'
-
   local options = vim.bo.ft == 'NvimTree' and 'nvimtree' or 'default'
   require('menu').open(options, { mouse = true })
 end, { desc = 'Right click menu' })
 map({ 'n', 'v' }, '<leader>a', function()
-  require('plenary.reload').reload_module 'menus'
-  require('plenary.reload').reload_module 'menu'
-
   local options = vim.bo.ft == 'NvimTree' and 'nvimtree' or 'default'
   require('menu').open(options)
-end, { desc = 'General action menu using plenary' })
+end, { desc = 'General action menu' })
 map({ 'n', 'v' }, '<leader>ga', function()
-  require('plenary.reload').reload_module 'menus'
-  require('plenary.reload').reload_module 'menu'
-
   require('menu').open 'gitsigns'
-end, { desc = 'Git action menu using plenary' })
+end, { desc = 'Git action menu' })
 map({ 'n', 'v' }, '<leader>e', function()
-  require('nvchad.themes').open()
-end, { desc = 'Open nvchad base46 themes' })
+  local light = 'catppuccin-latte'
+  vim.cmd.colorscheme((vim.g.colors_name == light) and 'catppuccin-mocha' or light)
+end, { desc = 'Toggle light/dark theme' })
 
 -- Windows
 map('n', '<leader>nj', ':rightbelow sb #<CR>', { desc = 'Open window to the bottom' })
@@ -63,12 +54,8 @@ map('n', '<leader>mf', '<CMD>WindowsMaximize<CR>', { desc = 'Toggle focus the cu
 
 -- Buffers
 map('n', '<leader>bn', ':new<CR>', { desc = 'Create a new buffer tab' })
-map('n', '<leader>bl', function()
-  require('nvchad.tabufline').next()
-end, { desc = 'Goto next buffer tab' })
-map('n', '<leader>bh', function()
-  require('nvchad.tabufline').prev()
-end, { desc = 'Goto previous buffer tab' })
+map('n', '<leader>bl', '<cmd>BufferLineCycleNext<CR>', { desc = 'Goto next buffer tab' })
+map('n', '<leader>bh', '<cmd>BufferLineCyclePrev<CR>', { desc = 'Goto previous buffer tab' })
 map('n', '<leader>bq', ':Bdelete<CR>', { desc = 'Quit current buffer tab' })
 map('n', '<leader>bs', ':FzfLua buffers<CR>', { desc = 'List buffer tabs' })
 

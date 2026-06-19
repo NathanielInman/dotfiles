@@ -6,6 +6,11 @@ return {
     opts = {
       formatters_by_ft = {
         cs = { 'csharpier' },
+        java = { 'google-java-format' },
+        rust = { 'rustfmt' },
+        elixir = { 'mix' },
+        eelixir = { 'mix' },
+        heex = { 'mix' },
         go = { 'goimports', 'gofumpt' },
         lua = { 'stylua' },
         javascript = { 'biome' },

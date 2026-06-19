@@ -1,6 +1,59 @@
-require 'nvchad.options'
-
 local opt = vim.opt
+local o = vim.o
+local g = vim.g
+
+-- ------------------------------------------------------------------
+-- Base editor options (previously inherited from nvchad.options)
+-- ------------------------------------------------------------------
+o.laststatus = 3 -- global statusline
+o.showmode = false -- mode is shown in lualine instead
+o.splitkeep = 'screen'
+
+o.clipboard = 'unnamedplus'
+o.cursorline = true
+o.cursorlineopt = 'number'
+
+-- Indenting
+o.expandtab = true
+o.shiftwidth = 2
+o.smartindent = true
+o.tabstop = 2
+o.softtabstop = 2
+
+opt.fillchars = { eob = ' ' }
+o.ignorecase = true
+o.smartcase = true
+o.mouse = 'a'
+
+-- Numbers
+o.number = true
+o.numberwidth = 2
+o.ruler = false
+
+opt.shortmess:append 'sI' -- disable nvim intro
+
+o.signcolumn = 'yes'
+o.splitbelow = true
+o.splitright = true
+o.timeoutlen = 400
+o.undofile = true
+o.updatetime = 250 -- also used by gitsigns
+
+-- wrap to previous/next line with h/l and arrows at line edges
+opt.whichwrap:append '<>[]hl'
+
+-- disable some default providers
+g.loaded_node_provider = 0
+g.loaded_python3_provider = 0
+g.loaded_perl_provider = 0
+g.loaded_ruby_provider = 0
+
+-- add binaries installed by mason.nvim to PATH
+vim.env.PATH = vim.fn.stdpath 'data' .. '/mason/bin:' .. vim.env.PATH
+
+-- ------------------------------------------------------------------
+-- Personal overrides
+-- ------------------------------------------------------------------
 
 -- Disable neovim's built-in markdown 4-space indentation
 vim.g.markdown_recommended_style = 0

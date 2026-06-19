@@ -8,16 +8,19 @@ return {
     event = 'VeryLazy',
     dependencies = {
       'MunifTanjim/nui.nvim',
-      'rcarriga/nvim-notify',
     },
     config = function()
       require('noice').setup {
+        -- notifications are owned by snacks.notifier
+        notify = {
+          enabled = false,
+        },
         lsp = {
           hover = {
-            enabled = false, -- handled by nvchad
+            enabled = true,
           },
           signature = {
-            enabled = false, -- handled by nvchad
+            enabled = false, -- blink.cmp provides signature help
           },
           override = {
             ['vim.lsp.util.convert_input_to_markdown_lines'] = true,

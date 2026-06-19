@@ -1,33 +1,17 @@
 return {
-  -- bundled configs to ease lsp
+  -- LSP server configs. Shared on_attach/capabilities/diagnostics live in
+  -- lua/configs/lsp.lua. C#, Rust and Java are configured by their own dedicated
+  -- plugin specs (roslyn.lua, rustaceanvim.lua, jdtls.lua) and are intentionally
+  -- absent here.
   {
     'neovim/nvim-lspconfig',
+    event = { 'BufReadPre', 'BufNewFile' },
+    dependencies = { 'saghen/blink.cmp' },
     config = function()
-      local nvlsp = require 'nvchad.configs.lspconfig'
-      local map = vim.keymap.set
+      local lsp = require 'configs.lsp'
+      lsp.setup() -- diagnostics, LspAttach keymaps, global '*' defaults, lua_ls
 
-      -- load defaults i.e lua_lsp
-      nvlsp.defaults()
-      nvlsp.on_attach = function(_, bufnr)
-        local function opts(desc)
-          return { buffer = bufnr, desc = 'LSP ' .. desc }
-        end
-
-        map('n', 'gD', vim.lsp.buf.declaration, opts 'Go to declaration')
-        map('n', 'gd', vim.lsp.buf.definition, opts 'Go to definition')
-        map('n', 'gi', vim.lsp.buf.implementation, opts 'Go to implementation')
-        map('n', 'gs', vim.lsp.buf.signature_help, opts 'Go to signature help')
-        map('n', 'gr', vim.lsp.buf.references, opts 'Show references')
-        map('n', '<leader>D', vim.lsp.buf.type_definition, opts 'Go to type definition')
-        map('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts 'Add workspace folder')
-        map('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts 'Remove workspace folder')
-        map('n', '<leader>ra', require 'nvchad.lsp.renamer', opts 'NvRenamer')
-        map({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts 'Code action')
-      end
       vim.lsp.config('html', {
-        on_attach = nvlsp.on_attach,
-        on_init = nvlsp.on_init,
-        capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
         init_options = {
           configurationSection = { 'html', 'css', 'javascript' },
           embeddedLanguages = {
@@ -38,9 +22,6 @@ return {
         },
       })
       vim.lsp.config('cssls', {
-        on_attach = nvlsp.on_attach,
-        on_init = nvlsp.on_init,
-        capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
         init_options = {
           provideFormatter = true,
         },
@@ -50,15 +31,8 @@ return {
           scss = { validate = true },
         },
       })
-      vim.lsp.config('ts_ls', {
-        on_attach = nvlsp.on_attach,
-        on_init = nvlsp.on_init,
-        capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
-      })
+      vim.lsp.config('ts_ls', {})
       vim.lsp.config('vue_ls', {
-        on_attach = nvlsp.on_attach,
-        on_init = nvlsp.on_init,
-        capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
         init_options = {
           vue = {
             hybridMode = false,
@@ -66,9 +40,6 @@ return {
         },
       })
       vim.lsp.config('gopls', {
-        on_attach = nvlsp.on_attach,
-        on_init = nvlsp.on_init,
-        capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
         settings = {
           gopls = {
             analyses = {
@@ -80,39 +51,10 @@ return {
           },
         },
       })
-      vim.lsp.config('rust_analyzer', {
-        on_attach = nvlsp.on_attach,
-        on_init = nvlsp.on_init,
-        capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
-        settings = {
-          ['rust-analyzer'] = {
-            checkOnSave = {
-              command = 'clippy',
-            },
-          },
-        },
-      })
-      vim.lsp.config('omnisharp', {
-        on_attach = nvlsp.on_attach,
-        on_init = nvlsp.on_init,
-        capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
-        settings = {
-          FormattingOptions = {
-            EnableEditorConfigSupport = true,
-          },
-          RoslynExtensionsOptions = {
-            EnableAnalyzersSupport = true,
-            EnableImportCompletion = true,
-          },
-        },
-      })
-      vim.lsp.config('markdown_oxide', {
-        on_attach = nvlsp.on_attach,
-        on_init = nvlsp.on_init,
-        capabilities = require('blink.cmp').get_lsp_capabilities(nvlsp.capabilities),
-      })
+      vim.lsp.config('markdown_oxide', {})
+      vim.lsp.config('lexical', {}) -- elixir
 
-      vim.lsp.enable { 'html', 'cssls', 'ts_ls', 'vue_ls', 'gopls', 'rust_analyzer', 'omnisharp', 'markdown_oxide' }
+      vim.lsp.enable { 'html', 'cssls', 'ts_ls', 'vue_ls', 'gopls', 'markdown_oxide', 'lexical' }
     end,
   },
 }
