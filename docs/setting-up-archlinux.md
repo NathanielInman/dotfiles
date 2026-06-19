@@ -281,7 +281,7 @@ password   include      system-local-login
 **Autologin caveat — blank the login keyring password.** `pam_gnome_keyring` can only auto-unlock the keyring when it captures your login password at the `auth` step. With getty `--autologin` no password is ever entered, so the keyring stays locked and you get prompted to unlock it manually after boot. The fix is to give the login keyring an **empty** password so `gnome-keyring-daemon` unlocks it automatically:
 
 1. Install and open **Seahorse** (`pacman -S seahorse`, the "Passwords and Keys" app).
-2. In the sidebar right-click the **Login** keyring (here it's stored as `~/.local/share/keyrings/Default_Keyring.keyring`) → **Change Password**.
+2. In the sidebar right-click the default keyring — labeled **Default Keyring** (stored as `~/.local/share/keyrings/Default_Keyring.keyring`; older setups may call it "Login") → **Change Password**.
 3. Enter the current passphrase, leave the new password **blank**, confirm, and accept the "store unencrypted" warning.
 
 The keyring now auto-unlocks on every autologin with no prompt. (Secrets are stored unencrypted on disk — acceptable here because the disk is the trust boundary on a single-user autologin workstation.) If the keyring holds nothing you care about, you can instead delete `~/.local/share/keyrings/*` and a fresh blank keyring is created on next login.
