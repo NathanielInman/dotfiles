@@ -116,7 +116,7 @@ nnoremap k gk
 " Color scheme configuration
 "---------------------------------------------
 syntax on "Make sure syntax highlighting is on
-colorscheme nord
+silent! colorscheme nord "silent! so a fresh machine (pre-:PluginInstall) doesn't abort with E185
 hi BufTabLineCurrent ctermfg=16 ctermbg=6 cterm=NONE
 hi BufTabLineHidden ctermfg=8 ctermbg=NONE cterm=NONE
 hi BufTabLineFill ctermfg=NONE ctermbg=NONE cterm=NONE
