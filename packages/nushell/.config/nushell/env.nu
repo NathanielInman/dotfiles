@@ -22,13 +22,21 @@ carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
 # GL_TOKEN and GOOGLE_CLOUD_PROJECT set via local environment
 export-env { $env.PNPM_HOME = $"($env.HOME)/.local/share/pnpm" }
 export-env { $env.PATH = ($env.PATH | split row (char esep) | prepend $env.PNPM_HOME ) }
+# Elgato Key Lights, addressed by permanent IPv6 link-local address (derived
+# from the device MAC, so no DHCP lease or mDNS discovery). %enp6s0 is the
+# interface they're on; brightness 3 is the left light, 50 the right.
+def _keylight [addr: string, on: int, brightness: int] {
+  http put -t application/json $"http://[($addr)%enp6s0]:9123/elgato/lights" {
+    numberOfLights: 1, lights: [{on: $on, brightness: $brightness, temperature: 344}]
+  } | ignore
+}
 def lightson [] {
-  keylightctl switch --light 8A95 on
-  keylightctl switch --light 9F74 on
+  _keylight "fe80::3e6a:9dff:fe14:e88f" 1 3
+  _keylight "fe80::3e6a:9dff:fe14:e88e" 1 50
 }
 def lightsoff [] {
-  keylightctl switch --light 8A95 off
-  keylightctl switch --light 9F74 off
+  _keylight "fe80::3e6a:9dff:fe14:e88f" 0 3
+  _keylight "fe80::3e6a:9dff:fe14:e88e" 0 50
 }
 
 # pnpm

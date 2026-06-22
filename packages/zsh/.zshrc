@@ -124,16 +124,23 @@ eval "$(zoxide init zsh)"
 eval "$(pyenv init -)"
 
 # det33 godot
-alias compass='cd ~/Sites/det33-godot && dotnet build && godot-mono --path . res://Scenes/Test/CompassTest.tscn'
-alias det33='cd ~/Sites/det33-godot && dotnet build && godot-mono --path . res://Scenes/Main/Boot.tscn'
-alias gym='cd ~/Sites/det33-godot && dotnet build && godot-mono --path . res://Scenes/Test/AbilityTest.tscn'
+alias compass='cd ~/Rime/det33-godot && dotnet build && godot-mono --path . res://Scenes/Test/CompassTest.tscn'
+alias det33='cd ~/Rime/det33-godot && dotnet build && godot-mono --path . res://Scenes/Main/Boot.tscn'
+alias gym='cd ~/Rime/det33-godot && dotnet build && godot-mono --path . res://Scenes/Test/AbilityTest.tscn'
 
 # tintin
 alias au-mardios='ssh nate@159.203.80.149 -t "tmux attach -t adventuresunlimited"'
 
-# streamdeck command simplification
-alias lightson='keylightctl switch --light 8A95 --brightness 3 on & keylightctl switch --light 9F74 --brightness 50 on'
-alias lightsoff='keylightctl switch --light 8A95 off & keylightctl switch --light 9F74 off'
+# Elgato Key Lights. Addressed by their permanent IPv6 link-local address
+# (derived from the device MAC via EUI-64, so no DHCP lease or mDNS discovery
+# is involved). %enp6s0 is the interface the lights are reachable on; the
+# brightness 3 light is on the left, brightness 50 on the right.
+_keylight() { # $1=fe80 addr  $2=on(1)/off(0)  $3=brightness
+  curl -s -m2 -X PUT "http://[$1%enp6s0]:9123/elgato/lights" \
+    -d "{\"numberOfLights\":1,\"lights\":[{\"on\":$2,\"brightness\":$3,\"temperature\":344}]}" >/dev/null
+}
+alias lightson='_keylight fe80::3e6a:9dff:fe14:e88f 1 3 & _keylight fe80::3e6a:9dff:fe14:e88e 1 50'
+alias lightsoff='_keylight fe80::3e6a:9dff:fe14:e88f 0 3 & _keylight fe80::3e6a:9dff:fe14:e88e 0 50'
 
 # we want to use brew on OSX, and keep broot config only on Arch
 if uname -a | grep -q 'Darwin'; then
