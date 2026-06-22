@@ -1,11 +1,11 @@
 return {
-  -- catppuccin replaces NvChad's base46 theming. latte (light) <-> mocha (dark)
-  -- gives the same light/dark toggle the old onedark/github_light pair did.
+  -- Nord is the default scheme (matches the rest of the distro). catppuccin
+  -- stays installed for variety in the picker (<leader>uC) and the light/dark
+  -- toggle (<leader>e: latte <-> mocha). Both feed the persistence layer below.
   {
     'catppuccin/nvim',
     name = 'catppuccin',
-    lazy = false,
-    priority = 1000,
+    lazy = true,
     opts = {
       flavour = 'mocha',
       background = { light = 'latte', dark = 'mocha' },
@@ -34,6 +34,24 @@ return {
     },
     config = function(_, opts)
       require('catppuccin').setup(opts)
+    end,
+  },
+  {
+    'gbprod/nord.nvim',
+    lazy = false,
+    priority = 1000,
+    -- pull catppuccin in (and run its setup) before we apply a saved scheme,
+    -- so a persisted catppuccin flavour is ready on startup.
+    dependencies = { 'catppuccin/nvim' },
+    opts = {
+      -- keep the custom Nord terminal colors set in options.lua
+      terminal_colors = false,
+      styles = {
+        comments = { italic = true },
+      },
+    },
+    config = function(_, opts)
+      require('nord').setup(opts)
 
       local persist = require 'configs.theme-persist'
 
@@ -44,10 +62,10 @@ return {
         end,
       })
 
-      -- Restore the last-used scheme, falling back to catppuccin if it's gone.
+      -- Restore the last-used scheme, falling back to nord if it's gone/unset.
       local saved = persist.load()
       if not (saved and pcall(vim.cmd.colorscheme, saved)) then
-        vim.cmd.colorscheme 'catppuccin'
+        vim.cmd.colorscheme 'nord'
       end
     end,
   },
