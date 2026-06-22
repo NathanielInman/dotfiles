@@ -1,7 +1,9 @@
 return {
-  -- Nord is the default scheme (matches the rest of the distro). catppuccin
-  -- stays installed for variety in the picker (<leader>uC) and the light/dark
-  -- toggle (<leader>e: latte <-> mocha). Both feed the persistence layer below.
+  -- onedark is the default scheme (the standalone equivalent of NvChad's old
+  -- base46 'onedark'). nord and catppuccin stay installed as selectable
+  -- alternatives in the picker (<leader>uC). catppuccin also drives the
+  -- light/dark toggle (<leader>e: latte <-> mocha). All feed the persistence
+  -- layer below, so whatever you pick survives a restart.
   {
     'catppuccin/nvim',
     name = 'catppuccin',
@@ -38,11 +40,7 @@ return {
   },
   {
     'gbprod/nord.nvim',
-    lazy = false,
-    priority = 1000,
-    -- pull catppuccin in (and run its setup) before we apply a saved scheme,
-    -- so a persisted catppuccin flavour is ready on startup.
-    dependencies = { 'catppuccin/nvim' },
+    lazy = true,
     opts = {
       -- keep the custom Nord terminal colors set in options.lua
       terminal_colors = false,
@@ -52,6 +50,25 @@ return {
     },
     config = function(_, opts)
       require('nord').setup(opts)
+    end,
+  },
+  {
+    'navarasu/onedark.nvim',
+    lazy = false,
+    priority = 1000,
+    -- pull the alternatives in (and run their setup) before we apply a saved
+    -- scheme, so a persisted nord/catppuccin choice is ready on startup.
+    dependencies = { 'catppuccin/nvim', 'gbprod/nord.nvim' },
+    opts = {
+      style = 'dark', -- matches the old base46 onedark
+      -- keep the custom Nord terminal colors set in options.lua
+      term_colors = false,
+      code_style = {
+        comments = 'italic',
+      },
+    },
+    config = function(_, opts)
+      require('onedark').setup(opts)
 
       local persist = require 'configs.theme-persist'
 
@@ -62,10 +79,10 @@ return {
         end,
       })
 
-      -- Restore the last-used scheme, falling back to nord if it's gone/unset.
+      -- Restore the last-used scheme, falling back to onedark if it's gone/unset.
       local saved = persist.load()
       if not (saved and pcall(vim.cmd.colorscheme, saved)) then
-        vim.cmd.colorscheme 'nord'
+        vim.cmd.colorscheme 'onedark'
       end
     end,
   },
