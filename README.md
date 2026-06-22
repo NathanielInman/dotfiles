@@ -59,6 +59,7 @@ System-level files that can't be stowed (because they live outside `$HOME`) are 
 
 - `cron-git-notes-auto-update.sh` / `cron-git-tasks-auto-update.sh` — keep the `notes` and `todo` repos synced hourly.
 - `cron-sites-nightly-backup.sh` — a 3am safety net so no uncommitted work in `~/Sites` is ever lost to a dead disk. Owned repos get an atomic commit + push on the current branch; every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote. Full write-up: [docs/sites-nightly-backup.md](docs/sites-nightly-backup.md).
+- `openvpn3-tun-dns` — attaches the DigitalTurbine CloudConnexa DNS resolver to the `tun0` link on every VPN connect (via `openvpn3-tun-dns@tun0.service`), because `openvpn3` doesn't apply the pushed DNS itself and internal hosts won't otherwise resolve. Full write-up: [docs/openvpn3-vpn-dns.md](docs/openvpn3-vpn-dns.md).
 
 > [!TIP]
 > Clicking on the icons below will lead directly to this repositories documentation on how to setup said operating system or tool.
