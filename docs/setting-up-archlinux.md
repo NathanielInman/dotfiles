@@ -112,6 +112,18 @@ pacman -S hyprland waybar swaync kitty network-manager-applet noto-fonts adobe-s
 yay -S walker elephant-all
 ```
 
+The Elgato Key Lights are driven over their built-in HTTP API with nothing but `curl` (already installed) - no extra packages or helper CLIs. The `lightson`/`lightsoff` shell aliases (in both `.zshrc` and the nushell config) and the waybar keylights widget (`custom/keylights`, with its status script `keylights.sh` and on-click `keylights-toggle.sh`) all hit the same endpoint: `PUT http://<addr>:9123/elgato/lights` with `{"numberOfLights":1,"lights":[{"on":0|1,"brightness":0-100,"temperature":143-344}]}` to set state, and `GET` of the same path to read it.
+
+> A common approach is the `keylightctl` CLI, but it rediscovers the lights over mDNS on every invocation and caches nothing, which is unreliable on a multi-homed host (this machine has two NICs on the same subnet, so its mDNS library frequently queries the wrong interface and finds no lights). It is deliberately not used here.
+
+Instead the lights are addressed at their **IPv6 link-local address** (`fe80::…`), which is derived from the device MAC via EUI-64 and is therefore permanent - no DHCP lease, no discovery. The address carries a `%enp6s0` zone (the interface the lights are reachable on). To derive the address for a light, take its MAC, insert `ff:fe` in the middle, flip the universal/local bit of the first octet, and prefix `fe80::` (e.g. `3c:6a:9d:14:e8:8e` becomes `fe80::3e6a:9dff:fe14:e88e`). Confirm a light answers with:
+
+```
+curl http://[fe80::3e6a:9dff:fe14:e88e%enp6s0]:9123/elgato/accessory-info
+```
+
+If lights ever change, update the two `fe80::` addresses (and the `%enp6s0` interface) in `.zshrc`, the nushell config, and the two waybar `keylights*.sh` scripts.
+
 No display manager is needed. Hyprland auto-launches via `.zshrc` when logging in on tty1, and getty autologin handles the login (configured below).
 
 Before we can start Hyprland we need graphics drivers, validate what we're using
@@ -398,6 +410,30 @@ pacman -S jdk-openjdk dotnet-sdk elixir
 Rust tooling (`rust-analyzer`, `rustfmt`, `clippy`) comes from the `rustup` install
 later in this guide. Everything else (`gopls`, `lua-language-server`, `biome`,
 `prettier`, `markdown_oxide`, `markdownlint`, etc.) is handled entirely by mason.
+
+### Game development (Godot / C#)
+
+The DET-33 game port (`~/Rime/det33-godot`) is a Godot 4 / C# project, so it needs
+the **Mono/.NET build** of Godot — the plain `godot` package can't build or run C#
+scripts. The `godot-mono` package ships the editor binary at `/usr/bin/godot-mono`,
+which is the binary the `det33`/`gym`/`compass` aliases in `.zshrc` and the project's
+build commands call (note: **not** `godot`). The `dotnet-sdk` it needs to compile the
+C# is already installed in the step above.
+
+- `godot-mono` — Godot 4 engine with C#/.NET support (binary: `godot-mono`)
+
+```
+pacman -S godot-mono
+```
+
+To build release exports (`godot-mono --headless --export-release`) you also need the
+matching export templates, which are AUR-only:
+
+```
+paru -S godot-mono-export-templates-linux
+```
+
+The project lives on the `~/Rime` SMB share (see [Network storage](#network-storage--rime-truenas-smb-share) below), so the NAS must be mounted/reachable before the aliases will `cd` into it.
 
 ### First-run authentication for the service CLIs
 
