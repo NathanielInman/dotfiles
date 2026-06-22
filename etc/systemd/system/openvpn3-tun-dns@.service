@@ -1,0 +1,21 @@
+[Unit]
+# Apply the DigitalTurbine CloudConnexa DNS resolver + split-domain to the
+# openvpn3 tunnel interface (instance name = the interface, e.g. @tun0).
+#
+# openvpn3-service-netcfg brings the tunnel up but never attaches the VPN-pushed
+# DNS to the link in systemd-resolved, so internal hosts (e.g.
+# grafana.internal.ss-prod.digitalturbine.com) don't resolve. This service fills
+# that gap: it is WantedBy the tun device unit, so systemd starts it every time
+# the kernel creates the interface (each VPN connect), and BindsTo stops it when
+# the interface goes away.
+Description=Apply CloudConnexa DNS to openvpn3 tunnel %i
+BindsTo=sys-subsystem-net-devices-%i.device
+After=sys-subsystem-net-devices-%i.device
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/bin/openvpn3-tun-dns %i
+
+[Install]
+WantedBy=sys-subsystem-net-devices-%i.device

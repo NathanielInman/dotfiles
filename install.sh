@@ -143,6 +143,33 @@ setup_system() {
         fi
     fi
 
+    # openvpn3-tun-dns@tun0 — attach CloudConnexa DNS to the tunnel link.
+    # netcfg doesn't apply the VPN-pushed DNS, so internal DT hosts won't resolve
+    # without this. WantedBy the tun0 device unit, so it re-runs on every connect.
+    if command -v openvpn3 &> /dev/null; then
+        local tundns_script_src="$DOTFILES_DIR/scripts/openvpn3-tun-dns"
+        local tundns_script_dst="/usr/local/bin/openvpn3-tun-dns"
+        local tundns_unit_src="$DOTFILES_DIR/etc/systemd/system/openvpn3-tun-dns@.service"
+        local tundns_unit_dst="/etc/systemd/system/openvpn3-tun-dns@.service"
+        if [[ -x "$tundns_script_dst" ]] && cmp -s "$tundns_script_src" "$tundns_script_dst" \
+            && [[ -f "$tundns_unit_dst" ]] && cmp -s "$tundns_unit_src" "$tundns_unit_dst" \
+            && systemctl is-enabled openvpn3-tun-dns@tun0.service &>/dev/null; then
+            echo -e "  ${GREEN}[configured]${NC} openvpn3-tun-dns@tun0 DNS hook"
+        else
+            echo -n -e "  ${YELLOW}[available]${NC} Install openvpn3 tunnel DNS hook (resolves internal DT hosts)? [y/N] "
+            read -r answer
+            if [[ "$answer" =~ ^[Yy]$ ]]; then
+                sudo install -Dm755 "$tundns_script_src" "$tundns_script_dst"
+                sudo install -Dm644 "$tundns_unit_src" "$tundns_unit_dst"
+                sudo systemctl daemon-reload
+                sudo systemctl enable openvpn3-tun-dns@tun0.service
+                echo -e "  ${GREEN}[configured]${NC} openvpn3-tun-dns@tun0 DNS hook"
+            else
+                echo -e "  ${YELLOW}[skipped]${NC} openvpn3-tun-dns@tun0 DNS hook"
+            fi
+        fi
+    fi
+
     # hyprpm pacman hook — rebuild plugins after Hyprland upgrades
     if command -v hyprpm &> /dev/null; then
         local hook_src="$DOTFILES_DIR/etc/pacman.d/hooks/hyprpm.hook"

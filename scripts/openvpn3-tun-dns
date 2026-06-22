@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Attach the DigitalTurbine CloudConnexa DNS resolver + split-domain routing to
+# the openvpn3 tunnel interface.
+#
+# openvpn3-service-netcfg on this machine does NOT push the VPN's DNS settings
+# into systemd-resolved (it launches with no resolver backend, and even with
+# `systemd-resolved true` the rebuilt client doesn't forward the pushed DNS).
+# Without this, internal names like grafana.internal.ss-prod.digitalturbine.com
+# never resolve: the query falls through to the LAN router, which returns
+# nothing. The in-tunnel CloudConnexa resolver answers them fine, so we just
+# have to point tun0 at it.
+#
+# Invoked by openvpn3-tun-dns@.service whenever the tun device appears.
+set -euo pipefail
+
+IFACE="${1:?usage: openvpn3-tun-dns <iface>}"
+
+# CloudConnexa internal resolvers (anycast + gateway-side). Both resolve the
+# DT private zones and forward public names upstream.
+DNS_SERVERS=(100.127.255.250 100.96.0.1)
+
+# Route only DT lookups into the tunnel ('~' = routing-only domain, so other
+# traffic keeps using the normal resolvers). Add more '~zone' entries here if
+# other internal suffixes need the tunnel.
+ROUTE_DOMAINS=('~digitalturbine.com')
+
+# systemd-resolved learns the freshly created link over rtnetlink; it may not be
+# registered the instant the .device unit fires. Wait briefly for it.
+for _ in $(seq 1 10); do
+    resolvectl status "$IFACE" &>/dev/null && break
+    sleep 1
+done
+
+resolvectl dns "$IFACE" "${DNS_SERVERS[@]}"
+resolvectl domain "$IFACE" "${ROUTE_DOMAINS[@]}"
+# Keep the tunnel out of the default DNS route: only the domains above go here.
+resolvectl default-route "$IFACE" false
