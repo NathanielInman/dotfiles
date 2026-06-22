@@ -127,6 +127,16 @@ eval "$(pyenv init -)"
 alias compass='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Test/CompassTest.tscn'
 alias det33='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Main/Boot.tscn'
 alias gym='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Test/AbilityTest.tscn'
+# Wipe DET-33 meta-progression (essence, unlocks, quests, stats) to re-test
+# progression from scratch. Leaves settings.cfg (display/keybinds) alone.
+det33clear() {
+  local save="$HOME/.local/share/godot/app_userdata/DET-33/save_data.json"
+  if [[ -f "$save" ]]; then
+    rm -f "$save" && echo "det33clear: removed $save (progression reset)."
+  else
+    echo "det33clear: no save at $save (already clean)."
+  fi
+}
 
 # tintin
 alias au-mardios='ssh nate@159.203.80.149 -t "tmux attach -t adventuresunlimited"'
