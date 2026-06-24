@@ -8,6 +8,7 @@
 [credential]
 	helper = store
 [credential "https://gitlab.com"]
+	helper =
 	helper = !glab auth git-credential
 [pull]
 	rebase = false
