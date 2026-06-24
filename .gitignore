@@ -3,6 +3,14 @@
 # setup time (not dotfiles), so keep them out of version control.
 packages/zsh/.local/share/
 packages/zsh/.local/state/
+packages/zsh/.local/lib/
 packages/zsh/.local/bin/claude
 packages/zsh/.local/bin/trcli
+packages/zsh/.local/bin/fonttools
+packages/zsh/.local/bin/pyftmerge
+packages/zsh/.local/bin/pyftsubset
+packages/zsh/.local/bin/ttx
 packages/zsh/.oh-my-zsh/custom/plugins/
+
+# wrangler writes a local cache (incl. wrangler-account.json) into the repo root
+.wrangler/
