@@ -375,14 +375,30 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `tree-sitter-cli` is required by nvim-treesitter's `main` branch to generate and compile parsers (it uses the already-installed `nodejs` for the `generate` step). Without it, treesitter cannot build parsers and opening files fails with parser/query mismatch errors such as `Query error: Invalid field name "operator"`. After install, parsers are built with `:TSUpdate` (or automatically via `require('nvim-treesitter').install(...)` in the nvim config)
 - `google-cloud-cli` provides the `gcloud` command for managing Google Cloud from the terminal (the `gsutil` and `bq` tools are split into the optional `google-cloud-cli-gsutil` and `google-cloud-cli-bq` packages)
 - `aws-cli-v2` provides the `aws` command for managing Amazon Web Services from the terminal (reads credentials from the stowed `~/.aws/config` and `~/.aws/credentials`)
+- `kubectl` is the Kubernetes CLI for talking to clusters (the DT GKE clusters behind `app-agent-events.<ns>.gcp-*.digitalturbine.io`, etc.); it is in the official `extra` repo. Our clusters are GKE, so authenticating also needs the `gke-gcloud-auth-plugin` (AUR `google-cloud-cli-component-gke-gcloud-auth-plugin`, installed on the `paru` line below); without it `kubectl` errors with `gke-gcloud-auth-plugin ... not found`
 - `jira-cli` is the AUR package providing the `jira` command for Atlassian Jira from the terminal (issues, sprints, boards); authenticate with `jira init`
+- `maven` provides the `mvn` command for building and testing the Java/Maven microservices (e.g. `apk-fetch-service`); it depends on a JDK and will pull one in if none is present, though `jdk-openjdk` (see the Neovim language toolchains section below) already satisfies that
 - `trcli` is the TestRail CLI for reporting automated test results to TestRail — it is a Python package (not in the Arch repos), so it is installed with `pipx` rather than on the `yay` line below (see the next step)
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 jira-cli
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 kubectl jira-cli maven
 ```
 
 After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). The AWS CLI reads the credentials stowed under `~/.aws/`; run `aws sts get-caller-identity` to confirm it can authenticate (or `aws configure` to set keys up fresh). Sign in to the git forges with `gh auth login` and `glab auth login`.
+
+`kubectl` ships no config of its own; it reads `~/.kube/config`, which `gcloud` writes per cluster. Because the DT clusters are GKE, first install the auth plugin (AUR, kept off the official `yay` line above since it's a gcloud component):
+
+```
+paru -S google-cloud-cli-component-gke-gcloud-auth-plugin
+```
+
+Then pull a cluster's credentials into `~/.kube/config` (gcloud must already be authenticated). List clusters with `gcloud container clusters list`, then:
+
+```
+gcloud container clusters get-credentials <cluster> --region <region> --project <project>
+```
+
+Verify the context works with `kubectl config current-context` and `kubectl get ns`. Switch between clusters with `kubectl config use-context <name>`.
 
 `trcli` is not packaged for Arch, so install it in an isolated environment with `pipx` (which keeps it off the system Python). `python-pipx` comes from the official repos:
 
@@ -405,6 +421,15 @@ runtime present on the system (mason installs the server, not the runtime):
 
 ```
 pacman -S jdk-openjdk dotnet-sdk elixir
+```
+
+The DT Java/Maven microservices (e.g. `apk-fetch-service`) build and test against **JDK 21** (the CI image is `maven:3.9.11-amazoncorretto-21`); the latest `jdk-openjdk` is too new for them (ByteBuddy/Mockito break). Install `jdk21-openjdk` alongside the default and point a build at it without changing the system default:
+
+```
+pacman -S jdk21-openjdk
+# per-build, leaves jdtls et al. on the default JDK:
+JAVA_HOME=/usr/lib/jvm/java-21-openjdk mvn ...
+# or switch the system default if you prefer: archlinux-java set java-21-openjdk
 ```
 
 Rust tooling (`rust-analyzer`, `rustfmt`, `clippy`) comes from the `rustup` install
