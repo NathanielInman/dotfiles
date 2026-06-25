@@ -21,8 +21,9 @@ DNS_SERVERS=(100.127.255.250 100.96.0.1)
 
 # Route only DT lookups into the tunnel ('~' = routing-only domain, so other
 # traffic keeps using the normal resolvers). Add more '~zone' entries here if
-# other internal suffixes need the tunnel.
-ROUTE_DOMAINS=('~digitalturbine.com')
+# other internal suffixes need the tunnel. '.io' covers the GCP dev estate
+# (e.g. *.internal.gcp-dev.digitalturbine.io).
+ROUTE_DOMAINS=('~digitalturbine.com' '~digitalturbine.io')
 
 # systemd-resolved learns the freshly created link over rtnetlink; it may not be
 # registered the instant the .device unit fires. Wait briefly for it.
