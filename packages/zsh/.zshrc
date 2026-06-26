@@ -127,6 +127,9 @@ eval "$(pyenv init -)"
 alias compass='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Test/CompassTest.tscn'
 alias det33='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Main/Boot.tscn'
 alias gym='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Test/AbilityTest.tscn'
+
+# everspark forge godot
+alias eversparkforge='cd ~/Sites/everspark-forge-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Main/Boot.tscn'
 # Wipe DET-33 meta-progression (essence, unlocks, quests, stats) to re-test
 # progression from scratch. Leaves settings.cfg (display/keybinds) alone.
 det33clear() {
