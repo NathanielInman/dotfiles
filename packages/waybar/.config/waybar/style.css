@@ -190,18 +190,9 @@ window#waybar.hidden {
   color: #a3be8c;
 }
 
-/* Games drawer toggle: blue like the details drawer, amber/red when active */
-#custom-toggle-games,
-#custom-toggle-games.idle {
+/* Games drawer toggle: blue like the details drawer */
+#custom-toggle-games {
   color: #88c0d0;
-}
-
-#custom-toggle-games.building {
-  color: #ebcb8b;
-}
-
-#custom-toggle-games.failed {
-  color: #bf616a;
 }
 
 /* Game build buttons */
