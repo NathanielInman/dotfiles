@@ -18,9 +18,7 @@
     "custom/keylights",
     "custom/vpn",
     "custom/silence-notifications",
-    "custom/wallpaper",
-    "custom/hotkeys",
-    "custom/commands",
+    "group/games",
     "custom/power-menu",
     "custom/timezone",
     "tray"
@@ -140,6 +138,48 @@
     "exec": "if [ \"$(swaync-client -D)\" = 'true' ]; then echo ''; else echo ''; fi",
     "interval": 1,
     "on-click": "swaync-client -d -sw"
+  },
+  "group/games": {
+    "orientation": "horizontal",
+    "drawer": {
+      "transition-duration": 300,
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "custom/toggle-games",
+      "custom/det33",
+      "custom/gym",
+      "custom/eversparkforge",
+      "custom/hotkeys",
+      "custom/commands",
+      "custom/wallpaper"
+    ]
+  },
+  "custom/toggle-games": {
+    "exec": "~/.config/waybar/scripts/game-build.sh drawer-status",
+    "return-type": "json",
+    "interval": 2
+  },
+  "custom/det33": {
+    "exec": "~/.config/waybar/scripts/game-build.sh status det33",
+    "return-type": "json",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/game-build.sh build det33",
+    "on-click-right": "~/.config/waybar/scripts/game-build.sh log det33"
+  },
+  "custom/gym": {
+    "exec": "~/.config/waybar/scripts/game-build.sh status gym",
+    "return-type": "json",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/game-build.sh build gym",
+    "on-click-right": "~/.config/waybar/scripts/game-build.sh log gym"
+  },
+  "custom/eversparkforge": {
+    "exec": "~/.config/waybar/scripts/game-build.sh status eversparkforge",
+    "return-type": "json",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/game-build.sh build eversparkforge",
+    "on-click-right": "~/.config/waybar/scripts/game-build.sh log eversparkforge"
   },
   "custom/hotkeys": {
     "format": "⌨",
