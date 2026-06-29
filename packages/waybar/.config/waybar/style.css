@@ -39,6 +39,10 @@ window#waybar.hidden {
 #custom-wallpaper,
 #custom-hotkeys,
 #custom-commands,
+#custom-toggle-games,
+#custom-det33,
+#custom-gym,
+#custom-eversparkforge,
 #custom-power-menu,
 #custom-timezone,
 #tray {
@@ -184,6 +188,45 @@ window#waybar.hidden {
 /* Wallpaper button */
 #custom-wallpaper {
   color: #a3be8c;
+}
+
+/* Games drawer toggle: blue like the details drawer, amber/red when active */
+#custom-toggle-games,
+#custom-toggle-games.idle {
+  color: #88c0d0;
+}
+
+#custom-toggle-games.building {
+  color: #ebcb8b;
+}
+
+#custom-toggle-games.failed {
+  color: #bf616a;
+}
+
+/* Game build buttons */
+#custom-det33.idle,
+#custom-gym.idle,
+#custom-eversparkforge.idle {
+  color: #C5C8C6;
+}
+
+#custom-det33.building,
+#custom-gym.building,
+#custom-eversparkforge.building {
+  color: #ebcb8b;
+}
+
+#custom-det33.failed,
+#custom-gym.failed,
+#custom-eversparkforge.failed {
+  color: #bf616a;
+}
+
+#custom-det33.ok,
+#custom-gym.ok,
+#custom-eversparkforge.ok {
+  color: #50fa7b;
 }
 
 /* Power menu */
