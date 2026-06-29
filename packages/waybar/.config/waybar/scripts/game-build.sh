@@ -132,8 +132,11 @@ case "${1:-}" in
         dir="$1"; scene="$2"; lf="$3"; game="$4"; last=0
         godot-mono --path "$dir" "$scene" 2>&1 | while IFS= read -r line; do
           printf "%s\n" "$line" >> "$lf"
+          # Godot prints engine + C# exceptions as a line starting with
+          # "ERROR:"/"SCRIPT ERROR:" (C# shows e.g. "ERROR: System.Foo...").
+          # Anchor to line start so indented stack-trace frames do not match.
           case "$line" in
-            *"SCRIPT ERROR"*|*"Unhandled Exception"*|*"Unhandled exception"*)
+            "ERROR:"*|"USER ERROR:"*|"SCRIPT ERROR:"*|"USER SCRIPT ERROR:"*|"Unhandled exception"*|"Unhandled Exception"*)
               now=$(date +%s)
               if [ $(( now - last )) -ge 15 ]; then
                 last=$now
