@@ -10,12 +10,10 @@
 #
 # Actions:
 #   status <game>   emit waybar JSON for one game button   (exec)
-#   drawer-status   emit JSON for the collapsed drawer handle (exec)
 #   build  <game>   start (or restart) a build + launch     (left-click)
 #   log    <game>   open the last build log in a float term  (right-click)
 #   _run   <game>   internal: the actual headless build, detached
 
-GAMES=(det33 gym eversparkforge)
 OK_FLASH=6  # seconds to keep the green check before reverting to idle
 
 game_dir() {
@@ -81,25 +79,6 @@ case "${1:-}" in
         printf '{"text":" %s","class":"idle","tooltip":"%s: click to build & launch · right-click for last log"}\n' "$label" "$game"
         ;;
     esac
-    ;;
-
-  drawer-status)
-    # The collapsed handle reflects the worst state across all games so a
-    # failure is visible even when the drawer is closed.
-    any_failed=0; any_building=0
-    for g in "${GAMES[@]}"; do
-      case "$(current_state "$g")" in
-        failed)   any_failed=1 ;;
-        building) any_building=1 ;;
-      esac
-    done
-    if [ "$any_failed" = 1 ]; then
-      printf '{"text":"","class":"failed","tooltip":"A game build failed — open the drawer"}\n'
-    elif [ "$any_building" = 1 ]; then
-      printf '{"text":"","class":"building","tooltip":"Building…"}\n'
-    else
-      printf '{"text":"","class":"idle","tooltip":"Games & shortcuts"}\n'
-    fi
     ;;
 
   build)
