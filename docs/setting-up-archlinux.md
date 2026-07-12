@@ -544,9 +544,10 @@ Now some rust utils:
 - `tidy-viewer` or "tv" is an easy way to preview csv files
 - `pueue` is a tool that helps manage a queue of shell commands (daemon is pueued)
 - `cargo-update` adds `cargo install-update -a` to upgrade every cargo-installed binary (topgrade calls this too)
+- `cargo-cache` adds `cargo cache` to inspect and prune the `~/.cargo` caches (registry sources, git checkouts, build artifacts)
 
 ```
-cargo install rusti-cal melt tidy-viewer pueue cargo-update
+cargo install rusti-cal melt tidy-viewer pueue cargo-update cargo-cache
 ```
 
 ### topgrade (upgrade everything)
