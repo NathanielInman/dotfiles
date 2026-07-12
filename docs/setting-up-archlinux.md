@@ -640,7 +640,7 @@ Now for any other essentials for arch
 yay -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv xsv obsidian cronie dog bind sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator nordic-theme gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
-Now open up `nwg-look` and set the theme to `Nordic` with `feather` font and `qogir-icon-theme` for icons.
+Now open up `nwg-look` and set the theme to `Nordic` with `PragmataPro 11` font and `Adwaita` for icons.
 
 Now grab the dictionary file for sdcv:
 
