@@ -26,14 +26,14 @@
   "hyprland/workspaces": {
     "format": "{icon}",
     "format-icons": {
-      "1": "",
+      "1": "󰊯",
       "2": "",
       "3": "",
-      "4": "",
+      "4": "",
       "5": "",
       "6": "",
       "7": "",
-      "8": "",
+      "8": "",
       "9": "",
       "10": ""
     },
@@ -84,7 +84,7 @@
     ]
   },
   "custom/toggle-details": {
-    "format": "",
+    "format": "󰋼",
     "tooltip-format": "Toggle details"
   },
   "custom/network-traffic": {

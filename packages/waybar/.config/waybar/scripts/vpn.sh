@@ -23,9 +23,9 @@ case "$1" in
     ;;
   *)
     if openvpn3 sessions-list 2>/dev/null | grep -q 'Path:'; then
-      echo '{"text": "", "class": "connected"}'
+      echo '{"text": "󰌘", "class": "connected"}'
     else
-      echo '{"text": "", "class": "disconnected"}'
+      echo '{"text": "󰌙", "class": "disconnected"}'
     fi
     ;;
 esac
