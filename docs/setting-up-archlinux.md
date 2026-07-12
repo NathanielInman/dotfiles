@@ -626,7 +626,7 @@ Now for any other essentials for arch
 - `tumbler` unlocks generation of thumbnails for thunar
 - `libgsf` is a super fast image thumbnailer for `tumbler`
 - `galculator` is a simple scientific gtk calculator
-- `orchis-theme-git` is a simple XFCE4 & GTK dark theme
+- `nordic-theme` is a Nord-colored GTK dark theme (matches the Nord palette used across this setup)
 - `gtk-engine-murrine` helps with backwards-compatibility themes for gtk2
 - `kooha` is a Wayland-native screen recorder (replaces peek)
 - `gthumb` is the best tiny app for browsing images
@@ -637,10 +637,10 @@ Now for any other essentials for arch
 - `fselect` is a SQL-like querying tool for the filesystem
 
 ```
-yay -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv xsv obsidian cronie dog bind sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator orchis-theme-git gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
+yay -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv xsv obsidian cronie dog bind sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator nordic-theme gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
-Now open up `nwg-look` and set the theme to `orchis-dark` with `feather` font and `qogir-icon-theme` for icons.
+Now open up `nwg-look` and set the theme to `Nordic` with `feather` font and `qogir-icon-theme` for icons.
 
 Now grab the dictionary file for sdcv:
 
