@@ -543,9 +543,10 @@ Now some rust utils:
 - `melt` is a way of easily extracting zip, gz, Z, bz2, tar, etc
 - `tidy-viewer` or "tv" is an easy way to preview csv files
 - `pueue` is a tool that helps manage a queue of shell commands (daemon is pueued)
+- `cargo-update` adds `cargo install-update -a` to upgrade every cargo-installed binary (topgrade calls this too)
 
 ```
-cargo install rusti-cal melt tidy-viewer pueue
+cargo install rusti-cal melt tidy-viewer pueue cargo-update
 ```
 
 ### topgrade (upgrade everything)
