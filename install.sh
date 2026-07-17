@@ -208,6 +208,27 @@ setup_system() {
         fi
     fi
 
+    # NVIDIA app profile — the driver hoards VRAM freed by Wayland compositors
+    # in a per-process reuse pool and never trims it (1-2GB/day of window
+    # churn). GLVidHeapReuseRatio=0 for Hyprland makes it return freed buffers
+    # immediately. Read at compositor startup, so needs a session restart.
+    if [[ -d /proc/driver/nvidia ]]; then
+        local nvprofile_src="$DOTFILES_DIR/etc/nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json"
+        local nvprofile_dst="/etc/nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json"
+        if [[ -f "$nvprofile_dst" ]] && cmp -s "$nvprofile_src" "$nvprofile_dst"; then
+            echo -e "  ${GREEN}[configured]${NC} NVIDIA VRAM buffer-pool profile"
+        else
+            echo -n -e "  ${YELLOW}[available]${NC} Install NVIDIA profile to stop Hyprland VRAM hoarding? [y/N] "
+            read -r answer
+            if [[ "$answer" =~ ^[Yy]$ ]]; then
+                sudo install -Dm644 "$nvprofile_src" "$nvprofile_dst"
+                echo -e "  ${GREEN}[configured]${NC} NVIDIA VRAM buffer-pool profile"
+            else
+                echo -e "  ${YELLOW}[skipped]${NC} NVIDIA VRAM buffer-pool profile"
+            fi
+        fi
+    fi
+
     # rime-umount.service — force-unmount the Rime CIFS share early on shutdown
     # so the kernel doesn't block ~180s on the unreachable server (shutdown hang).
     local rime_src="$DOTFILES_DIR/etc/systemd/system/rime-umount.service"
