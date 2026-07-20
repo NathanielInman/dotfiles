@@ -166,7 +166,7 @@
     ]
   },
   "custom/toggle-games": {
-    "format": "",
+    "format": "󰐱",
     "tooltip-format": "Games & shortcuts",
     "cursor": true
   },
@@ -192,11 +192,11 @@
     "on-click-right": "~/.config/waybar/scripts/game-build.sh log eversparkforge"
   },
   "custom/hotkeys": {
-    "format": "⌨",
+    "format": "shortcuts",
     "on-click": "~/.config/waybar/scripts/hotkeys.sh"
   },
   "custom/commands": {
-    "format": "",
+    "format": "app names",
     "on-click": "~/.config/waybar/scripts/commands.sh"
   },
   "custom/timezone": {
