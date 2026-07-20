@@ -86,7 +86,8 @@
   },
   "custom/toggle-details": {
     "format": "󰋼",
-    "tooltip-format": "Toggle details"
+    "tooltip-format": "Toggle details",
+    "cursor": true
   },
   "custom/network-traffic": {
     "exec": "~/.config/waybar/scripts/network-traffic.sh",
@@ -159,7 +160,8 @@
   },
   "custom/toggle-games": {
     "format": "",
-    "tooltip-format": "Games & shortcuts"
+    "tooltip-format": "Games & shortcuts",
+    "cursor": true
   },
   "custom/det33": {
     "exec": "~/.config/waybar/scripts/game-build.sh status det33",
