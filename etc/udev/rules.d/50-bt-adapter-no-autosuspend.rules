@@ -1,0 +1,5 @@
+# TP-Link UB500 Bluetooth adapter: never autosuspend. With power/control=auto
+# the kernel power-cycles the adapter after 2s idle, dropping BT peripherals
+# (MX Master re-enumerated up to 9x/day; mid-drag drops synthesize a button
+# release, ending slurp screenshot selections early).
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="2357", ATTR{idProduct}=="0604", TEST=="power/control", ATTR{power/control}="on"
