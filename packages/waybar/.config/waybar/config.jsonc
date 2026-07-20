@@ -69,7 +69,8 @@
     "orientation": "horizontal",
     "drawer": {
       "transition-duration": 300,
-      "transition-left-to-right": false
+      "transition-left-to-right": false,
+      "click-to-reveal": true
     },
     "modules": [
       "custom/toggle-details",
@@ -143,7 +144,8 @@
     "orientation": "horizontal",
     "drawer": {
       "transition-duration": 300,
-      "transition-left-to-right": false
+      "transition-left-to-right": false,
+      "click-to-reveal": true
     },
     "modules": [
       "custom/toggle-games",
