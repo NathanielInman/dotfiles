@@ -50,6 +50,36 @@ window#waybar.hidden {
   border-right: 1px solid #4c566a;
 }
 
+/* Hover feedback on clickable modules (info-only modules excluded) */
+#custom-currently-playing:hover,
+#pulseaudio:hover,
+#custom-public-ip:hover,
+#custom-keylights:hover,
+#custom-vpn:hover,
+#custom-voxtype:hover,
+#custom-meeting-record:hover,
+#custom-screen-record:hover,
+#custom-pomodoro:hover,
+#custom-silence-notifications:hover,
+#custom-wallpaper:hover,
+#custom-hotkeys:hover,
+#custom-commands:hover,
+#custom-det33:hover,
+#custom-gym:hover,
+#custom-eversparkforge:hover,
+#custom-power-menu:hover,
+#custom-timezone:hover {
+  background: #373B41;
+}
+
+/* Drawer toggles get a brighter accent too: they reveal/collapse a tray,
+   unlike the one-shot buttons around them */
+#custom-toggle-details:hover,
+#custom-toggle-games:hover {
+  background: #373B41;
+  color: #b8e0ea;
+}
+
 /* Workspaces */
 #workspaces button {
   padding: 0 6px;
