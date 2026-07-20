@@ -43,6 +43,7 @@ window#waybar.hidden {
 #custom-toggle-games,
 #custom-det33,
 #custom-gym,
+#custom-compass,
 #custom-eversparkforge,
 #custom-power-menu,
 #custom-timezone,
@@ -84,6 +85,7 @@ window#waybar.hidden {
 #custom-commands:hover,
 #custom-det33:hover,
 #custom-gym:hover,
+#custom-compass:hover,
 #custom-eversparkforge:hover,
 #custom-power-menu:hover,
 #custom-timezone:hover {
@@ -250,24 +252,28 @@ window#waybar.hidden {
 /* Game build buttons */
 #custom-det33.idle,
 #custom-gym.idle,
+#custom-compass.idle,
 #custom-eversparkforge.idle {
   color: #ffffff;
 }
 
 #custom-det33.building,
 #custom-gym.building,
+#custom-compass.building,
 #custom-eversparkforge.building {
   color: #ebcb8b;
 }
 
 #custom-det33.failed,
 #custom-gym.failed,
+#custom-compass.failed,
 #custom-eversparkforge.failed {
   color: #bf616a;
 }
 
 #custom-det33.ok,
 #custom-gym.ok,
+#custom-compass.ok,
 #custom-eversparkforge.ok {
   color: #50fa7b;
 }

@@ -159,6 +159,7 @@
       "custom/toggle-games",
       "custom/det33",
       "custom/gym",
+      "custom/compass",
       "custom/eversparkforge",
       "custom/hotkeys",
       "custom/commands",
@@ -183,6 +184,13 @@
     "interval": 1,
     "on-click": "~/.config/waybar/scripts/game-build.sh build gym",
     "on-click-right": "~/.config/waybar/scripts/game-build.sh log gym"
+  },
+  "custom/compass": {
+    "exec": "~/.config/waybar/scripts/game-build.sh status compass",
+    "return-type": "json",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/game-build.sh build compass",
+    "on-click-right": "~/.config/waybar/scripts/game-build.sh log compass"
   },
   "custom/eversparkforge": {
     "exec": "~/.config/waybar/scripts/game-build.sh status eversparkforge",

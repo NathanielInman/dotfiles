@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Waybar game build/launch buttons for det33, gym, eversparkforge.
+# Waybar game build/launch buttons for det33, gym, compass, eversparkforge.
 #
 # Click a button and the build runs headless in the background; the button
 # itself becomes the status light. No terminal is spawned. If the build
@@ -19,8 +19,8 @@ OK_FLASH=6  # seconds to keep the green check before reverting to idle
 
 game_dir() {
   case "$1" in
-    det33|gym)      echo "$HOME/Rime/det33-godot" ;;
-    eversparkforge) echo "$HOME/Sites/everspark-forge-godot" ;;
+    det33|gym|compass) echo "$HOME/Rime/det33-godot" ;;
+    eversparkforge)    echo "$HOME/Sites/everspark-forge-godot" ;;
   esac
 }
 
@@ -28,6 +28,7 @@ game_scene() {
   case "$1" in
     det33)          echo "res://Scenes/Main/Boot.tscn" ;;
     gym)            echo "res://Scenes/Test/AbilityTest.tscn" ;;
+    compass)        echo "res://Scenes/Test/CompassTest.tscn" ;;
     eversparkforge) echo "res://Scenes/Main/Boot.tscn" ;;
   esac
 }
@@ -36,6 +37,7 @@ game_label() {
   case "$1" in
     det33)          echo "det33" ;;
     gym)            echo "gym" ;;
+    compass)        echo "compass" ;;
     eversparkforge) echo "forge" ;;
   esac
 }
