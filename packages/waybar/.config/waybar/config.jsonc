@@ -81,8 +81,15 @@
       "custom/rime-disk",
       "memory",
       "cpu",
+      "custom/mouse-battery",
       "custom/public-ip"
     ]
+  },
+  "custom/mouse-battery": {
+    "exec": "~/.config/waybar/scripts/mouse-battery.sh",
+    "return-type": "json",
+    "interval": 60,
+    "format": "{}"
   },
   "custom/toggle-details": {
     "format": "󰋼",

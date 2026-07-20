@@ -28,6 +28,7 @@ window#waybar.hidden {
 #custom-rime-disk,
 #memory,
 #cpu,
+#custom-mouse-battery,
 #custom-public-ip,
 #custom-keylights,
 #custom-vpn,
@@ -48,6 +49,23 @@ window#waybar.hidden {
 #tray {
   padding: 0 6px;
   border-right: 1px solid #4c566a;
+}
+
+/* Mouse battery (details drawer) */
+#custom-mouse-battery {
+  color: #a3be8c;
+}
+
+#custom-mouse-battery.low {
+  color: #ebcb8b;
+}
+
+#custom-mouse-battery.critical {
+  color: #bf616a;
+}
+
+#custom-mouse-battery.charging {
+  color: #88c0d0;
 }
 
 /* Hover feedback on clickable modules (info-only modules excluded) */
