@@ -189,11 +189,15 @@ window#waybar.hidden {
   color: #a3be8c;
 }
 
-/* Notifications, hotkeys, commands */
-#custom-silence-notifications,
+/* Notifications */
+#custom-silence-notifications {
+  color: #a3be8c;
+}
+
+/* Games drawer text buttons: white */
 #custom-hotkeys,
 #custom-commands {
-  color: #a3be8c;
+  color: #ffffff;
 }
 
 /* VPN status */
@@ -235,7 +239,7 @@ window#waybar.hidden {
 
 /* Wallpaper button */
 #custom-wallpaper {
-  color: #a3be8c;
+  color: #ffffff;
 }
 
 /* Games drawer toggle: blue like the details drawer */
@@ -247,7 +251,7 @@ window#waybar.hidden {
 #custom-det33.idle,
 #custom-gym.idle,
 #custom-eversparkforge.idle {
-  color: #C5C8C6;
+  color: #ffffff;
 }
 
 #custom-det33.building,

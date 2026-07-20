@@ -249,7 +249,7 @@
     "return-type": "json"
   },
   "custom/wallpaper": {
-    "format": "",
+    "format": "rotate wallpaper",
     "on-click": "pkill -USR1 -f wallpaper.sh",
     "tooltip-format": "Random wallpaper"
   },
