@@ -11,6 +11,7 @@
     "custom/currently-playing",
     "group/details",
     "pulseaudio",
+    "custom/mouse-battery",
     "custom/voxtype",
     "custom/meeting-record",
     "custom/screen-record",
@@ -81,7 +82,6 @@
       "custom/rime-disk",
       "memory",
       "cpu",
-      "custom/mouse-battery",
       "custom/public-ip"
     ]
   },
