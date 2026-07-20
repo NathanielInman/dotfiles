@@ -229,6 +229,25 @@ setup_system() {
         fi
     fi
 
+    # udev rule — keep the TP-Link UB500 BT adapter powered. USB autosuspend
+    # drops the adapter after 2s idle, disconnecting BT peripherals mid-use
+    # (ended slurp screenshot drags early via synthesized button release).
+    local btudev_src="$DOTFILES_DIR/etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules"
+    local btudev_dst="/etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules"
+    if [[ -f "$btudev_dst" ]] && cmp -s "$btudev_src" "$btudev_dst"; then
+        echo -e "  ${GREEN}[configured]${NC} BT adapter no-autosuspend udev rule"
+    else
+        echo -n -e "  ${YELLOW}[available]${NC} Install udev rule to stop BT adapter autosuspend (drops mouse mid-use)? [y/N] "
+        read -r answer
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
+            sudo install -Dm644 "$btudev_src" "$btudev_dst"
+            sudo udevadm control --reload-rules
+            echo -e "  ${GREEN}[configured]${NC} BT adapter no-autosuspend udev rule"
+        else
+            echo -e "  ${YELLOW}[skipped]${NC} BT adapter no-autosuspend udev rule"
+        fi
+    fi
+
     # rime-umount.service — force-unmount the Rime CIFS share early on shutdown
     # so the kernel doesn't block ~180s on the unreachable server (shutdown hang).
     local rime_src="$DOTFILES_DIR/etc/systemd/system/rime-umount.service"
