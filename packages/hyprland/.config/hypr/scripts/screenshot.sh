@@ -11,8 +11,10 @@ before=$(ls -t "$DIR"/swappy-*.png 2>/dev/null | head -1)
 # Two-click region select instead of press-and-hold drag: click one corner,
 # then the opposite corner. The MX Master's worn left switch drops contact
 # mid-hold, which ended drag selections early; short clicks are unaffected.
-p1=$(slurp -p -f '%x %y') || exit 0
-p2=$(slurp -p -f '%x %y') || exit 0
+# -b 00000000: no dimming backdrop (default is a light gray wash that can
+# also bleed into the capture since grim fires right after the second click)
+p1=$(slurp -p -b '#00000000' -f '%x %y') || exit 0
+p2=$(slurp -p -b '#00000000' -f '%x %y') || exit 0
 read -r x1 y1 <<< "$p1"
 read -r x2 y2 <<< "$p2"
 x=$(( x1 < x2 ? x1 : x2 ))
@@ -22,6 +24,8 @@ h=$(( y1 < y2 ? y2 - y1 : y1 - y2 ))
 (( w < 1 )) && w=1
 (( h < 1 )) && h=1
 
+# Let the slurp overlay unmap before capturing
+sleep 0.1
 grim -g "${x},${y} ${w}x${h}" - | swappy -f -
 
 # Find newest file after screenshot
