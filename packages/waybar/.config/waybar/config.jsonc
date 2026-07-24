@@ -167,8 +167,10 @@
     ]
   },
   "custom/toggle-games": {
-    "format": "󰐱",
-    "tooltip-format": "Games & shortcuts",
+    "exec": "~/.config/waybar/scripts/game-build.sh drawer-status",
+    "return-type": "json",
+    "interval": 1,
+    "format": "{}",
     "cursor": true
   },
   "custom/det33": {

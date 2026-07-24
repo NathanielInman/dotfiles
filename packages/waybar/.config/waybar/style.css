@@ -244,9 +244,22 @@ window#waybar.hidden {
   color: #ffffff;
 }
 
-/* Games drawer toggle: blue like the details drawer */
+/* Games drawer toggle: blue like the details drawer; takes on build state
+   colors so compiles stay visible while the drawer is collapsed */
 #custom-toggle-games {
   color: #88c0d0;
+}
+
+#custom-toggle-games.building {
+  color: #ebcb8b;
+}
+
+#custom-toggle-games.failed {
+  color: #bf616a;
+}
+
+#custom-toggle-games.ok {
+  color: #50fa7b;
 }
 
 /* Game build buttons */

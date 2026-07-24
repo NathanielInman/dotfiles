@@ -85,6 +85,31 @@ case "${1:-}" in
     esac
     ;;
 
+  # Aggregate state across all games for the drawer toggle button, so builds
+  # stay visible after click-to-reveal collapses the drawer on click.
+  drawer-status)
+    building=(); failed=(); okg=()
+    for g in det33 gym compass eversparkforge; do
+      case "$(current_state "$g")" in
+        building) building+=("$g") ;;
+        failed)   failed+=("$g") ;;
+        ok)       okg+=("$g") ;;
+      esac
+    done
+    icon="󰐱"
+    if [ ${#building[@]} -gt 0 ]; then
+      frames=(⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏)
+      i=$(( $(date +%s) % ${#frames[@]} ))
+      printf '{"text":"%s %s","class":"building","tooltip":"building: %s"}\n' "${frames[$i]}" "$icon" "${building[*]}"
+    elif [ ${#failed[@]} -gt 0 ]; then
+      printf '{"text":" %s","class":"failed","tooltip":"BUILD FAILED: %s — open drawer, right-click the game for its log"}\n' "$icon" "${failed[*]}"
+    elif [ ${#okg[@]} -gt 0 ]; then
+      printf '{"text":" %s","class":"ok","tooltip":"built & launched: %s"}\n' "$icon" "${okg[*]}"
+    else
+      printf '{"text":"%s","class":"idle","tooltip":"Games & shortcuts"}\n' "$icon"
+    fi
+    ;;
+
   build)
     game="$2"
     st="$(current_state "$game")"
