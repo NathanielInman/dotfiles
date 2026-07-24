@@ -126,7 +126,7 @@ eval "$(pyenv init -)"
 # det33 godot
 alias compass='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Test/CompassTest.tscn'
 alias det33='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Main/Boot.tscn'
-alias gym='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Test/AbilityTest.tscn'
+alias gym='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Test/Workbench.tscn'
 
 # everspark forge godot
 alias eversparkforge='cd ~/Sites/everspark-forge-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Main/Boot.tscn'
