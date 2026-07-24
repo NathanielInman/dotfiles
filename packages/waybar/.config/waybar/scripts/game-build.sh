@@ -27,7 +27,7 @@ game_dir() {
 game_scene() {
   case "$1" in
     det33)          echo "res://Scenes/Main/Boot.tscn" ;;
-    gym)            echo "res://Scenes/Test/AbilityTest.tscn" ;;
+    gym)            echo "res://Scenes/Test/Workbench.tscn" ;;
     compass)        echo "res://Scenes/Test/CompassTest.tscn" ;;
     eversparkforge) echo "res://Scenes/Main/Boot.tscn" ;;
   esac
