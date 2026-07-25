@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /home/nate/.local/share/steamcmd/steamcmd.sh "$@"
