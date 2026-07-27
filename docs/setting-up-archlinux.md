@@ -378,10 +378,11 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `kubectl` is the Kubernetes CLI for talking to clusters (the DT GKE clusters behind `app-agent-events.<ns>.gcp-*.digitalturbine.io`, etc.); it is in the official `extra` repo. Our clusters are GKE, so authenticating also needs the `gke-gcloud-auth-plugin` (AUR `google-cloud-cli-component-gke-gcloud-auth-plugin`, installed on the `paru` line below); without it `kubectl` errors with `gke-gcloud-auth-plugin ... not found`
 - `jira-cli` is the AUR package providing the `jira` command for Atlassian Jira from the terminal (issues, sprints, boards); authenticate with `jira init`
 - `maven` provides the `mvn` command for building and testing the Java/Maven microservices (e.g. `apk-fetch-service`); it depends on a JDK and will pull one in if none is present, though `jdk-openjdk` (see the Neovim language toolchains section below) already satisfies that
+- `scrcpy` mirrors and controls an Android device from the desktop over ADB (USB or wireless), with no root and nothing to install on the phone: it pushes a short-lived server, runs it with the shell UID via `app_process`, and streams a hardware-encoded H.264 feed back over the ADB socket while injecting mouse/keyboard events as real touches. It pulls in `android-tools` (which provides `adb`/`fastboot`) as a dependency. Enable USB debugging on the device, accept the RSA prompt, then just run `scrcpy`; `paru -S android-udev` adds the vendor udev rules if a device shows as `unauthorized`/`no permissions` in `adb devices`
 - `trcli` is the TestRail CLI for reporting automated test results to TestRail — it is a Python package (not in the Arch repos), so it is installed with `pipx` rather than on the `yay` line below (see the next step)
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 kubectl jira-cli maven
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 kubectl jira-cli maven scrcpy
 ```
 
 After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). The AWS CLI reads the credentials stowed under `~/.aws/`; run `aws sts get-caller-identity` to confirm it can authenticate (or `aws configure` to set keys up fresh). Sign in to the git forges with `gh auth login` and `glab auth login`.
