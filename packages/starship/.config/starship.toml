@@ -91,6 +91,9 @@ $netns\
 $shell\
 $character"""
 
+# ~/Rime is a CIFS automount; a cold mount or slow NAS blows the 30ms default
+scan_timeout = 100
+
 [cmd_duration]
 min_time = 1
 format = 'took [$duration](bold yellow)'
