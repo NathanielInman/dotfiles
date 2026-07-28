@@ -360,7 +360,7 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `git` is basic requirement for version control
 - `github-cli` provides the `gh` command for GitHub from the terminal (auth, PRs, issues)
 - `glab` is the GitLab CLI, the GitLab equivalent of `gh`
-- `git-delta` by dandavison is an amazing pager tool for git diffs
+- `git-delta` by dandavison is an amazing pager tool for git diffs. The stowed `packages/git/.gitconfig` sets `core.pager = delta`, so this is not optional: without the package installed, every `git log`/`git diff` fails with `cannot run delta: No such file or directory` / `fatal: unable to execute pager 'delta'`
 - `zsh` will be our default shell
 - `python-pip` will give us pip for python package management
 - `pyenv` python version manager and virtual environment
@@ -382,7 +382,7 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `trcli` is the TestRail CLI for reporting automated test results to TestRail — it is a Python package (not in the Arch repos), so it is installed with `pipx` rather than on the `yay` line below (see the next step)
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 kubectl jira-cli maven scrcpy
+yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab git-delta zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 kubectl jira-cli maven scrcpy
 ```
 
 After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). The AWS CLI reads the credentials stowed under `~/.aws/`; run `aws sts get-caller-identity` to confirm it can authenticate (or `aws configure` to set keys up fresh). Sign in to the git forges with `gh auth login` and `glab auth login`.
