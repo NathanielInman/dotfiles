@@ -474,43 +474,38 @@ this guide, so the only genuinely Android-specific addition is the SDK manager:
   to its own Gradle version, which in turn drives the Kotlin compiler; never install a
   standalone one
 - `android-sdk-cmdline-tools-latest` — the AUR package that provides `sdkmanager` and
-  `avdmanager`. These live under `/opt/android-sdk`; the package creates an `android-sdk`
-  group and makes that tree group-writable so members can install SDK components without
-  root
+  `avdmanager` (the runners that download the rest of the SDK). As of `22.0` it installs
+  them read-only under `/opt/android-sdk` (root-owned, no writable `android-sdk` group),
+  and `sdkmanager` warns that it's deprecated in favour of `android sdk` but still works
 
 ```
 yay -S android-sdk-cmdline-tools-latest
 ```
 
-Add yourself to the `android-sdk` group so `sdkmanager` can write new components (log out
-and back in, or `newgrp android-sdk`, for it to take effect):
+Because `/opt/android-sdk` is root-owned, keep the actual SDK components in a
+user-writable root under `$HOME` instead (this also lets Gradle self-install anything
+missing). Add these to `~/.zshenv` so every shell and Gradle see them:
 
 ```
-sudo usermod -aG android-sdk $USER
-```
-
-Point the toolchain at the SDK by exporting these (add to `~/.zshenv` so every shell and
-Gradle see them; `/opt/android-sdk` is the install root):
-
-```
-export ANDROID_HOME=/opt/android-sdk
-export ANDROID_SDK_ROOT=/opt/android-sdk
-export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+export ANDROID_HOME=$HOME/Android/Sdk
+export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+export PATH=$PATH:/opt/android-sdk/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
 ```
 
 Then accept the licenses and install the platform + build-tools the project targets
-(`compileSdk`/`targetSdk = 36`, so API 36; `minSdk = 24`):
+(`compileSdk`/`targetSdk = 36`, so API 36; `minSdk = 24`) into that home root with
+`--sdk_root`:
 
 ```
-sdkmanager --licenses
-sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+yes | sdkmanager --sdk_root="$ANDROID_HOME" --licenses
+sdkmanager --sdk_root="$ANDROID_HOME" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 ```
 
 Gradle reads the SDK path from a per-project `local.properties` (git-ignored, never
 committed). Create it once per checkout:
 
 ```
-echo "sdk.dir=/opt/android-sdk" > ~/Sites/LaunchPad/local.properties
+echo "sdk.dir=$HOME/Android/Sdk" > ~/Sites/LaunchPad/local.properties
 ```
 
 Build and test from the repo root with the wrapper (never a system `gradle`):
@@ -523,8 +518,8 @@ Build and test from the repo root with the wrapper (never a system `gradle`):
 To run it, deploy to a physical device over USB with debugging enabled — `adb install`
 the APK, then mirror/control it with `scrcpy` (already installed). If you'd rather use an
 emulator instead of hardware, install `android-emulator` plus a system image
-(`sdkmanager "system-images;android-36;google_apis;x86_64"`) and create an AVD with
-`avdmanager`.
+(`sdkmanager --sdk_root="$ANDROID_HOME" "system-images;android-36;google_apis;x86_64"`)
+and create an AVD with `avdmanager`.
 
 ### First-run authentication for the service CLIs
 
