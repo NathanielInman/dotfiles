@@ -191,3 +191,9 @@ jiratransitions() {
     "https://digital-turbine.atlassian.net/rest/api/3/issue/$1/transitions" \
     | jq -r '.transitions[] | "\(.id)\t\(.name)"'
 }
+
+# Android SDK (Kotlin/Compose builds, e.g. LaunchPad). cmdline-tools live in the
+# root-owned /opt/android-sdk; the writable SDK root with components is under $HOME.
+export ANDROID_HOME="$HOME/Android/Sdk"
+export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+export PATH="$PATH:/opt/android-sdk/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
