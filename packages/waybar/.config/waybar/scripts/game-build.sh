@@ -96,6 +96,17 @@ case "${1:-}" in
         ok)       okg+=("$g") ;;
       esac
     done
+    # The LaunchPad Android build lives in launchpad-build.sh but shares the
+    # same "state|epoch" file format, so fold it into the collapsed-drawer light.
+    if [ -f /tmp/launchpad-build.state ]; then
+      IFS='|' read -r lst lts < /tmp/launchpad-build.state
+      if [ "$lst" = "ok" ] && [ $(( $(date +%s) - lts )) -ge "$OK_FLASH" ]; then lst=idle; fi
+      case "$lst" in
+        building) building+=("launchpad") ;;
+        failed)   failed+=("launchpad") ;;
+        ok)       okg+=("launchpad") ;;
+      esac
+    fi
     icon="󰐱"
     if [ ${#building[@]} -gt 0 ]; then
       frames=(⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏)

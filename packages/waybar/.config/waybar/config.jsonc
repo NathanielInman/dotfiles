@@ -161,6 +161,7 @@
       "custom/gym",
       "custom/compass",
       "custom/eversparkforge",
+      "custom/launchpad",
       "custom/hotkeys",
       "custom/commands",
       "custom/wallpaper"
@@ -200,6 +201,13 @@
     "interval": 1,
     "on-click": "~/.config/waybar/scripts/game-build.sh build eversparkforge",
     "on-click-right": "~/.config/waybar/scripts/game-build.sh log eversparkforge"
+  },
+  "custom/launchpad": {
+    "exec": "~/.config/waybar/scripts/launchpad-build.sh status",
+    "return-type": "json",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/launchpad-build.sh build",
+    "on-click-right": "~/.config/waybar/scripts/launchpad-build.sh log"
   },
   "custom/hotkeys": {
     "format": "shortcuts",
