@@ -461,6 +461,71 @@ paru -S godot-mono-export-templates-linux
 
 The project lives on the `~/Rime` SMB share (see [Network storage](#network-storage--rime-truenas-smb-share) below), so the NAS must be mounted/reachable before the aliases will `cd` into it.
 
+### Android development (Kotlin / Jetpack Compose)
+
+The DT `Launchpad` app (`~/Sites/LaunchPad`) is a Kotlin + Jetpack Compose Android
+project built with Gradle. Most of what it needs is already installed elsewhere in
+this guide, so the only genuinely Android-specific addition is the SDK manager:
+
+- **JDK 17+** — already satisfied by `jdk21-openjdk` from the Neovim language toolchains
+  section (the build's `sourceCompatibility`/`jvmTarget` is 17, and AGP runs fine on 21)
+- **`adb`/`fastboot`** — already present via `android-tools`, which `scrcpy` pulls in
+- **No system `gradle` or `kotlin` needed** — the repo ships a `./gradlew` wrapper pinned
+  to its own Gradle version, which in turn drives the Kotlin compiler; never install a
+  standalone one
+- `android-sdk-cmdline-tools-latest` — the AUR package that provides `sdkmanager` and
+  `avdmanager`. These live under `/opt/android-sdk`; the package creates an `android-sdk`
+  group and makes that tree group-writable so members can install SDK components without
+  root
+
+```
+yay -S android-sdk-cmdline-tools-latest
+```
+
+Add yourself to the `android-sdk` group so `sdkmanager` can write new components (log out
+and back in, or `newgrp android-sdk`, for it to take effect):
+
+```
+sudo usermod -aG android-sdk $USER
+```
+
+Point the toolchain at the SDK by exporting these (add to `~/.zshenv` so every shell and
+Gradle see them; `/opt/android-sdk` is the install root):
+
+```
+export ANDROID_HOME=/opt/android-sdk
+export ANDROID_SDK_ROOT=/opt/android-sdk
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+```
+
+Then accept the licenses and install the platform + build-tools the project targets
+(`compileSdk`/`targetSdk = 36`, so API 36; `minSdk = 24`):
+
+```
+sdkmanager --licenses
+sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+```
+
+Gradle reads the SDK path from a per-project `local.properties` (git-ignored, never
+committed). Create it once per checkout:
+
+```
+echo "sdk.dir=/opt/android-sdk" > ~/Sites/LaunchPad/local.properties
+```
+
+Build and test from the repo root with the wrapper (never a system `gradle`):
+
+```
+./gradlew :app:assembleDebug   # build the debug APK
+./gradlew test                 # run unit tests
+```
+
+To run it, deploy to a physical device over USB with debugging enabled — `adb install`
+the APK, then mirror/control it with `scrcpy` (already installed). If you'd rather use an
+emulator instead of hardware, install `android-emulator` plus a system image
+(`sdkmanager "system-images;android-36;google_apis;x86_64"`) and create an AVD with
+`avdmanager`.
+
 ### First-run authentication for the service CLIs
 
 The pattern for both `jira` and `trcli` is the same: **secrets (API tokens, passwords) are exported from `~/.zshenv`**, while non-secret config (servers, default projects) lives in each tool's own config directory. `~/.zshenv` is deliberately **not** stowed and never committed, so no credentials land in this repo — only the method below is documented here. Placeholders like `<token>` are stand-ins; substitute real values locally.
