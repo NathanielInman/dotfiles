@@ -328,6 +328,14 @@ cd packages
 stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade
 ```
 
+Enable waybar's user service so systemd revives it if it ever segfaults
+(hyprland.conf only does `systemctl --user start waybar.service`; the
+packaged unit ships `Restart=on-failure`):
+
+```
+systemctl --user enable waybar
+```
+
 if at any point you want to remove the symlinks `stow -D <package>` from within the packages folder
 Feel free to manually copy any ./Sites/dot-files/usr/share/applications files
 in order to setup launching using walker or hiding unused/unwanted apps.
