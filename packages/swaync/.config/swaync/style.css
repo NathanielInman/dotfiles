@@ -38,8 +38,24 @@
   color: #4c566a;
 }
 
+/* Critical: aurora-red error card. Left accent bar plus a wine-tinted
+   gradient bleeding back into the normal surface (GTK4, so no box-shadow). */
 .notification.critical {
-  border-color: #bf616a;
+  background: linear-gradient(to right, #4c3b45, #3b4252 60%);
+  border: 1px solid #bf616a;
+  border-left: 4px solid #bf616a;
+}
+
+.notification.critical .summary {
+  color: #bf616a;
+}
+
+.notification.critical .body {
+  color: #e5e9f0;
+}
+
+.notification.critical .time {
+  color: #d08770;
 }
 
 .notification.low {
