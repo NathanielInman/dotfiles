@@ -24,6 +24,12 @@
   "hide-on-clear": false,
   "hide-on-action": true,
   "script-fail-notify": true,
+  "scripts": {
+    "log-notifications": {
+      "exec": "/home/nate/.config/swaync/log-notification.sh",
+      "app-name": ".*"
+    }
+  },
   "widgets": [
     "inhibitors",
     "title",
