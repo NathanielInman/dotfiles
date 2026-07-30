@@ -58,8 +58,26 @@
   color: #d08770;
 }
 
+/* Normal: frost-blue accent card, same shape as the critical treatment. */
+.notification.normal {
+  background: linear-gradient(to right, #445161, #3b4252 60%);
+  border: 1px solid #5e81ac;
+  border-left: 4px solid #88c0d0;
+}
+
+.notification.normal .summary {
+  color: #88c0d0;
+}
+
+.notification.normal .time {
+  color: #5e81ac;
+}
+
+/* Low: quiet polar-night card that stays out of the way. */
 .notification.low {
-  border-color: #4c566a;
+  background: #353c48;
+  border: 1px solid #434c5e;
+  border-left: 4px solid #4c566a;
 }
 
 .close-button {
