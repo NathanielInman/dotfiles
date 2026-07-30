@@ -16,9 +16,13 @@
   border-bottom: 1px solid #3b4252;
 }
 
+/* Base card doubles as the "normal" look: some senders (e.g. kitty
+   relaying Claude Code) omit the urgency hint, so swaync adds no urgency
+   class and the card falls back to this rule. */
 .notification {
-  background: #3b4252;
-  border: 1px solid #4c566a;
+  background: linear-gradient(to right, #445161, #3b4252 60%);
+  border: 1px solid #5e81ac;
+  border-left: 4px solid #88c0d0;
   border-radius: 6px;
   margin: 4px;
   padding: 8px;
@@ -26,7 +30,7 @@
 }
 
 .notification .summary {
-  color: #81a1c1;
+  color: #88c0d0;
   font-weight: bold;
 }
 
@@ -35,7 +39,7 @@
 }
 
 .notification .time {
-  color: #4c566a;
+  color: #5e81ac;
 }
 
 /* Critical: aurora-red error card. Left accent bar plus a wine-tinted
@@ -58,26 +62,19 @@
   color: #d08770;
 }
 
-/* Normal: frost-blue accent card, same shape as the critical treatment. */
-.notification.normal {
-  background: linear-gradient(to right, #445161, #3b4252 60%);
-  border: 1px solid #5e81ac;
-  border-left: 4px solid #88c0d0;
-}
-
-.notification.normal .summary {
-  color: #88c0d0;
-}
-
-.notification.normal .time {
-  color: #5e81ac;
-}
-
 /* Low: quiet polar-night card that stays out of the way. */
 .notification.low {
   background: #353c48;
   border: 1px solid #434c5e;
   border-left: 4px solid #4c566a;
+}
+
+.notification.low .summary {
+  color: #81a1c1;
+}
+
+.notification.low .time {
+  color: #4c566a;
 }
 
 .close-button {
