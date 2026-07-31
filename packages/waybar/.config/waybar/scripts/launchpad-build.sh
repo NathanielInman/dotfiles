@@ -87,9 +87,16 @@ focus_emulator() {
   local ws
   ws=$(hyprctl activeworkspace -j 2>/dev/null | sed -n 's/.*"id": *\([0-9-]*\).*/\1/p' | head -1)
   [ -z "$ws" ] && return 0
-  hyprctl dispatch movetoworkspacesilent "$ws,title:Android Emulator - $AVD" >/dev/null 2>&1
-  hyprctl dispatch movetoworkspacesilent "$ws,title:^Emulator$"              >/dev/null 2>&1
-  hyprctl dispatch focuswindow "title:Android Emulator - $AVD"               >/dev/null 2>&1
+  # Try the legacy keyword form first, then the lua-config (Hyprland 0.55+) form
+  dispatch() {
+    [ "$(hyprctl dispatch $1 2>/dev/null)" = "ok" ] || hyprctl dispatch "$2" >/dev/null 2>&1
+  }
+  dispatch "movetoworkspacesilent $ws,title:Android Emulator - $AVD" \
+    "hl.dsp.window.move({ workspace = $ws, window = \"title:Android Emulator - $AVD\", follow = false })"
+  dispatch "movetoworkspacesilent $ws,title:^Emulator\$" \
+    "hl.dsp.window.move({ workspace = $ws, window = \"title:^Emulator\$\", follow = false })"
+  dispatch "focuswindow title:Android Emulator - $AVD" \
+    "hl.dsp.focus({ window = \"title:Android Emulator - $AVD\" })"
 }
 
 fail() {
