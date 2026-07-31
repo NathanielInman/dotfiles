@@ -183,14 +183,15 @@ If you have multiple monitors and need to set them up, here are some helpful com
 hyprctl monitors # list all connected monitors with names, resolutions, positions
 ```
 
-Monitor configuration is handled in `~/.config/hypr/hyprland.conf`:
+Monitor configuration is handled in `~/.config/hypr/monitors.lua` (required
+from `hyprland.lua`; Hyprland 0.55+ uses lua configs):
 
-```
-monitor = DP-1, preferred, auto, 1
-monitor = DP-2, preferred, auto, 1
-# or with explicit resolution/position:
-# monitor = DP-1, 2560x1440@144, 0x0, 1
-# monitor = DP-2, 2560x1440@144, 2560x0, 1
+```lua
+hl.monitor({ output = "DP-1", mode = "preferred", position = "auto", scale = 1 })
+hl.monitor({ output = "DP-2", mode = "preferred", position = "auto", scale = 1 })
+-- or with explicit resolution/position:
+-- hl.monitor({ output = "DP-1", mode = "2560x1440@144", position = "0x0", scale = 1 })
+-- hl.monitor({ output = "DP-2", mode = "2560x1440@144", position = "2560x0", scale = 1 })
 ```
 
 Your user (`nate`) was created during archinstall and added to `wheel`. For passwordless sudo, add a drop-in rule (safer than editing `/etc/sudoers` directly; `visudo -c` validates it):
@@ -214,7 +215,7 @@ helpful non-user-specific applications
 - `libsecret` - library necessary for gnome-keychain
 - `seahorse` - GUI to manage the keyring; **required** to blank the login keyring password for autologin auto-unlock (see the autologin keyring step below)
 
-Note: `numlockx` is not needed - Hyprland handles numlock via `input { numlock_by_default = 1 }` in hyprland.conf
+Note: `numlockx` is not needed - Hyprland handles numlock via `input = { numlock_by_default = true }` in `~/.config/hypr/options.lua`
 
 ```
 pacman -S unzip ntp gnome-keychain libsecret seahorse
@@ -262,11 +263,13 @@ ExecStart=
 ExecStart=-/usr/bin/agetty --autologin nate --noclear %I $TERM
 ```
 
-Hyprland auto-launches from `.zshrc` when on tty1 (no display manager needed). The dbus setup is handled in `hyprland.conf` via `exec-once`:
+Hyprland auto-launches from `.zshrc` when on tty1 (no display manager needed). The dbus setup is handled in `~/.config/hypr/autostart.lua` on the `hyprland.start` event:
 
-```
-# These are already in hyprland.conf:
-exec-once = dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP
+```lua
+-- Already in autostart.lua:
+hl.on("hyprland.start", function()
+  hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE")
+end)
 ```
 
 Since we're not using a display manager, PAM won't automatically unlock the GNOME keyring on login. Add the following lines to `/etc/pam.d/login` to fix this:
@@ -329,7 +332,7 @@ stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade
 ```
 
 Enable waybar's user service so systemd revives it if it ever segfaults
-(hyprland.conf only does `systemctl --user start waybar.service`; the
+(autostart.lua only does `systemctl --user start waybar.service`; the
 packaged unit ships `Restart=on-failure`):
 
 ```
@@ -562,7 +565,7 @@ curl -s -o /dev/null -w "%{http_code}\n" -u "$TR_CLI_USERNAME:$TR_CLI_PASSWORD" 
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
 
-Screen locking is handled by `hyprlock` and idle management by `hypridle`. Both configs live in `~/.config/hypr/` (installed via the hyprland stow package). Lock screen is triggered manually via SUPER+Alt+L.
+Screen locking is handled by `hyprlock` and idle management by `hypridle`. Both configs live in `~/.config/hypr/` (installed via the hyprland stow package) and still use hyprlang `.conf` files (only the compositor config moved to lua). Lock screen is triggered manually via SUPER+Escape.
 
 Now for installing vim package manager
 
@@ -657,7 +660,7 @@ voxtype setup
 voxtype setup gpu --enable  # optional, requires vulkan-icd-loader
 ```
 
-Voxtype runs as a daemon and is bound to F13 (code:191) as push-to-talk in `hyprland.conf`. The waybar module shows recording/transcribing status. A meeting recording script (`~/.config/waybar/scripts/meeting-record.sh`) captures audio to 15-minute WAV chunks for later batch transcription via `voxtype transcribe`, toggled with F14 (code:192).
+Voxtype runs as a daemon and is bound to F13 (code:191) as push-to-talk in `~/.config/hypr/binds.lua`. The waybar module shows recording/transcribing status. A meeting recording script (`~/.config/waybar/scripts/meeting-record.sh`) captures audio to 15-minute WAV chunks for later batch transcription via `voxtype transcribe`, toggled with F14 (code:192).
 
 Now for any other essentials for arch
 
@@ -797,18 +800,12 @@ The `claude` shell function (`.zshrc`) routes work repos (gitlab.com/digitalturb
 
 ## Hyprland Plugin Setup
 
-Install plugins from the official hyprland-plugins repo:
-
-```
-hyprpm update
-hyprpm add https://github.com/hyprwm/hyprland-plugins
-hyprpm enable hyprscrolling hyprbars
-```
-
-- `hyprscrolling` - scrolling/column-based window layout (like PaperWM)
-- `hyprbars` - window title bars with close/fullscreen/float buttons
-
-Plugin config is in `hyprland.conf` under the `plugin { ... }` block.
+No plugins are needed anymore: the scrolling/column-based layout (like
+PaperWM) that used to come from the `hyprscrolling` plugin is built into
+Hyprland core since 0.55, configured via the `scrolling` table in
+`~/.config/hypr/options.lua`. If a plugin is ever wanted again, `hyprpm` is
+still installed and a pacman hook (`hyprpm.hook`) reruns `hyprpm update`
+after Hyprland upgrades; lua configs load plugins via `hl.plugin`.
 
 ## Stow Packages
 
@@ -821,7 +818,7 @@ stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade
 
 | Package | Description |
 |---------|-------------|
-| `hyprland` | Hyprland compositor config with hyprscrolling, hyprlock, and hypridle |
+| `hyprland` | Hyprland compositor config (modular lua) with the scrolling layout, hyprlock, and hypridle |
 | `waybar` | Bottom bar with system info, scripts, and workspaces |
 | `swaync` | Notification center with history |
 | `walker` | Application launcher with file browser, symbols, and window switcher |
