@@ -8,15 +8,19 @@ if [ ${#windows[@]} -lt 2 ]; then
   exit 0
 fi
 
+# Try the legacy keyword form first, then the lua-config (Hyprland 0.55+) form
+dispatch() {
+  [ "$(hyprctl dispatch $1 2>/dev/null)" = "ok" ] || hyprctl dispatch "$2" >/dev/null
+}
+
 # Focus the first window and start a group
-hyprctl dispatch focuswindow "address:${windows[0]}"
-hyprctl dispatch togglegroup
+dispatch "focuswindow address:${windows[0]}" "hl.dsp.focus({ window = \"address:${windows[0]}\" })"
+dispatch "togglegroup" "hl.dsp.group.toggle()"
 
 # Move all other windows into the group by trying every direction
 for addr in "${windows[@]:1}"; do
-  hyprctl dispatch focuswindow "address:$addr"
-  hyprctl dispatch moveintogroup l
-  hyprctl dispatch moveintogroup r
-  hyprctl dispatch moveintogroup u
-  hyprctl dispatch moveintogroup d
+  dispatch "focuswindow address:$addr" "hl.dsp.focus({ window = \"address:$addr\" })"
+  for dir in l r u d; do
+    dispatch "moveintogroup $dir" "hl.dsp.window.move({ into_group = \"$dir\" })"
+  done
 done
