@@ -21,5 +21,5 @@ _kl() { # $1=addr  $2=on(1)/off(0)  $3=brightness
 }
 
 _kl "$LEFT" "$on" 3 &
-_kl "$RIGHT" "$on" 50 &
+_kl "$RIGHT" "$on" 35 &
 wait
