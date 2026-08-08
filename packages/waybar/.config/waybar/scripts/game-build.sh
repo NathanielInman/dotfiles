@@ -45,6 +45,9 @@ game_label() {
 state_file() { echo "/tmp/game-build-$1.state"; }
 # Log lives in ~/Downloads so it is easy to open or point another tool at.
 log_file()   { echo "$HOME/Downloads/game-$1.log"; }
+# Same reasoning for HitchWatch reports: analyze-hitch.py wants a path you can
+# paste, not one buried in app_userdata.
+hitch_dir()  { echo "$HOME/Downloads/hitches-$1"; }
 
 # state file holds "state|epoch"; state is idle|building|failed|ok
 get_state() {
@@ -166,8 +169,28 @@ case "${1:-}" in
       # detached watcher also notifies on the first genuine runtime error
       # (then throttles 15s) so you do not have to keep the log open.
       printf '\n===== game session %s =====\n' "$(date '+%F %T')" >> "$lf"
+
+      # HitchWatch (det33 only): arm the frame-hitch watchdog so an occasional
+      # dip writes a report instead of vanishing. Sampling is always on in a
+      # debug build - which this is, since we run the project directly rather
+      # than an exported template - so F4 works regardless; this only turns on
+      # AUTO-tripping at 24ms. Deliberately not armed for gym/compass, where
+      # long frames are the expected state of affairs and would just burn the
+      # 5-dumps-per-session cap.
+      #
+      # DET33_HITCH_ABORT=3 closes the game after the third dip: three reports
+      # is enough to tell "always the same subsystem" from "different every
+      # time", and ending the session there freezes the repro instead of
+      # letting it scroll away over the next hour of play. Set it to 1 to quit
+      # on the first, or unset it to play on indefinitely.
+      if [ "$game" = "det33" ]; then
+        hd="$(hitch_dir "$game")"
+        mkdir -p "$hd"
+        export DET33_HITCH=1 DET33_HITCH_DIR="$hd" DET33_HITCH_ABORT=3
+      fi
+
       setsid -f bash -c '
-        dir="$1"; scene="$2"; lf="$3"; game="$4"; last=0
+        dir="$1"; scene="$2"; lf="$3"; game="$4"; last=0; lasth=0
         godot-mono --path "$dir" "$scene" 2>&1 | while IFS= read -r line; do
           printf "%s\n" "$line" >> "$lf"
           # Godot prints engine + C# exceptions as a line starting with
@@ -179,6 +202,19 @@ case "${1:-}" in
               if [ $(( now - last )) -ge 15 ]; then
                 last=$now
                 notify-send "$game runtime error" "$line" -u critical -i dialog-error
+              fi ;;
+            # HitchWatch trip header, e.g. "[hitch] ===== frame 31.2ms over 24ms
+            # threshold =====". Notified on its own throttle so a hitch cannot
+            # swallow a runtime-error notification or vice versa. Low urgency:
+            # this is information to come back to, not something to interrupt
+            # play for - the report is already on disk by the time you read it.
+            "[hitch] ====="*)
+              now=$(date +%s)
+              if [ $(( now - lasth )) -ge 15 ]; then
+                lasth=$now
+                notify-send "$game frame hitch" "${line#\[hitch\] }
+report in ~/Downloads/hitches-$game (read it with tools/analyze-hitch.py)" \
+                  -u low -i dialog-information
               fi ;;
           esac
         done
