@@ -160,7 +160,6 @@
       "custom/det33",
       "custom/gym",
       "custom/compass",
-      "custom/benchmark",
       "custom/eversparkforge",
       "custom/launchpad",
       "custom/hotkeys",
@@ -202,13 +201,6 @@
     "interval": 1,
     "on-click": "~/.config/waybar/scripts/game-build.sh build eversparkforge",
     "on-click-right": "~/.config/waybar/scripts/game-build.sh log eversparkforge"
-  },
-  "custom/benchmark": {
-    "exec": "~/.config/waybar/scripts/game-build.sh status benchmark",
-    "return-type": "json",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/game-build.sh build benchmark",
-    "on-click-right": "~/.config/waybar/scripts/game-build.sh log benchmark"
   },
   "custom/launchpad": {
     "exec": "~/.config/waybar/scripts/launchpad-build.sh status",

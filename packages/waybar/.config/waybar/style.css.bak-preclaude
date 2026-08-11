@@ -44,7 +44,6 @@ window#waybar.hidden {
 #custom-det33,
 #custom-gym,
 #custom-compass,
-#custom-benchmark,
 #custom-eversparkforge,
 #custom-launchpad,
 #custom-power-menu,
@@ -88,7 +87,6 @@ window#waybar.hidden {
 #custom-det33:hover,
 #custom-gym:hover,
 #custom-compass:hover,
-#custom-benchmark:hover,
 #custom-eversparkforge:hover,
 #custom-launchpad:hover,
 #custom-power-menu:hover,
@@ -270,7 +268,6 @@ window#waybar.hidden {
 #custom-det33.idle,
 #custom-gym.idle,
 #custom-compass.idle,
-#custom-benchmark.idle,
 #custom-eversparkforge.idle,
 #custom-launchpad.idle {
   color: #ffffff;
@@ -279,7 +276,6 @@ window#waybar.hidden {
 #custom-det33.building,
 #custom-gym.building,
 #custom-compass.building,
-#custom-benchmark.building,
 #custom-eversparkforge.building,
 #custom-launchpad.building {
   color: #ebcb8b;
@@ -288,7 +284,6 @@ window#waybar.hidden {
 #custom-det33.failed,
 #custom-gym.failed,
 #custom-compass.failed,
-#custom-benchmark.failed,
 #custom-eversparkforge.failed,
 #custom-launchpad.failed {
   color: #bf616a;
@@ -297,7 +292,6 @@ window#waybar.hidden {
 #custom-det33.ok,
 #custom-gym.ok,
 #custom-compass.ok,
-#custom-benchmark.ok,
 #custom-eversparkforge.ok,
 #custom-launchpad.ok {
   color: #50fa7b;
