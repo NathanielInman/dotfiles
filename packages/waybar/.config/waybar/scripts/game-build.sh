@@ -19,8 +19,8 @@ OK_FLASH=6  # seconds to keep the green check before reverting to idle
 
 game_dir() {
   case "$1" in
-    det33|gym|compass) echo "$HOME/Rime/det33-godot" ;;
-    eversparkforge)    echo "$HOME/Sites/everspark-forge-godot" ;;
+    det33|gym|compass|benchmark) echo "$HOME/Rime/det33-godot" ;;
+    eversparkforge)              echo "$HOME/Sites/everspark-forge-godot" ;;
   esac
 }
 
@@ -30,6 +30,7 @@ game_scene() {
     gym)            echo "res://Scenes/Test/Workbench.tscn" ;;
     compass)        echo "res://Scenes/Test/CompassTest.tscn" ;;
     eversparkforge) echo "res://Scenes/Main/Boot.tscn" ;;
+    benchmark)      echo "" ;;  # not a scene launch — see the _run branch
   esac
 }
 
@@ -39,6 +40,7 @@ game_label() {
     gym)            echo "gym" ;;
     compass)        echo "compass" ;;
     eversparkforge) echo "forge" ;;
+    benchmark)      echo "bench" ;;
   esac
 }
 
@@ -92,7 +94,7 @@ case "${1:-}" in
   # stay visible after click-to-reveal collapses the drawer on click.
   drawer-status)
     building=(); failed=(); okg=()
-    for g in det33 gym compass eversparkforge; do
+    for g in det33 gym compass eversparkforge benchmark; do
       case "$(current_state "$g")" in
         building) building+=("$g") ;;
         failed)   failed+=("$g") ;;
@@ -161,6 +163,58 @@ case "${1:-}" in
     fi
 
     cd "$dir" || exit 1
+
+    # ---- benchmark: a quality gate, not a play session -------------------
+    #
+    # Runs the seeded high-load scenario (tools/load-bench.sh) and judges the
+    # result against the committed baseline. The button light IS the verdict:
+    # green = performance held, red = it regressed or could not be judged.
+    #
+    # This exists because a solo dev has no other check that stops an accidental
+    # performance regression reaching players. It takes the screen for ~3
+    # minutes and quits itself, so press it when stepping away.
+    #
+    # Deliberately thin: every parameter and threshold lives in the repo, under
+    # version control, so a commit can explain any change to what "PASS" means.
+    # This script only decides WHEN to run it.
+    if [ "$game" = "benchmark" ]; then
+      : > "$lf"
+      printf '===== benchmark %s =====\n' "$(date '+%F %T')" >> "$lf"
+      if ! bash tools/load-bench.sh clean >> "$lf" 2>&1; then
+        set_state "$game" failed
+        err="$(grep -m1 -E ': error|error CS|Error:' "$lf" || tail -n 3 "$lf" | tr '\n' ' ')"
+        notify-send "benchmark failed to run" "$err" -u critical -i dialog-error
+        exit 1
+      fi
+
+      csv="$(find profiles -name 'loadbench-*.csv' -newermt '-30 minutes' 2>/dev/null \
+             | sort | tail -1)"
+      if [ -z "$csv" ]; then
+        set_state "$game" failed
+        notify-send "benchmark produced no CSV" \
+          "The run did not reach gameplay — right-click for the log." \
+          -u critical -i dialog-error
+        exit 1
+      fi
+
+      verdict="$(python3 tools/analyze-loadbench.py --gate "$csv" 2>&1)"
+      rc=$?
+      printf '\n%s\n' "$verdict" >> "$lf"
+      head="$(printf '%s' "$verdict" | head -1)"
+      body="$(printf '%s' "$verdict" | sed -n '2,6p')"
+
+      # exit 2 (no baseline / scenario mismatch) is NOT a pass. A gate that
+      # cannot judge must never show green, or it silently stops gating.
+      if [ "$rc" -eq 0 ]; then
+        set_state "$game" ok
+        notify-send "benchmark PASS" "$body" -i dialog-information
+      else
+        set_state "$game" failed
+        notify-send "benchmark $head" "$body" -u critical -i dialog-error
+      fi
+      exit 0
+    fi
+
     if { dotnet build && godot-mono --headless --import; } > "$lf" 2>&1; then
       set_state "$game" ok
       notify-send "$game" "Build OK — launching" -i dialog-information
@@ -170,23 +224,17 @@ case "${1:-}" in
       # (then throttles 15s) so you do not have to keep the log open.
       printf '\n===== game session %s =====\n' "$(date '+%F %T')" >> "$lf"
 
-      # HitchWatch (det33 only): arm the frame-hitch watchdog so an occasional
-      # dip writes a report instead of vanishing. Sampling is always on in a
-      # debug build - which this is, since we run the project directly rather
-      # than an exported template - so F4 works regardless; this only turns on
-      # AUTO-tripping at 24ms. Deliberately not armed for gym/compass, where
-      # long frames are the expected state of affairs and would just burn the
-      # 5-dumps-per-session cap.
-      #
-      # DET33_HITCH_ABORT=3 closes the game after the third dip: three reports
-      # is enough to tell "always the same subsystem" from "different every
-      # time", and ending the session there freezes the repro instead of
-      # letting it scroll away over the next hour of play. Set it to 1 to quit
-      # on the first, or unset it to play on indefinitely.
+      # HitchWatch (det33 only): point reports at ~/Downloads so a dump is
+      # easy to find, but do NOT arm auto-trip or abort - this button is a
+      # normal play session. Hitch hunting is a runtime choice now: Shift+F4
+      # in-game toggles "hunt mode" (auto-trip at 24ms + quit after 3 dumps,
+      # freezing the repro), and F4 still dumps the last 4s manually any time.
+      # Sampling is always on in a debug build - which this is, since we run
+      # the project directly rather than an exported template.
       if [ "$game" = "det33" ]; then
         hd="$(hitch_dir "$game")"
         mkdir -p "$hd"
-        export DET33_HITCH=1 DET33_HITCH_DIR="$hd" DET33_HITCH_ABORT=3
+        export DET33_HITCH_DIR="$hd"
       fi
 
       setsid -f bash -c '
@@ -203,6 +251,11 @@ case "${1:-}" in
                 last=$now
                 notify-send "$game runtime error" "$line" -u critical -i dialog-error
               fi ;;
+            # Hunt-mode toggle acknowledgment (Shift+F4): immediate desktop
+            # feedback without opening the log. Not throttled, it only prints
+            # on a deliberate keypress.
+            "[hitch] hunt"*)
+              notify-send "$game" "${line#\[hitch\] }" -u low -i dialog-information ;;
             # HitchWatch trip header, e.g. "[hitch] ===== frame 31.2ms over 24ms
             # threshold =====". Notified on its own throttle so a hitch cannot
             # swallow a runtime-error notification or vice versa. Low urgency:
