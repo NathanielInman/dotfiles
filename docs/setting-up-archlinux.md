@@ -472,6 +472,14 @@ paru -S godot-mono-export-templates-linux
 
 The project lives on the `~/Rime` SMB share (see [Network storage](#network-storage--rime-truenas-smb-share) below), so the NAS must be mounted/reachable before the aliases will `cd` into it.
 
+For 3D asset work, Blender is in the official repos:
+
+- `blender` - 3D modeling/animation suite; runs natively on Wayland/Hyprland, and Cycles GPU rendering (OptiX) works out of the box with the `nvidia-open`/`nvidia-utils` driver installed above (install `cuda` additionally only if CUDA-specific rendering is needed)
+
+```
+pacman -S blender
+```
+
 ### Android development (Kotlin / Jetpack Compose)
 
 The DT `Launchpad` app (`~/Sites/LaunchPad`) is a Kotlin + Jetpack Compose Android
