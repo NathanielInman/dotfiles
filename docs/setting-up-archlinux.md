@@ -480,6 +480,12 @@ For 3D asset work, Blender is in the official repos:
 pacman -S blender
 ```
 
+- `oxipng` - lossless PNG compression optimizer; the DET-33 spritesheet renderers (`render_sprites.py` in `~/Rime/DET-33/props/` and `~/Rime/DET-33/enemies/`) shell out to it to shrink each finished sheet without altering a pixel
+
+```
+pacman -S oxipng
+```
+
 ### Android development (Kotlin / Jetpack Compose)
 
 The DT `Launchpad` app (`~/Sites/LaunchPad`) is a Kotlin + Jetpack Compose Android
