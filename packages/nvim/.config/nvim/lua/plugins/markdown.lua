@@ -10,6 +10,10 @@ return {
       latex = {
         enabled = false,
       },
+      -- keep the cursor line rendered in normal mode; raw text only in insert
+      anti_conceal = {
+        enabled = false,
+      },
     },
     ft = { 'markdown', 'norg', 'rmd', 'org', 'vimwiki', 'Avante' },
     config = function(_, opts)
