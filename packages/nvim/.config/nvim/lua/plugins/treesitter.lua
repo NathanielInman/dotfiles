@@ -22,6 +22,7 @@ return {
         'html',
         'java',
         'javascript',
+        'kotlin',
         'lua',
         'elixir',
         'eex',

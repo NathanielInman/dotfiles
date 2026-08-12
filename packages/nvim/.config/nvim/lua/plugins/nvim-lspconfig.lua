@@ -53,8 +53,9 @@ return {
       })
       vim.lsp.config('markdown_oxide', {})
       vim.lsp.config('lexical', {}) -- elixir
+      vim.lsp.config('kotlin_lsp', {}) -- JetBrains official Kotlin LSP
 
-      vim.lsp.enable { 'html', 'cssls', 'ts_ls', 'vue_ls', 'gopls', 'markdown_oxide', 'lexical' }
+      vim.lsp.enable { 'html', 'cssls', 'ts_ls', 'vue_ls', 'gopls', 'markdown_oxide', 'lexical', 'kotlin_lsp' }
     end,
   },
 }

@@ -26,6 +26,7 @@ return {
         'roslyn', -- C# LSP (roslyn.nvim)
         'csharpier', -- C# formatter (conform)
         'jdtls', -- Java LSP (nvim-jdtls)
+        'kotlin-lsp', -- Kotlin LSP (lspconfig)
         'google-java-format', -- Java formatter (conform)
         'lexical', -- Elixir LSP (lspconfig)
         'rust-analyzer', -- used by rustaceanvim
