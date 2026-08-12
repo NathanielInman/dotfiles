@@ -71,5 +71,17 @@ map('t', '<C-k>', '<C-\\><C-n><C-w>k', { desc = 'Jump from terminal to window ab
 -- LSP Mappings
 map('n', 'gD', vim.lsp.buf.declaration, { desc = 'Go to declaration' })
 
+-- Diagnostics
+map('n', '<leader>dt', function()
+  local enabled = not vim.diagnostic.is_enabled { bufnr = 0 }
+  vim.diagnostic.enable(enabled, { bufnr = 0 })
+  vim.notify('Diagnostics ' .. (enabled and 'enabled' or 'disabled') .. ' for this buffer')
+end, { desc = 'Toggle diagnostics for current buffer' })
+map('n', '<leader>dT', function()
+  local enabled = not vim.diagnostic.is_enabled()
+  vim.diagnostic.enable(enabled)
+  vim.notify('Diagnostics ' .. (enabled and 'enabled' or 'disabled') .. ' globally')
+end, { desc = 'Toggle diagnostics globally' })
+
 -- Markdown
 map('n', '<leader>mt', ':RenderMarkdown toggle<CR>', { desc = 'Toggle markdown preview' })
