@@ -12,6 +12,9 @@ return {
         go = {
           'golangcilint',
         },
+        kotlin = {
+          'ktlint',
+        },
         javascript = {
           'biomejs',
         },
