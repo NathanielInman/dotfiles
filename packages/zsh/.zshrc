@@ -133,14 +133,21 @@ alias gym='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --impo
 
 # everspark forge godot
 alias eversparkforge='cd ~/Sites/everspark-forge-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Main/Boot.tscn'
-# Wipe DET-33 meta-progression (essence, unlocks, quests, stats) to re-test
-# progression from scratch. Leaves settings.cfg (display/keybinds) alone.
+# Wipe DET-33 back to fresh-install state: save (+.bak/.tmp), settings.cfg,
+# and the Sentry install id/cache. Keeps engine caches (shader_cache, vulkan)
+# and diagnostics (logs, hitches).
 det33clear() {
-  local save="$HOME/.local/share/godot/app_userdata/DET-33/save_data.json"
-  if [[ -f "$save" ]]; then
-    rm -f "$save" && echo "det33clear: removed $save (progression reset)."
+  local dir="$HOME/.local/share/godot/app_userdata/DET-33"
+  local removed=()
+  local f
+  for f in save_data.json save_data.json.bak save_data.json.tmp settings.cfg sentry.cfg; do
+    [[ -f "$dir/$f" ]] && rm -f "$dir/$f" && removed+=("$f")
+  done
+  [[ -d "$dir/sentry-cache" ]] && rm -rf "$dir/sentry-cache" && removed+=("sentry-cache/")
+  if (( ${#removed} )); then
+    echo "det33clear: removed ${(j:, :)removed} (fresh-install state)."
   else
-    echo "det33clear: no save at $save (already clean)."
+    echo "det33clear: nothing to remove (already clean)."
   fi
 }
 
