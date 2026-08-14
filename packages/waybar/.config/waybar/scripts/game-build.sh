@@ -216,6 +216,19 @@ case "${1:-}" in
     fi
 
     if { dotnet build && godot-mono --headless --import; } > "$lf" 2>&1; then
+      # det33 plays from a local-disk mirror rather than the CIFS repo: paging
+      # the game over SMB mid-session caused ~130ms off-CPU frame stalls (see
+      # docs/perf-status.md, 2026-08-14). tools/run-local.sh prints the mirror
+      # dir; a mirror failure is a build failure, never a silent CIFS fallback.
+      # gym/compass stay on the repo because Workbench authoring writes to res://.
+      rundir="$dir"
+      if [ "$game" = "det33" ]; then
+        if ! rundir="$(bash tools/run-local.sh mirror 2>>"$lf")"; then
+          set_state "$game" failed
+          notify-send "$game build failed" "local mirror failed — right-click for the log" -u critical -i dialog-error
+          exit 1
+        fi
+      fi
       set_state "$game" ok
       notify-send "$game" "Build OK — launching" -i dialog-information
       # Append the live game session to the same log so right-click shows
@@ -239,6 +252,7 @@ case "${1:-}" in
 
       setsid -f bash -c '
         dir="$1"; scene="$2"; lf="$3"; game="$4"; last=0; lasth=0
+        printf "===== running from %s =====\n" "$dir" >> "$lf"
         godot-mono --path "$dir" "$scene" 2>&1 | while IFS= read -r line; do
           printf "%s\n" "$line" >> "$lf"
           # Godot prints engine + C# exceptions as a line starting with
@@ -271,7 +285,7 @@ report in ~/Downloads/hitches-$game (read it with tools/analyze-hitch.py)" \
               fi ;;
           esac
         done
-      ' _ "$dir" "$scene" "$lf" "$game" >/dev/null 2>&1
+      ' _ "$rundir" "$scene" "$lf" "$game" >/dev/null 2>&1
     else
       set_state "$game" failed
       err="$(grep -m1 -E ': error|error CS|: error|Error:' "$lf")"

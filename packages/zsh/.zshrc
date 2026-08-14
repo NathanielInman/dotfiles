@@ -125,7 +125,10 @@ eval "$(pyenv init -)"
 
 # det33 godot
 alias compass='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Test/CompassTest.tscn'
-alias det33='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Main/Boot.tscn'
+# det33 plays from a local-disk mirror (CIFS paging caused ~130ms frame
+# stalls; see docs/perf-status.md 2026-08-14). gym/compass stay on the repo
+# because Workbench authoring writes back into res://.
+alias det33='cd ~/Rime/det33-godot && bash tools/run-local.sh'
 alias gym='cd ~/Rime/det33-godot && dotnet build && godot-mono --headless --import && godot-mono --path . res://Scenes/Test/Workbench.tscn'
 
 # everspark forge godot
