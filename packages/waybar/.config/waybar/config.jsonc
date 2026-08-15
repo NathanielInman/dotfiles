@@ -277,7 +277,8 @@
   "custom/wallpaper": {
     "format": "rotate wallpaper",
     "on-click": "pkill -USR1 -f wallpaper.sh",
-    "tooltip-format": "Random wallpaper"
+    "on-click-right": "pkill -USR2 -f wallpaper.sh",
+    "tooltip-format": "Random wallpaper (left: next, right: ban current)"
   },
   "custom/power-menu": {
     "format": "⏻",
