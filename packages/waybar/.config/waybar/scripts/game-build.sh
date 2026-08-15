@@ -134,7 +134,23 @@ case "${1:-}" in
       exit 0
     fi
     set_state "$game" building
-    setsid -f "$0" _run "$game" >/dev/null 2>&1
+    # setsid escapes the controlling terminal but NOT waybar.service's cgroup,
+    # and waybar runs with the default KillMode=control-group. So a waybar
+    # restart (config edit, Hyprland reload, its own Restart=on-failure) SIGTERMs
+    # the running game along with the bar. Godot exits silently on SIGTERM, so it
+    # looks exactly like a game crash: window gone, no log line, no coredump.
+    # Wrapping here rather than around the godot call puts the whole chain -
+    # dotnet build, --headless --import, run-local.sh mirror, benchmark gate,
+    # notify-send, the error watcher - in a transient unit with its own cgroup.
+    # No --unit name, so systemd auto-names it and relaunches never collide.
+    systemd-run --user --quiet --collect \
+      --description="game-build $game" \
+      --setenv=PATH="$PATH" \
+      --setenv=WAYLAND_DISPLAY="$WAYLAND_DISPLAY" \
+      --setenv=XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR" \
+      --setenv=DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+      --setenv=XDG_CURRENT_DESKTOP="$XDG_CURRENT_DESKTOP" \
+      "$0" _run "$game" >/dev/null 2>&1
     ;;
 
   log)
