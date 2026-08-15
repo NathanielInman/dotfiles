@@ -85,7 +85,9 @@ case "${1:-}" in
         printf '{"text":" %s","class":"ok","tooltip":"%s: built & launched"}\n' "$label" "$game"
         ;;
       *)
-        printf '{"text":" %s","class":"idle","tooltip":"%s: click to build & launch · right-click for last log"}\n' "$label" "$game"
+        # &amp;, not & — the tooltip is parsed as Pango markup, and a bare
+        # ampersand makes every poll log "Entity did not end with a semicolon".
+        printf '{"text":" %s","class":"idle","tooltip":"%s: click to build &amp; launch · right-click for last log"}\n' "$label" "$game"
         ;;
     esac
     ;;
