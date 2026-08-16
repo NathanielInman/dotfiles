@@ -268,7 +268,14 @@ case "${1:-}" in
         export DET33_HITCH_DIR="$hd"
       fi
 
-      setsid -f bash -c '
+      # Foreground, NOT setsid -f: this whole _run is the main process of the
+      # systemd-run transient unit created by "build". If the game were forked
+      # into the background here, _run would exit right after, the unit would
+      # go inactive, and systemd (KillMode=control-group) would SIGTERM the
+      # game a few ms after launch - build says OK, notification fires, no
+      # window ever appears, log ends at the session header. Keeping the game
+      # in the foreground makes the unit live exactly as long as the session.
+      bash -c '
         dir="$1"; scene="$2"; lf="$3"; game="$4"; last=0; lasth=0
         printf "===== running from %s =====\n" "$dir" >> "$lf"
         godot-mono --path "$dir" "$scene" 2>&1 | while IFS= read -r line; do
