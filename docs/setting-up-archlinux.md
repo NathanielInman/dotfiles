@@ -108,7 +108,7 @@ Now for installing window manager stuff (Hyprland)
 - `hyprpicker` - screen color picker bound to Super+I
 
 ```
-pacman -S hyprland waybar swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+pacman -S hyprland waybar swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
 yay -S walker elephant-all
 ```
 
