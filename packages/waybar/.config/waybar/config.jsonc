@@ -56,15 +56,22 @@
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
+    "format-bluetooth": "{icon} {volume}% 󰂯",
     "format-muted": " muted",
     "format-icons": {
+      "headphone": "󰋋",
+      "headset": "󰋎",
+      "hdmi": "󰡁",
       "default": [
         "",
         "",
         ""
       ]
     },
-    "on-click": "pavucontrol"
+    "tooltip-format": "Output: {desc}\nLeft: switch output · Right: switch input · Middle: mixer",
+    "on-click": "~/.config/waybar/scripts/audio-switch.sh output",
+    "on-click-right": "~/.config/waybar/scripts/audio-switch.sh input",
+    "on-click-middle": "pavucontrol"
   },
   "group/details": {
     "orientation": "horizontal",
