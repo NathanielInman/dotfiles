@@ -1,0 +1,8 @@
+[Unit]
+Description=Force this PC to be the central on classic Bluetooth links
+# Started by 51-bt-force-central.rules whenever a new hciX:N link appears.
+After=bluetooth.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/bt-force-central

@@ -1,0 +1,38 @@
+#!/bin/bash
+# Make this PC the central (master) on every classic Bluetooth (BR/EDR) link,
+# then drop RSWITCH from that link's policy so the peer cannot flip it back.
+#
+# Why: when the Arctis Nova Pro Wireless reconnects on its own it takes the
+# central role and leaves the RTL8761B dongle as peripheral. As peripheral the
+# dongle only gets to transmit when the headset polls it, and A2DP audio
+# stutters badly (2026-08-17). A role switch to central fixed it instantly
+# with no other change. LE links (the mouse) are left alone.
+#
+# Triggered by 51-bt-force-central.rules for each new hciX:N link device;
+# also safe to run by hand.  Needs hcitool (bluez-deprecated-tools).
+
+sleep 3  # let the link finish authentication/encryption before asking
+
+for attempt in 1 2 3; do
+    switched=0
+    while read -r dir type addr rest; do
+        [ "$type" = "ACL" ] || continue
+        if [[ "$rest" == *PERIPHERAL* ]]; then
+            hcitool sr "$addr" master >/dev/null 2>&1 && switched=1
+        fi
+    done < <(hcitool con | tail -n +2)
+    [ "$switched" = 1 ] && sleep 1
+    # any classic link still peripheral? retry
+    hcitool con | grep -q 'ACL.*PERIPHERAL' || break
+    sleep 2
+done
+
+# Lock the policy on every classic link that is now central
+while read -r dir type addr rest; do
+    [ "$type" = "ACL" ] || continue
+    [[ "$rest" == *CENTRAL* ]] || continue
+    hcitool lp "$addr" HOLD,SNIFF,PARK >/dev/null 2>&1
+    echo "bt-force-central: $addr is central, RSWITCH disabled"
+done < <(hcitool con | tail -n +2)
+hcitool con | grep -q 'ACL.*PERIPHERAL' && echo "bt-force-central: a classic link is still peripheral" >&2
+exit 0

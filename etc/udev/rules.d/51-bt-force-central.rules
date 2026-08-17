@@ -1,0 +1,3 @@
+# Every new Bluetooth link (hciX:N device, DEVTYPE=link) kicks off a oneshot
+# that role-switches classic links to central. See /usr/local/bin/bt-force-central.
+ACTION=="add", SUBSYSTEM=="bluetooth", ENV{DEVTYPE}=="link", TAG+="systemd", ENV{SYSTEMD_WANTS}+="bt-force-central.service"
