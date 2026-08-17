@@ -61,13 +61,21 @@ Sound and bluetooth. PipeWire replaces PulseAudio and is enabled **per-user** la
 - `pipewire-pulse` - provides support for older pulse audio API applications
 - `bluez` - bluetooth protocol stack
 - `bluez-utils` - provides bluetoothctl utility
+- `bluez-deprecated-tools` - `hcitool` (RSSI, link role/policy); needed by the `bt-force-central` fix below
 - `blueberry` - bluetooth GUI applet (**AUR** — install with `yay`, not pacman)
 
 ```
-pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils
+pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils bluez-deprecated-tools
 yay -S blueberry
 systemctl enable bluetooth.service --now
 ```
+
+Two Bluetooth quirks of the TP-Link UB500 (RTL8761B) dongle are handled by `install.sh`:
+
+- `etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules` keeps the dongle powered (USB autosuspend after 2s idle dropped the mouse mid-drag).
+- `bt-force-central`: when the Arctis Nova Pro Wireless reconnects on its own it takes the central role, and with the dongle as peripheral A2DP audio stutters badly even at -20 dBm RSSI. `etc/udev/rules.d/51-bt-force-central.rules` starts `bt-force-central.service` for every new `hciX:N` link, which runs `usr/local/bin/bt-force-central` (`hcitool sr <addr> master`, then `hcitool lp <addr> HOLD,SNIFF,PARK` so the peer cannot switch it back). Check with `sudo hcitool con` (want `CENTRAL`) and `sudo hcitool rssi <addr>`.
+
+Pairings live in `/var/lib/bluetooth/<adapter MAC>/` and the peripheral bonds to that MAC too, so swapping dongles (even the same model) means re-pairing every device.
 
 Now for installing window manager stuff (Hyprland)
 

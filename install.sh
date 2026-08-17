@@ -248,6 +248,34 @@ setup_system() {
         fi
     fi
 
+    # bt-force-central: udev rule + oneshot that role-switches classic BT links
+    # to central. When the Arctis headset reconnects on its own it takes the
+    # central role and the RTL8761B dongle, left as peripheral, stutters A2DP
+    # audio badly. Needs hcitool (bluez-deprecated-tools).
+    local btfc_bin_src="$DOTFILES_DIR/usr/local/bin/bt-force-central"
+    local btfc_bin_dst="/usr/local/bin/bt-force-central"
+    local btfc_svc_src="$DOTFILES_DIR/etc/systemd/system/bt-force-central.service"
+    local btfc_svc_dst="/etc/systemd/system/bt-force-central.service"
+    local btfc_udev_src="$DOTFILES_DIR/etc/udev/rules.d/51-bt-force-central.rules"
+    local btfc_udev_dst="/etc/udev/rules.d/51-bt-force-central.rules"
+    if cmp -s "$btfc_bin_src" "$btfc_bin_dst" && cmp -s "$btfc_svc_src" "$btfc_svc_dst" && cmp -s "$btfc_udev_src" "$btfc_udev_dst"; then
+        echo -e "  ${GREEN}[configured]${NC} BT force-central role switch (headset stutter fix)"
+    else
+        echo -n -e "  ${YELLOW}[available]${NC} Install BT force-central role switch (fixes A2DP stutter when the headset reconnects)? [y/N] "
+        read -r answer
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
+            command -v hcitool >/dev/null || sudo pacman -S --needed --noconfirm bluez-deprecated-tools
+            sudo install -Dm755 "$btfc_bin_src" "$btfc_bin_dst"
+            sudo install -Dm644 "$btfc_svc_src" "$btfc_svc_dst"
+            sudo install -Dm644 "$btfc_udev_src" "$btfc_udev_dst"
+            sudo systemctl daemon-reload
+            sudo udevadm control --reload-rules
+            echo -e "  ${GREEN}[configured]${NC} BT force-central role switch"
+        else
+            echo -e "  ${YELLOW}[skipped]${NC} BT force-central role switch"
+        fi
+    fi
+
     # rime-umount.service — force-unmount the Rime CIFS share early on shutdown
     # so the kernel doesn't block ~180s on the unreachable server (shutdown hang).
     local rime_src="$DOTFILES_DIR/etc/systemd/system/rime-umount.service"
