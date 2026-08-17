@@ -62,10 +62,11 @@ Sound and bluetooth. PipeWire replaces PulseAudio and is enabled **per-user** la
 - `bluez` - bluetooth protocol stack
 - `bluez-utils` - provides bluetoothctl utility
 - `bluez-deprecated-tools` - `hcitool` (RSSI, link role/policy); needed by the `bt-force-central` fix below
+- `headsetcontrol` - reads the Arctis headset state from its USB base station over HID; used by `headset-autoswitch.service`
 - `blueberry` - bluetooth GUI applet (**AUR** — install with `yay`, not pacman)
 
 ```
-pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils bluez-deprecated-tools
+pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils bluez-deprecated-tools headsetcontrol
 yay -S blueberry
 systemctl enable bluetooth.service --now
 ```
@@ -347,6 +348,14 @@ packaged unit ships `Restart=on-failure`):
 
 ```
 systemctl --user enable waybar
+```
+
+The hyprland package also stows `headset-autoswitch.service` (follows the Arctis
+headset between the base station and the speakers, see the Bluetooth notes near
+the top). Enable it on machines that have the base station plugged in:
+
+```
+systemctl --user enable --now headset-autoswitch
 ```
 
 if at any point you want to remove the symlinks `stow -D <package>` from within the packages folder
