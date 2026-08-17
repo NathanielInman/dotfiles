@@ -77,6 +77,8 @@ Two Bluetooth quirks of the TP-Link UB500 (RTL8761B) dongle are handled by `inst
 
 Pairings live in `/var/lib/bluetooth/<adapter MAC>/` and the peripheral bonds to that MAC too, so swapping dongles (even the same model) means re-pairing every device.
 
+The Arctis Nova Pro Wireless is normally used through its 2.4 GHz base station, which is a plain USB Audio Class device (no vendor software; the OLED menu covers EQ/sidetone/ChatMix). Its sink exists whether or not the headset is powered, so `headset-autoswitch.service` (stowed from `packages/hyprland/.config/systemd/user/`, script `~/.config/hypr/scripts/headset-autoswitch.sh`) polls `headsetcontrol -o json` every 2s and moves the default output to the base station when the headset comes online, back to the desk speakers when it goes off. `pacman -S headsetcontrol` (also needs `jq`), then `systemctl --user enable --now headset-autoswitch.service`. The headset's Bluetooth pairing was removed to keep it from grabbing the PC; turn Bluetooth off in the base station menu unless it is wanted for a phone.
+
 Now for installing window manager stuff (Hyprland)
 
 - `hyprland` - tiling Wayland compositor with dynamic tiling, animations, and scripting

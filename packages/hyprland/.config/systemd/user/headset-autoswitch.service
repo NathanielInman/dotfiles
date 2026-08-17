@@ -1,0 +1,12 @@
+[Unit]
+Description=Follow the Arctis headset: base station output when on, speakers when off
+After=pipewire.service wireplumber.service pipewire-pulse.service
+Wants=pipewire-pulse.service
+
+[Service]
+ExecStart=%h/.config/hypr/scripts/headset-autoswitch.sh
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
