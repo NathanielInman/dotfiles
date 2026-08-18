@@ -13,7 +13,16 @@
 #   status <game>   emit waybar JSON for one game button     (exec)
 #   build  <game>   start (or restart) a build + launch       (left-click)
 #   log    <game>   live-tail the build+game log in a term     (right-click)
+#   drawer-status   aggregate light for the drawer toggle      (exec)
+#   drawer-toggled  acknowledge failures on drawer open/close  (toggle click)
 #   _run   <game>   internal: the actual headless build, detached
+#
+# A failed build stays red until it is acknowledged, but not forever: the red
+# drawer toggle clears as soon as the drawer is opened (you saw it and are
+# looking at the drawer for details), and the red game button clears on the
+# next toggle click after that (you had the drawer open, you saw which one).
+# Two clicks rather than one so opening the drawer to find the failed game
+# does not wipe the very light you opened it to look at.
 
 OK_FLASH=6  # seconds to keep the green check before reverting to idle
 
@@ -51,7 +60,9 @@ log_file()   { echo "$HOME/Downloads/game-$1.log"; }
 # paste, not one buried in app_userdata.
 hitch_dir()  { echo "$HOME/Downloads/hitches-$1"; }
 
-# state file holds "state|epoch"; state is idle|building|failed|ok
+# state file holds "state|epoch"; state is idle|building|failed|seen|ok
+# ("seen" = failed but acknowledged: the game button still shows red so the
+# open drawer tells you which build broke, the toggle light is already clear.)
 get_state() {
   local f; f="$(state_file "$1")"
   [ -f "$f" ] && cat "$f" || echo "idle|0"
@@ -78,8 +89,8 @@ case "${1:-}" in
         i=$(( $(date +%s) % ${#frames[@]} ))
         printf '{"text":"%s %s","class":"building","tooltip":"%s: building…"}\n' "${frames[$i]}" "$label" "$game"
         ;;
-      failed)
-        printf '{"text":" %s","class":"failed","tooltip":"%s: BUILD FAILED — right-click to open the log"}\n' "$label" "$game"
+      failed|seen)
+        printf '{"text":" %s","class":"failed","tooltip":"%s: BUILD FAILED - right-click to open the log"}\n' "$label" "$game"
         ;;
       ok)
         printf '{"text":" %s","class":"ok","tooltip":"%s: built & launched"}\n' "$label" "$game"
@@ -93,7 +104,9 @@ case "${1:-}" in
     ;;
 
   # Aggregate state across all games for the drawer toggle button, so builds
-  # stay visible after click-to-reveal collapses the drawer on click.
+  # stay visible after click-to-reveal collapses the drawer on click. "seen"
+  # failures are deliberately left out: the toggle light is exactly the part
+  # that opening the drawer acknowledges.
   drawer-status)
     building=(); failed=(); okg=()
     for g in det33 gym compass eversparkforge benchmark; do
@@ -120,12 +133,29 @@ case "${1:-}" in
       i=$(( $(date +%s) % ${#frames[@]} ))
       printf '{"text":"%s %s","class":"building","tooltip":"building: %s"}\n' "${frames[$i]}" "$icon" "${building[*]}"
     elif [ ${#failed[@]} -gt 0 ]; then
-      printf '{"text":" %s","class":"failed","tooltip":"BUILD FAILED: %s — open drawer, right-click the game for its log"}\n' "$icon" "${failed[*]}"
+      printf '{"text":" %s","class":"failed","tooltip":"BUILD FAILED: %s - open drawer, right-click the game for its log"}\n' "$icon" "${failed[*]}"
     elif [ ${#okg[@]} -gt 0 ]; then
       printf '{"text":" %s","class":"ok","tooltip":"built & launched: %s"}\n' "$icon" "${okg[*]}"
     else
       printf '{"text":"%s","class":"idle","tooltip":"Games & shortcuts"}\n' "$icon"
     fi
+    ;;
+
+  # Runs from the drawer toggle's on-click-release (a release handler, so it
+  # does not steal the press the group needs for click-to-reveal). Every click
+  # on the toggle, open or close, advances each broken build one step:
+  # failed -> seen (toggle light clears, game button stays red) -> idle. The
+  # LaunchPad state file has the same format so it is walked here as well
+  # rather than needing its own release hook.
+  drawer-toggled)
+    for f in /tmp/game-build-*.state /tmp/launchpad-build.state; do
+      [ -f "$f" ] || continue
+      IFS='|' read -r st _ < "$f"
+      case "$st" in
+        failed) echo "seen|$(date +%s)" > "$f" ;;
+        seen)   echo "idle|$(date +%s)" > "$f" ;;
+      esac
+    done
     ;;
 
   build)
@@ -320,7 +350,7 @@ report in ~/Downloads/hitches-$game (read it with tools/analyze-hitch.py)" \
     ;;
 
   *)
-    echo "usage: game-build.sh {status|drawer-status|build|log|_run} [game]" >&2
+    echo "usage: game-build.sh {status|drawer-status|drawer-toggled|build|log|_run} [game]" >&2
     exit 1
     ;;
 esac
