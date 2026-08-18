@@ -83,7 +83,7 @@ The Arctis Nova Pro Wireless is normally used through its 2.4 GHz base station, 
 Now for installing window manager stuff (Hyprland)
 
 - `hyprland` - tiling Wayland compositor with dynamic tiling, animations, and scripting
-- `waybar` - highly customizable bar for Wayland compositors
+- `waybar-git` (**AUR**) - highly customizable bar for Wayland compositors. Not the `extra/waybar` release: since the Hyprland config moved to the Lua root, `hyprctl dispatch workspace N` (the legacy keyword form) is rejected, and waybar 0.15.0's `hyprland/workspaces` still hardcodes it, so clicking a workspace icon does nothing. Upstream fixed it in April 2026 (`IPC::dispatch` detects the Lua protocol and emits `hl.dsp.*`) but no release has shipped it. Swap back to `pacman -S waybar` once a release newer than 0.15.0 lands. `paru --noconfirm` refuses the `waybar` -> `waybar-git` conflict and `yes |` loops on the provider prompt, so answer by hand or `printf '1\ny\ny\ny\n' | paru -S --skipreview aur/waybar-git`
 - `walker` - Wayland-native GTK4 application launcher (requires `elephant` provider daemon)
 - `elephant-all` - general-purpose data provider daemon for walker (includes all providers)
 - `swaync` - notification center with history panel for Wayland
@@ -119,8 +119,8 @@ Now for installing window manager stuff (Hyprland)
 - `hyprpicker` - screen color picker bound to Super+I
 
 ```
-pacman -S hyprland waybar swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
-yay -S walker elephant-all
+pacman -S hyprland swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+yay -S waybar-git walker elephant-all
 ```
 
 The Elgato Key Lights are driven over their built-in HTTP API with nothing but `curl` (already installed) - no extra packages or helper CLIs. The `lightson`/`lightsoff` shell aliases (in both `.zshrc` and the nushell config) and the waybar keylights widget (`custom/keylights`, with its status script `keylights.sh` and on-click `keylights-toggle.sh`) all hit the same endpoint: `PUT http://<addr>:9123/elgato/lights` with `{"numberOfLights":1,"lights":[{"on":0|1,"brightness":0-100,"temperature":143-344}]}` to set state, and `GET` of the same path to read it.
