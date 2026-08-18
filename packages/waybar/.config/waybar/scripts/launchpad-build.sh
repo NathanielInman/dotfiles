@@ -40,7 +40,9 @@ state_file() { echo "/tmp/launchpad-build.state"; }
 log_file()   { echo "$HOME/Downloads/launchpad-build.log"; }
 emu_log()    { echo "/tmp/launchpad-emulator.log"; }
 
-# state file holds "state|epoch"; state is idle|building|failed|ok
+# state file holds "state|epoch"; state is idle|building|failed|seen|ok
+# ("seen" is written by game-build.sh drawer-toggled: failure acknowledged by a
+# drawer click, button stays red until the next click. Same as the games.)
 get_state() { local f; f="$(state_file)"; [ -f "$f" ] && cat "$f" || echo "idle|0"; }
 set_state() { echo "$1|$(date +%s)" > "$(state_file)"; }
 
@@ -116,8 +118,8 @@ case "${1:-}" in
         i=$(( $(date +%s) % ${#frames[@]} ))
         printf '{"text":"%s %s","class":"building","tooltip":"launchpad: building & installing…"}\n' "${frames[$i]}" "$LABEL"
         ;;
-      failed)
-        printf '{"text":" %s","class":"failed","tooltip":"launchpad: BUILD FAILED — right-click to open the log"}\n' "$LABEL"
+      failed|seen)
+        printf '{"text":" %s","class":"failed","tooltip":"launchpad: BUILD FAILED - right-click to open the log"}\n' "$LABEL"
         ;;
       ok)
         printf '{"text":" %s","class":"ok","tooltip":"launchpad: built, installed & launched"}\n' "$LABEL"

@@ -180,7 +180,11 @@
     "return-type": "json",
     "interval": 1,
     "format": "{}",
-    "cursor": true
+    "cursor": true,
+    // release, not on-click: a press handler on this module would swallow the
+    // click before the group's click-to-reveal sees it and the drawer would
+    // stop opening. The release still lands here, so this runs on every toggle.
+    "on-click-release": "~/.config/waybar/scripts/game-build.sh drawer-toggled"
   },
   "custom/det33": {
     "exec": "~/.config/waybar/scripts/game-build.sh status det33",
