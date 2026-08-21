@@ -505,6 +505,17 @@ pacman -S blender
 pacman -S oxipng
 ```
 
+For capturing marketing assets of the game (Steam screenshots, trailer footage):
+
+- `gpu-screen-recorder` (**AUR**) - low-overhead screen recorder that feeds NVENC directly, so recording gameplay costs almost nothing; its replay-buffer mode keeps a rolling last-N-seconds in memory and a hotkey flushes it to disk (shadowplay-style), so a good moment is never missed. `wf-recorder` (installed with the Hyprland line above) is screencopy-based and drops frames under game load, so prefer this for gameplay capture
+- `mpv` - media player used to scrub the captured footage; its `s` key exports the current frame as a PNG, which is how still screenshots are harvested out of 1440p60 recordings instead of chasing live screenshots of a moving game
+- `kdenlive` - non-linear video editor for cutting the trailer
+
+```
+pacman -S mpv kdenlive
+paru -S gpu-screen-recorder
+```
+
 ### Android development (Kotlin / Jetpack Compose)
 
 The DT `Launchpad` app (`~/Sites/LaunchPad`) is a Kotlin + Jetpack Compose Android
