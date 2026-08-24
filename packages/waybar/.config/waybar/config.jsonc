@@ -38,6 +38,14 @@
       "9": "",
       "10": ""
     },
+    "tooltips": {
+      "1": "Browser (Chrome)",
+      "2": "Work Slack + Zoom",
+      "3": "Discord",
+      "4": "Terminal + editor",
+      "5": "Notes / todos",
+      "default": "{name}"
+    },
     "ignore-workspaces": [
       "^1[1-9]$",
       "^[2-9][0-9]+$"
