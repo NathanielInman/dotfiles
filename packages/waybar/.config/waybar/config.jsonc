@@ -44,6 +44,11 @@
       "3": "Discord",
       "4": "Terminal + editor",
       "5": "Notes / todos",
+      "6": "Background Work",
+      "7": "Critical Work",
+      "8": "Regular Work",
+      "9": "Cosmetic Work",
+      "10": "Bug Work",
       "default": "{name}"
     },
     "ignore-workspaces": [
