@@ -26,5 +26,16 @@ fi
 chosen=$(printf '%s\n' "${entries[@]}" | cut -f2- | walker --dmenu --placeholder "$placeholder")
 [ -z "$chosen" ] && exit 0
 
-id=$(printf '%s\n' "${entries[@]}" | awk -F'\t' -v c="$chosen" '$2 == c { print $1; exit }')
-[ -n "$id" ] && wpctl set-default "$id"
+# walker hands the row back with surrounding whitespace stripped, so the padding
+# that aligns the non-default entries never survives the round trip. Match on the
+# trimmed label rather than the exact string that went out.
+id=$(printf '%s\n' "${entries[@]}" | awk -F'\t' -v c="$chosen" '
+    function trim(s) { gsub(/^[[:space:]]+|[[:space:]]+$/, "", s); return s }
+    trim($2) == trim(c) { print $1; exit }')
+
+if [ -z "$id" ]; then
+    notify-send -a audio-switch "Audio switch failed" "No ${kind} matched \"$chosen\"" 2>/dev/null
+    exit 1
+fi
+
+wpctl set-default "$id"
