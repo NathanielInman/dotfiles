@@ -1,5 +1,5 @@
 [Unit]
-Description=Follow the Arctis headset: base station output when on, speakers when off
+Description=Follow the Arctis headset: headset output when linked (base station or Bluetooth), speakers when off
 After=pipewire.service wireplumber.service pipewire-pulse.service
 Wants=pipewire-pulse.service
 
