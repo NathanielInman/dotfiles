@@ -35,7 +35,8 @@ hl.window_rule({
 -- Force a usable size until Blender fixes GHOST_WindowWayland.
 hl.window_rule({
   name  = "blender-filebrowser",
-  match = { class = "blender", title = "^(Blender File View)$" },
+  -- Matched at map time, when the title is still the initial "File Browser".
+  match = { class = "blender", title = "^(File Browser|Blender File View)$" },
   float  = true,
   size   = { "(monitor_w*0.6)", "(monitor_h*0.7)" },
   center = true,
