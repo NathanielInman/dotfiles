@@ -28,6 +28,19 @@ hl.window_rule({
   center = true,
 })
 
+-- Blender's temporary File Browser window (native Wayland) always maps at
+-- its 320x240 minimum under Hyprland: Blender commits before it has sent its
+-- real size, so the compositor's initial configure answers with the min-size
+-- hint. Upstream: https://projects.blender.org/blender/blender/issues/162315
+-- Force a usable size until Blender fixes GHOST_WindowWayland.
+hl.window_rule({
+  name  = "blender-filebrowser",
+  match = { class = "blender", title = "^(Blender File View)$" },
+  float  = true,
+  size   = { "(monitor_w*0.6)", "(monitor_h*0.7)" },
+  center = true,
+})
+
 -- Android emulator: tiling squashes its fixed phone aspect ratio and pads the
 -- leftover space with a grey background. Float both its windows (device +
 -- control toolbar share class "Emulator") and center only the device window;
