@@ -47,6 +47,10 @@ alias gbclean = git branch --merged master | grep -v '^[ *]*master$' | xargs git
 alias l = eza -lbF # list, size, type
 alias ll = eza -al # long, list
 alias llm = ll --sort=modified # list, long, sort by modification date
+alias lsm = eza --sort=age # newest modified first
+alias lsmr = eza --sort=modified # oldest modified first
+alias lsc = eza -U --sort=created -r # newest created first
+alias lscr = eza -U --sort=created # oldest created first
 alias la = eza -lbhHigUmuSa # all list
 alias lx = eza -lbhHigUmuSa@ # all list and extended
 alias lS = eza -1 # just names
