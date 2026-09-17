@@ -37,6 +37,10 @@ alias ls='eza' # 1:1 ls replacement
 alias l='ls -lbF' # list, size, type
 alias ll='ls -al' # long, list
 alias llm='ll --sort=modified' # list, long, sort by modification date
+alias lsm='ls --sort=age' # newest modified first
+alias lsmr='ls --sort=modified' # oldest modified first
+alias lsc='ls -U --sort=created -r' # newest created first
+alias lscr='ls -U --sort=created' # oldest created first
 alias la='ls -lbhHigUmuSa' # all list
 alias lx='ls -lbhHigUmuSa@' # all list and extended
 alias lS='eza -1' # just names
