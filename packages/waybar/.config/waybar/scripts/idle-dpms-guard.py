@@ -10,6 +10,8 @@
 #
 # Monitor state alone can't tell that apart from a real wake, so this runs a
 # private hypridle (ext-idle-notify, 1s timeout) as the input signal:
+#   - a hotplug burst that starts while idle is the G9 relinking on its own:
+#     each monitor it re-adds is turned off the moment Hyprland announces it
 #   - while idle, any lit monitor is a spurious wake: turn it back off
 #   - a resume is real input and ends the guard, EXCEPT the one Hyprland
 #     fakes within a few ms of a monitor add/remove; that one is ignored
@@ -34,7 +36,7 @@ IDLE_CONFIRM = 5.0     # a suspect resume must be followed by idle within this
 MAX_FORCES = 30
 MAX_HOURS = 16
 
-state = {"idle": False, "resume": None, "hotplug": 0.0}
+state = {"idle": False, "resume": None, "hotplug": 0.0, "spurious_burst": False}
 
 
 def on_idle(*_):
@@ -122,8 +124,19 @@ listener {{
                     return  # compositor gone
                 buf += chunk
                 *lines, buf = buf.split(b"\n")
-                if any(l.startswith((b"monitoradded", b"monitorremoved")) for l in lines):
+                for line in lines:
+                    if not line.startswith((b"monitoradded>>", b"monitorremoved>>")):
+                        continue
+                    # A real wake shows input before the G9 relinks, so a
+                    # burst that begins while idle can only be the G9 itself
+                    if now - state["hotplug"] > HOTPLUG_WINDOW:
+                        state["spurious_burst"] = state["idle"] and state["resume"] is None
                     state["hotplug"] = now
+                    name = line.split(b">>", 1)[1].decode(errors="replace")
+                    if (state["spurious_burst"] and line.startswith(b"monitoradded>>")
+                            and name != "FALLBACK"):
+                        dpms_off(name)
+                        forces += 1
 
             resume = state["resume"]
             if resume is not None:
