@@ -1,0 +1,7 @@
+# Taskwarrior 3 config. Data lives in the git-synced ~/Sites/tasks repo
+# (github.com/NathanielInman/tasks), committed hourly by
+# scripts/cron-git-tasks-auto-update.sh.
+data.location=~/Sites/tasks
+
+# Already read the 3.x release notes; stop the startup nag.
+news.version=3.5.0
