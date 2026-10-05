@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/nate/.task || exit # short-cut if not setup
+cd /home/nate/Sites/tasks || exit # short-cut if not setup
 
 alias git='/usr/bin/git'
 
