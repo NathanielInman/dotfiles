@@ -16,6 +16,14 @@ disable = ["gcloud"]
 # Use paru for both repo and AUR upgrades (yay is aliased to paru here).
 arch_package_manager = "paru"
 
+[commands]
+# Blender MCP lives in its own venv instead of running under `uvx`: every
+# Claude Code session's uvx wrapper holds a shared lock on ~/.cache/uv for
+# its whole lifetime, so cleanup's `uv cache prune` hung forever waiting
+# for them ("cache is currently in-use"). --allow-existing keeps the venv
+# and rebuilds against the new interpreter after a pacman python bump.
+"Blender MCP" = "uv venv -q --allow-existing --python /usr/bin/python3 ~/.local/share/blender-mcp && uv pip install -q --upgrade --python ~/.local/share/blender-mcp 'git+https://projects.blender.org/lab/blender_mcp.git#subdirectory=mcp'"
+
 [post_commands]
 # Long-running GTK daemons keep old (now-deleted) .so mappings after an
 # in-place glibc/gtk upgrade and eventually segfault; bounce waybar so it
