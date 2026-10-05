@@ -16,6 +16,16 @@ disable = ["gcloud"]
 # Use paru for both repo and AUR upgrades (yay is aliased to paru here).
 arch_package_manager = "paru"
 
+[containers]
+# topgrade re-pulls every local image. Skip the ones that can never pull:
+# images built locally (no registry behind them) and work CI images on the
+# private GitLab registry, which need a short-lived token and are pulled by
+# the jobs that use them anyway.
+ignored_containers = [
+  "webview-local:*",
+  "registry.gitlab.com/digitalturbine/*",
+]
+
 [commands]
 # Blender MCP lives in its own venv instead of running under `uvx`: every
 # Claude Code session's uvx wrapper holds a shared lock on ~/.cache/uv for
