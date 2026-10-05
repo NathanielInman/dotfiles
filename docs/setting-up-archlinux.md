@@ -787,7 +787,16 @@ The `task` stow package (above) points Taskwarrior at it through
 `~/.config/vit/config.ini`, which also keeps vit's first-run "create config?"
 prompt from blocking autostart. Hyprland opens vit on workspace 6 at login
 (`kitty --class vit -e vit`, pinned by a window rule on class `vit`). Check
-with `task next`; vit's own keys are listed with `?` inside it.
+with `task next`; vit's own keys are listed with `?` inside it, plus `o` (ours)
+to open the task's long-form note.
+
+How tasks are organized (projects, tags, `ref` markers, notes, per-visit
+annotations) is a Claude skill kept in the tasks repo. Link it in so every
+project's agent sessions pick it up:
+
+```
+ln -sfn ~/Sites/tasks/skills/tasks ~/.claude/skills/tasks
+```
 
 Taskwarrior 3 can't read the old 2.x `*.data` files. If a clone ever has them
 again (history before Oct 2026 does), `task import-v2` moves them into the
