@@ -339,7 +339,7 @@ Install stow packages for the Wayland setup:
 
 ```
 cd packages
-stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade
+stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade task
 ```
 
 Enable waybar's user service so systemd revives it if it ever segfaults
@@ -773,6 +773,26 @@ cd ~/Sites
 git clone https://github.com/nathanielinman/notes.git
 ```
 
+Tasks live in Taskwarrior 3 with `vit` as the TUI. The data is the
+`taskchampion.sqlite3` database in its own git repo, cloned into Sites:
+
+```
+sudo pacman -S task vit
+cd ~/Sites
+git clone https://github.com/nathanielinman/tasks.git
+```
+
+The `task` stow package (above) points Taskwarrior at it through
+`~/.config/task/taskrc` (`data.location=~/Sites/tasks`) and gives vit a
+`~/.config/vit/config.ini`, which also keeps vit's first-run "create config?"
+prompt from blocking autostart. Hyprland opens vit on workspace 6 at login
+(`kitty --class vit -e vit`, pinned by a window rule on class `vit`). Check
+with `task next`; vit's own keys are listed with `?` inside it.
+
+Taskwarrior 3 can't read the old 2.x `*.data` files. If a clone ever has them
+again (history before Oct 2026 does), `task import-v2` moves them into the
+database, then delete the `*.data` files to silence the upgrade warning.
+
 Now enable the cronie cron service for systemd and start immediately
 
 ```
@@ -784,6 +804,7 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 ```
 # `cron tab -e` then add the following lines to update both automatically hourly
 @hourly /home/nate/Sites/dot-files/scripts/cron-git-notes-auto-update.sh
+@hourly /home/nate/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh
 # nightly safety net so no uncommitted ~/Sites work is ever lost to a dead disk
 0 3 * * * /home/nate/Sites/dot-files/scripts/cron-sites-nightly-backup.sh
 ```
