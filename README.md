@@ -44,6 +44,7 @@ cd ~/Sites/dot-files
 | `walker`      | Application launcher  |
 | `starship`    | Shell prompt          |
 | `swaync`      | Notification center   |
+| `t3code`      | T3 Code color theme   |
 | `topgrade`    | Upgrade-everything cfg |
 | `vim`         | Vim configuration     |
 | `waybar`      | Status bar            |
