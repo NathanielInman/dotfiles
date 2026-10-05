@@ -842,6 +842,20 @@ done
 
 The `claude` shell function (`.zshrc`) routes work repos (gitlab.com/digitalturbine) to the `~/.claude-work` profile and everything else to personal, each with its own subscription login — see the function for details.
 
+## T3 Code (agent session GUI)
+
+[T3 Code](https://github.com/pingdotgg/t3code) is a desktop front end for the coding agents already installed on the machine: a sidebar of threads grouped by project, each thread driving the real `claude` CLI (plus Codex, OpenCode, etc. if present). It autostarts on workspace 4 (`autostart.lua`).
+
+```
+paru -S t3code-bin
+```
+
+It never asks for a Claude login of its own. It spawns the installed `claude`, which uses the subscription login from `claude auth login`, so it stays inside Anthropic's subscription terms (unlike tools that lift the OAuth token and call the API directly). Settings > Providers should show Claude as authenticated with the Max plan.
+
+- **One window only.** The app holds Electron's single-instance lock, so a second launch exits immediately (`T3CODE_HOME` and `--user-data-dir` don't get around it). Run sessions in parallel as threads inside the one window instead.
+- **Work profile.** T3 Code runs `claude` directly, so the `.zshrc` `claude` function and its digitalturbine routing never fire and every thread uses the personal `~/.claude` login. For DT repos, add a second Claude provider instance in Settings > Providers with `CLAUDE_CONFIG_DIR path` set to `~/.claude-work`, and pick that instance for those threads.
+- State lives in `~/.t3` (threads, worktrees) and `~/.config/t3code` (Electron profile).
+
 ## Hyprland Plugin Setup
 
 No plugins are needed anymore: the scrolling/column-based layout (like
