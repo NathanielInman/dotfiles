@@ -5,3 +5,13 @@ data.location=~/Sites/tasks
 
 # Already read the 3.x release notes; stop the startup nag.
 news.version=3.5.0
+
+# Inline code marker that points at a task: det33 TODO(item-system) is
+# ref:item-system, forge TODO #13 is ref:13. Conventions live in the tasks
+# skill (~/Sites/tasks/skills/tasks/SKILL.md).
+uda.ref.type=string
+uda.ref.label=Ref
+
+# Keep the list glanceable: annotations (the per-visit log) collapse to a
+# [N] count; Enter in vit shows them in full.
+report.next.columns=id,start.age,entry.age,depends,priority,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description.count,urgency
