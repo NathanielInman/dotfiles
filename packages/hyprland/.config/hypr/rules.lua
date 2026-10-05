@@ -61,3 +61,4 @@ hl.window_rule({
 })
 hl.window_rule({ name = "slack-workspace", match = { class = "Slack" }, workspace = "2" })
 hl.window_rule({ name = "discord-workspace", match = { class = "discord" }, workspace = "3" })
+hl.window_rule({ name = "t3code-workspace", match = { class = "com.t3tools.T3Code" }, workspace = "4" })
