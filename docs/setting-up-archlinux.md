@@ -516,6 +516,18 @@ pacman -S mpv kdenlive
 paru -S gpu-screen-recorder
 ```
 
+### MUD development (PLOS:Origins)
+
+PLOS:Origins (`~/Sites/plos-origins`) is a Rust MUD server played over telnet, TLS and WebSocket, so it needs a MUD client for playtesting. Agents drive TinTin++ inside tmux (`send-keys` to type, `capture-pane` or a `#log` file to read) so they see exactly what a player sees.
+
+- `tmux` - terminal multiplexer that hosts the scripted TinTin++ sessions
+- `tintin` (**AUR**) - TinTin++ console MUD client (binary: `tt++`); speaks GMCP through `#event` scripts
+
+```
+pacman -S tmux
+paru -S tintin
+```
+
 ### Android development (Kotlin / Jetpack Compose)
 
 The DT `Launchpad` app (`~/Sites/LaunchPad`) is a Kotlin + Jetpack Compose Android
