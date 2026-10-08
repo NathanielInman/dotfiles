@@ -1,5 +1,4 @@
 ^\.git$
-\.aws
 \.claude
 docs
 scripts
