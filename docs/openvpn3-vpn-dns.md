@@ -15,7 +15,7 @@ This surfaced after rebuilding the `openvpn3` AUR package: the rebuild reset the
 packaged netcfg D-Bus service, which launches netcfg with **no DNS resolver
 backend** (no `--systemd-resolved` flag, and `/var/lib/openvpn3/netcfg.json`
 didn't exist). Setting `systemd_resolved true` is necessary but was **not
-sufficient** — even then the rebuilt client didn't forward the pushed DNS to
+sufficient** - even then the rebuilt client didn't forward the pushed DNS to
 netcfg. So we apply the DNS ourselves.
 
 ## Diagnosing
@@ -28,7 +28,7 @@ openvpn3 sessions-list
 resolvectl status tun0
 
 # Is the in-tunnel resolver actually working? (this should resolve even when the
-# system resolver can't — proves it's purely a "DNS not applied to tun0" issue)
+# system resolver can't - proves it's purely a "DNS not applied to tun0" issue)
 dig @100.127.255.250 grafana.internal.ss-prod.digitalturbine.com
 # -> 10.242.16.28
 ```
@@ -43,11 +43,11 @@ names upstream.
 
 1. `scripts/openvpn3-tun-dns` -> `/usr/local/bin/openvpn3-tun-dns`
    Runs `resolvectl dns/domain/default-route` to point the tunnel at the
-   CloudConnexa resolvers and route only `~digitalturbine.com` lookups through it.
+   CloudConnexa resolvers and route only `~digitalturbine.com` and `~digitalturbine.io` lookups through it.
 2. `etc/systemd/system/openvpn3-tun-dns@.service`, enabled as
    `openvpn3-tun-dns@tun0.service`. It is `WantedBy` the `tun0` **device unit**,
    so systemd runs it automatically every time the kernel (re)creates the
-   interface — i.e. on every VPN connect.
+   interface - i.e. on every VPN connect.
 
 It also persists `openvpn3-admin netcfg-service --config-set systemd-resolved true`.
 
@@ -56,7 +56,7 @@ It also persists `openvpn3-admin netcfg-service --config-set systemd-resolved tr
 The hook is decoupled from the package. None of its files are owned by
 `openvpn3` (`pacman -Qo` reports them unowned), and it triggers off the kernel
 creating the interface, not off any openvpn3 internal. A future rebuild that
-again breaks netcfg's own DNS handling won't affect the hook — it re-applies DNS
+again breaks netcfg's own DNS handling won't affect the hook - it re-applies DNS
 on top regardless.
 
 ## When it could still need attention
@@ -74,16 +74,16 @@ on top regardless.
   ```
 
 - **CloudConnexa changes resolver IPs, or DT adds zones outside
-  `*.digitalturbine.com`.** Edit the `DNS_SERVERS` / `ROUTE_DOMAINS` arrays at the
+  `*.digitalturbine.com` and `*.digitalturbine.io`.** Edit the `DNS_SERVERS` / `ROUTE_DOMAINS` arrays at the
   top of `scripts/openvpn3-tun-dns`.
 
 ## Manual one-shot (if the hook is ever missing)
 
 ```sh
 sudo resolvectl dns tun0 100.127.255.250 100.96.0.1
-sudo resolvectl domain tun0 '~digitalturbine.com'
+sudo resolvectl domain tun0 '~digitalturbine.com' '~digitalturbine.io'
 sudo resolvectl default-route tun0 false
 ```
 
-Not persistent — wiped on the next reconnect. The systemd hook above is the
+Not persistent - wiped on the next reconnect. The systemd hook above is the
 durable version.
