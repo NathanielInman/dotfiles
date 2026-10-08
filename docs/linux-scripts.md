@@ -1,15 +1,17 @@
 # Linux Scripts
 
 ## Finding a window
-There are times where you want to find the `CLASS` or other such attributes of running programs to apply configurations within `dunst`, `i3` or other applications.
+There are times where you want to find the `class`, `title` or other attributes of running programs to write Hyprland window rules (`~/.config/hypr/rules.lua`) or swaync notification rules.
 
 ```
-# this allows you to click on most windows showing those attributes within the cli
-xprop
+# attributes of the currently focused window
+hyprctl activewindow
 
-# this lets you test your attributes you're using within your apps to validate they're accurate
-xdotool search --onlyvisible --classname Zoom
+# every open window; filter with jq to test the class you plan to match
+hyprctl clients -j | jq '.[] | {class, title, workspace: .workspace.name}'
 ```
+
+`xprop` still works, but only for XWayland windows.
 
 ## Freeing up pacman yay or paru
 

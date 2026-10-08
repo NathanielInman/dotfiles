@@ -8,8 +8,7 @@ cd distFolder && tar -czvf ../dist.tar.gz . && cd ..
 ```
 Now we will deploy to the server. Make sure to replace `$username` and `$serverip` with the correct values
 ```
-user=$(whoami)
-rsync -avhtz -e 'ssh -i /Users/$user/.ssh/id_rsa' dist.tar.gz $username@$serverip:./
+rsync -avhtz -e 'ssh -i ~/.ssh/id_rsa' dist.tar.gz $username@$serverip:./
 ```
 Now for extracting the package on the server, don't forget to replace `/var/opt/applicationName` with where you want the package to go as well as `$username` and `$serverip` with the correct values. It creates the destination folder if it doesn't exist, and then extracts the package to that destination folder, removes the package and exits the server.
 ```
@@ -74,18 +73,10 @@ After finished restart the nginx server.
 sudo service nginx restart
 ```
 ### Setting Up Mongodb
-Start by using the official mongodb repo for apt-get
-```
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
-echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
-sudo apt-get update
-```
-Now install mongod and make sure it is running okay
-```
-sudo apt-get install -y mongodb-org
-service mongod status
-```
+The old `apt-key` + MongoDB 3.0 repo steps no longer work (`apt-key` is gone from current Debian/Ubuntu and 3.0 is long EOL). Follow MongoDB's current guide instead: <https://www.mongodb.com/docs/manual/administration/install-on-linux/>
+
 ### Global Git Ignore
+The stowed `git` package already sets this and ships `~/.gitignore`. On a machine without it:
 ```
-git config --global core.excludesfile ~/.gitignore_global
+git config --global core.excludesFile ~/.gitignore
 ```
