@@ -13,7 +13,7 @@ Aside from referencing the configuration files directly, you can use stow to aut
 sudo pacman -S stow
 
 # Clone the repository
-git clone https://github.com/NathanielInman/dot-files.git ~/Sites/dot-files
+git clone https://github.com/NathanielInman/dotfiles.git ~/Sites/dot-files
 cd ~/Sites/dot-files
 
 # List available packages
@@ -34,44 +34,56 @@ cd ~/Sites/dot-files
 
 ### Available Packages
 
-| Package       | Description           |
-| ------------- | --------------------- |
-| `kitty`       | Terminal emulator     |
-| `git`         | Git configuration     |
-| `hyprland`    | Wayland compositor    |
-| `nushell`     | Modern shell          |
-| `nvim`        | NeoVim with NvChad    |
-| `walker`      | Application launcher  |
-| `starship`    | Shell prompt          |
-| `swaync`      | Notification center   |
-| `t3code`      | T3 Code color theme   |
-| `topgrade`    | Upgrade-everything cfg |
-| `vim`         | Vim configuration     |
-| `waybar`      | Status bar            |
-| `zsh`         | Zsh + Oh-My-Zsh theme |
+| Package    | Description                                   |
+| ---------- | --------------------------------------------- |
+| `biome`    | Global Biome formatter/linter config          |
+| `chrome`   | Chrome Wayland flags (`chrome-flags.conf`)    |
+| `git`      | Git configuration (delta pager)               |
+| `hyprland` | Wayland compositor (Lua config), lock, idle   |
+| `kitty`    | Terminal emulator                             |
+| `nushell`  | Modern shell                                  |
+| `nvim`     | Standalone lazy.nvim NeoVim config            |
+| `starship` | Shell prompt                                  |
+| `swaync`   | Notification center                           |
+| `t3code`   | T3 Code color theme                           |
+| `task`     | Taskwarrior + vit config                      |
+| `topgrade` | Upgrade-everything config                     |
+| `vim`      | Vim configuration                             |
+| `walker`   | Application launcher                          |
+| `waybar`   | Status bar                                    |
+| `zsh`      | Zsh + Oh-My-Zsh config                        |
 
-System-level files that can't be stowed (because they live outside `$HOME`) are tracked under `etc/` and `usr/` as copies. Install them via `./install.sh -s`, which prompts for each one. Currently covers:
+System-level files that can't be stowed (because they live outside `$HOME`) are tracked under `etc/`, `usr/` and `scripts/` as copies. Install them via `./install.sh -s`, which prompts for each one. Currently covers:
 
-- `etc/pacman.d/hooks/hyprpm.hook` — rebuilds hyprpm plugins automatically after Hyprland upgrades so boot doesn't complain about outdated plugin headers.
+- `etc/pacman.d/hooks/hyprpm.hook`: rebuilds hyprpm plugins automatically after Hyprland upgrades so boot doesn't complain about outdated plugin headers.
+- `scripts/hypr-launch` -> `/usr/local/bin/hypr-launch`: sets the NVIDIA/Wayland env and execs Hyprland's own `start-hyprland` watchdog on tty1 login.
+- `etc/nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json`: stops the NVIDIA driver hoarding VRAM freed by Hyprland.
+- `etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules`: keeps the UB500 Bluetooth dongle from autosuspending.
+- `usr/local/bin/bt-force-central` + `etc/systemd/system/bt-force-central.service` + `etc/udev/rules.d/51-bt-force-central.rules`: forces the PC to the central role on new Bluetooth links (fixes headset audio stutter).
+- `etc/systemd/system/rime-umount.service`: unmounts the Rime CIFS share early on shutdown so it doesn't hang.
+- `scripts/openvpn3-tun-dns` + `etc/systemd/system/openvpn3-tun-dns@.service`: VPN DNS hook (see below).
+
+`usr/share/applications/` holds `.desktop` overrides (mostly `NoDisplay=true` to hide unwanted apps from walker); copy them to `/usr/share/applications/` by hand.
 
 ## Automation
 
-`scripts/` holds a few cron helpers (set up via `crontab -e`, see [docs/setting-up-archlinux.md](docs/setting-up-archlinux.md)):
+`scripts/` holds the cron helpers (set up via `crontab -e`, see [docs/setting-up-archlinux.md](docs/setting-up-archlinux.md)) and a few other tools:
 
-- `cron-git-notes-auto-update.sh` / `cron-git-tasks-auto-update.sh` — keep the `notes` and `todo` repos synced hourly.
-- `cron-sites-nightly-backup.sh` — a 3am safety net so no uncommitted work in `~/Sites` is ever lost to a dead disk. Owned repos get an atomic commit + push on the current branch; every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote. Full write-up: [docs/sites-nightly-backup.md](docs/sites-nightly-backup.md).
-- `openvpn3-tun-dns` — attaches the DigitalTurbine CloudConnexa DNS resolver to the `tun0` link on every VPN connect (via `openvpn3-tun-dns@tun0.service`), because `openvpn3` doesn't apply the pushed DNS itself and internal hosts won't otherwise resolve. Full write-up: [docs/openvpn3-vpn-dns.md](docs/openvpn3-vpn-dns.md).
+- `cron-git-notes-auto-update.sh` / `cron-git-tasks-auto-update.sh`: keep the `notes` and `tasks` repos synced hourly.
+- `cron-sites-nightly-backup.sh`: a 3am safety net so no uncommitted work in `~/Sites` is ever lost to a dead disk. Owned repos get an atomic commit + push on the current branch; every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote. Full write-up: [docs/sites-nightly-backup.md](docs/sites-nightly-backup.md).
+- `openvpn3-tun-dns`: attaches the DigitalTurbine CloudConnexa DNS resolver to the `tun0` link on every VPN connect (via `openvpn3-tun-dns@tun0.service`), because `openvpn3` doesn't apply the pushed DNS itself and internal hosts won't otherwise resolve. Full write-up: [docs/openvpn3-vpn-dns.md](docs/openvpn3-vpn-dns.md).
+- `statusline-command.sh`: custom Claude Code statusline (see [docs/setting-up-archlinux.md](docs/setting-up-archlinux.md#claude-code-statusline)).
 
 > [!TIP]
-> Clicking on the icons below will lead directly to this repositories documentation on how to setup said operating system or tool.
+> Clicking on the Arch, NeoVim, Zsh and PragmataPro icons below leads to this repository's setup docs or config for that tool.
 
 ## My Everyday Stack
 
-[![arch linux badge](https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-archlinux.md#setting-up-archlinux) [![neovim badge](https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)](https://nvchad.com/) [![zsh badge](https://img.shields.io/badge/Zsh-F15A24?style=for-the-badge&logo=Zsh&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/basic-scripts.md#basic-scripts) [![pragmata pro badge](https://img.shields.io/badge/pragmata%20pro-1BB91F?style=for-the-badge&logo=educative&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/fonts.md)
+[![arch linux badge](https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white)](docs/setting-up-archlinux.md#setting-up-archlinux) [![neovim badge](https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white)](packages/nvim/.config/nvim/README.md) [![zsh badge](https://img.shields.io/badge/Zsh-F15A24?style=for-the-badge&logo=Zsh&logoColor=white)](packages/zsh/.zshrc) [![pragmata pro badge](https://img.shields.io/badge/pragmata%20pro-1BB91F?style=for-the-badge&logo=educative&logoColor=white)](docs/fonts.md)
 
 ## My Common Stacks
 
-[![cloudflare badge](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=Cloudflare&logoColor=white)](https://github.com/NathanielInman/dot-files/blob/master/docs/setting-up-digital-ocean.md#setting-up-digital-ocean) [![claude badge](https://img.shields.io/badge/Claude-D97757?style=for-the-badge&logo=claude&logoColor=white)](https://claude.ai/) [![gemini badge](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://gemini.google.com/) [![proton mail badge](https://img.shields.io/badge/proton%20mail-6D4AFF?style=for-the-badge&logo=protonmail&logoColor=white)](https://proton.me/) [![illustrator badge](https://img.shields.io/badge/Adobe%20Illustrator-FF9A00?style=for-the-badge&logo=adobe%20illustrator&logoColor=white)](https://www.adobe.com/products/illustrator.html) [![photoshop badge](https://img.shields.io/badge/Adobe%20Photoshop-31A8FF?style=for-the-badge&logo=Adobe%20Photoshop&logoColor=black)](https://www.adobe.com/products/photoshop.html) [![blender badge](https://img.shields.io/badge/blender-%23F5792A.svg?style=for-the-badge&logo=blender&logoColor=white)](https://www.blender.org/) [![bevy badge](https://img.shields.io/badge/Bevy-232326?style=for-the-badge&logo=bevy&logoColor=white)](https://bevyengine.org/) [![godot badge](https://img.shields.io/badge/Godot-478CBF?style=for-the-badge&logo=GodotEngine&logoColor=white)](https://godotengine.org/) [![steam badge](https://img.shields.io/badge/Steam-000000?style=for-the-badge&logo=steam&logoColor=white)](https://store.steampowered.com/) [![chrome badge](https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white)](https://www.google.com/chrome/)
+[![cloudflare badge](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=Cloudflare&logoColor=white)](https://www.cloudflare.com/) [![claude badge](https://img.shields.io/badge/Claude-D97757?style=for-the-badge&logo=claude&logoColor=white)](https://claude.ai/) [![gemini badge](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://gemini.google.com/) [![proton mail badge](https://img.shields.io/badge/proton%20mail-6D4AFF?style=for-the-badge&logo=protonmail&logoColor=white)](https://proton.me/) [![illustrator badge](https://img.shields.io/badge/Adobe%20Illustrator-FF9A00?style=for-the-badge&logo=adobe%20illustrator&logoColor=white)](https://www.adobe.com/products/illustrator.html) [![photoshop badge](https://img.shields.io/badge/Adobe%20Photoshop-31A8FF?style=for-the-badge&logo=Adobe%20Photoshop&logoColor=black)](https://www.adobe.com/products/photoshop.html) [![blender badge](https://img.shields.io/badge/blender-%23F5792A.svg?style=for-the-badge&logo=blender&logoColor=white)](https://www.blender.org/) [![bevy badge](https://img.shields.io/badge/Bevy-232326?style=for-the-badge&logo=bevy&logoColor=white)](https://bevyengine.org/) [![godot badge](https://img.shields.io/badge/Godot-478CBF?style=for-the-badge&logo=GodotEngine&logoColor=white)](https://godotengine.org/) [![steam badge](https://img.shields.io/badge/Steam-000000?style=for-the-badge&logo=steam&logoColor=white)](https://store.steampowered.com/) [![chrome badge](https://img.shields.io/badge/Google_chrome-4285F4?style=for-the-badge&logo=Google-chrome&logoColor=white)](https://www.google.com/chrome/)
 
 ## Who Am I
 
@@ -80,6 +92,6 @@ I'm a software engineer who makes Roguelikes for fun, enjoys WebGL, javascript, 
 | :-: |
 | [![basic summary](https://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=nathanielinman)](https://github.com/nathanielinman) |
 | [![Golang](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev/) [![javascript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://tc39.es/) [![nodejs](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/en/) [![typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![python](https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/) [![rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/) [![lua](https://img.shields.io/badge/Lua-2C2D72?style=for-the-badge&logo=lua&logoColor=white)](https://www.lua.org/) [![R lang](https://img.shields.io/badge/R-276DC3?style=for-the-badge&logo=r&logoColor=white)](https://www.r-project.org/) |
-| [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin/in/nathanielinman) [![goodreads](https://img.shields.io/badge/Goodreads-372213?style=for-the-badge&logo=goodreads&logoColor=white)](https://www.goodreads.com/user/show/95582054-nathaniel-inman) [![github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/nathanielinman) [![gitlab](https://img.shields.io/badge/GitLab-330F63?style=for-the-badge&logo=gitlab&logoColor=white)](https://gitlab.com/nathaniel.inman) [![codepen badge](https://img.shields.io/badge/Codepen-000000?style=for-the-badge&logo=codepen&logoColor=white)](https://codepen.io/NathanielInman) |
-| ![nathanielinman's top spotify](https://github.com/NathanielInman/dot-files/blob/master/Pictures/spotify_summary_nathanielinman2023.png) |
+| [![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/nathanielinman) [![goodreads](https://img.shields.io/badge/Goodreads-372213?style=for-the-badge&logo=goodreads&logoColor=white)](https://www.goodreads.com/user/show/95582054-nathaniel-inman) [![github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/nathanielinman) [![gitlab](https://img.shields.io/badge/GitLab-330F63?style=for-the-badge&logo=gitlab&logoColor=white)](https://gitlab.com/nathaniel.inman) [![codepen badge](https://img.shields.io/badge/Codepen-000000?style=for-the-badge&logo=codepen&logoColor=white)](https://codepen.io/NathanielInman) |
+| ![nathanielinman's top spotify](Pictures/spotify_summary_nathanielinman2023.png) |
 | [![nathanielinman's typing test profile](https://www.keyhero.com/static//badges/1603/typing-test-481109.png)](http://keyhero.com/profile/nathanielinman/?ba) |
