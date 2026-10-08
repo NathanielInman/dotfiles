@@ -2,30 +2,30 @@
 
 ## Install Method
 
-**FROSTYARCH was installed with [`archinstall`](https://wiki.archlinux.org/title/Archinstall).** It handles partitioning, filesystem, bootloader, swap, locale, networking, and user creation — so the old manual cfdisk/mdadm/LVM/grub flow is gone. Just pick the right options in the installer.
+**FROSTYARCH was installed with [`archinstall`](https://wiki.archlinux.org/title/Archinstall).** It handles partitioning, filesystem, bootloader, swap, locale, networking, and user creation - so the old manual cfdisk/mdadm/LVM/grub flow is gone. Just pick the right options in the installer.
 
 ### Selections to choose during archinstall
 
-- **Mirror region** — your country
-- **Locale** — language `en_US.UTF-8`, keymap `us`
-- **Timezone** — `America/Chicago` (US/Central)
-- **Disk configuration** — select **`nvme0n1` only**, best-effort default partitioning, filesystem **btrfs** (with subvolumes). Leave `nvme1n1` untouched — it becomes the separate `~/Sites` drive afterward.
-- **Disk encryption** — none (this machine is unencrypted by choice)
-- **Bootloader** — **Limine**
-- **Swap** — enable **zram**
-- **Hostname** — `FROSTYARCH`
-- **Root password** — set one (or leave unset; tty1 autologin + NOPASSWD sudo are configured in First Boot)
-- **User account** — create `nate` and mark it a **superuser** (adds it to `wheel`)
-- **Profile** — **Minimal** (no desktop environment; Hyprland is installed manually below)
-- **Audio** — **Pipewire**
-- **Kernels** — `linux`
-- **Network configuration** — **systemd-networkd** (i.e. *not* NetworkManager; the networkd default works on wired). Note: `network-manager-applet` in the Hyprland package list below is then an unused no-op — harmless, remove if you like.
-- **Additional packages** — optional (e.g. `git vim`); microcode (`amd-ucode`) is auto-detected
+- **Mirror region** - your country
+- **Locale** - language `en_US.UTF-8`, keymap `us`
+- **Timezone** - `America/Chicago` (US/Central)
+- **Disk configuration** - select **`nvme0n1` only**, best-effort default partitioning, filesystem **btrfs** (with subvolumes). Leave `nvme1n1` untouched - it becomes the separate `~/Sites` drive afterward.
+- **Disk encryption** - none (this machine is unencrypted by choice)
+- **Bootloader** - **Limine**
+- **Swap** - enable **zram**
+- **Hostname** - `FROSTYARCH`
+- **Root password** - set one (or leave unset; tty1 autologin + NOPASSWD sudo are configured in First Boot)
+- **User account** - create `nate` and mark it a **superuser** (adds it to `wheel`)
+- **Profile** - **Minimal** (no desktop environment; Hyprland is installed manually below)
+- **Audio** - **Pipewire**
+- **Kernels** - `linux`
+- **Network configuration** - **systemd-networkd** (i.e. *not* NetworkManager; the networkd default works on wired). DNS goes through `systemd-resolved`, which the VPN DNS hook relies on.
+- **Additional packages** - optional (e.g. `git vim`); microcode (`amd-ucode`) is auto-detected
 
-The resulting layout: single `nvme0n1`, **btrfs** on LVM (`ArchinstallVg-root`, subvol `@`), **zram** swap, **limine** bootloader, `amd-ucode`.
+The resulting layout: the OS NVMe (which may enumerate as `nvme0n1` or `nvme1n1` on later boots), **btrfs** on LVM (`ArchinstallVg-root`, subvol `@`), **zram** swap, **limine** bootloader, `amd-ucode`.
 
 > [!IMPORTANT]
-> Use UUIDs for **every** `/etc/fstab` entry, including `/boot` — NVMe enumeration order (`nvme0` vs `nvme1`) is not stable across reboots. Find them with `lsblk -f` or `blkid`.
+> Use UUIDs for **every** `/etc/fstab` entry, including `/boot` - NVMe enumeration order (`nvme0` vs `nvme1`) is not stable across reboots. Find them with `lsblk -f` or `blkid`.
 
 After `archinstall` finishes, continue at [First Boot](#first-boot).
 
@@ -43,6 +43,16 @@ Now lets update everything:
 ```
 pacman -Syyu
 ```
+
+Install the `paru` AUR helper now, since several steps below pull from the AUR. Build it as your user (`su - nate` if you're still root; `makepkg` refuses to run as root). The stowed `.zshrc` later aliases `yay` to `paru`, but until then call `paru` directly:
+
+```
+sudo pacman -S --needed base-devel git
+git clone https://aur.archlinux.org/paru.git /tmp/paru
+cd /tmp/paru && makepkg -si
+```
+
+> Building `paru` from source pulls in the `rust` package, which **conflicts with `rustup`** (installed later). Remove it (`sudo pacman -R rust`) before installing `rustup`, or install `paru-bin` instead to skip the Rust build entirely.
 
 Enable weekly automatic cleanup of the pacman package cache (keeps the last 3 versions of each package). This prevents `/` from filling up over time:
 
@@ -63,11 +73,11 @@ Sound and bluetooth. PipeWire replaces PulseAudio and is enabled **per-user** la
 - `bluez-utils` - provides bluetoothctl utility
 - `bluez-deprecated-tools` - `hcitool` (RSSI, link role/policy); needed by the `bt-force-central` fix below
 - `headsetcontrol` - reads the Arctis headset state from its USB base station over HID; used by `headset-autoswitch.service`
-- `blueberry` - bluetooth GUI applet (**AUR** — install with `yay`, not pacman)
+- `blueberry` - bluetooth GUI applet (**AUR**, install with `paru`, not pacman)
 
 ```
 pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils bluez-deprecated-tools headsetcontrol
-yay -S blueberry
+paru -S blueberry
 systemctl enable bluetooth.service --now
 ```
 
@@ -83,12 +93,11 @@ The Arctis Nova Pro Wireless is normally used through its 2.4 GHz base station, 
 Now for installing window manager stuff (Hyprland)
 
 - `hyprland` - tiling Wayland compositor with dynamic tiling, animations, and scripting
-- `waybar-git` (**AUR**) - highly customizable bar for Wayland compositors. Not the `extra/waybar` release: since the Hyprland config moved to the Lua root, `hyprctl dispatch workspace N` (the legacy keyword form) is rejected, and waybar 0.15.0's `hyprland/workspaces` still hardcodes it, so clicking a workspace icon does nothing. Upstream fixed it in April 2026 (`IPC::dispatch` detects the Lua protocol and emits `hl.dsp.*`) but no release has shipped it. Swap back to `pacman -S waybar` once a release newer than 0.15.0 lands. `paru --noconfirm` refuses the `waybar` -> `waybar-git` conflict and `yes |` loops on the provider prompt, so answer by hand or `printf '1\ny\ny\ny\n' | paru -S --skipreview aur/waybar-git` Until [Waybar PR #5287](https://github.com/Alexays/Waybar/pull/5287) is merged, the build also needs `docs/patches/waybar-pr5287-sni-combined-registration.diff` applied in `prepare()` (add it to `source=`, `git apply` it): Electron 44+ apps (Slack 4.52+, Signal) register their tray icon as a combined `bus_name/object_path` string, waybar's watcher rejects it as an invalid bus name, and the app then drops the icon entirely. Any waybar-git rebuild from a plain PKGBUILD loses the Slack tray icon again.
+- `waybar-git` (**AUR**) - highly customizable bar for Wayland compositors. Not the `extra/waybar` release: since the Hyprland config moved to the Lua root, `hyprctl dispatch workspace N` (the legacy keyword form) is rejected, and waybar 0.15.0's `hyprland/workspaces` still hardcodes it, so clicking a workspace icon does nothing. Upstream fixed it in April 2026 (`IPC::dispatch` detects the Lua protocol and emits `hl.dsp.*`) but no release has shipped it. Swap back to `pacman -S waybar` once a release newer than 0.15.0 lands. `paru --noconfirm` refuses the `waybar` -> `waybar-git` conflict and `yes |` loops on the provider prompt, so answer by hand or `printf '1\ny\ny\ny\n' | paru -S --skipreview aur/waybar-git`. Until [Waybar PR #5287](https://github.com/Alexays/Waybar/pull/5287) is merged, the build also needs `docs/patches/waybar-pr5287-sni-combined-registration.diff` applied in `prepare()` (add it to `source=`, `git apply` it): Electron 44+ apps (Slack 4.52+, Signal) register their tray icon as a combined `bus_name/object_path` string, waybar's watcher rejects it as an invalid bus name, and the app then drops the icon entirely. Any waybar-git rebuild from a plain PKGBUILD loses the Slack tray icon again.
 - `walker` - Wayland-native GTK4 application launcher (requires `elephant` provider daemon)
 - `elephant-all` - general-purpose data provider daemon for walker (includes all providers)
 - `swaync` - notification center with history panel for Wayland
 - `kitty` - GPU-accelerated terminal emulator with ligature support
-- `network-manager-applet` - gui layer for managing network apps & vpn
 - `noto-fonts` - emoji extras & base fonts
 - `adobe-source-code-pro-fonts` - additional fallback fonts
 - `otf-font-awesome` - additional fallback fonts
@@ -106,6 +115,7 @@ Now for installing window manager stuff (Hyprland)
 - `hyprlock` - screen locker for Hyprland
 - `hypridle` - idle management daemon for Hyprland
 - `pamixer` - pulseaudio/pipewire CLI mixer
+- `pavucontrol` - GUI volume mixer for per-app and per-device levels
 - `playerctl` - MPRIS media player controller
 - `brightnessctl` - brightness control utility
 - `xdg-desktop-portal-hyprland` - desktop portal backend for Hyprland
@@ -119,11 +129,11 @@ Now for installing window manager stuff (Hyprland)
 - `hyprpicker` - screen color picker bound to Super+I
 
 ```
-pacman -S hyprland swaync kitty network-manager-applet noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
-yay -S waybar-git walker elephant-all
+pacman -S hyprland swaync kitty noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+paru -S waybar-git walker elephant-all
 ```
 
-The Elgato Key Lights are driven over their built-in HTTP API with nothing but `curl` (already installed) - no extra packages or helper CLIs. The `lightson`/`lightsoff` shell aliases (in both `.zshrc` and the nushell config) and the waybar keylights widget (`custom/keylights`, with its status script `keylights.sh` and on-click `keylights-toggle.sh`) all hit the same endpoint: `PUT http://<addr>:9123/elgato/lights` with `{"numberOfLights":1,"lights":[{"on":0|1,"brightness":0-100,"temperature":143-344}]}` to set state, and `GET` of the same path to read it.
+The Elgato Key Lights are driven over their built-in HTTP API with nothing but `curl` (already installed) - no extra packages or helper CLIs. The `lightson`/`lightsoff` shell aliases (in `.zshrc`) and the waybar keylights widget (`custom/keylights`, with its status script `keylights.sh` and on-click `keylights-toggle.sh`) all hit the same endpoint: `PUT http://<addr>:9123/elgato/lights` with `{"numberOfLights":1,"lights":[{"on":0|1,"brightness":0-100,"temperature":143-344}]}` to set state, and `GET` of the same path to read it.
 
 > A common approach is the `keylightctl` CLI, but it rediscovers the lights over mDNS on every invocation and caches nothing, which is unreliable on a multi-homed host (this machine has two NICs on the same subnet, so its mDNS library frequently queries the wrong interface and finds no lights). It is deliberately not used here.
 
@@ -133,7 +143,7 @@ Instead the lights are addressed at their **IPv6 link-local address** (`fe80::�
 curl http://[fe80::3e6a:9dff:fe14:e88e%enp6s0]:9123/elgato/accessory-info
 ```
 
-If lights ever change, update the two `fe80::` addresses (and the `%enp6s0` interface) in `.zshrc`, the nushell config, and the two waybar `keylights*.sh` scripts.
+If lights ever change, update the two `fe80::` addresses (and the `%enp6s0` interface) in `.zshrc` and the two waybar `keylights*.sh` scripts.
 
 No display manager is needed. Hyprland auto-launches via `.zshrc` when logging in on tty1, and getty autologin handles the login (configured below).
 
@@ -145,7 +155,7 @@ lspci -v | grep -A1 -e VGA -e 3D
 
 Now acquire graphics packages (if issues see [here](https://github.com/JaKooLit/Arch-Hyprland/blob/main/install-scripts/nvidia.sh)):
 
-> The proprietary `nvidia` / `nvidia-dkms` packages no longer exist in current Arch — only the **open kernel modules** remain. Use `nvidia-open`, which is correct for Turing (GTX 1650) and newer.
+> The proprietary `nvidia` / `nvidia-dkms` packages no longer exist in current Arch - only the **open kernel modules** remain. Use `nvidia-open`, which is correct for Turing (GTX 1650) and newer.
 
 - `nvidia-open` - open NVIDIA kernel modules (replaces `nvidia`/`nvidia-dkms`)
 - `nvidia-settings` - configure nvidia options through cli or gui
@@ -161,7 +171,7 @@ pacman -S nvidia-open nvidia-utils nvidia-settings libva libva-nvidia-driver egl
 Configure the modules for Wayland/KMS so the framebuffer comes up early and survives suspend:
 
 ```
-# /etc/mkinitcpio.conf — load the modules early and DROP the kms hook (stops nouveau)
+# /etc/mkinitcpio.conf - load the modules early and DROP the kms hook (stops nouveau)
 MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)
 # HOOKS=(... remove 'kms' ...)
 
@@ -172,7 +182,7 @@ options nvidia NVreg_PreserveVideoMemoryAllocations=1
 # /etc/modprobe.d/nouveau-blacklist.conf
 blacklist nouveau
 
-# /boot/limine/limine.conf — append to the kernel cmdline
+# /boot/limine/limine.conf - append to the kernel cmdline
 nvidia_drm.modeset=1 nvidia_drm.fbdev=1
 ```
 
@@ -184,7 +194,7 @@ mkinitcpio -P
 
 The Wayland env vars (`LIBVA_DRIVER_NAME=nvidia`, `GBM_BACKEND=nvidia-drm`, etc.) are exported by the `hypr-launch` launcher (`scripts/hypr-launch`, install to `/usr/local/bin/hypr-launch`), which `.zshrc` runs on tty1 login. It sets the env and then `exec`s Hyprland's own watchdog launcher at `/usr/bin/start-hyprland` (shipped by the `hyprland` package).
 
-> **Do not name this script `start-hyprland`.** Hyprland 0.55+ ships its own launcher binary at `/usr/bin/start-hyprland` (a crash watchdog), and launching `Hyprland` directly bypasses it — Hyprland then warns `WARNING: Hyprland is being launched without start-hyprland. This is highly advised against.` A script named `start-hyprland` in `/usr/local/bin` shadows the real one on PATH, so we name ours `hypr-launch` and call the watchdog by absolute path.
+> **Do not name this script `start-hyprland`.** Hyprland 0.55+ ships its own launcher binary at `/usr/bin/start-hyprland` (a crash watchdog), and launching `Hyprland` directly bypasses it - Hyprland then warns `WARNING: Hyprland is being launched without start-hyprland. This is highly advised against.` A script named `start-hyprland` in `/usr/local/bin` shadows the real one on PATH, so we name ours `hypr-launch` and call the watchdog by absolute path.
 
 `install.sh`'s system-config step installs `hypr-launch` to `/usr/local/bin/` and removes any stale `/usr/local/bin/start-hyprland`.
 
@@ -222,14 +232,14 @@ helpful non-user-specific applications
 
 - `ntp` (network-time-protocol) helps ensure we're always time synchronized
 - `unzip` - obviously helps us w/ zip files
-- `gnome-keychain` - helps us maintain a keychain across different apps
-- `libsecret` - library necessary for gnome-keychain
+- `gnome-keyring` - helps us maintain a keychain across different apps
+- `libsecret` - library necessary for gnome-keyring
 - `seahorse` - GUI to manage the keyring; **required** to blank the login keyring password for autologin auto-unlock (see the autologin keyring step below)
 
 Note: `numlockx` is not needed - Hyprland handles numlock via `input = { numlock_by_default = true }` in `~/.config/hypr/options.lua`
 
 ```
-pacman -S unzip ntp gnome-keychain libsecret seahorse
+pacman -S unzip ntp gnome-keyring libsecret seahorse
 ```
 
 ensure time synchronization service is started and activated
@@ -304,13 +314,13 @@ session    optional     pam_gnome_keyring.so auto_start
 password   include      system-local-login
 ```
 
-**Autologin caveat — blank the login keyring password.** `pam_gnome_keyring` can only auto-unlock the keyring when it captures your login password at the `auth` step. With getty `--autologin` no password is ever entered, so the keyring stays locked and you get prompted to unlock it manually after boot. The fix is to give the login keyring an **empty** password so `gnome-keyring-daemon` unlocks it automatically:
+**Autologin caveat - blank the login keyring password.** `pam_gnome_keyring` can only auto-unlock the keyring when it captures your login password at the `auth` step. With getty `--autologin` no password is ever entered, so the keyring stays locked and you get prompted to unlock it manually after boot. The fix is to give the login keyring an **empty** password so `gnome-keyring-daemon` unlocks it automatically:
 
 1. Install and open **Seahorse** (`pacman -S seahorse`, the "Passwords and Keys" app).
-2. In the sidebar right-click the default keyring — labeled **Default Keyring** (stored as `~/.local/share/keyrings/Default_Keyring.keyring`; older setups may call it "Login") → **Change Password**.
+2. In the sidebar right-click the default keyring - labeled **Default Keyring** (stored as `~/.local/share/keyrings/Default_Keyring.keyring`; older setups may call it "Login") → **Change Password**.
 3. Enter the current passphrase, leave the new password **blank**, confirm, and accept the "store unencrypted" warning.
 
-The keyring now auto-unlocks on every autologin with no prompt. (Secrets are stored unencrypted on disk — acceptable here because the disk is the trust boundary on a single-user autologin workstation.) If the keyring holds nothing you care about, you can instead delete `~/.local/share/keyrings/*` and a fresh blank keyring is created on next login.
+The keyring now auto-unlocks on every autologin with no prompt. (Secrets are stored unencrypted on disk - acceptable here because the disk is the trust boundary on a single-user autologin workstation.) If the keyring holds nothing you care about, you can instead delete `~/.local/share/keyrings/*` and a fresh blank keyring is created on next login.
 
 No `~/.xinitrc` is needed for Wayland.
 
@@ -331,15 +341,20 @@ mkdir ~/Pictures #will hold backgrounds etc
 Now grab all of the dot files
 
 ```
-cd ~/Sites && git clone https://github.com/nathanielinman/dot-files.git
+cd ~/Sites && git clone https://github.com/NathanielInman/dotfiles.git dot-files
 cd dot-files
 ```
 
-Install stow packages for the Wayland setup:
+Install the stow packages for the Wayland setup (the full list is in the [README](../README.md#available-packages); `./install.sh -a` installs all of them):
 
 ```
-cd packages
-stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade task
+./install.sh hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade task chrome
+```
+
+Then install the system-level files (Hyprland launcher, NVIDIA profile, Bluetooth fixes, Rime shutdown fix, VPN DNS hook). Each one prompts, and the ones for tools that aren't installed yet are skipped, so rerun it after the later sections:
+
+```
+./install.sh -s
 ```
 
 Enable waybar's user service so systemd revives it if it ever segfaults
@@ -358,27 +373,19 @@ the top). Enable it on machines that have the base station plugged in:
 systemctl --user enable --now headset-autoswitch
 ```
 
-if at any point you want to remove the symlinks `stow -D <package>` from within the packages folder
-Feel free to manually copy any ./Sites/dot-files/usr/share/applications files
-in order to setup launching using walker or hiding unused/unwanted apps.
-Now grab paru for AUR, used to use yay but Rust ftw :)
-
-```
-cd ~/Sites
-git clone https://aur.archlinux.org/paru.git
-cd paru
-makepkg -si
-```
+To remove a package's symlinks later, run `./install.sh -u <package>`.
+Copy any `usr/share/applications/` files to `/usr/share/applications/` by hand to
+hide unused/unwanted apps from walker.
 
 Now install web browser
 
 ```
-yay -S google-chrome
+paru -S google-chrome
 ```
 
 ## CLI Configuration
 
-We start by using our package manager `pacman` to get all necessary binaries. We'll omit `node` as it will be managed by it's own version manager `pnpm`.
+We start by using our package manager `pacman` to get all necessary binaries. The system `nodejs` gets pulled in as a dependency (e.g. by `vscode-langservers-extracted`); `pnpm` installs and pins any other Node versions a project needs.
 
 - `curl` helps make web requests from the command line
 - `wget` command helps acquire data from the web via the command line
@@ -404,20 +411,20 @@ We start by using our package manager `pacman` to get all necessary binaries. We
 - `neovim` is the primary editor; its config is the stowed `nvim` package
 - `tree-sitter-cli` is required by nvim-treesitter's `main` branch to generate and compile parsers (it uses the already-installed `nodejs` for the `generate` step). Without it, treesitter cannot build parsers and opening files fails with parser/query mismatch errors such as `Query error: Invalid field name "operator"`. After install, parsers are built with `:TSUpdate` (or automatically via `require('nvim-treesitter').install(...)` in the nvim config)
 - `google-cloud-cli` provides the `gcloud` command for managing Google Cloud from the terminal (the `gsutil` and `bq` tools are split into the optional `google-cloud-cli-gsutil` and `google-cloud-cli-bq` packages)
-- `aws-cli-v2` provides the `aws` command for managing Amazon Web Services from the terminal (reads credentials from the stowed `~/.aws/config` and `~/.aws/credentials`)
+- `aws-cli-v2` provides the `aws` command for managing Amazon Web Services from the terminal (`~/.aws/` is not stowed; it holds the SSO profiles and is set up locally)
 - `kubectl` is the Kubernetes CLI for talking to clusters (the DT GKE clusters behind `app-agent-events.<ns>.gcp-*.digitalturbine.io`, etc.); it is in the official `extra` repo. Our clusters are GKE, so authenticating also needs the `gke-gcloud-auth-plugin` (AUR `google-cloud-cli-component-gke-gcloud-auth-plugin`, installed on the `paru` line below); without it `kubectl` errors with `gke-gcloud-auth-plugin ... not found`
 - `jira-cli` is the AUR package providing the `jira` command for Atlassian Jira from the terminal (issues, sprints, boards); authenticate with `jira init`
 - `maven` provides the `mvn` command for building and testing the Java/Maven microservices (e.g. `apk-fetch-service`); it depends on a JDK and will pull one in if none is present, though `jdk-openjdk` (see the Neovim language toolchains section below) already satisfies that
 - `scrcpy` mirrors and controls an Android device from the desktop over ADB (USB or wireless), with no root and nothing to install on the phone: it pushes a short-lived server, runs it with the shell UID via `app_process`, and streams a hardware-encoded H.264 feed back over the ADB socket while injecting mouse/keyboard events as real touches. It pulls in `android-tools` (which provides `adb`/`fastboot`) as a dependency. Enable USB debugging on the device, accept the RSA prompt, then just run `scrcpy`; `paru -S android-udev` adds the vendor udev rules if a device shows as `unauthorized`/`no permissions` in `adb devices`
-- `trcli` is the TestRail CLI for reporting automated test results to TestRail — it is a Python package (not in the Arch repos), so it is installed with `pipx` rather than on the `yay` line below (see the next step)
+- `trcli` is the TestRail CLI for reporting automated test results to TestRail - it is a Python package (not in the Arch repos), so it is installed with `pipx` rather than on the `paru` line below (see the next step)
 
 ```
-yay -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab git-delta zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 kubectl jira-cli maven scrcpy
+paru -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab git-delta zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 kubectl jira-cli maven scrcpy
 ```
 
-After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). The AWS CLI reads the credentials stowed under `~/.aws/`; run `aws sts get-caller-identity` to confirm it can authenticate (or `aws configure` to set keys up fresh). Sign in to the git forges with `gh auth login` and `glab auth login`.
+After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). AWS uses IAM Identity Center (SSO): create the `sso-session` and profile with `aws configure sso`, then `aws sso login` when the session expires and `aws sts get-caller-identity` to confirm it can authenticate. Sign in to the git forges with `gh auth login` and `glab auth login`.
 
-`kubectl` ships no config of its own; it reads `~/.kube/config`, which `gcloud` writes per cluster. Because the DT clusters are GKE, first install the auth plugin (AUR, kept off the official `yay` line above since it's a gcloud component):
+`kubectl` ships no config of its own; it reads `~/.kube/config`, which `gcloud` writes per cluster. Because the DT clusters are GKE, first install the auth plugin (AUR, kept off the `paru` line above since it's a gcloud component):
 
 ```
 paru -S google-cloud-cli-component-gke-gcloud-auth-plugin
@@ -438,7 +445,7 @@ sudo pacman -S --needed python-pipx
 pipx install trcli
 ```
 
-This drops the `trcli` binary in `~/.local/bin` (already on `PATH` via `.zshrc`); verify with `trcli --help` (`TestRail CLI v1.15.0`).
+This drops the `trcli` binary in `~/.local/bin` (already on `PATH` via `.zshrc`); verify with `trcli --help`.
 
 ### Neovim language toolchains
 
@@ -446,9 +453,9 @@ The Neovim config installs language servers, formatters and linters automaticall
 via `mason` on first launch. A few of those are thin clients that need a language
 runtime present on the system (mason installs the server, not the runtime):
 
-- `jdk-openjdk` — required by the Java language server (`jdtls`)
-- `dotnet-sdk` — required by the C# server (`roslyn`) and formatter (`csharpier`)
-- `elixir` — required by the Elixir server (`lexical`) and `mix format` (pulls Erlang/OTP)
+- `jdk-openjdk` - required by the Java language server (`jdtls`)
+- `dotnet-sdk` - required by the C# server (`roslyn`) and formatter (`csharpier`)
+- `elixir` - required by the Elixir server (`lexical`) and `mix format` (pulls Erlang/OTP)
 
 ```
 pacman -S jdk-openjdk dotnet-sdk elixir
@@ -470,13 +477,13 @@ later in this guide. Everything else (`gopls`, `lua-language-server`, `biome`,
 ### Game development (Godot / C#)
 
 The DET-33 game port (`~/Rime/det33-godot`) is a Godot 4 / C# project, so it needs
-the **Mono/.NET build** of Godot — the plain `godot` package can't build or run C#
+the **Mono/.NET build** of Godot - the plain `godot` package can't build or run C#
 scripts. The `godot-mono` package ships the editor binary at `/usr/bin/godot-mono`,
 which is the binary the `det33`/`gym`/`compass` aliases in `.zshrc` and the project's
 build commands call (note: **not** `godot`). The `dotnet-sdk` it needs to compile the
 C# is already installed in the step above.
 
-- `godot-mono` — Godot 4 engine with C#/.NET support (binary: `godot-mono`)
+- `godot-mono` - Godot 4 engine with C#/.NET support (binary: `godot-mono`)
 
 ```
 pacman -S godot-mono
@@ -489,7 +496,7 @@ matching export templates, which are AUR-only:
 paru -S godot-mono-export-templates-linux
 ```
 
-The project lives on the `~/Rime` SMB share (see [Network storage](#network-storage--rime-truenas-smb-share) below), so the NAS must be mounted/reachable before the aliases will `cd` into it.
+The project lives on the `~/Rime` SMB share (see [Network storage](#network-storage-rime-truenas-smb-share) below), so the NAS must be mounted/reachable before the aliases will `cd` into it.
 
 For 3D asset work, Blender is in the official repos:
 
@@ -534,19 +541,19 @@ The DT `Launchpad` app (`~/Sites/LaunchPad`) is a Kotlin + Jetpack Compose Andro
 project built with Gradle. Most of what it needs is already installed elsewhere in
 this guide, so the only genuinely Android-specific addition is the SDK manager:
 
-- **JDK 17+** — already satisfied by `jdk21-openjdk` from the Neovim language toolchains
+- **JDK 17+** - already satisfied by `jdk21-openjdk` from the Neovim language toolchains
   section (the build's `sourceCompatibility`/`jvmTarget` is 17, and AGP runs fine on 21)
-- **`adb`/`fastboot`** — already present via `android-tools`, which `scrcpy` pulls in
-- **No system `gradle` or `kotlin` needed** — the repo ships a `./gradlew` wrapper pinned
+- **`adb`/`fastboot`** - already present via `android-tools`, which `scrcpy` pulls in
+- **No system `gradle` or `kotlin` needed** - the repo ships a `./gradlew` wrapper pinned
   to its own Gradle version, which in turn drives the Kotlin compiler; never install a
   standalone one
-- `android-sdk-cmdline-tools-latest` — the AUR package that provides `sdkmanager` and
+- `android-sdk-cmdline-tools-latest` - the AUR package that provides `sdkmanager` and
   `avdmanager` (the runners that download the rest of the SDK). As of `22.0` it installs
   them read-only under `/opt/android-sdk` (root-owned, no writable `android-sdk` group),
   and `sdkmanager` warns that it's deprecated in favour of `android sdk` but still works
 
 ```
-yay -S android-sdk-cmdline-tools-latest
+paru -S android-sdk-cmdline-tools-latest
 ```
 
 Because `/opt/android-sdk` is root-owned, keep the actual SDK components in a
@@ -582,7 +589,7 @@ Build and test from the repo root with the wrapper (never a system `gradle`):
 ./gradlew test                 # run unit tests
 ```
 
-To run it, deploy to a physical device over USB with debugging enabled — `adb install`
+To run it, deploy to a physical device over USB with debugging enabled - `adb install`
 the APK, then mirror/control it with `scrcpy` (already installed). If you'd rather use an
 emulator instead of hardware, install `android-emulator` plus a system image
 (`sdkmanager --sdk_root="$ANDROID_HOME" "system-images;android-36;google_apis;x86_64"`)
@@ -590,9 +597,9 @@ and create an AVD with `avdmanager`.
 
 ### First-run authentication for the service CLIs
 
-The pattern for both `jira` and `trcli` is the same: **secrets (API tokens, passwords) are exported from `~/.zshenv`**, while non-secret config (servers, default projects) lives in each tool's own config directory. `~/.zshenv` is deliberately **not** stowed and never committed, so no credentials land in this repo — only the method below is documented here. Placeholders like `<token>` are stand-ins; substitute real values locally.
+The pattern for both `jira` and `trcli` is the same: **secrets (API tokens, passwords) are exported from `~/.zshenv`**, while non-secret config (servers, default projects) lives in each tool's own config directory. `~/.zshenv` is deliberately **not** stowed and never committed, so no credentials land in this repo - only the method below is documented here. Placeholders like `<token>` are stand-ins; substitute real values locally.
 
-**TestRail (`trcli`)** has no login step — it reads everything from `TR_CLI_`-prefixed environment variables (its `auto_envvar_prefix`). Add these to `~/.zshenv`:
+**TestRail (`trcli`)** has no login step - it reads everything from `TR_CLI_`-prefixed environment variables (its `auto_envvar_prefix`). Add these to `~/.zshenv`:
 
 ```
 export TR_CLI_HOST=https://YOURCO.testrail.io
@@ -607,16 +614,16 @@ curl -s -o /dev/null -w "%{http_code}\n" -u "$TR_CLI_USERNAME:$TR_CLI_PASSWORD" 
   "$TR_CLI_HOST/index.php?/api/v2/get_projects"
 ```
 
-**Jira (`jira-cli`)** splits auth in two. The API token comes from the `JIRA_API_TOKEN` environment variable — the *only* secret it reads, and note there is **no** env var for the server URL — while server, login, default project and board are written to `~/.config/.jira/.config.yml` by the `jira init` wizard.
+**Jira (`jira-cli`)** splits auth in two. The API token comes from the `JIRA_API_TOKEN` environment variable - the *only* secret it reads, and note there is **no** env var for the server URL - while server, login, default project and board are written to `~/.config/.jira/.config.yml` by the `jira init` wizard.
 
-1. Generate a token. Jira Cloud: <https://id.atlassian.com/manage-profile/security/api-tokens>. Self-hosted Server/DC: a Personal Access Token from your Jira profile (basic auth there also still accepts your account password — Cloud does not, it requires a token).
+1. Generate a token. Jira Cloud: <https://id.atlassian.com/manage-profile/security/api-tokens>. Self-hosted Server/DC: a Personal Access Token from your Jira profile (basic auth there also still accepts your account password - Cloud does not, it requires a token).
 2. Export it in `~/.zshenv`:
 
    ```
    export JIRA_API_TOKEN=<token>
    ```
 
-3. With that token present in the shell (`source ~/.zshenv` or open a fresh terminal first — `init` needs it set), run `jira init`: choose `cloud` or `local`, enter the server URL, login email, auth type (`basic` for Cloud, `bearer` for a Server/DC PAT), and a default project/board.
+3. With that token present in the shell (`source ~/.zshenv` or open a fresh terminal first - `init` needs it set), run `jira init`: choose `cloud` or `local`, enter the server URL, login email, auth type (`basic` for Cloud, `bearer` for a Server/DC PAT), and a default project/board.
 4. Verify with `jira me` or `jira issue list`.
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
@@ -648,10 +655,10 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 ```
 
-Install node js package manager pnpm, this also manages our node versions now instead of `nvm` or `n`. After installing leverage it to install the latest or whatever versions required.
+Install the node package manager pnpm. It also manages extra node versions instead of `nvm` or `n`; the system `nodejs` stays the default `node` on `PATH`.
 
 ```
-yay -S pnpm
+paru -S pnpm
 pnpm env use --global lts
 pnpm env ls
 ```
@@ -663,7 +670,7 @@ pacman -S rustup
 rustup default stable
 ```
 
-> If you built `paru` from source earlier, it may have pulled the `rust` package, which **conflicts with `rustup`**. Remove it first (`pacman -R rust`) before installing `rustup`.
+> If `paru` was built from source earlier, remove the `rust` package it pulled in first (`sudo pacman -R rust`); it **conflicts with `rustup`**.
 
 Now some rust utils:
 
@@ -681,7 +688,7 @@ cargo install rusti-cal melt tidy-viewer pueue cargo-update cargo-cache
 ### topgrade (upgrade everything)
 
 `topgrade` is a single command that walks every package manager and tool on this
-machine and updates each one — `pacman`/AUR (via `paru`), `rustup` + `cargo`
+machine and updates each one - `pacman`/AUR (via `paru`), `rustup` + `cargo`
 binaries, `pnpm`, oh-my-zsh and its plugins, `vim`/`nvim` plugins, and more. It
 replaces having to remember the individual `pacman -Syyu`, `cargo install-update`,
 `pnpm update`, etc. invocations. It's an AUR package (not in the official repos):
@@ -690,11 +697,12 @@ replaces having to remember the individual `pacman -Syyu`, `cargo install-update
 paru -S topgrade
 ```
 
-Its config is the stowed `topgrade` package — a deliberately minimal
-`~/.config/topgrade.toml` that just pins the choices made elsewhere in this guide
-(use `paru` as the AUR helper, run cache cleanup after upgrades). topgrade
-auto-detects everything else, so there's nothing more to configure. Run it any
-time with:
+Its config is the stowed `topgrade` package, a small `~/.config/topgrade.toml`
+that pins the choices made elsewhere in this guide: `paru` as the AUR helper,
+cache cleanup after upgrades, skipping `gcloud` (pacman owns it), ignoring
+container images that can't be pulled, rebuilding the Blender MCP venv, and
+restarting waybar afterwards so it doesn't keep stale libraries mapped. topgrade
+auto-detects everything else. Run it any time with:
 
 ```
 topgrade
@@ -706,7 +714,7 @@ topgrade
 - `wtype` - keyboard simulation for Wayland (recommended by voxtype)
 
 ```
-yay -S voxtype-bin wtype
+paru -S voxtype-bin wtype
 ```
 
 Run the initial setup to download the Whisper model and configure GPU acceleration:
@@ -766,10 +774,16 @@ Now for any other essentials for arch
 - `fselect` is a SQL-like querying tool for the filesystem
 
 ```
-yay -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv xsv obsidian cronie dog bind sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator nordic-theme gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
+paru -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv xsv obsidian cronie dog bind sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator nordic-theme gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
-Now open up `nwg-look` and set the theme to `Nordic` with `PragmataPro 11` font and `Adwaita` for icons.
+Now set the GTK theme to `Nordic` with the `PragmataPro 11` font and `Adwaita` icons (or use the `nwg-look` GUI from the AUR):
+
+```
+gsettings set org.gnome.desktop.interface gtk-theme 'Nordic'
+gsettings set org.gnome.desktop.interface font-name 'PragmataPro 11'
+gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'
+```
 
 Now grab the dictionary file for sdcv:
 
@@ -823,7 +837,7 @@ sudo systemctl enable cronie.service --now
 cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit crontab with `crontab -e`. Go ahead and add those cron actions now to keep things synced:
 
 ```
-# `cron tab -e` then add the following lines to update both automatically hourly
+# `crontab -e` then add the following lines to update both automatically hourly
 @hourly /home/nate/Sites/dot-files/scripts/cron-git-notes-auto-update.sh
 @hourly /home/nate/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh
 # nightly safety net so no uncommitted ~/Sites work is ever lost to a dead disk
@@ -832,7 +846,7 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 
 The nightly backup is documented in full in [`docs/sites-nightly-backup.md`](./sites-nightly-backup.md): owned repos get an atomic conventional commit + push on the current branch, every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote.
 
-### Network storage — Rime (TrueNAS SMB share)
+### Network storage: Rime (TrueNAS SMB share)
 
 The TrueNAS box at `192.168.1.51` exposes a `private` SMB share, mounted at `~/Rime` via a systemd **automount** (mounts on first access, not at boot, so a powered-off NAS never blocks boot). Credentials live in a root-only file. In `/etc/fstab`:
 
@@ -846,7 +860,7 @@ username=ninman
 password=<smb-password>
 ```
 
-**Shutdown hang fix.** CIFS mounts hang shutdown: systemd tears the network down before unmounting the share, so the kernel blocks ~180s waiting on the now-unreachable server (`CIFS: VFS: \\192.168.1.51 has not responded in 180 seconds`) before force-killing every other mount — a multi-minute freeze. The fix is a oneshot service that force-lazy-unmounts the share early in shutdown, while the network is still up. It's tracked at [`etc/systemd/system/rime-umount.service`](../etc/systemd/system/rime-umount.service) and installed + enabled by `install.sh`'s system-config step:
+**Shutdown hang fix.** CIFS mounts hang shutdown: systemd tears the network down before unmounting the share, so the kernel blocks ~180s waiting on the now-unreachable server (`CIFS: VFS: \\192.168.1.51 has not responded in 180 seconds`) before force-killing every other mount - a multi-minute freeze. The fix is a oneshot service that force-lazy-unmounts the share early in shutdown, while the network is still up. It's tracked at [`etc/systemd/system/rime-umount.service`](../etc/systemd/system/rime-umount.service) and installed + enabled by `install.sh`'s system-config step:
 
 ```
 sudo install -Dm644 etc/systemd/system/rime-umount.service /etc/systemd/system/rime-umount.service
@@ -870,9 +884,9 @@ Then we can add urls we want to block within it (for me, yandex - which i usuall
 
 ## Claude Code statusline
 
-The repo ships `scripts/statusline-command.sh` — a custom Claude Code statusline (dir · git branch · model · context % · usage window · cost · session duration). It uses only `jq` plus a cached, bounded call to Anthropic's usage API with your own OAuth token, and honors `CLAUDE_CONFIG_DIR` so the personal and work profiles each read their own credentials/cache.
+The repo ships `scripts/statusline-command.sh` - a custom Claude Code statusline (dir · git branch · model · context % · usage window · cost · session duration). It uses only `jq` plus a cached, bounded call to Anthropic's usage API with your own OAuth token, and honors `CLAUDE_CONFIG_DIR` so the personal and work profiles each read their own credentials/cache.
 
-Wire it into each Claude config dir's `settings.json`. A running session won't pick up a newly-added `statusLine` — start a fresh `claude` to see it.
+Wire it into each Claude config dir's `settings.json`. A running session won't pick up a newly-added `statusLine` - start a fresh `claude` to see it.
 
 ```bash
 for dir in ~/.claude ~/.claude-work; do
@@ -882,7 +896,7 @@ for dir in ~/.claude ~/.claude-work; do
 done
 ```
 
-The `claude` shell function (`.zshrc`) routes work repos (gitlab.com/digitalturbine) to the `~/.claude-work` profile and everything else to personal, each with its own subscription login — see the function for details.
+The `claude` shell function (`.zshrc`) routes work repos (gitlab.com/digitalturbine) to the `~/.claude-work` profile and everything else to personal, each with its own subscription login - see the function for details.
 
 ## T3 Code (agent session GUI)
 
@@ -909,26 +923,8 @@ after Hyprland upgrades; lua configs load plugins via `hl.plugin`.
 
 ## Stow Packages
 
-The following stow packages should be installed for the Wayland setup:
-
-```
-cd ~/Sites/dot-files/packages
-stow -t ~ hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade
-```
-
-| Package | Description |
-|---------|-------------|
-| `hyprland` | Hyprland compositor config (modular lua) with the scrolling layout, hyprlock, and hypridle |
-| `waybar` | Bottom bar with system info, scripts, and workspaces |
-| `swaync` | Notification center with history |
-| `walker` | Application launcher with file browser, symbols, and window switcher |
-| `kitty` | Terminal emulator |
-| `zsh` | Shell configuration with aliases and plugins |
-| `git` | Git configuration with delta pager |
-| `nvim` | Neovim configuration |
-| `starship` | Cross-shell prompt |
-| `topgrade` | Minimal `topgrade.toml` (pins paru as the AUR helper, enables cleanup) |
-| `vim` | Vim configuration |
+The package list and descriptions live in the [README](../README.md#available-packages).
+`./install.sh -l` shows which ones are currently stowed.
 
 ## Default Applications
 
@@ -979,46 +975,26 @@ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="18d1|096e", ATTRS{idPr
 
 then `:wq` and `sudo udevadm control --reload-rules`.
 
-## autostart apps using systemd
+## OpenVPN (DigitalTurbine CloudConnexa)
 
-https://github.com/jceb/dex
+The work VPN is OpenVPN CloudConnexa, which needs the browser-based SSO login only `openvpn3` supports. NetworkManager isn't installed (networking is `systemd-networkd`), so `nmcli` isn't an option here.
 
-
-## Openvpn
-
-Instead of going down the route of openvpn3 which is super buggy, it's best to just use the built-in `nmcli` client similar to `docker`:
+> **Build note:** openvpn3's test suite fails inside makepkg's sandbox: the dbus `request-queue-test` aborts (SIGABRT) because there's no session bus. The build itself is fine, so skip the checks with `--nocheck`. The web/SSO auth step then opens the login in your existing browser session (where you're already signed into your IdP), so it completes automatically.
 
 ```bash
-# add ability to add openvpn files to network manager
-yay -S extra/networkmanager-openvpn libnma
-
-# list connections
-nmcli connection
-
-# add a new openvpn connection
-nmcli connection import type openvpn file example.ovpn
-
-# activate the new connection (--ask is only helpful if there's a private key password)
-nmcli connection up connection_name --ask
-
-# deactivate the connection
-nmcli connection down connection_name
-```
-
-If you have issues such as needing to auth over browser, here's how to do openvpn3:
-
-> **Build note:** openvpn3's test suite fails inside makepkg's sandbox — the dbus `request-queue-test` aborts (SIGABRT) because there's no session bus. The build itself is fine, so skip the checks with `--nocheck`. The web/SSO auth step then opens the login in your existing browser session (where you're already signed into your IdP), so it completes automatically.
-
-```bash
-# install openvpn (skip the dbus test that fails in the build sandbox)
+# install openvpn3 (skip the dbus test that fails in the build sandbox)
 paru -S openvpn3 --nocheck
 
 # show sessions
 openvpn3 sessions-list
 
 # make connection
-openvpn3 session-start --config ~/example.ovpn
+openvpn3 session-start --config ~/dt.ovpn
 
 # disconnect from session
-openvpn3 session-manage --disconnect --path /net/openvpn/v3/sessions/___example__uid__real__one__in__sessions-list
+openvpn3 session-manage --disconnect --config ~/dt.ovpn
 ```
+
+`openvpn3` doesn't apply the VPN-pushed DNS to `tun0`, so internal hosts won't resolve without the `openvpn3-tun-dns` hook that `./install.sh -s` installs. Full write-up: [openvpn3-vpn-dns.md](./openvpn3-vpn-dns.md).
+
+If the VPN stops connecting after a `pacman -Syu` ("New tunnel did not respond"), a `protobuf` soname bump has orphaned the AUR build. Rebuild it with `paru -S --rebuild openvpn3 --nocheck`.
