@@ -4,6 +4,7 @@
 packages/zsh/.local/share/
 packages/zsh/.local/state/
 packages/zsh/.local/lib/
+packages/zsh/.local/opt/
 packages/zsh/.local/bin/claude
 packages/zsh/.local/bin/trcli
 packages/zsh/.local/bin/fonttools
