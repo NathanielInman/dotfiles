@@ -19,7 +19,7 @@ skipped. For a dirty repo, behavior depends on who owns the remote:
 | Repo owner | Action | Result in the morning |
 | --- | --- | --- |
 | `nathanielinman`, `theoestudio`, `ion-cloud`, `twinspear-games` | Atomic conventional commit on the branch you're on, then `git push` | Your changes are a real commit on your branch, on the remote |
-| Anything else (e.g. work repos) | **Non-destructive snapshot** pushed to `backup/auto/<host>/<branch>` | Working tree untouched — you wake up exactly as you left it, but a copy is on the remote |
+| Anything else (e.g. work repos) | **Non-destructive snapshot** pushed to `backup/auto/<host>/<branch>` | Working tree untouched - you wake up exactly as you left it, but a copy is on the remote |
 
 Owner is matched case-insensitively against the first path segment of the `origin`
 URL (the GitHub org or top-level GitLab group), so `https://gitlab.com/digitalturbine/...`
@@ -29,7 +29,7 @@ URL (the GitHub org or top-level GitLab group), so `https://gitlab.com/digitaltu
 > [!TIP]
 > The asymmetry is intentional. Auto-committing onto a shared work branch would
 > pollute it and disrupt teammates/CI, so work repos get an isolated backup branch
-> instead — and they get it *without* moving your checkout, so your active branch and
+> instead - and they get it *without* moving your checkout, so your active branch and
 > dirty files are exactly where you left them.
 
 ### The non-destructive snapshot
@@ -48,14 +48,14 @@ git push --force origin "$commit:refs/heads/backup/auto/<host>/<branch>"
 ```
 
 Your real index, `HEAD`, current branch, and working files are never touched. The
-backup branch is a single rolling snapshot per source branch (force-updated nightly) —
+backup branch is a single rolling snapshot per source branch (force-updated nightly) -
 because uncommitted work is cumulative, last night's snapshot already contains
 everything you haven't self-committed, so no branch sprawl or history pruning is needed.
 
 ### No LLM by design
 
 Commit messages are deterministic (`chore: nightly backup <ts>` /
-`chore(backup): nightly snapshot <ts>`) — Claude is intentionally **not** invoked. The
+`chore(backup): nightly snapshot <ts>`) - Claude is intentionally **not** invoked. The
 backup has to succeed unattended at 3am even when rate-limited or offline, so it must
 never depend on a network LLM or an OAuth token refresh.
 
@@ -78,7 +78,7 @@ so it's recoverable the same way.
 ## Safeguards
 
 - **In-progress operations** (merge/rebase/cherry-pick/revert) and repos with no
-  commits yet are skipped — committing into them would corrupt state.
+  commits yet are skipped - committing into them would corrupt state.
 - **Secret/credential guard**: untracked files matching `.env`, `*.pem`, `*.key`,
   `id_rsa*`, `*credentials*`, etc. are logged as warnings before they'd reach a remote.
   The right fix is to add them to `.gitignore`; run with `EXCLUDE_RISKY=1` to actively
@@ -88,7 +88,7 @@ so it's recoverable the same way.
 
 ## Install
 
-The cron isn't managed by stow — add it to your crontab once:
+The cron isn't managed by stow - add it to your crontab once:
 
 ```bash
 # Make sure cronie is running (see setting-up-archlinux.md)
@@ -103,7 +103,7 @@ sudo systemctl enable cronie.service --now
 > `github.com` and `gitlab.com` (the `store` credential helper), so auth doesn't depend
 > on a graphical keyring/DBus session that won't exist at 3am. If you ever rotate to a
 > keyring-only setup, re-add the tokens to `~/.git-credentials` or the cron pushes will
-> silently fail — check the logfile.
+> silently fail - check the logfile.
 
 ## Dry run / testing
 
