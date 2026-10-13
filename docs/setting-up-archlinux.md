@@ -512,6 +512,12 @@ pacman -S blender
 pacman -S oxipng
 ```
 
+- `potrace`, `librsvg`, `imagemagick`, `python-numpy` - the DET-33 icon vectorizer (`tools/vectorize-icon.py` in the game repo) that replaced the Illustrator image-trace step: numpy snaps a raw generated icon to two inks, `potrace` traces each ink to SVG paths, `rsvg-convert` (from `librsvg`) renders the SVG master to the 1024px PNG, and `magick` decodes the source and builds the 4-up pick sheet
+
+```
+pacman -S potrace librsvg imagemagick python-numpy
+```
+
 For capturing marketing assets of the game (Steam screenshots, trailer footage):
 
 - `gpu-screen-recorder` (**AUR**) - low-overhead screen recorder that feeds NVENC directly, so recording gameplay costs almost nothing; its replay-buffer mode keeps a rolling last-N-seconds in memory and a hotkey flushes it to disk (shadowplay-style), so a good moment is never missed. `wf-recorder` (installed with the Hyprland line above) is screencopy-based and drops frames under game load, so prefer this for gameplay capture
