@@ -868,6 +868,16 @@ username=ninman
 password=<smb-password>
 ```
 
+The password is the shared ops password exported as `CLAUDE_OPS_PWD` in `~/.zshenv` (not tracked here). Write the file without the secret ever hitting a command line, then verify the login before relying on the automount:
+
+```
+zsh -c 'source ~/.zshenv; printf "username=ninman\npassword=%s\n" "$CLAUDE_OPS_PWD"' | sudo tee /etc/cifs-credentials/rime >/dev/null
+sudo chmod 600 /etc/cifs-credentials/rime
+sudo smbclient //192.168.1.51/private -A /etc/cifs-credentials/rime -c ls
+```
+
+A rejected password shows as `mount error(13): Permission denied` / `NT_STATUS_LOGON_FAILURE`. After enough failures the automount unit itself goes `failed`, so after fixing the credentials run `sudo systemctl reset-failed home-nate-Rime.mount home-nate-Rime.automount && sudo systemctl start home-nate-Rime.automount`.
+
 **Shutdown hang fix.** CIFS mounts hang shutdown: systemd tears the network down before unmounting the share, so the kernel blocks ~180s waiting on the now-unreachable server (`CIFS: VFS: \\192.168.1.51 has not responded in 180 seconds`) before force-killing every other mount - a multi-minute freeze. The fix is a oneshot service that force-lazy-unmounts the share early in shutdown, while the network is still up. It's tracked at [`etc/systemd/system/rime-umount.service`](../etc/systemd/system/rime-umount.service) and installed + enabled by `install.sh`'s system-config step:
 
 ```
