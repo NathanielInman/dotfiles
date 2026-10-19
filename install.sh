@@ -295,7 +295,7 @@ setup_system() {
         fi
     fi
 
-    # bond0 — FROSTYARCH-specific active-backup bond of the two onboard LAN
+    # bond0: FROSTYARCH-specific active-backup bond of the two onboard LAN
     # ports (enp5s0 RTL8125 2.5G primary, enp6s0 I211 1G backup), so the router
     # sees one client/IP instead of two. Only offered when enp5s0 has the MAC
     # pinned in the .netdev, i.e. on this exact motherboard.
