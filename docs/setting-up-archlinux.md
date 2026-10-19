@@ -230,7 +230,6 @@ export EDITOR=vim
 
 helpful non-user-specific applications
 
-- `ntp` (network-time-protocol) helps ensure we're always time synchronized
 - `unzip` - obviously helps us w/ zip files
 - `gnome-keyring` - helps us maintain a keychain across different apps
 - `libsecret` - library necessary for gnome-keyring
@@ -239,14 +238,17 @@ helpful non-user-specific applications
 Note: `numlockx` is not needed - Hyprland handles numlock via `input = { numlock_by_default = true }` in `~/.config/hypr/options.lua`
 
 ```
-pacman -S unzip ntp gnome-keyring libsecret seahorse
+pacman -S unzip gnome-keyring libsecret seahorse
 ```
 
-ensure time synchronization service is started and activated
+enable time synchronization with `systemd-timesyncd` (ships with systemd, nothing to install). Don't install the `ntp` package: `ntpd` starts before the NICs finish IPv6 duplicate address detection, fails to bind the still-tentative link-local address, and segfaults in that error path (`daemon child died with signal 11`); systemd retries 5 times in 2 seconds and then gives up with `start-limit-hit`, leaving the clock unsynced for the whole boot. `timesyncd` is a plain SNTP client with no listening sockets, so it has no such race.
 
 ```
-systemctl enable ntpd.service --now
+systemctl enable systemd-timesyncd.service --now
+timedatectl set-ntp true
 ```
+
+verify with `timedatectl` (`System clock synchronized: yes`, `NTP service: active`) and `timedatectl timesync-status` (shows the selected `*.arch.pool.ntp.org` server and offset)
 
 login to user
 
