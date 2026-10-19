@@ -1,0 +1,7 @@
+# FROSTYARCH-specific: Intel I211 1GbE, backup bond0 port.
+# Sorts before 20-ethernet.network, so it wins and the port gets no DHCP of its own.
+[Match]
+Name=enp6s0
+
+[Network]
+Bond=bond0

@@ -854,6 +854,28 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 
 The nightly backup is documented in full in [`docs/sites-nightly-backup.md`](./sites-nightly-backup.md): owned repos get an atomic conventional commit + push on the current branch, every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote.
 
+### Bonded LAN ports (FROSTYARCH hardware only)
+
+> [!NOTE]
+> Hardware-specific. This only applies to FROSTYARCH's current motherboard, which has two onboard NICs: `enp5s0` (Realtek RTL8125, 2.5GbE) and `enp6s0` (Intel I211, 1GbE), both cabled to the UniFi network. On different hardware, skip this or adapt the interface names and the pinned MAC first.
+
+Out of the box, archinstall's `20-ethernet.network` runs DHCP on every ethernet port, so with both cables plugged in the box gets two leases (`.54` and `.55`), two equal-metric default routes, and shows up in UniFi as two clients (`FROSTYARCHp1` / `FROSTYARCHp2`). Instead, the ports are joined into an **active-backup** `bond0`: the 2.5G port carries all traffic and the 1G port takes over only if the primary loses link (failing back as soon as it returns). Active-backup needs no LAG/LACP config on the switch. 802.3ad wouldn't help here anyway: Linux only aggregates ports of the same speed, so one of the mismatched ports would sit idle.
+
+The files live in [`etc/systemd/network/`](../etc/systemd/network/) and sort before `20-ethernet.network`, so they win the match for both ports:
+
+- `10-bond0.netdev`: the bond itself (`Mode=active-backup`, `PrimaryReselectPolicy=always`, 100ms MII polling). `MACAddress=` is pinned to the RTL8125's burned-in MAC (`24:4b:fe:cf:7e:46`) so UniFi and DHCP keep seeing one stable client.
+- `10-bond0-enp5s0.network` / `10-bond0-enp6s0.network`: enslave each port; `enp5s0` has `PrimarySlave=yes`.
+- `10-bond0.network`: DHCP, mDNS and route metric 100 on `bond0`, mirroring the stock ethernet config.
+
+`./install.sh -s` installs them, but only offers to when `enp5s0` has that exact MAC (i.e. on this board). It flushes the ports' old addresses and restarts `systemd-networkd`, so expect a few seconds of network drop. The openvpn3 session survives it. Check the result with:
+
+```
+cat /proc/net/bonding/bond0   # want "Currently Active Slave: enp5s0", both slaves "MII Status: up"
+networkctl list               # enp5s0/enp6s0 "enslaved", bond0 "routable"
+```
+
+To undo: `sudo rm /etc/systemd/network/10-bond0* && sudo ip link del bond0 && sudo systemctl restart systemd-networkd`.
+
 ### Network storage: Rime (TrueNAS SMB share)
 
 The TrueNAS box at `192.168.1.51` exposes a `private` SMB share, mounted at `~/Rime` via a systemd **automount** (mounts on first access, not at boot, so a powered-off NAS never blocks boot). Credentials live in a root-only file. In `/etc/fstab`:

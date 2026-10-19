@@ -1,0 +1,17 @@
+# FROSTYARCH-specific: bonds the two onboard LAN ports (see 10-bond0-*.network).
+# active-backup: one port carries traffic, the other only takes over if the
+# primary loses link. Needs no switch config (no LACP/LAG on the UniFi side).
+# The ports run at different speeds (RTL8125 2.5G + I211 1G), so 802.3ad
+# would only ever use one of them anyway.
+[NetDev]
+Name=bond0
+Kind=bond
+# Pin the bond to the 2.5G RTL8125's (enp5s0) burned-in MAC so UniFi and the
+# DHCP server keep seeing one stable client. Change or drop this on other hardware.
+MACAddress=24:4b:fe:cf:7e:46
+
+[Bond]
+Mode=active-backup
+# Fail back to the primary (2.5G) port as soon as it regains link.
+PrimaryReselectPolicy=always
+MIIMonitorSec=100ms

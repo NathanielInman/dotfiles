@@ -1,0 +1,17 @@
+# FROSTYARCH-specific: DHCP on the bond instead of on each port. Mirrors the
+# archinstall 20-ethernet.network settings (mDNS, metric 100).
+[Match]
+Name=bond0
+
+[Link]
+RequiredForOnline=routable
+
+[Network]
+DHCP=yes
+MulticastDNS=yes
+
+[DHCPv4]
+RouteMetric=100
+
+[IPv6AcceptRA]
+RouteMetric=100

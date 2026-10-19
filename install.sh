@@ -295,6 +295,37 @@ setup_system() {
         fi
     fi
 
+    # bond0 — FROSTYARCH-specific active-backup bond of the two onboard LAN
+    # ports (enp5s0 RTL8125 2.5G primary, enp6s0 I211 1G backup), so the router
+    # sees one client/IP instead of two. Only offered when enp5s0 has the MAC
+    # pinned in the .netdev, i.e. on this exact motherboard.
+    local bond_dir="$DOTFILES_DIR/etc/systemd/network"
+    local bond_mac
+    bond_mac=$(sed -n 's/^MACAddress=//p' "$bond_dir/10-bond0.netdev")
+    if [[ "$(cat /sys/class/net/enp5s0/address 2>/dev/null)" == "$bond_mac" && -e /sys/class/net/enp6s0 ]]; then
+        local bond_ok="true" f
+        for f in "$bond_dir"/10-bond0*; do
+            cmp -s "$f" "/etc/systemd/network/$(basename "$f")" || bond_ok="false"
+        done
+        if [[ "$bond_ok" == "true" ]]; then
+            echo -e "  ${GREEN}[configured]${NC} bond0 active-backup LAN bond"
+        else
+            echo -n -e "  ${YELLOW}[available]${NC} Install bond0 active-backup LAN bond (restarts networkd, brief network drop)? [y/N] "
+            read -r answer
+            if [[ "$answer" =~ ^[Yy]$ ]]; then
+                for f in "$bond_dir"/10-bond0*; do
+                    sudo install -Dm644 "$f" "/etc/systemd/network/$(basename "$f")"
+                done
+                sudo ip addr flush dev enp5s0
+                sudo ip addr flush dev enp6s0
+                sudo systemctl restart systemd-networkd
+                echo -e "  ${GREEN}[configured]${NC} bond0 active-backup LAN bond"
+            else
+                echo -e "  ${YELLOW}[skipped]${NC} bond0 active-backup LAN bond"
+            fi
+        fi
+    fi
+
     echo ""
     echo -e "${GREEN}System configuration complete!${NC}"
 }

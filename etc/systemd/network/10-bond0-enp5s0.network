@@ -1,0 +1,8 @@
+# FROSTYARCH-specific: Realtek RTL8125 2.5GbE, primary bond0 port.
+# Sorts before 20-ethernet.network, so it wins and the port gets no DHCP of its own.
+[Match]
+Name=enp5s0
+
+[Network]
+Bond=bond0
+PrimarySlave=yes
