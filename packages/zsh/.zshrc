@@ -158,16 +158,16 @@ det33clear() {
 # tintin
 alias au-mardios='ssh nate@159.203.80.149 -t "tmux attach -t adventuresunlimited"'
 
-# Elgato Key Lights. Addressed by their permanent IPv6 link-local address
-# (derived from the device MAC via EUI-64, so no DHCP lease or mDNS discovery
-# is involved). %enp6s0 is the interface the lights are reachable on; the
-# brightness 3 light is on the left, brightness 50 on the right.
-_keylight() { # $1=fe80 addr  $2=on(1)/off(0)  $3=brightness
-  curl -s -m2 -X PUT "http://[$1%enp6s0]:9123/elgato/lights" \
+# Elgato Key Lights. Addressed by their fixed IoT VLAN addresses (UniFi DHCP
+# reservations), so no mDNS discovery is involved. The main LAN is allowed to
+# reach the IoT VLAN; the brightness 3 light is on the left (.90), brightness
+# 50 on the right (.91).
+_keylight() { # $1=ip  $2=on(1)/off(0)  $3=brightness
+  curl -s -m2 -X PUT "http://$1:9123/elgato/lights" \
     -d "{\"numberOfLights\":1,\"lights\":[{\"on\":$2,\"brightness\":$3,\"temperature\":344}]}" >/dev/null
 }
-alias lightson='_keylight fe80::3e6a:9dff:fe14:e88f 1 3 & _keylight fe80::3e6a:9dff:fe14:e88e 1 50'
-alias lightsoff='_keylight fe80::3e6a:9dff:fe14:e88f 0 3 & _keylight fe80::3e6a:9dff:fe14:e88e 0 50'
+alias lightson='_keylight 192.168.20.90 1 3 & _keylight 192.168.20.91 1 50'
+alias lightsoff='_keylight 192.168.20.90 0 3 & _keylight 192.168.20.91 0 50'
 
 # we want to use brew on OSX, and keep broot config only on Arch
 if uname -a | grep -q 'Darwin'; then
