@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Usage: dbsql "<SQL>" [warehouse_id]  - runs a statement via the Databricks SQL Statement API, prints TSV
+set -euo pipefail
+source ~/.zshenv >/dev/null 2>&1 || true
+H=6917424514478359.9.gcp.databricks.com
+WH=${2:-${DBSQL_WAREHOUSE:-a764e988bad09470}}
+body=$(python3 -c 'import json,sys;print(json.dumps({"statement":sys.argv[1],"warehouse_id":sys.argv[2],"wait_timeout":"50s","format":"JSON_ARRAY","disposition":"INLINE"}))' "$1" "$WH")
+curl -s -H "Authorization: Bearer $DATABRICKS_QA_TOKEN" -H "Content-Type: application/json" -X POST "https://$H/api/2.0/sql/statements" -d "$body" | python3 -c '
+import json,sys
+d=json.load(sys.stdin); st=d.get("status",{})
+if st.get("state")!="SUCCEEDED": print(st.get("state"), st.get("error",d)); sys.exit(1)
+cols=[c["name"] for c in d["manifest"]["schema"]["columns"]]; print("\t".join(cols))
+for r in d.get("result",{}).get("data_array",[]) or []: print("\t".join("" if v is None else str(v) for v in r))'
