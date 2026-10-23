@@ -200,9 +200,13 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
+# Credentials live in broker, not the environment. These tools read theirs
+# only from env vars, so run them through broker exec.
+jira() { broker exec --request --reason "Run jira-cli." JIRA_API_TOKEN -- jira "$@"; }
+trcli() { broker exec --request --reason "Run trcli." TR_CLI_HOST TR_CLI_USERNAME TR_CLI_PASSWORD -- trcli "$@"; }
 jiratransitions() {
-  curl -s -u "$JIRA_USERNAME:$JIRA_API_TOKEN" \
-    "https://digital-turbine.atlassian.net/rest/api/3/issue/$1/transitions" \
+  broker exec --request --reason "List Jira transitions for $1." JIRA_API_TOKEN -- \
+    sh -c 'curl -s -u "$(jira me):$JIRA_API_TOKEN" "https://digital-turbine.atlassian.net/rest/api/3/issue/$1/transitions"' _ "$1" \
     | jq -r '.transitions[] | "\(.id)\t\(.name)"'
 }
 
