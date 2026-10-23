@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Usage: dbsql "<SQL>" [warehouse_id]  - runs a statement via the Databricks SQL Statement API, prints TSV
 set -euo pipefail
-source ~/.zshenv >/dev/null 2>&1 || true
+if [[ -z ${DATABRICKS_QA_TOKEN:-} ]]; then
+  exec broker exec --request --reason "Run a Databricks SQL statement with dbsql." DATABRICKS_QA_TOKEN -- "$0" "$@"
+fi
 H=6917424514478359.9.gcp.databricks.com
 WH=${2:-${DBSQL_WAREHOUSE:-a764e988bad09470}}
 body=$(python3 -c 'import json,sys;print(json.dumps({"statement":sys.argv[1],"warehouse_id":sys.argv[2],"wait_timeout":"50s","format":"JSON_ARRAY","disposition":"INLINE"}))' "$1" "$WH")
