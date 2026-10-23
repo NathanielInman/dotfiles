@@ -605,33 +605,33 @@ and create an AVD with `avdmanager`.
 
 ### First-run authentication for the service CLIs
 
-The pattern for both `jira` and `trcli` is the same: **secrets (API tokens, passwords) are exported from `~/.zshenv`**, while non-secret config (servers, default projects) lives in each tool's own config directory. `~/.zshenv` is deliberately **not** stowed and never committed, so no credentials land in this repo - only the method below is documented here. Placeholders like `<token>` are stand-ins; substitute real values locally.
+The pattern for both `jira` and `trcli` is the same: **secrets (API tokens, passwords) live in [broker](https://github.com/NathanielInman/credential-broker)**, while non-secret config (servers, default projects) lives in each tool's own config directory. Both tools only read credentials from environment variables, so `.zshrc` wraps them in `jira()` and `trcli()` functions that run them through `broker exec --request` (a desktop window asks for the vault unlock when there's no live grant). Nothing is exported from `~/.zshenv`, so no shell or agent carries them around. Placeholders like `<token>` are stand-ins; substitute real values locally.
 
-**TestRail (`trcli`)** has no login step - it reads everything from `TR_CLI_`-prefixed environment variables (its `auto_envvar_prefix`). Add these to `~/.zshenv`:
+**TestRail (`trcli`)** has no login step - it reads everything from `TR_CLI_`-prefixed environment variables (its `auto_envvar_prefix`). Store them in broker (`set` prompts for each value):
 
 ```
-export TR_CLI_HOST=https://YOURCO.testrail.io
-export TR_CLI_USERNAME=you@example.com
-export TR_CLI_PASSWORD=<password>   # or TR_CLI_KEY=<api-key> if the instance requires API keys
+broker set TR_CLI_HOST --public --desc "TestRail host URL, read by trcli"
+broker set TR_CLI_USERNAME --public --desc "TestRail username (email), read by trcli"
+broker set TR_CLI_PASSWORD --desc "TestRail password, read by trcli"   # or TR_CLI_KEY if the instance requires API keys
 ```
 
 Every command then picks them up automatically; you only add `--project "<name>"` per run. Confirm auth with a read-only API call (expect `200`):
 
 ```
-curl -s -o /dev/null -w "%{http_code}\n" -u "$TR_CLI_USERNAME:$TR_CLI_PASSWORD" \
-  "$TR_CLI_HOST/index.php?/api/v2/get_projects"
+broker exec --request TR_CLI_HOST TR_CLI_USERNAME TR_CLI_PASSWORD -- sh -c \
+  'curl -s -o /dev/null -w "%{http_code}\n" -u "$TR_CLI_USERNAME:$TR_CLI_PASSWORD" "$TR_CLI_HOST/index.php?/api/v2/get_projects"'
 ```
 
 **Jira (`jira-cli`)** splits auth in two. The API token comes from the `JIRA_API_TOKEN` environment variable - the *only* secret it reads, and note there is **no** env var for the server URL - while server, login, default project and board are written to `~/.config/.jira/.config.yml` by the `jira init` wizard.
 
 1. Generate a token. Jira Cloud: <https://id.atlassian.com/manage-profile/security/api-tokens>. Self-hosted Server/DC: a Personal Access Token from your Jira profile (basic auth there also still accepts your account password - Cloud does not, it requires a token).
-2. Export it in `~/.zshenv`:
+2. Store it in broker:
 
    ```
-   export JIRA_API_TOKEN=<token>
+   broker set JIRA_API_TOKEN --desc "Atlassian API token, read by jira-cli"
    ```
 
-3. With that token present in the shell (`source ~/.zshenv` or open a fresh terminal first - `init` needs it set), run `jira init`: choose `cloud` or `local`, enter the server URL, login email, auth type (`basic` for Cloud, `bearer` for a Server/DC PAT), and a default project/board.
+3. Run `jira init` (the `jira()` wrapper in `.zshrc` supplies the token, which `init` needs): choose `cloud` or `local`, enter the server URL, login email, auth type (`basic` for Cloud, `bearer` for a Server/DC PAT), and a default project/board.
 4. Verify with `jira me` or `jira issue list`.
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
@@ -890,10 +890,10 @@ username=ninman
 password=<smb-password>
 ```
 
-The password is the shared ops password exported as `CLAUDE_OPS_PWD` in `~/.zshenv` (not tracked here). Write the file without the secret ever hitting a command line, then verify the login before relying on the automount:
+The password is the shared ops password stored in broker as `CLAUDE_OPS_PWD`. Write the file without the secret ever hitting a command line, then verify the login before relying on the automount. The `tee` has to run inside `broker exec`, since anything piped out of it gets the value redacted:
 
 ```
-zsh -c 'source ~/.zshenv; printf "username=ninman\npassword=%s\n" "$CLAUDE_OPS_PWD"' | sudo tee /etc/cifs-credentials/rime >/dev/null
+broker exec --request CLAUDE_OPS_PWD -- sh -c 'printf "username=ninman\npassword=%s\n" "$CLAUDE_OPS_PWD" | sudo tee /etc/cifs-credentials/rime >/dev/null'
 sudo chmod 600 /etc/cifs-credentials/rime
 sudo smbclient //192.168.1.51/private -A /etc/cifs-credentials/rime -c ls
 ```
