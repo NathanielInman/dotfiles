@@ -19,7 +19,7 @@
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
 mkdir ~/.cache/carapace
 carapace _carapace nushell | save --force ~/.cache/carapace/init.nu
-# GL_TOKEN and GOOGLE_CLOUD_PROJECT set via local environment
+# GOOGLE_CLOUD_PROJECT set via local environment; tokens like GL_TOKEN live in broker
 export-env { $env.PNPM_HOME = $"($env.HOME)/.local/share/pnpm" }
 export-env { $env.PATH = ($env.PATH | split row (char esep) | prepend $env.PNPM_HOME ) }
 # Elgato Key Lights, addressed by permanent IPv6 link-local address (derived
