@@ -3,7 +3,7 @@
 # file to ~/Downloads and updates ~/Downloads/{current,last}.md symlinks
 # the same way the screenshot script does for PNGs.
 #
-# Requires: GL_TOKEN exported, gcloud auth set up for Vertex, jq, curl, claude.
+# Requires: GL_TOKEN in broker, gcloud auth set up for Vertex, jq, curl, claude.
 
 set -euo pipefail
 
@@ -20,8 +20,7 @@ get_project_id() {
 }
 
 if [[ -z "${GL_TOKEN:-}" ]]; then
-    echo "❌ GL_TOKEN is not set. Export it first."
-    exit 1
+    exec broker exec --request --reason "Fetch a GitLab MR for review." GL_TOKEN -- "$0" "$@"
 fi
 
 echo -n "🔗 Paste the GitLab MR URL: "
