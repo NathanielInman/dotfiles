@@ -127,11 +127,17 @@ Now for installing window manager stuff (Hyprland)
 - `yad` - GTK dialog tool; powers the waybar hotkeys (⌨) and commands cheat-sheet buttons
 - `wf-recorder` - screen recording backend for the Super+R / waybar screen-record script
 - `hyprpicker` - screen color picker bound to Super+I
+- `swayosd` - on-screen volume/brightness popups, started from `autostart.lua` and driven by the media keys in `binds.lua`
+- `neovide` - GPU NeoVim GUI that `autostart.lua` opens on login (`scripts/neovide-autostart.sh`)
+- `noto-fonts-emoji` - color emoji font
+- `sway-audio-idle-inhibit-git` (**AUR**) - holds off hypridle while audio is playing, started from `autostart.lua`
 
 ```
-pacman -S hyprland swaync kitty noto-fonts adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
-paru -S waybar-git walker elephant-all
+pacman -S hyprland swaync kitty noto-fonts noto-fonts-emoji adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker swayosd neovide pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+paru -S waybar-git walker elephant-all sway-audio-idle-inhibit-git
 ```
+
+walker needs the `elephant` daemon running as a user service. `elephant service enable` writes `~/.config/systemd/user/elephant.service` and enables it. `autostart.lua` also starts `hyprland-session.target`, which is stowed with the `hyprland` package (`packages/hyprland/.config/systemd/user/`), so it doesn't need to be created by hand.
 
 The Elgato Key Lights are driven over their built-in HTTP API with nothing but `curl` (already installed) - no extra packages or helper CLIs. The `lightson`/`lightsoff` shell aliases (in `.zshrc`) and the waybar keylights widget (`custom/keylights`, with its status script `keylights.sh` and on-click `keylights-toggle.sh`) all hit the same endpoint: `PUT http://<addr>:9123/elgato/lights` with `{"numberOfLights":1,"lights":[{"on":0|1,"brightness":0-100,"temperature":143-344}]}` to set state, and `GET` of the same path to read it.
 
@@ -419,9 +425,17 @@ We start by using our package manager `pacman` to get all necessary binaries. Th
 - `maven` provides the `mvn` command for building and testing the Java/Maven microservices (e.g. `apk-fetch-service`); it depends on a JDK and will pull one in if none is present, though `jdk-openjdk` (see the Neovim language toolchains section below) already satisfies that
 - `scrcpy` mirrors and controls an Android device from the desktop over ADB (USB or wireless), with no root and nothing to install on the phone: it pushes a short-lived server, runs it with the shell UID via `app_process`, and streams a hardware-encoded H.264 feed back over the ADB socket while injecting mouse/keyboard events as real touches. It pulls in `android-tools` (which provides `adb`/`fastboot`) as a dependency. Enable USB debugging on the device, accept the RSA prompt, then just run `scrcpy`; `paru -S android-udev` adds the vendor udev rules if a device shows as `unauthorized`/`no permissions` in `adb devices`
 - `trcli` is the TestRail CLI for reporting automated test results to TestRail - it is a Python package (not in the Arch repos), so it is installed with `pipx` rather than on the `paru` line below (see the next step)
+- `zsh-completions` adds extra completion definitions for zsh
+- `atuin` replaces shell history with a searchable SQLite database (`history` alias and init in `.zshrc`; the history lives in `~/.local/share/atuin`)
+- `broot` is a tree-style directory navigator (the `tree` alias and `br` launcher in `.zshrc`)
+- `chafa` renders images in the terminal (the `icat` alias)
+- `uv` is the fast Python package/project runner; `uv run --with <pkg>` covers one-off scripts without touching the system Python
+- `bun` and `npm` are JavaScript runtimes/package managers alongside `pnpm`
+- `cloudflared` is the Cloudflare Tunnel client
+- `rsync` for copying and syncing directories (local or over SSH)
 
 ```
-paru -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab git-delta zsh python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 kubectl jira-cli maven scrcpy
+paru -S curl wget diff-so-fancy eza bat fd ripgrep git github-cli glab git-delta zsh zsh-completions python-pip pyenv wl-clipboard scc duf bandwhich fkill gping jq neovim tree-sitter-cli google-cloud-cli aws-cli-v2 kubectl jira-cli maven scrcpy atuin broot chafa uv bun npm cloudflared rsync
 ```
 
 After installing, authenticate Google Cloud with `gcloud init` (or `gcloud auth login`). AWS uses IAM Identity Center (SSO): create the `sso-session` and profile with `aws configure sso`, then `aws sso login` when the session expires and `aws sts get-caller-identity` to confirm it can authenticate. Sign in to the git forges with `gh auth login` and `glab auth login`.
@@ -448,6 +462,16 @@ pipx install trcli
 ```
 
 This drops the `trcli` binary in `~/.local/bin` (already on `PATH` via `.zshrc`); verify with `trcli --help`.
+
+### Docker
+
+Docker runs the throwaway local dependencies for work services (Kafka, Postgres, Pact stub servers) via `docker compose`. Add yourself to the `docker` group so it works without `sudo`, then log out and back in:
+
+```
+pacman -S docker docker-buildx docker-compose
+sudo systemctl enable --now docker.service
+sudo usermod -aG docker $USER
+```
 
 ### Neovim language toolchains
 
@@ -496,6 +520,12 @@ matching export templates, which are AUR-only:
 
 ```
 paru -S godot-mono-export-templates-linux
+```
+
+Windows exports shell out to `rcedit` (a Windows tool) through Wine to stamp the exe icon and version info, the same way the `release.yml` workflow does in CI. `steamcmd` (the stowed `~/.local/bin/steamcmd`, see `det33-godot/docs/steam.md`) is a 32-bit binary and needs the 32-bit C runtime from `multilib`. `icoutils` provides `icotool`/`wrestool` for building and inspecting Windows `.ico` icons.
+
+```
+pacman -S wine wine-mono lib32-gcc-libs icoutils
 ```
 
 The project lives on the `~/Rime` SMB share (see [Network storage](#network-storage-rime-truenas-smb-share) below), so the NAS must be mounted/reachable before the aliases will `cd` into it.
@@ -1014,6 +1044,36 @@ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="18d1|096e", ATTRS{idPr
 ```
 
 then `:wq` and `sudo udevadm control --reload-rules`.
+
+## ZSA keyboard (Oryx flashing and live training)
+
+Oryx flashes and live-trains the ZSA keyboard from Chrome over WebHID, which needs the board's `hidraw` nodes to be user-accessible. In `sudo vim /etc/udev/rules.d/50-zsa.rules`:
+
+```
+# Rules for Oryx web flashing and live training
+KERNEL=="hidraw*", ATTRS{idVendor}=="16c0", MODE="0664", GROUP="plugdev", TAG+="uaccess"
+KERNEL=="hidraw*", ATTRS{idVendor}=="3297", MODE="0664", GROUP="plugdev", TAG+="uaccess"
+```
+
+then add yourself to `plugdev` (`sudo groupadd -f plugdev && sudo usermod -aG plugdev $USER`), `sudo udevadm control --reload-rules`, and log out and back in. ZSA's full rule set (including the legacy webusb rules for firmware older than v21) is at <https://github.com/zsa/wally/wiki/Linux-install>.
+
+## Credentials (broker + YubiKey)
+
+Secrets live in [`broker`](https://github.com/NathanielInman/credential-broker), not in the environment. Its vault is wrapped to a YubiKey over PIV, which needs the smart card stack (`pcsclite`/`ccid` plus the `pcscd` socket), `age`, and `age-plugin-yubikey`. `yubikey-manager` provides `ykman` for PIN/PUK/management-key setup and `libfido2` covers FIDO2 use of the same key. Build/install broker itself from its README.
+
+```
+pacman -S age age-plugin-yubikey pcsclite ccid yubikey-manager libfido2
+sudo systemctl enable --now pcscd.socket
+```
+
+The vault lives in `~/.local/share/broker` (inside the gitignored stow tree, so it is **not** in this repo). To move it to a new machine, write a passphrase-encrypted backup on the old one and restore it on the new one with the same YubiKey:
+
+```
+broker backup -o ~/broker.backup --generate-passphrase   # old machine (touch)
+broker restore ~/broker.backup --identity ~/.config/broker/yubikey-identity.txt --force   # new machine
+```
+
+Keep the backup file somewhere off the machine and the passphrase in a password manager. The nightly `~/Sites` backup cron also needs `~/.git-credentials` (plaintext HTTPS tokens for github.com and gitlab.com) recreated on a new machine, see [sites-nightly-backup.md](sites-nightly-backup.md#install).
 
 ## OpenVPN (DigitalTurbine CloudConnexa)
 
