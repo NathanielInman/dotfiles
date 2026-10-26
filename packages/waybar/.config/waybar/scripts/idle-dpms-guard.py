@@ -16,6 +16,8 @@
 #   - a resume is real input and ends the guard, EXCEPT the one Hyprland
 #     fakes within a few ms of a monitor add/remove; that one is ignored
 #     unless idle fails to come back shortly after (someone really is there)
+# Every idle inhibitor is ignored (a Chrome tab holding a wayland inhibitor
+# otherwise means idle never fires and the guard does nothing).
 # It fails open: if hypridle or the event socket goes away, the guard exits
 # and the screens behave as they would without it.
 
@@ -95,6 +97,7 @@ def main():
         f.write(f"""general {{
     ignore_dbus_inhibit = true
     ignore_systemd_inhibit = true
+    ignore_wayland_inhibit = true
     inhibit_sleep = 0
 }}
 listener {{
