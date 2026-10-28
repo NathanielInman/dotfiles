@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Run a heavy job (builds, test suites, batch sims) so it can't starve the
+# desktop or audio. CPUWeight=idle puts the whole cgroup in the kernel's idle
+# class (cpu.idle=1), so it only gets CPU nobody else wants, which nice 19
+# alone doesn't guarantee. MemoryMax/MemorySwapMax make the kernel OOM-kill
+# the job instead of thrashing the machine.
+#
+#   lowprio ./gradlew build
+#   LOWPRIO_MEM=12G lowprio cargo build --release
+set -euo pipefail
+
+if [[ $# -eq 0 ]]; then
+  echo "usage: lowprio <command> [args...]  (LOWPRIO_MEM=8G by default)" >&2
+  exit 2
+fi
+
+exec systemd-run --user --scope -q \
+  -p CPUWeight=idle \
+  -p MemoryMax="${LOWPRIO_MEM:-8G}" \
+  -p MemorySwapMax=0 \
+  nice -n 19 "$@"
