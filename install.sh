@@ -284,6 +284,30 @@ setup_system() {
         fi
     fi
 
+    # Desktop headroom: pin user@.service (apps, agents, builds) off CPU core 0
+    # so Hyprland and the terminal always have a free core, let systemd-oomd
+    # kill runaway jobs under memory pressure, and enable the SysRq rescue keys.
+    local headroom_src="$DOTFILES_DIR/etc/systemd/system/user@.service.d/50-desktop-headroom.conf"
+    local headroom_dst="/etc/systemd/system/user@.service.d/50-desktop-headroom.conf"
+    local sysrq_src="$DOTFILES_DIR/etc/sysctl.d/90-sysrq.conf"
+    local sysrq_dst="/etc/sysctl.d/90-sysrq.conf"
+    if cmp -s "$headroom_src" "$headroom_dst" && cmp -s "$sysrq_src" "$sysrq_dst" && systemctl is-enabled systemd-oomd.service &>/dev/null; then
+        echo -e "  ${GREEN}[configured]${NC} desktop headroom (reserved core, systemd-oomd, SysRq)"
+    else
+        echo -n -e "  ${YELLOW}[available]${NC} Reserve CPU core 0 for the desktop, enable systemd-oomd and SysRq keys? [y/N] "
+        read -r answer
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
+            sudo install -Dm644 "$headroom_src" "$headroom_dst"
+            sudo install -Dm644 "$sysrq_src" "$sysrq_dst"
+            sudo sysctl -q -p "$sysrq_dst"
+            sudo systemctl daemon-reload
+            sudo systemctl enable --now systemd-oomd.service
+            echo -e "  ${GREEN}[configured]${NC} desktop headroom (applies to user@ on next login)"
+        else
+            echo -e "  ${YELLOW}[skipped]${NC} desktop headroom"
+        fi
+    fi
+
     # rime-umount.service — force-unmount the Rime CIFS share early on shutdown
     # so the kernel doesn't block ~180s on the unreachable server (shutdown hang).
     local rime_src="$DOTFILES_DIR/etc/systemd/system/rime-umount.service"
