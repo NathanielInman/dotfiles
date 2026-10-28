@@ -104,6 +104,14 @@ stow_package() {
         stow_opts+=("-n")
     fi
 
+    # Link systemd files one by one instead of folding directories: systemd
+    # ignores drop-in dirs (foo.service.d) that are symlinks, and a folded
+    # ~/.config/systemd/user would make `systemctl --user enable` write its
+    # *.wants links into this repo.
+    if [[ -d "$PACKAGES_DIR/$pkg/.config/systemd" ]]; then
+        stow_opts+=("--no-folding")
+    fi
+
     case "$action" in
         install)
             echo -e "${GREEN}Installing${NC} $pkg..."
