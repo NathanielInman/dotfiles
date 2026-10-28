@@ -284,6 +284,16 @@ EOF
 systemctl --user restart wireplumber.service
 ```
 
+PipeWire gets realtime scheduling from `rtkit`, which is D-Bus activated. At login PipeWire can ask before rtkit is up; the request fails silently and every audio thread stays at nice 0 / `SCHED_OTHER` until the next restart, so a busy CPU makes playback stutter even with the network fine. The `pipewire` stow package adds a drop-in (`~/.config/systemd/user/pipewire.service.d/10-wait-for-rtkit.conf`) that wakes rtkit before PipeWire starts. `wireplumber` and `pipewire-pulse` are ordered after `pipewire.service`, so it covers all three.
+
+```
+./install.sh pipewire
+systemctl --user daemon-reload
+systemctl --user restart pipewire pipewire-pulse wireplumber
+# want SCHED_FIFO on data-loop.0 and nice -11 on the main threads
+for t in /proc/$(pgrep -x pipewire)/task/*; do echo "$(cat $t/comm) nice=$(awk '{print $19}' $t/stat) $(chrt -p ${t##*/} | head -1 | sed 's/.*: //')"; done
+```
+
 Ensure we're automatically logged in, `systemctl edit getty@tty1.service` and add:
 
 ```
