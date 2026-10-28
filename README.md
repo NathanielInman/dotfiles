@@ -43,7 +43,7 @@ cd ~/Sites/dot-files
 | `kitty`    | Terminal emulator                             |
 | `nushell`  | Modern shell                                  |
 | `nvim`     | Standalone lazy.nvim NeoVim config            |
-| `pipewire` | Make PipeWire wait for rtkit (realtime audio) |
+| `pipewire` | rtkit wait + WirePlumber no-suspend drop-ins  |
 | `starship` | Shell prompt                                  |
 | `swaync`   | Notification center                           |
 | `t3code`   | T3 Code color theme                           |

@@ -268,30 +268,19 @@ Let's enable pipewire for the user (pipewire replaces pulseaudio as the sound se
 systemctl --user enable pipewire pipewire-pulse wireplumber --now
 ```
 
-Now disable node suspend/idle (when zoom is quiet, the pipewire sink can take a second or two to wake up and clip the start of sentences). The `pw-metadata` runtime commands don't survive a reboot, so use a **persistent WirePlumber drop-in** instead:
+Two problems need fixing, and the `pipewire` stow package has a drop-in for each:
 
-```
-mkdir -p ~/.config/wireplumber/wireplumber.conf.d
-cat > ~/.config/wireplumber/wireplumber.conf.d/50-no-suspend.conf <<'EOF'
-# Disable node suspend/idle so the start of audio (e.g. Zoom) isn't clipped.
-monitor.alsa.rules = [
-  {
-    matches = [ { node.name = "~alsa_output.*" } { node.name = "~alsa_input.*" } ]
-    actions = { update-props = { session.suspend-timeout-seconds = 0 } }
-  }
-]
-EOF
-systemctl --user restart wireplumber.service
-```
-
-PipeWire gets realtime scheduling from `rtkit`, which is D-Bus activated. At login PipeWire can ask before rtkit is up; the request fails silently and every audio thread stays at nice 0 / `SCHED_OTHER` until the next restart, so a busy CPU makes playback stutter even with the network fine. The `pipewire` stow package adds a drop-in (`~/.config/systemd/user/pipewire.service.d/10-wait-for-rtkit.conf`) that wakes rtkit before PipeWire starts. `wireplumber` and `pipewire-pulse` are ordered after `pipewire.service`, so it covers all three.
+- **Node suspend/idle.** When Zoom goes quiet, the PipeWire sink can take a second or two to wake up and clip the start of sentences. The `pw-metadata` runtime commands don't survive a reboot, so `~/.config/wireplumber/wireplumber.conf.d/50-no-suspend.conf` sets `session.suspend-timeout-seconds = 0` on every ALSA node.
+- **No realtime priority.** PipeWire gets realtime scheduling from `rtkit`, which is D-Bus activated. At login PipeWire can ask before rtkit is up; the request fails silently and every audio thread stays at nice 0 / `SCHED_OTHER` until the next restart, so a busy CPU makes playback stutter even with the network fine. `~/.config/systemd/user/pipewire.service.d/10-wait-for-rtkit.conf` wakes rtkit before PipeWire starts. `wireplumber` and `pipewire-pulse` are ordered after `pipewire.service`, so it covers all three.
 
 ```
 ./install.sh pipewire
 systemctl --user daemon-reload
 systemctl --user restart pipewire pipewire-pulse wireplumber
-# want SCHED_FIFO on data-loop.0 and nice -11 on the main threads
+# want nice -11 on the main threads and SCHED_RR 20 on data-loop.0
 for t in /proc/$(pgrep -x pipewire)/task/*; do echo "$(cat $t/comm) nice=$(awk '{print $19}' $t/stat) $(chrt -p ${t##*/} | head -1 | sed 's/.*: //')"; done
+# want session.suspend-timeout-seconds = "0"
+wpctl inspect @DEFAULT_AUDIO_SINK@ | grep suspend-timeout
 ```
 
 Heavy jobs (Gradle, big test suites, batch sims) should go through `lowprio` (stowed to `~/.local/bin` by the `zsh` package). It runs the command in a transient user scope with `CPUWeight=idle` (kernel `cpu.idle=1`, so the job only gets CPU nobody else wants; `nice 19` alone still competes), `MemoryMax=8G` and no swap, so the kernel OOM-kills the job instead of freezing the desktop. Override the cap with `LOWPRIO_MEM=12G lowprio ...`.
