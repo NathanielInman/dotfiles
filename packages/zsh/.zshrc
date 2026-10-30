@@ -113,6 +113,13 @@ claude () {
     print -P "%B%F{black}%K{yellow}                                                  %k%f%b"
     print -P "%B%F{black}%K{yellow}   ██  WORK  ·  digitalturbine (subscription)  ██%k%f%b"
     print -P "%B%F{black}%K{yellow}                                                  %k%f%b"
+    # Share personal skills with the work profile; only the login stays separate.
+    # synced/ is per-account, so it is left alone.
+    local skill
+    for skill in "$HOME"/.claude/skills/*(N-/); do
+      [[ ${skill:t} == synced || -e "$HOME/.claude-work/skills/${skill:t}" ]] && continue
+      ln -s "${skill:A}" "$HOME/.claude-work/skills/${skill:t}"
+    done
     CLAUDE_CONFIG_DIR="$HOME/.claude-work" \
       command claude "${args[@]}"
   else
