@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Renews the Let's Encrypt certificate of broker's phone page
+# (broker.twinspear.com) once it has under 30 days left. Run daily by
+# broker-cert-renew.timer. Renewing needs the Cloudflare DNS token, so it
+# asks for it through broker's request window or the enrolled phone, and
+# exits quietly the rest of the time.
+set -euo pipefail
+
+dir="$HOME/.local/share/lego"
+crt="$dir/certificates/broker.twinspear.com.crt"
+if [[ -f $crt ]] && openssl x509 -checkend $((30 * 86400)) -noout -in "$crt" >/dev/null; then
+	exit 0
+fi
+
+exec broker exec --request \
+	--reason "Renew the TLS certificate for broker's phone page (broker.twinspear.com); it expires within 30 days." \
+	CLOUDFLARE_API_TOKEN -- \
+	sh -c 'CLOUDFLARE_DNS_API_TOKEN="$CLOUDFLARE_API_TOKEN" exec lego run --accept-tos --path "$1" \
+		--dns cloudflare --dns.resolvers 1.1.1.1:53 -d broker.twinspear.com \
+		--renew-days 30 --no-random-sleep --log.format text' _ "$dir"
