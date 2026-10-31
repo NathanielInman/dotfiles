@@ -1,0 +1,7 @@
+[Unit]
+Description=Renew the TLS certificate of broker's phone page when it is near expiry
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/broker-cert-renew

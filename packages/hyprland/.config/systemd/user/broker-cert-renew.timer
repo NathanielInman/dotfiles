@@ -1,0 +1,10 @@
+[Unit]
+Description=Check broker's phone page certificate daily, while someone is around to approve
+
+[Timer]
+OnCalendar=*-*-* 10:00:00
+RandomizedDelaySec=2h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
