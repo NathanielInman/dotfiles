@@ -178,6 +178,7 @@
     "modules": [
       "custom/toggle-games",
       "custom/det33",
+      "custom/detour33",
       "custom/gym",
       "custom/compass",
       "custom/benchmark",
@@ -205,6 +206,13 @@
     "interval": 1,
     "on-click": "~/.config/waybar/scripts/game-build.sh build det33",
     "on-click-right": "~/.config/waybar/scripts/game-build.sh log det33"
+  },
+  "custom/detour33": {
+    "exec": "~/.config/waybar/scripts/game-build.sh status detour33",
+    "return-type": "json",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/game-build.sh build detour33",
+    "on-click-right": "~/.config/waybar/scripts/game-build.sh log detour33"
   },
   "custom/gym": {
     "exec": "~/.config/waybar/scripts/game-build.sh status gym",
