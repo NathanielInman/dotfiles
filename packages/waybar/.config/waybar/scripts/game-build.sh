@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Waybar game build/launch buttons for det33, gym, compass, eversparkforge.
+# Waybar game build/launch buttons for det33, gym, compass, eversparkforge, detour33.
 #
 # Click a button and the build runs headless in the background; the button
 # itself becomes the status light. No terminal is spawned. If the build
@@ -30,6 +30,7 @@ game_dir() {
   case "$1" in
     det33|gym|compass|benchmark) echo "$HOME/Rime/det33-godot" ;;
     eversparkforge)              echo "$HOME/Sites/everspark-forge-godot" ;;
+    detour33)                    echo "$HOME/Sites/detour-33" ;;
   esac
 }
 
@@ -39,6 +40,7 @@ game_scene() {
     gym)            echo "res://Scenes/Test/Workbench.tscn" ;;
     compass)        echo "res://Scenes/Test/CompassTest.tscn" ;;
     eversparkforge) echo "res://Scenes/Main/Boot.tscn" ;;
+    detour33)       echo "res://Scenes/ChaseDemo.tscn" ;;  # neon chase demo, loops every 10 s
     benchmark)      echo "" ;;  # not a scene launch — see the _run branch
   esac
 }
@@ -49,6 +51,7 @@ game_label() {
     gym)            echo "gym" ;;
     compass)        echo "compass" ;;
     eversparkforge) echo "forge" ;;
+    detour33)       echo "detour33" ;;
     benchmark)      echo "bench" ;;
   esac
 }
@@ -109,7 +112,7 @@ case "${1:-}" in
   # that opening the drawer acknowledges.
   drawer-status)
     building=(); failed=(); okg=()
-    for g in det33 gym compass eversparkforge benchmark; do
+    for g in det33 gym compass eversparkforge benchmark detour33; do
       case "$(current_state "$g")" in
         building) building+=("$g") ;;
         failed)   failed+=("$g") ;;
