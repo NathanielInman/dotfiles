@@ -1,0 +1,6 @@
+[Unit]
+Description=Hide swaync popups stuck on screen past every timeout
+
+[Service]
+Type=oneshot
+ExecStart=%h/.config/swaync/popup-watchdog.sh

@@ -1,0 +1,10 @@
+[Unit]
+Description=Check for stuck swaync popups every 30s
+
+[Timer]
+OnActiveSec=30s
+OnUnitActiveSec=30s
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target
