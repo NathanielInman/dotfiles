@@ -40,7 +40,7 @@ game_scene() {
     gym)            echo "res://Scenes/Test/Workbench.tscn" ;;
     compass)        echo "res://Scenes/Test/CompassTest.tscn" ;;
     eversparkforge) echo "res://Scenes/Main/Boot.tscn" ;;
-    detour33)       echo "res://Scenes/ChaseDemo.tscn" ;;  # neon chase demo, loops every 10 s
+    detour33)       echo "res://Scenes/Menu.tscn" ;;
     benchmark)      echo "" ;;  # not a scene launch — see the _run branch
   esac
 }
