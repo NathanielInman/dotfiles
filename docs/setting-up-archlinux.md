@@ -2,14 +2,94 @@
 
 ## Install Method
 
-**FROSTYARCH was installed with [`archinstall`](https://wiki.archlinux.org/title/Archinstall).** It handles partitioning, filesystem, bootloader, swap, locale, networking, and user creation - so the old manual cfdisk/mdadm/LVM/grub flow is gone. Just pick the right options in the installer.
+FROSTYARCH (Ryzen 7 9800X3D, TUF X870, 64 GB RAM, RTX 3080) has three 2 TB NVMe drives, one per role. No RAID (backups go to Rime), no LVM (it does nothing under btrfs), no encryption (single-user autologin desktop).
+
+| Drive | Filesystem | Mounts |
+|---|---|---|
+| OS (Sabrent, in M.2_1, CPU-attached) | btrfs, subvols `@ @home @snapshots @log @pkg @swap` | `/`, `/home`, `/.snapshots`, `/var/log`, `/var/cache/pacman/pkg`, `/swap`, plus `/boot` (2 GB ESP) |
+| Scratch (Samsung 990 PRO, `LABEL=scratch`) | ext4 | `/scratch`, and `/tmp` as a bind of `/scratch/tmp` |
+| Data (Samsung 990 PRO, `LABEL=data`) | btrfs, subvols `@data @sites` | `/data`, `~/Sites` |
+
+- **`/tmp` is on the scratch disk, not in RAM.** Agents filled a 16 GB tmpfs, and the workaround (`~/.cache`) grew to 425 GB with nothing cleaning it. A disk-backed `/tmp` uses no RAM. `/etc/tmpfiles.d/tmp.conf` holds `Q /tmp 1777 root root 7d` (replaces the stock 10-day file; `systemd-tmpfiles-clean.timer` runs it daily). It is not wiped on reboot, so agent worktrees survive a restart.
+- **Scratch is for rebuildable, high-churn data** (`/tmp`, Docker, Gradle, VMs, emulators). Never snapshotted or backed up; if it dies, reformat it.
+- **Data holds what matters**: `~/Sites` (same path as before so Claude memories and T3 threads still match), Steam library, assets. Snapshot it and back it up to Rime.
+- **Swap**: zram (`ram / 4`) plus a 16 GB swapfile, no hibernate. Keep `systemd-oomd` on.
+
+### OS drive (from the archiso)
+
+Partition and mount by hand, then either run `archinstall` with "Pre-mounted configuration" for the selections below, or `pacstrap` directly:
+
+```
+OS=/dev/disk/by-id/nvme-<os-drive>
+sgdisk -Z $OS
+sgdisk -n1:0:+2G -t1:ef00 -c1:ESP -n2:0:0 -t2:8304 -c2:root $OS
+mkfs.fat -F32 -n ESP $OS-part1
+mkfs.btrfs -L root $OS-part2
+
+mount $OS-part2 /mnt
+for s in @ @home @snapshots @log @pkg @swap; do btrfs subvolume create /mnt/$s; done
+umount /mnt
+
+o=noatime,compress=zstd:1
+mount -o $o,subvol=@ $OS-part2 /mnt
+mount --mkdir -o $o,subvol=@home      $OS-part2 /mnt/home
+mount --mkdir -o $o,subvol=@snapshots $OS-part2 /mnt/.snapshots
+mount --mkdir -o $o,subvol=@log       $OS-part2 /mnt/var/log
+mount --mkdir -o $o,subvol=@pkg       $OS-part2 /mnt/var/cache/pacman/pkg
+mount --mkdir -o noatime,subvol=@swap $OS-part2 /mnt/swap
+mount --mkdir -o umask=0077 $OS-part1 /mnt/boot
+btrfs filesystem mkswapfile --size 16g /mnt/swap/swapfile && swapon /mnt/swap/swapfile
+
+# if not using archinstall:
+pacstrap -K /mnt base linux linux-firmware amd-ucode btrfs-progs \
+  nvidia-open nvidia-utils zram-generator snapper snap-pac limine
+genfstab -U /mnt >> /mnt/etc/fstab
+```
+
+In the new system:
+
+- Limine kernel cmdline needs `rootflags=subvol=@` along with the NVIDIA flags below. `limine-snapper-sync` (AUR) adds snapshots to the boot menu.
+- `/etc/systemd/zram-generator.conf`: `[zram0]` / `zram-size = ram / 4`
+- `systemctl enable fstrim.timer systemd-oomd`
+- Snapper root config: `snapper -c root create-config /` fails while `/.snapshots` exists. Unmount and `rmdir` it, run create-config, delete the `.snapshots` subvolume snapper made, then `mkdir /.snapshots` and `mount -a`.
+- After user `nate` exists: `btrfs subvolume create /home/nate/.cache` (a nested subvolume is left out of `@home` snapshots).
+- multilib plus `lib32-nvidia-utils` for Steam.
+
+### Scratch and data drives
+
+```
+SCR=/dev/disk/by-id/nvme-Samsung_SSD_990_PRO_2TB_S7L9NJ0L206326Y
+DATA=/dev/disk/by-id/nvme-Samsung_SSD_990_PRO_2TB_S7L9NJ0L206355B
+sudo sgdisk -Z $SCR  && sudo sgdisk -n1:0:0 -t1:8300 -c1:scratch $SCR && sudo mkfs.ext4 -L scratch $SCR-part1
+sudo sgdisk -Z $DATA && sudo sgdisk -n1:0:0 -t1:8300 -c1:data $DATA   && sudo mkfs.btrfs -L data $DATA-part1
+sudo mount $DATA-part1 /mnt && sudo btrfs subvolume create /mnt/@data /mnt/@sites && sudo umount /mnt
+```
+
+`/etc/fstab` additions (`nofail` so a dead drive cannot block boot; the `/tmp` line replaces Arch's tmpfs `tmp.mount` on its own):
+
+```
+LABEL=scratch  /scratch          ext4   noatime,nofail,x-systemd.device-timeout=10s  0 2
+LABEL=data     /data             btrfs  noatime,compress=zstd:1,subvol=@data,nofail,x-systemd.device-timeout=10s   0 0
+LABEL=data     /home/nate/Sites  btrfs  noatime,compress=zstd:1,subvol=@sites,nofail,x-systemd.device-timeout=10s  0 0
+/scratch/tmp   /tmp              none   bind,x-systemd.requires-mounts-for=/scratch  0 0
+```
+
+```
+sudo mkdir -p /scratch /data /home/nate/Sites && sudo systemctl daemon-reload
+sudo mount /scratch && sudo mount /data && sudo mount /home/nate/Sites
+sudo install -d -m 1777 /scratch/tmp
+sudo chown nate:nate /data /home/nate/Sites
+sudo reboot        # then `findmnt /tmp` must show /scratch/tmp, not tmpfs
+```
+
+Then send the heavy writers to scratch: Docker `/etc/docker/daemon.json` `{"data-root": "/scratch/docker"}`; `GRADLE_USER_HOME=/scratch/gradle`; libvirt pool at `/scratch/vms`; `ANDROID_AVD_HOME=/scratch/avd`; Steam library at `/data/steam`; `snapper -c sites create-config /home/nate/Sites`; `~/.cargo/config.toml` `[profile.dev] debug = "line-tables-only"` (no global `CARGO_TARGET_DIR`: parallel agents would block on its lock).
 
 ### Selections to choose during archinstall
 
 - **Mirror region** - your country
 - **Locale** - language `en_US.UTF-8`, keymap `us`
 - **Timezone** - `America/Chicago` (US/Central)
-- **Disk configuration** - select **`nvme0n1` only**, best-effort default partitioning, filesystem **btrfs** (with subvolumes). Leave `nvme1n1` untouched - it becomes the separate `~/Sites` drive afterward.
+- **Disk configuration** - **Pre-mounted configuration** at `/mnt` (done above)
 - **Disk encryption** - none (this machine is unencrypted by choice)
 - **Bootloader** - **Limine**
 - **Swap** - enable **zram**
@@ -22,10 +102,8 @@
 - **Network configuration** - **systemd-networkd** (i.e. *not* NetworkManager; the networkd default works on wired). DNS goes through `systemd-resolved`, which the VPN DNS hook relies on.
 - **Additional packages** - optional (e.g. `git vim`); microcode (`amd-ucode`) is auto-detected
 
-The resulting layout: the OS NVMe (which may enumerate as `nvme0n1` or `nvme1n1` on later boots), **btrfs** on LVM (`ArchinstallVg-root`, subvol `@`), **zram** swap, **limine** bootloader, `amd-ucode`.
-
 > [!IMPORTANT]
-> Use UUIDs for **every** `/etc/fstab` entry, including `/boot` - NVMe enumeration order (`nvme0` vs `nvme1`) is not stable across reboots. Find them with `lsblk -f` or `blkid`.
+> Use UUIDs or labels for **every** `/etc/fstab` entry, including `/boot` - NVMe enumeration order (`nvme0` vs `nvme1`) is not stable across reboots. Find them with `lsblk -f` or `blkid`.
 
 After `archinstall` finishes, continue at [First Boot](#first-boot).
 
@@ -884,28 +962,6 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 ```
 
 The nightly backup is documented in full in [`docs/sites-nightly-backup.md`](./sites-nightly-backup.md): owned repos get an atomic conventional commit + push on the current branch, every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote.
-
-### Bonded LAN ports (FROSTYARCH hardware only)
-
-> [!NOTE]
-> Hardware-specific. This only applies to FROSTYARCH's current motherboard, which has two onboard NICs: `enp5s0` (Realtek RTL8125, 2.5GbE) and `enp6s0` (Intel I211, 1GbE), both cabled to the UniFi network. On different hardware, skip this or adapt the interface names and the pinned MAC first.
-
-Out of the box, archinstall's `20-ethernet.network` runs DHCP on every ethernet port, so with both cables plugged in the box gets two leases (`.54` and `.55`), two equal-metric default routes, and shows up in UniFi as two clients (`FROSTYARCHp1` / `FROSTYARCHp2`). Instead, the ports are joined into an **active-backup** `bond0`: the 2.5G port carries all traffic and the 1G port takes over only if the primary loses link (failing back as soon as it returns). Active-backup needs no LAG/LACP config on the switch. 802.3ad wouldn't help here anyway: Linux only aggregates ports of the same speed, so one of the mismatched ports would sit idle.
-
-The files live in [`etc/systemd/network/`](../etc/systemd/network/) and sort before `20-ethernet.network`, so they win the match for both ports:
-
-- `10-bond0.netdev`: the bond itself (`Mode=active-backup`, `PrimaryReselectPolicy=always`, 100ms MII polling). `MACAddress=` is pinned to the RTL8125's burned-in MAC (`24:4b:fe:cf:7e:46`) so UniFi and DHCP keep seeing one stable client.
-- `10-bond0-enp5s0.network` / `10-bond0-enp6s0.network`: enslave each port; `enp5s0` has `PrimarySlave=yes`.
-- `10-bond0.network`: DHCP, mDNS and route metric 100 on `bond0`, mirroring the stock ethernet config.
-
-`./install.sh -s` installs them, but only offers to when `enp5s0` has that exact MAC (i.e. on this board). It flushes the ports' old addresses and restarts `systemd-networkd`, so expect a few seconds of network drop. The openvpn3 session survives it. Check the result with:
-
-```
-cat /proc/net/bonding/bond0   # want "Currently Active Slave: enp5s0", both slaves "MII Status: up"
-networkctl list               # enp5s0/enp6s0 "enslaved", bond0 "routable"
-```
-
-To undo: `sudo rm /etc/systemd/network/10-bond0* && sudo ip link del bond0 && sudo systemctl restart systemd-networkd`.
 
 ### Network storage: Rime (TrueNAS SMB share)
 
