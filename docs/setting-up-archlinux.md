@@ -17,6 +17,9 @@ FROSTYARCH (Ryzen 7 9800X3D, TUF X870, 64 GB RAM, RTX 3080) has three 2 TB NVMe 
 
 ### Rebuild order (one reboot)
 
+> [!TIP]
+> [`rebuild/`](../rebuild/README.md) scripts this whole order: `bootstrap.sh` and `10-live.sh` on the ISO, `40-first-boot.sh` after the reboot. Steps that fail are either critical (the script stops and says how to resume) or minor (written to `/var/log/rebuild/followups.md` for later). The steps below are the reference for what those scripts do.
+
 Do everything that doesn't need a running desktop from the archiso, so the first boot lands in a working Hyprland session. The 2026-11-06 rebuild didn't, and paid for it: it stopped at a bare system and rebooted, then installed only the [First Boot](#first-boot) packages and rebooted again just to start Hyprland. That session had no oh-my-zsh, zoxide, atuin, starship or eza yet, so every shell errored. About 120 more packages went in after that, and adding the `docker` group needed a third log-out.
 
 1. **Live ISO.** Get online, then uncomment `[multilib]` in the ISO's own `/etc/pacman.conf` (pacstrap resolves against the host config). Partition and mount the [OS drive](#os-drive-from-the-archiso), and format the [scratch and data drives](#scratch-and-data-drives) too, mounted at `/mnt/scratch`, `/mnt/data` and `/mnt/home/nate/Sites`. Then install the whole package manifest in one pass. `-P` copies the ISO's `pacman.conf` (with multilib) into the new system:
@@ -1171,6 +1174,8 @@ Install it as `nate` with the native installer, which puts a self-updating binar
 ```
 curl -fsSL https://claude.ai/install.sh | bash
 ```
+
+To skip the login on the live ISO entirely, run `rebuild/save-claude-token.sh` on the old machine before wiping it. It stores a one-year `claude setup-token` on Rime, encrypted to the YubiKey, and `rebuild/bootstrap.sh` decrypts it with one touch. The 2026-11-06 rebuild typed the login code three times (live USB as root, first boot as root, then as `nate`), because the backup leaves out `.credentials.json` on purpose: its refresh token rotates, so copies used by several sessions knock each other out.
 
 Don't use `npm install -g` as root: the 2026-11-06 install did that from the chroot, and the root-owned `/usr/bin/claude` could never auto-update. The live ISO is the exception: `npm install -g` is fine there, since it's thrown away. `~/.local/bin` comes before `/usr/bin` on `PATH`, including for T3 Code. Sign in with `claude auth login`. A text-only console can't open the login URL, so render it as a QR code to scan with a phone. Install the helpers with `pacman -S tmux qrencode terminus-font` and run `setfont ter-112n` so the code fits on screen. Then run `claude` inside `tmux`, and in a second pane:
 
