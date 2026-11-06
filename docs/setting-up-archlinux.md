@@ -110,20 +110,28 @@ From `arch-chroot /mnt`. This is what the 2026-11-06 install did, minus its mist
   efibootmgr --create --disk $(readlink -f $OS) --part 1 --label Limine --loader '\EFI\limine\BOOTX64.EFI' --unicode
   ```
 
-  `/boot/limine/limine.conf` (root UUID from `blkid`; `zswap.enabled=0` because zram does that job):
+  `/boot/limine.conf`, at the root of the ESP (root UUID from `blkid`, machine ID from `/etc/machine-id`; `zswap.enabled=0` because zram does that job). Keep it in this nested shape and in exactly this place: `limine-snapper-sync` only manages `$ESP/limine.conf`, it finds the entry by the `machine-id` comment, and it fills `//Snapshots`. Limine reads `/limine/limine.conf` before `/limine.conf`, so a leftover `/boot/limine/limine.conf` would shadow this file. `default_entry` uses the path form because an index that lands on a directory disables autoboot:
 
   ```
   timeout: 3
+  default_entry: Arch Linux/Linux
 
-  /Arch Linux
+  /+Arch Linux
+  comment: machine-id=<machine-id>
+
+      //Linux
       protocol: linux
-      path: boot():/vmlinuz-linux
-      cmdline: root=UUID=<root-uuid> rootflags=subvol=@ rw quiet nvidia_drm.modeset=1 nvidia_drm.fbdev=1 zswap.enabled=0
+      kernel_path: boot():/vmlinuz-linux
+      kernel_cmdline: root=UUID=<root-uuid> rootflags=subvol=@ rw quiet nvidia_drm.modeset=1 nvidia_drm.fbdev=1 zswap.enabled=0
       module_path: boot():/amd-ucode.img
       module_path: boot():/initramfs-linux.img
+
+      //Snapshots
   ```
 
-  `/etc/pacman.d/hooks/99-limine.hook` copies the EFI binary to both paths again on every `limine` upgrade (`[Trigger]` Install/Upgrade, Package, `Target = limine`; `[Action]` PostTransaction, `Exec = /bin/sh -c 'cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/BOOTX64.EFI && cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI'`). After first boot, `limine-snapper-sync` (AUR) adds snapshots to the boot menu.
+  `/etc/pacman.d/hooks/99-limine.hook` copies the EFI binary to both paths again on every `limine` upgrade (`[Trigger]` Install/Upgrade, Package, `Target = limine`; `[Action]` PostTransaction, `Exec = /bin/sh -c 'cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/BOOTX64.EFI && cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI'`).
+
+  Snapshots in the boot menu: `limine-snapper-sync` (AUR, in `pkglist/aur.txt`; a GraalVM native build, so run it through `lowprio`). Put `ESP_PATH="/boot"` and `SNAPPER_CONFIG_NAME="root"` in `/etc/default/limine`, then `systemctl enable --now limine-snapper-sync.service` and run `limine-snapper-sync` once. Each snapshot entry boots `/@snapshots/<n>/snapshot` read-only, with copies of the kernel and initramfs it was taken with under `/boot/<machine-id>/limine_history/`. The NVIDIA initramfs is about 100 MB, so the 2 GB ESP holds about a dozen distinct kernel/initramfs pairs (make it 4 GB on the next rebuild, as the tool recommends); old entries drop off at `LIMIT_USAGE_PERCENT=85`. Snapshots taken before the tool was installed can't be added, because their kernels are gone. To roll back, boot a snapshot and accept the "Restore now" prompt.
 - NVIDIA modules, `mkinitcpio.conf` and modprobe files as in [First Boot](#first-boot), then `mkinitcpio -P`.
 - `/etc/systemd/zram-generator.conf`: `[zram0]` / `zram-size = ram / 4`. `/etc/tmpfiles.d/tmp.conf`: `Q /tmp 1777 root root 7d`.
 - Wired network, `/etc/systemd/network/20-wired.network`:
@@ -382,7 +390,7 @@ options nvidia NVreg_PreserveVideoMemoryAllocations=1
 # /etc/modprobe.d/nouveau-blacklist.conf
 blacklist nouveau
 
-# /boot/limine/limine.conf - append to the kernel cmdline
+# /boot/limine.conf - append to the //Linux entry's kernel_cmdline
 nvidia_drm.modeset=1 nvidia_drm.fbdev=1
 ```
 
