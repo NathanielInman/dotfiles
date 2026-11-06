@@ -581,7 +581,7 @@ later in this guide. Everything else (`gopls`, `lua-language-server`, `biome`,
 
 ### Game development (Godot / C#)
 
-The DET-33 game port (`~/Rime/det33-godot`) is a Godot 4 / C# project, so it needs
+The DET-33 game port (`~/Sites/det33-godot`) is a Godot 4 / C# project, so it needs
 the **Mono/.NET build** of Godot - the plain `godot` package can't build or run C#
 scripts. The `godot-mono` package ships the editor binary at `/usr/bin/godot-mono`,
 which is the binary the `det33`/`gym`/`compass` aliases in `.zshrc` and the project's
