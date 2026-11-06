@@ -1,18 +1,9 @@
-# Runtime/installed artifacts that leak into the repo because ~/.local and
-# ~/.oh-my-zsh are stow-symlinked into packages/zsh. These are installed at
-# setup time (not dotfiles), so keep them out of version control.
-packages/zsh/.local/share/
-packages/zsh/.local/state/
-packages/zsh/.local/lib/
-packages/zsh/.local/opt/
-packages/zsh/.local/bin/claude
-packages/zsh/.local/bin/broker
-packages/zsh/.local/bin/broker-dialog
-packages/zsh/.local/bin/trcli
-packages/zsh/.local/bin/fonttools
-packages/zsh/.local/bin/pyftmerge
-packages/zsh/.local/bin/pyftsubset
-packages/zsh/.local/bin/ttx
+# ~/.oh-my-zsh is stow-symlinked into packages/zsh, so oh-my-zsh's own files
+# (installed at setup time, not dotfiles) live here; only custom/ is ours.
+# ~/.local is a real dir in $HOME and stow links only the scripts in
+# packages/zsh/.local/bin, so anything else under .local got here by mistake.
+packages/zsh/.local/*
+!packages/zsh/.local/bin/
 packages/zsh/.oh-my-zsh/*
 !packages/zsh/.oh-my-zsh/custom/
 packages/zsh/.oh-my-zsh/custom/plugins/
