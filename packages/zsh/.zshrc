@@ -180,16 +180,15 @@ alias lightsoff='_keylight 192.168.20.90 0 3 & _keylight 192.168.20.91 0 50'
 if uname -a | grep -q 'Darwin'; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 else
-  source /home/nate/.config/broot/launcher/bash/br
+  # created by `broot --install` (the `br` function)
+  [ -f "$HOME/.config/broot/launcher/bash/br" ] && source "$HOME/.config/broot/launcher/bash/br"
 fi
 
-
-. "$HOME/.atuin/bin/env"
+# only present when atuin came from its curl installer; the pacman build needs nothing
+[ -f "$HOME/.atuin/bin/env" ] && . "$HOME/.atuin/bin/env"
 
 eval "$(atuin init zsh --disable-up-arrow)"
 eval "$(starship init zsh)"
-
-source /home/nate/.config/broot/launcher/bash/br
 
 # bun completions
 [ -s "/home/nate/.bun/_bun" ] && source "/home/nate/.bun/_bun"
