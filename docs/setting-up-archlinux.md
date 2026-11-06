@@ -283,7 +283,7 @@ for t in /proc/$(pgrep -x pipewire)/task/*; do echo "$(cat $t/comm) nice=$(awk '
 wpctl inspect @DEFAULT_AUDIO_SINK@ | grep suspend-timeout
 ```
 
-Heavy jobs (Gradle, big test suites, batch sims) should go through `lowprio` (stowed to `~/.local/bin` by the `zsh` package). It runs the command in a transient user scope with `CPUWeight=idle` (kernel `cpu.idle=1`, so the job only gets CPU nobody else wants; `nice 19` alone still competes), `MemoryMax=8G` and no swap, so the kernel OOM-kills the job instead of freezing the desktop. Override the cap with `LOWPRIO_MEM=12G lowprio ...`.
+Heavy jobs (Gradle, big test suites, batch sims) should go through `lowprio` (stowed to `~/.local/bin` by the `zsh` package). It runs the command in a transient user scope with `CPUWeight=idle` (kernel `cpu.idle=1`, so the job only gets CPU nobody else wants; `nice 19` alone still competes), `MemoryMax=16G` and no swap, so the kernel OOM-kills the job instead of freezing the desktop. Override the cap with `LOWPRIO_MEM=24G lowprio ...`.
 
 Ensure we're automatically logged in, `systemctl edit getty@tty1.service` and add:
 
