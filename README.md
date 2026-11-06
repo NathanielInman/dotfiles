@@ -55,7 +55,7 @@ cd ~/Sites/dot-files
 | `waybar`   | Status bar                                    |
 | `zsh`      | Zsh + Oh-My-Zsh config                        |
 
-System-level files that can't be stowed (because they live outside `$HOME`) are tracked under `etc/`, `usr/` and `scripts/` as copies. Install them via `./install.sh -s`, which prompts for each one. Currently covers:
+System-level files that can't be stowed (because they live outside `$HOME`) are tracked under `etc/`, `usr/` and `scripts/` as copies. Install them via `./install.sh -s`, which prompts for each one (`./install.sh -y -s` answers yes to all; it is safe to run in a chroot, where anything that needs udev or D-Bus waits for first boot). Currently covers:
 
 - `etc/pacman.d/hooks/hyprpm.hook`: rebuilds hyprpm plugins automatically after Hyprland upgrades so boot doesn't complain about outdated plugin headers. Only offered when `hyprpm` (a separate package since Hyprland 0.57) is installed; no plugins are in use today.
 - `scripts/hypr-launch` -> `/usr/local/bin/hypr-launch`: sets the NVIDIA/Wayland env and execs Hyprland's own `start-hyprland` watchdog on tty1 login.
