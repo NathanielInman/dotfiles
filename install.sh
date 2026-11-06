@@ -276,6 +276,26 @@ setup_system() {
         fi
     fi
 
+    # udev rule: disable the onboard MediaTek MT7925 Bluetooth so BlueZ only
+    # sees the UB500 dongle (otherwise the onboard one can become the default
+    # controller and peripherals pair to it instead).
+    local btonboard_src="$DOTFILES_DIR/etc/udev/rules.d/52-disable-onboard-bt.rules"
+    local btonboard_dst="/etc/udev/rules.d/52-disable-onboard-bt.rules"
+    if [[ -f "$btonboard_dst" ]] && cmp -s "$btonboard_src" "$btonboard_dst"; then
+        echo -e "  ${GREEN}[configured]${NC} Onboard Bluetooth disabled (UB500 only)"
+    else
+        echo -n -e "  ${YELLOW}[available]${NC} Disable onboard MediaTek Bluetooth so only the UB500 dongle is used? [y/N] "
+        read -r answer
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
+            sudo install -Dm644 "$btonboard_src" "$btonboard_dst"
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger --action=add --subsystem-match=usb --attr-match=idVendor=13d3 --attr-match=idProduct=3602
+            echo -e "  ${GREEN}[configured]${NC} Onboard Bluetooth disabled (UB500 only)"
+        else
+            echo -e "  ${YELLOW}[skipped]${NC} Onboard Bluetooth disable"
+        fi
+    fi
+
     # bt-force-central: udev rule + oneshot that role-switches classic BT links
     # to central. When the Arctis headset reconnects on its own it takes the
     # central role and the RTL8761B dongle, left as peripheral, stutters A2DP

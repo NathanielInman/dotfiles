@@ -1,0 +1,7 @@
+# Onboard MediaTek MT7925 Bluetooth (USB 13d3:3602, the BT half of the PCIe
+# Wi-Fi card): deauthorize it so BlueZ only sees the TP-Link UB500 dongle.
+# With both present BlueZ made the onboard one the default controller and the
+# MX Master paired to it, riding the motherboard antennas behind the case
+# instead of the dongle on the desk. Wi-Fi is a separate PCIe function and is
+# unaffected.
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="13d3", ATTR{idProduct}=="3602", ATTR{authorized}="0"
