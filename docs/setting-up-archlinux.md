@@ -15,6 +15,58 @@ FROSTYARCH (Ryzen 7 9800X3D, TUF X870, 64 GB RAM, RTX 3080) has three 2 TB NVMe 
 - **Data holds what matters**: `~/Sites` (same path as before so Claude memories and T3 threads still match), Steam library, assets. Snapshot it and back it up to Rime.
 - **Swap**: zram (`ram / 4`) plus a 16 GB swapfile, no hibernate. Keep `systemd-oomd` on.
 
+### Rebuild order (one reboot)
+
+Do everything that doesn't need a running desktop from the archiso, so the first boot lands in a working Hyprland session. The 2026-11-06 rebuild didn't, and paid for it: it stopped at a bare system and rebooted, then installed only the [First Boot](#first-boot) packages and rebooted again just to start Hyprland. That session had no oh-my-zsh, zoxide, atuin, starship or eza yet, so every shell errored. About 120 more packages went in after that, and adding the `docker` group needed a third log-out.
+
+1. **Live ISO.** Get online, then uncomment `[multilib]` in the ISO's own `/etc/pacman.conf` (pacstrap resolves against the host config). Partition and mount the [OS drive](#os-drive-from-the-archiso), and format the [scratch and data drives](#scratch-and-data-drives) too, mounted at `/mnt/scratch`, `/mnt/data` and `/mnt/home/nate/Sites`. Then install the whole package manifest in one pass. `-P` copies the ISO's `pacman.conf` (with multilib) into the new system:
+
+   ```
+   git clone https://github.com/NathanielInman/dotfiles.git /root/dot-files
+   pacstrap -K -P /mnt $(grep -v '^#' /root/dot-files/pkglist/repo.txt)
+   genfstab -U /mnt >> /mnt/etc/fstab    # then swap the scratch/data lines for the LABEL= ones below
+   ```
+
+2. **`arch-chroot /mnt`, as root.** Do everything in [In the new system](#in-the-new-system). Create the user with all of its groups now, so nothing needs a log-out later. `docker` already exists from the package; `plugdev` is for the [ZSA keyboard](#zsa-keyboard-oryx-flashing-and-live-training):
+
+   ```
+   groupadd -f plugdev
+   useradd -m -G wheel,users,docker,plugdev -s /bin/zsh nate
+   chown nate:nate /home/nate/Sites /data /scratch /scratch/{gradle,vms,avd}
+   btrfs subvolume create /home/nate/.cache && chown nate:nate /home/nate/.cache
+   ```
+
+3. **Still in the chroot, as nate** (`su - nate`). Clone dot-files and stow it **before** anything else writes to `$HOME`. If paru or pnpm creates `~/.local` first, stow can't fold it into the repo symlink. Then install the shell plugins and the AUR side of the manifest:
+
+   ```
+   git clone https://github.com/NathanielInman/dotfiles.git ~/Sites/dot-files && cd ~/Sites/dot-files
+   ./install.sh hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade task chrome pipewire cargo
+   (cd ~/.oh-my-zsh && git init -q && git remote add origin https://github.com/ohmyzsh/ohmyzsh.git \
+     && git fetch -q --depth=1 origin master && git checkout -q -f -B master FETCH_HEAD)   # not the installer: it replaces .zshrc
+   git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+   git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+   git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim && vim +PluginInstall +qall
+   broot --install                       # writes the `br` launcher that .zshrc sources
+   rustup default stable                 # before any AUR build, so nothing pulls in the conflicting `rust`
+   git clone https://aur.archlinux.org/paru-bin.git /tmp/paru-bin && (cd /tmp/paru-bin && makepkg -si)
+   grep -v '^#' pkglist/aur.txt | paru -S --needed -   # openvpn3 needs --nocheck; waybar-git asks about its conflict
+   ./install.sh -s                       # in a chroot systemctl enables units and skips --now/daemon-reload
+   ```
+
+   `systemctl --user` needs a running user manager, so enable the user units (`waybar`, `headset-autoswitch`, `elephant`) from the first Hyprland terminal. PipeWire's sockets are enabled by default.
+
+4. **Leave the chroot**, point `resolv.conf` at resolved (arch-chroot bind-mounts over it, so do it from outside), and reboot. This is the only reboot:
+
+   ```
+   ln -sf ../run/systemd/resolve/stub-resolv.conf /mnt/etc/resolv.conf
+   umount -R /mnt && reboot
+   ```
+
+5. **After the first boot**, getty autologin starts Hyprland. Do the YubiKey, secrets and `~/Sites` restore from a kitty terminal as `nate`, never as root. Under `sudo`, `~` expands to `/root`, and files land root-owned. Run Claude Code as `nate` too. After restoring `~/.claude`, restart Claude itself. The session doesn't need a restart.
+
+> [!TIP]
+> A restored GNOME keyring is still locked with the old machine's login password, so `glab` can't read its token and every GitLab clone fails. On the old machine, blank the keyring password (see the [autologin keyring step](#first-boot)) before archiving it. Otherwise, unlock it in Seahorse before restoring repos.
+
 ### OS drive (from the archiso)
 
 Partition and mount by hand, then either run `archinstall` with "Pre-mounted configuration" for the selections below, or `pacstrap` directly:
@@ -40,20 +92,63 @@ mount --mkdir -o noatime,subvol=@swap $OS-part2 /mnt/swap
 mount --mkdir -o umask=0077 $OS-part1 /mnt/boot
 btrfs filesystem mkswapfile --size 16g /mnt/swap/swapfile && swapon /mnt/swap/swapfile
 
-# if not using archinstall:
-pacstrap -K /mnt base linux linux-firmware amd-ucode btrfs-progs \
-  nvidia-open nvidia-utils zram-generator snapper snap-pac limine
+# without archinstall: the whole manifest (see "Rebuild order"), or at minimum
+pacstrap -K -P /mnt $(grep -v '^#' /root/dot-files/pkglist/repo.txt)
 genfstab -U /mnt >> /mnt/etc/fstab
 ```
 
-In the new system:
+### In the new system
 
-- Limine kernel cmdline needs `rootflags=subvol=@` along with the NVIDIA flags below. `limine-snapper-sync` (AUR) adds snapshots to the boot menu.
-- `/etc/systemd/zram-generator.conf`: `[zram0]` / `zram-size = ram / 4`
-- `systemctl enable fstrim.timer systemd-oomd`
-- Snapper root config: `snapper -c root create-config /` fails while `/.snapshots` exists. Unmount and `rmdir` it, run create-config, delete the `.snapshots` subvolume snapper made, then `mkdir /.snapshots` and `mount -a`.
-- After user `nate` exists: `btrfs subvolume create /home/nate/.cache` (a nested subvolume is left out of `@home` snapshots).
-- multilib plus `lib32-nvidia-utils` for Steam.
+From `arch-chroot /mnt`. This is what the 2026-11-06 install did, minus its mistakes:
+
+- Locale and time: `en_US.UTF-8 UTF-8` in `/etc/locale.gen` then `locale-gen`, `LANG=en_US.UTF-8` in `/etc/locale.conf`, `ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime && hwclock --systohc`, `KEYMAP=us` in `/etc/vconsole.conf`, `FROSTYARCH` in `/etc/hostname`.
+- Limine. `efibootmgr` writes the firmware entry, and the second copy is the fallback path some boards boot first:
+
+  ```
+  install -Dm644 /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/BOOTX64.EFI
+  install -Dm644 /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI
+  efibootmgr --create --disk $(readlink -f $OS) --part 1 --label Limine --loader '\EFI\limine\BOOTX64.EFI' --unicode
+  ```
+
+  `/boot/limine/limine.conf` (root UUID from `blkid`; `zswap.enabled=0` because zram does that job):
+
+  ```
+  timeout: 3
+
+  /Arch Linux
+      protocol: linux
+      path: boot():/vmlinuz-linux
+      cmdline: root=UUID=<root-uuid> rootflags=subvol=@ rw quiet nvidia_drm.modeset=1 nvidia_drm.fbdev=1 zswap.enabled=0
+      module_path: boot():/amd-ucode.img
+      module_path: boot():/initramfs-linux.img
+  ```
+
+  `/etc/pacman.d/hooks/99-limine.hook` copies the EFI binary to both paths again on every `limine` upgrade (`[Trigger]` Install/Upgrade, Package, `Target = limine`; `[Action]` PostTransaction, `Exec = /bin/sh -c 'cp /usr/share/limine/BOOTX64.EFI /boot/EFI/limine/BOOTX64.EFI && cp /usr/share/limine/BOOTX64.EFI /boot/EFI/BOOT/BOOTX64.EFI'`). After first boot, `limine-snapper-sync` (AUR) adds snapshots to the boot menu.
+- NVIDIA modules, `mkinitcpio.conf` and modprobe files as in [First Boot](#first-boot), then `mkinitcpio -P`.
+- `/etc/systemd/zram-generator.conf`: `[zram0]` / `zram-size = ram / 4`. `/etc/tmpfiles.d/tmp.conf`: `Q /tmp 1777 root root 7d`.
+- Wired network, `/etc/systemd/network/20-wired.network`:
+
+  ```
+  [Match]
+  Type=ether
+  Kind=!*
+
+  [Network]
+  DHCP=yes
+  MulticastDNS=yes
+  ```
+
+- `echo '%wheel ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/10-wheel-nopasswd`, the tty1 autologin drop-in, `/etc/profile.d/editor.sh`, the PAM keyring lines, and `passwd -l root`: all from [First Boot](#first-boot).
+- Rime: `/etc/cifs-credentials/rime` and its fstab line from [Network storage](#network-storage-rime-truenas-smb-share). broker isn't restored yet, so type the password in by hand this once.
+- Docker data root: `/etc/docker/daemon.json` with `{"data-root": "/scratch/docker"}`.
+- Snapper root config: `snapper -c root create-config /` fails while `/.snapshots` exists. Unmount and `rmdir` it, run create-config, delete the `.snapshots` subvolume snapper made, then `mkdir /.snapshots` and `mount -a`. Then `snapper -c sites create-config /home/nate/Sites`.
+- Enable every system service in one go. `snapper-cleanup.timer` matters: without it, snap-pac's pre/post pairs pile up past `NUMBER_LIMIT` (99 root snapshots on day one). The scrub timers read every block monthly, which is the only way to find silent corruption on drives with no mirror:
+
+  ```
+  systemctl enable systemd-networkd systemd-resolved systemd-timesyncd sshd pcscd.socket bluetooth \
+    cronie docker.socket fstrim.timer paccache.timer systemd-oomd \
+    snapper-timeline.timer snapper-cleanup.timer btrfs-scrub@-.timer btrfs-scrub@data.timer
+  ```
 
 ### Scratch and data drives
 
@@ -74,15 +169,33 @@ LABEL=data     /home/nate/Sites  btrfs  noatime,compress=zstd:1,subvol=@sites,no
 /scratch/tmp   /tmp              none   bind,x-systemd.requires-mounts-for=/scratch  0 0
 ```
 
+From the archiso (the [one-reboot order](#rebuild-order-one-reboot)), mount them under `/mnt` and create the directories there, before pacstrap:
+
+```
+mount --mkdir $SCR-part1 /mnt/scratch
+mount --mkdir -o noatime,compress=zstd:1,subvol=@data  $DATA-part1 /mnt/data
+mount --mkdir -o noatime,compress=zstd:1,subvol=@sites $DATA-part1 /mnt/home/nate/Sites
+install -d -m 1777 /mnt/scratch/tmp && mkdir -p /mnt/scratch/{gradle,vms,avd}
+```
+
+Adding them to a running system instead needs a reboot, because the live tmpfs `/tmp` is busy:
+
 ```
 sudo mkdir -p /scratch /data /home/nate/Sites && sudo systemctl daemon-reload
 sudo mount /scratch && sudo mount /data && sudo mount /home/nate/Sites
 sudo install -d -m 1777 /scratch/tmp
-sudo chown nate:nate /data /home/nate/Sites
+sudo chown nate:nate /scratch /data /home/nate/Sites
 sudo reboot        # then `findmnt /tmp` must show /scratch/tmp, not tmpfs
 ```
 
-Then send the heavy writers to scratch: Docker `/etc/docker/daemon.json` `{"data-root": "/scratch/docker"}`; `GRADLE_USER_HOME=/scratch/gradle`; libvirt pool at `/scratch/vms`; `ANDROID_AVD_HOME=/scratch/avd`; Steam library at `/data/steam`; `snapper -c sites create-config /home/nate/Sites`; `~/.cargo/config.toml` `[profile.dev] debug = "line-tables-only"` (no global `CARGO_TARGET_DIR`: parallel agents would block on its lock).
+`/scratch` must be owned by `nate`, or scripts and agents can't create their own dirs in it. Heavy writers that go there:
+
+- Docker: `/etc/docker/daemon.json` `{"data-root": "/scratch/docker"}`
+- Gradle and Android AVDs: `.zshrc` exports `GRADLE_USER_HOME=/scratch/gradle` and `ANDROID_AVD_HOME=/scratch/avd` when `/scratch` exists
+- libvirt: storage pool at `/scratch/vms`
+- Rust: the `cargo` stow package sets `[profile.dev] debug = "line-tables-only"` in `~/.cargo/config.toml`. Don't set a global `CARGO_TARGET_DIR`: parallel agents would block on its lock.
+
+Steam's library goes on data, not scratch: install `steam` (multilib), then add a library folder at `/data/steam` in its Storage settings.
 
 ### Selections to choose during archinstall
 
@@ -109,6 +222,9 @@ After `archinstall` finishes, continue at [First Boot](#first-boot).
 
 ## First Boot
 
+> [!NOTE]
+> With the [one-reboot order](#rebuild-order-one-reboot), most of this section is already done from the chroot, and the packages come from `pkglist/`. This section stays as the reference for what each piece is and why.
+
 Now after boot, login with the configured password and uncomment `multilib` within:
 
 ```
@@ -130,7 +246,7 @@ git clone https://aur.archlinux.org/paru.git /tmp/paru
 cd /tmp/paru && makepkg -si
 ```
 
-> Building `paru` from source pulls in the `rust` package, which **conflicts with `rustup`** (installed later). Remove it (`sudo pacman -R rust`) before installing `rustup`, or install `paru-bin` instead to skip the Rust build entirely.
+> Building `paru` from source pulls in the `rust` package, which **conflicts with `rustup`** (installed later). Remove it (`sudo pacman -R rust`) before installing `rustup`, or install `paru-bin` instead to skip the Rust build entirely. Even with `paru-bin`, other AUR builds pull `rust` in as a make dependency, so install `rustup` and run `rustup default stable` before the first AUR build. Once `rustup` provides `rust`, nothing pulls in the conflicting package.
 
 Enable weekly automatic cleanup of the pacman package cache (keeps the last 3 versions of each package). This prevents `/` from filling up over time:
 
@@ -544,11 +660,11 @@ This drops the `trcli` binary in `~/.local/bin` (already on `PATH` via `.zshrc`)
 
 ### Docker
 
-Docker runs the throwaway local dependencies for work services (Kafka, Postgres, Pact stub servers) via `docker compose`. Add yourself to the `docker` group so it works without `sudo`, then log out and back in:
+Docker runs the throwaway local dependencies for work services (Kafka, Postgres, Pact stub servers) via `docker compose`. Add yourself to the `docker` group so it works without `sudo`. A group added after login only applies after you log out and back in, so on a rebuild put it in the `useradd -G` list instead. Its data root lives on scratch (`/etc/docker/daemon.json`, see [Scratch and data drives](#scratch-and-data-drives)):
 
 ```
 pacman -S docker docker-buildx docker-compose
-sudo systemctl enable --now docker.service
+sudo systemctl enable --now docker.socket
 sudo usermod -aG docker $USER
 ```
 
@@ -607,7 +723,7 @@ Windows exports shell out to `rcedit` (a Windows tool) through Wine to stamp the
 pacman -S wine wine-mono lib32-gcc-libs icoutils
 ```
 
-The project lives on the `~/Rime` SMB share (see [Network storage](#network-storage-rime-truenas-smb-share) below), so the NAS must be mounted/reachable before the aliases will `cd` into it.
+The project lives in `~/Sites/det33-godot` (it moved off the `~/Rime` SMB share on 2026-11-06; SMB has no exec bits and was slow for git). The art source folders such as `~/Rime/DET-33` are still on the share.
 
 For 3D asset work, Blender is in the official repos:
 
@@ -759,10 +875,12 @@ Now that Vundler is installed, we can install all the plugins.
 vim +PluginInstall +qall
 ```
 
-Now for configuring the shell.
+Now for configuring the shell. Don't use the oh-my-zsh installer script: it replaces the stowed `~/.zshrc`. `~/.oh-my-zsh` is a stow symlink into `packages/zsh/.oh-my-zsh`, which tracks only `custom/` (the `.gitignore` ignores the rest), so clone oh-my-zsh into it around the tracked files:
 
 ```
-sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+cd ~/.oh-my-zsh && git init -q && git remote add origin https://github.com/ohmyzsh/ohmyzsh.git \
+  && git fetch -q --depth=1 origin master && git checkout -q -f -B master FETCH_HEAD
+broot --install    # the `br` launcher .zshrc sources
 ```
 
 Lets ensure that zsh will have fish-like syntax highlighting & autocompletion
@@ -859,7 +977,6 @@ Now for any other essentials for arch
 - `fzf` is a fuzzy finder for files usable in vim or cli
 - `didyoumean` is a spell-checking app
 - `translate-shell` is a translation app
-- `udict` urban dictionary
 - `fastfetch` cli system info tool (actively maintained neofetch replacement)
 - `sdcv` cli dictionary
 - `xsv` is a cli for splitting/joining/analyzing csv files
@@ -891,7 +1008,7 @@ Now for any other essentials for arch
 - `fselect` is a SQL-like querying tool for the filesystem
 
 ```
-paru -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell udict fastfetch sdcv xsv obsidian cronie dog bind sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator nordic-theme gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
+paru -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glances procs tokei zoxide fzf didyoumean translate-shell fastfetch sdcv xsv obsidian cronie dog bind sd onefetch okular usbutils kooha thunar thunar-volman thunar-archive-plugin ffmpegthumbnailer gvfs gvfs-smb tumbler libgsf galculator nordic-theme gtk-engine-murrine gthumb vscode-langservers-extracted inxi vfox yazi fselect
 ```
 
 Now set the GTK theme to `Nordic` with the `PragmataPro 11` font and `Adwaita` icons (or use the `nwg-look` GUI from the AUR):
@@ -959,6 +1076,8 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 @hourly /home/nate/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh
 # nightly safety net so no uncommitted ~/Sites work is ever lost to a dead disk
 0 3 * * * /home/nate/Sites/dot-files/scripts/cron-sites-nightly-backup.sh
+# refresh pkglist/ so the 3am backup commits any package changes
+55 2 * * * /home/nate/Sites/dot-files/scripts/pkglist-refresh.sh
 ```
 
 The nightly backup is documented in full in [`docs/sites-nightly-backup.md`](./sites-nightly-backup.md): owned repos get an atomic conventional commit + push on the current branch, every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote.
@@ -1044,9 +1163,11 @@ It never asks for a Claude login of its own. It spawns the installed `claude`, w
 No plugins are needed anymore: the scrolling/column-based layout (like
 PaperWM) that used to come from the `hyprscrolling` plugin is built into
 Hyprland core since 0.55, configured via the `scrolling` table in
-`~/.config/hypr/options.lua`. If a plugin is ever wanted again, `hyprpm` is
-still installed and a pacman hook (`hyprpm.hook`) reruns `hyprpm update`
-after Hyprland upgrades; lua configs load plugins via `hl.plugin`.
+`~/.config/hypr/options.lua`. `hyprpm` is no longer part of the `hyprland`
+package (it is `extra/hyprpm` since 0.57), so it isn't installed. If a plugin is
+ever wanted again, `pacman -S hyprpm` and rerun `./install.sh -s`, which offers a
+pacman hook (`hyprpm.hook`) that reruns `hyprpm update` after Hyprland upgrades;
+lua configs load plugins via `hl.plugin`.
 
 ## Stow Packages
 
