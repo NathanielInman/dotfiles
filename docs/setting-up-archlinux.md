@@ -283,6 +283,8 @@ paru -S blueberry
 systemctl enable bluetooth.service --now
 ```
 
+The board also has onboard Bluetooth (MediaTek MT7925, USB `13d3:3602`, the BT half of the Wi-Fi card). With it present BlueZ made it the default controller and the MX Master paired to it instead of the dongle, so `etc/udev/rules.d/52-disable-onboard-bt.rules` deauthorizes it (`bluetoothctl list` should show one controller). Wi-Fi is unaffected.
+
 Two Bluetooth quirks of the TP-Link UB500 (RTL8761B) dongle are handled by `install.sh`:
 
 - `etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules` keeps the dongle powered (USB autosuspend after 2s idle dropped the mouse mid-drag).
