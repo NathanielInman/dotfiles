@@ -13,7 +13,10 @@ packages/zsh/.local/bin/fonttools
 packages/zsh/.local/bin/pyftmerge
 packages/zsh/.local/bin/pyftsubset
 packages/zsh/.local/bin/ttx
+packages/zsh/.oh-my-zsh/*
+!packages/zsh/.oh-my-zsh/custom/
 packages/zsh/.oh-my-zsh/custom/plugins/
+packages/zsh/.oh-my-zsh/custom/example.zsh
 
 # wrangler writes a local cache (incl. wrangler-account.json) into the repo root
 .wrangler/
