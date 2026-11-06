@@ -1128,6 +1128,20 @@ Then we can add urls we want to block within it (for me, yandex - which i usuall
 127.0.0.1 yabs.yandex.ru
 ```
 
+## Claude Code
+
+Install it as `nate` with the native installer, which puts a self-updating binary at `~/.local/bin/claude` (versions under `~/.local/share/claude/versions`, not restored by a migration, so reinstall):
+
+```
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+Don't use `npm install -g` as root: the 2026-11-06 install did that from the chroot, and the root-owned `/usr/bin/claude` could never auto-update. The live ISO is the exception: `npm install -g` is fine there, since it's thrown away. `~/.local/bin` comes before `/usr/bin` on `PATH`, including for T3 Code. Sign in with `claude auth login`. A text-only console can't open the login URL, so render it as a QR code to scan with a phone. Install the helpers with `pacman -S tmux qrencode terminus-font` and run `setfont ter-112n` so the code fits on screen. Then run `claude` inside `tmux`, and in a second pane:
+
+```
+tmux capture-pane -p -t :0 | tr -d ' \n' | grep -o 'https://claude\.com/cai/oauth.*Paste' | sed 's/Paste$//' | qrencode -t ansi
+```
+
 ## Claude Code statusline
 
 The repo ships `scripts/statusline-command.sh` - a custom Claude Code statusline (dir · git branch · model · context % · usage window · cost · session duration). It uses only `jq` plus a cached, bounded call to Anthropic's usage API with your own OAuth token, and honors `CLAUDE_CONFIG_DIR` so the personal and work profiles each read their own credentials/cache.
