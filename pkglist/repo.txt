@@ -138,6 +138,7 @@ smbclient
 snap-pac
 snapper
 starship
+steam
 stow
 sudo
 swappy
