@@ -4,6 +4,14 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE")
   hl.exec_cmd("systemctl --user start hyprland-session.target")
 
+  -- Dark mode lives in dconf, not in ~/.config/gtk-*/settings.ini.
+  -- xdg-desktop-portal-gtk reads color-scheme from here, and Electron/Chromium
+  -- apps (T3 Code, Slack, Discord) follow the portal for native context menus.
+  -- Without it they fall back to white menus. Re-applied each login so a fresh
+  -- machine is dark without a manual step.
+  hl.exec_cmd("gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'")
+  hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme 'Nordic'")
+
   -- waybar runs as a systemd user service (enabled via `systemctl --user
   -- enable waybar`) so Restart=on-failure revives it if it segfaults, e.g.
   -- after an in-place glibc upgrade invalidates its mapped libraries.

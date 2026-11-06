@@ -1041,10 +1041,19 @@ paru -S slack-desktop discord file-roller ttf-joypixels ncdu lazygit glow glance
 Now set the GTK theme to `Nordic` with the `PragmataPro 11` font and `Adwaita` icons (or use the `nwg-look` GUI from the AUR):
 
 ```
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface gtk-theme 'Nordic'
 gsettings set org.gnome.desktop.interface font-name 'PragmataPro 11'
 gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'
 ```
+
+`color-scheme` is the one that matters for Electron/Chromium apps (T3 Code, Slack, Discord): they ask xdg-desktop-portal for the color scheme, the portal reads it from dconf, and without `prefer-dark` their native right-click menus render white. The Hyprland autostart re-applies `color-scheme` and `gtk-theme` on every login, so this is covered even if the step above gets skipped. Check what the portal reports with:
+
+```
+busctl --user call org.freedesktop.portal.Desktop /org/freedesktop/portal/desktop org.freedesktop.portal.Settings ReadOne ss org.freedesktop.appearance color-scheme
+```
+
+`v u 1` means prefer dark, `v u 0` means no preference (light menus).
 
 Now grab the dictionary file for sdcv:
 
