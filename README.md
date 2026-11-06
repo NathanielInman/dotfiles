@@ -79,6 +79,10 @@ grep -v '^#' pkglist/aur.txt  | paru -S --needed -
 
 `scripts/pkglist-refresh.sh` regenerates both from `pacman -Qqe` at 2:55am, just before the nightly backup commits and pushes them. The setup guide still explains why each package is there.
 
+### Rebuilding the desktop
+
+`rebuild/` turns the guide's one-reboot order into scripts: `bootstrap.sh` on the live ISO, `10-live.sh` for everything up to the reboot, `40-first-boot.sh` for the restore afterwards. Each step is critical (stop and hand it to a person) or minor (record it in `/var/log/rebuild/followups.md` for Claude to fix after first boot). See [rebuild/README.md](rebuild/README.md). `etc/udev/rules.d/50-zsa.rules` and `70-titan-key.rules` are installed by the rebuild.
+
 ## Automation
 
 `scripts/` holds the cron helpers (set up via `crontab -e`, see [docs/setting-up-archlinux.md](docs/setting-up-archlinux.md)) and a few other tools:
