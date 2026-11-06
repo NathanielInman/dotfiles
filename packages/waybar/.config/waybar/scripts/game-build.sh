@@ -28,7 +28,7 @@ OK_FLASH=6  # seconds to keep the green check before reverting to idle
 
 game_dir() {
   case "$1" in
-    det33|gym|compass|benchmark) echo "$HOME/Rime/det33-godot" ;;
+    det33|gym|compass|benchmark) echo "$HOME/Sites/det33-godot" ;;
     eversparkforge)              echo "$HOME/Sites/everspark-forge-godot" ;;
     detour33)                    echo "$HOME/Sites/detour-33" ;;
   esac
