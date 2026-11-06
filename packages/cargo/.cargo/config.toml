@@ -1,0 +1,5 @@
+# Smaller target/ dirs: line tables keep backtraces readable at a fraction of the
+# size of full debug info (Rust target/ dirs reached 20 to 26 GB each).
+# No global CARGO_TARGET_DIR: parallel agents would block on its lock.
+[profile.dev]
+debug = "line-tables-only"

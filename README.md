@@ -37,6 +37,7 @@ cd ~/Sites/dot-files
 | Package    | Description                                   |
 | ---------- | --------------------------------------------- |
 | `biome`    | Global Biome formatter/linter config          |
+| `cargo`    | Cargo dev profile (small `target/` dirs)      |
 | `chrome`   | Chrome Wayland flags (`chrome-flags.conf`)    |
 | `git`      | Git configuration (delta pager)               |
 | `hyprland` | Wayland compositor (Lua config), lock, idle   |
