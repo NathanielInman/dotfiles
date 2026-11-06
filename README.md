@@ -61,6 +61,7 @@ System-level files that can't be stowed (because they live outside `$HOME`) are 
 - `scripts/hypr-launch` -> `/usr/local/bin/hypr-launch`: sets the NVIDIA/Wayland env and execs Hyprland's own `start-hyprland` watchdog on tty1 login.
 - `etc/nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json`: stops the NVIDIA driver hoarding VRAM freed by Hyprland.
 - `etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules`: keeps the UB500 Bluetooth dongle from autosuspending.
+- `etc/udev/rules.d/52-disable-onboard-bt.rules`: turns off the onboard MediaTek Bluetooth so only the UB500 is used.
 - `usr/local/bin/bt-force-central` + `etc/systemd/system/bt-force-central.service` + `etc/udev/rules.d/51-bt-force-central.rules`: forces the PC to the central role on new Bluetooth links (fixes headset audio stutter).
 - `etc/systemd/system/rime-umount.service`: unmounts the Rime CIFS share early on shutdown so it doesn't hang.
 - `scripts/openvpn3-tun-dns` + `etc/systemd/system/openvpn3-tun-dns@.service`: VPN DNS hook (see below).
