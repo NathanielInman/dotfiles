@@ -121,14 +121,19 @@ stow_package() {
                 mv "$TARGET_DIR/.zshrc" "$TARGET_DIR/.zshrc.pre-stow"
                 echo -e "  ${YELLOW}moved${NC} existing ~/.zshrc to ~/.zshrc.pre-stow"
             fi
-            # ~/.local is meant to be one symlink into packages/zsh/.local (the
-            # gitignored bin/lib/share/state live there). If something (paru,
-            # pnpm, a first shell) created it as a real dir first, stow links
-            # into it piecemeal instead and restores of ~/.local land outside
-            # the repo tree.
-            if [[ "$pkg" == "zsh" && -d "$TARGET_DIR/.local" && ! -L "$TARGET_DIR/.local" ]]; then
-                echo -e "  ${RED}warning${NC} ~/.local is a real directory, not a symlink. Merge it:"
-                echo "    rsync -a ~/.local/ $PACKAGES_DIR/zsh/.local/ && rm -rf ~/.local && ln -s Sites/dot-files/packages/zsh/.local ~/.local"
+            # ~/.local must stay a real directory: apps keep their data in
+            # ~/.local/share and ~/.local/state, which belongs on @home, not in
+            # this repo on the snapshotted ~/Sites subvolume. If ~/.local or
+            # ~/.local/bin is missing, stow would fold it into one symlink
+            # into packages/zsh/.local, so create both and stow links only the
+            # tracked scripts in bin/.
+            if [[ "$pkg" == "zsh" ]]; then
+                if [[ -L "$TARGET_DIR/.local" ]]; then
+                    echo -e "  ${RED}warning${NC} ~/.local is a symlink into the repo; app data is landing in ~/Sites."
+                    echo "    Move it back: see "Why ~/.local is a real directory" in docs/setting-up-archlinux.md"
+                elif [[ "$dry_run" != "true" ]]; then
+                    mkdir -p "$TARGET_DIR/.local/bin"
+                fi
             fi
             stow "${stow_opts[@]}" "$pkg"
             ;;
