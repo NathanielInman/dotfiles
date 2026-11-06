@@ -38,6 +38,7 @@ cd ~/Sites/dot-files
 | ---------- | --------------------------------------------- |
 | `biome`    | Global Biome formatter/linter config          |
 | `cargo`    | Cargo dev profile (small `target/` dirs)      |
+| `cargo`    | Cargo dev profile (small `target/` dirs)      |
 | `chrome`   | Chrome Wayland flags (`chrome-flags.conf`)    |
 | `git`      | Git configuration (delta pager)               |
 | `hyprland` | Wayland compositor (Lua config), lock, idle   |
@@ -67,6 +68,17 @@ System-level files that can't be stowed (because they live outside `$HOME`) are 
 
 `usr/share/applications/` holds `.desktop` overrides (mostly `NoDisplay=true` to hide unwanted apps from walker); copy them to `/usr/share/applications/` by hand.
 
+### Package manifest
+
+`pkglist/repo.txt` (official repos, multilib included) and `pkglist/aur.txt` list every explicitly installed package on the desktop, so a rebuild installs everything in one pass instead of section by section:
+
+```bash
+grep -v '^#' pkglist/repo.txt | sudo pacman -S --needed -   # or: pacstrap -K -P /mnt $(grep -v '^#' pkglist/repo.txt)
+grep -v '^#' pkglist/aur.txt  | paru -S --needed -
+```
+
+`scripts/pkglist-refresh.sh` regenerates both from `pacman -Qqe` at 2:55am, just before the nightly backup commits and pushes them. The setup guide still explains why each package is there.
+
 ## Automation
 
 `scripts/` holds the cron helpers (set up via `crontab -e`, see [docs/setting-up-archlinux.md](docs/setting-up-archlinux.md)) and a few other tools:
@@ -74,6 +86,7 @@ System-level files that can't be stowed (because they live outside `$HOME`) are 
 - `cron-git-notes-auto-update.sh` / `cron-git-tasks-auto-update.sh`: keep the `notes` and `tasks` repos synced hourly.
 - `cron-sites-nightly-backup.sh`: a 3am safety net so no uncommitted work in `~/Sites` is ever lost to a dead disk. Owned repos get an atomic commit + push on the current branch; every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote. Full write-up: [docs/sites-nightly-backup.md](docs/sites-nightly-backup.md).
 - `openvpn3-tun-dns`: attaches the DigitalTurbine CloudConnexa DNS resolver to the `tun0` link on every VPN connect (via `openvpn3-tun-dns@tun0.service`), because `openvpn3` doesn't apply the pushed DNS itself and internal hosts won't otherwise resolve. Full write-up: [docs/openvpn3-vpn-dns.md](docs/openvpn3-vpn-dns.md).
+- `pkglist-refresh.sh`: rewrites `pkglist/` from what is installed (cron, 2:55am).
 - `statusline-command.sh`: custom Claude Code statusline (see [docs/setting-up-archlinux.md](docs/setting-up-archlinux.md#claude-code-statusline)).
 
 > [!TIP]
