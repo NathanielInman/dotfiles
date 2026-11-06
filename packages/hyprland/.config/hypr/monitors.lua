@@ -1,5 +1,6 @@
--- Monitors
-hl.monitor({ output = "DP-1", mode = "2560x1440@59.95", position = "0x0", scale = 1 })
+-- Monitors: the G9 in PBP, left half on DP-3, right half on DP-2 (connector
+-- names depend on the GPU; check with `hyprctl monitors` after a hardware swap).
+hl.monitor({ output = "DP-3", mode = "2560x1440@59.95", position = "0x0", scale = 1 })
 hl.monitor({ output = "DP-2", mode = "2560x1440@59.95", position = "2560x0", scale = 1 })
 -- Fallback: any output not matched above (e.g. a different connector name
 -- through the KVM, like HDMI-A-1) still lights up at its preferred mode.
@@ -7,7 +8,7 @@ hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })
 
 -- Workspace assignments
 local assignments = {
-  ["DP-1"] = { 1, 4, 5, 6 },
+  ["DP-3"] = { 1, 4, 5, 6 },
   ["DP-2"] = { 2, 3, 7, 8, 9, 10 },
 }
 for monitor, workspaces in pairs(assignments) do

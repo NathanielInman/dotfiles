@@ -2,7 +2,7 @@
 
 # Keeps the G9 dark after an Idle until real input arrives.
 #
-# The G9 runs in PBP with two DisplayPort inputs (DP-1 left, DP-2 right).
+# The G9 runs in PBP with two DisplayPort inputs (DP-3 left, DP-2 right).
 # Some time after dpms off it drops both links on the way into standby;
 # Hyprland removes both monitors, adds a FALLBACK output, then re-adds
 # whichever inputs relink. Re-added monitors come up with dpms on, so one

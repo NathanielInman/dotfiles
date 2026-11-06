@@ -415,7 +415,9 @@ hyprctl monitors # list all connected monitors with names, resolutions, position
 ```
 
 Monitor configuration is handled in `~/.config/hypr/monitors.lua` (required
-from `hyprland.lua`; Hyprland 0.55+ uses lua configs):
+from `hyprland.lua`; Hyprland 0.55+ uses lua configs). Connector names depend on the GPU: on the
+current desktop the G9's PBP halves are `DP-3` (left) and `DP-2` (right), and a name that matches
+nothing falls through to the `auto` fallback, which puts that screen on the wrong side.
 
 ```lua
 hl.monitor({ output = "DP-1", mode = "preferred", position = "auto", scale = 1 })
