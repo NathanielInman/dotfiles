@@ -115,6 +115,21 @@ stow_package() {
     case "$action" in
         install)
             echo -e "${GREEN}Installing${NC} $pkg..."
+            # A fresh user gets a stub ~/.zshrc from zsh-newuser-install (or
+            # /etc/skel), which makes stow refuse the whole package. Park it.
+            if [[ "$pkg" == "zsh" && -f "$TARGET_DIR/.zshrc" && ! -L "$TARGET_DIR/.zshrc" && "$dry_run" != "true" ]]; then
+                mv "$TARGET_DIR/.zshrc" "$TARGET_DIR/.zshrc.pre-stow"
+                echo -e "  ${YELLOW}moved${NC} existing ~/.zshrc to ~/.zshrc.pre-stow"
+            fi
+            # ~/.local is meant to be one symlink into packages/zsh/.local (the
+            # gitignored bin/lib/share/state live there). If something (paru,
+            # pnpm, a first shell) created it as a real dir first, stow links
+            # into it piecemeal instead and restores of ~/.local land outside
+            # the repo tree.
+            if [[ "$pkg" == "zsh" && -d "$TARGET_DIR/.local" && ! -L "$TARGET_DIR/.local" ]]; then
+                echo -e "  ${RED}warning${NC} ~/.local is a real directory, not a symlink. Merge it:"
+                echo "    rsync -a ~/.local/ $PACKAGES_DIR/zsh/.local/ && rm -rf ~/.local && ln -s Sites/dot-files/packages/zsh/.local ~/.local"
+            fi
             stow "${stow_opts[@]}" "$pkg"
             ;;
         unstow)
