@@ -36,7 +36,7 @@ Do everything that doesn't need a running desktop from the archiso, so the first
    btrfs subvolume create /home/nate/.cache && chown nate:nate /home/nate/.cache
    ```
 
-3. **Still in the chroot, as nate** (`su - nate`). Clone dot-files and stow it **before** anything else writes to `$HOME`. If paru or pnpm creates `~/.local` first, stow can't fold it into the repo symlink. Then install the shell plugins and the AUR side of the manifest:
+3. **Still in the chroot, as nate** (`su - nate`). Clone dot-files and stow it. `install.sh` creates `~/.local/bin` as a real directory first, so stow links only the tracked scripts ([why](#why-local-is-a-real-directory)). Then install the shell plugins and the AUR side of the manifest:
 
    ```
    git clone https://github.com/NathanielInman/dotfiles.git ~/Sites/dot-files && cd ~/Sites/dot-files
@@ -555,6 +555,21 @@ Now grab all of the dot files
 cd ~/Sites && git clone https://github.com/NathanielInman/dotfiles.git dot-files
 cd dot-files
 ```
+
+#### Why `~/.local` is a real directory
+
+`~/.local` must be a plain directory on `@home`, never a symlink into this repo. Until 2026-11-06 it was one (`~/.local -> Sites/dot-files/packages/zsh/.local`) so that stow could track the scripts in `~/.local/bin`. The side effect was that everything apps keep in `~/.local/share` and `~/.local/state` landed inside `~/Sites` too: 5.3 GB, including the 3.1 GB Steam client. That's on the data drive, and the `sites` snapper config snapshots it every hour. Now `install.sh` creates `~/.local/bin` before stowing `zsh`, so stow can't fold the directory and links each tracked script in `packages/zsh/.local/bin` individually. The `.gitignore` ignores everything else under `packages/zsh/.local`. A new script added to that `bin/` gets tracked like any other file; rerun `./install.sh -r zsh` to link it.
+
+To undo a folded `~/.local` (as on 2026-11-06), close Steam and anything else writing there, then copy everything except the tracked scripts out, swap, and restow:
+
+```
+P=~/Sites/dot-files/packages/zsh/.local
+rsync -aHAX $(git -C ~/Sites/dot-files ls-files packages/zsh/.local | sed 's|packages/zsh/.local|--exclude=|') $P/ ~/.local.new/
+rm ~/.local && mv ~/.local.new ~/.local
+git -C ~/Sites/dot-files clean -ffdX packages/zsh/.local && ~/Sites/dot-files/install.sh -r zsh
+```
+
+Afterwards, fix anything that recorded the old real path. Find it with `find ~/.local ~/.steam -lname "$P*"` and `grep -rIl "$P" ~/.local ~/.steam`, skipping logs. On 2026-11-06 that was: Steam's runtime symlinks, `~/.steam/*` links, `libraryfolders.vdf` and `registry.vdf`, Steam's Vulkan layer JSONs, and pipx (`rm -rf ~/.local/share/pipx/shared && pipx reinstall trcli`).
 
 Install the stow packages for the Wayland setup (the full list is in the [README](../README.md#available-packages); `./install.sh -a` installs all of them):
 
@@ -1266,7 +1281,7 @@ pacman -S age age-plugin-yubikey pcsclite ccid yubikey-manager libfido2
 sudo systemctl enable --now pcscd.socket
 ```
 
-The vault lives in `~/.local/share/broker` (inside the gitignored stow tree, so it is **not** in this repo). To move it to a new machine, write a passphrase-encrypted backup on the old one and restore it on the new one with the same YubiKey:
+The vault lives in `~/.local/share/broker` on `@home`, so it is **not** in this repo and not in any snapshot. To move it to a new machine, write a passphrase-encrypted backup on the old one and restore it on the new one with the same YubiKey:
 
 ```
 broker backup -o ~/broker.backup --generate-passphrase   # old machine (touch)
