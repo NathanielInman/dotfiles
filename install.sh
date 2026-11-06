@@ -16,6 +16,32 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# -y/--yes answers every setup prompt with yes (used by rebuild/ scripts).
+ASSUME_YES="false"
+
+# Read a y/N answer for the prompt just printed; -y answers yes.
+confirm() {
+    if [[ "$ASSUME_YES" == "true" ]]; then
+        echo "y"
+        return 0
+    fi
+    local answer
+    read -r answer
+    [[ "$answer" =~ ^[Yy]$ ]]
+}
+
+# In a chroot (the rebuild runs this from the archiso) there is no udev or
+# D-Bus to talk to: systemctl already skips start/reload there, but udevadm
+# and openvpn3-admin fail, so skip them. The rules load on first boot.
+in_chroot() {
+    systemd-detect-virt --chroot &>/dev/null
+}
+
+udev_reload() {
+    in_chroot && return 0
+    sudo udevadm control --reload-rules || echo "  udev reload failed; the rules load on next boot"
+}
+
 # All available packages (directories in packages/)
 get_packages() {
     local packages=()
@@ -38,6 +64,7 @@ usage() {
     echo "  -r, --restow    Restow packages (useful after updates)"
     echo "  -n, --dry-run   Show what would be done without making changes"
     echo "  -s, --setup-system  Run optional system-level configuration (requires sudo)"
+    echo "  -y, --yes       Answer yes to every -s prompt (unattended)"
     echo "  -h, --help      Show this help message"
     echo ""
     echo "Examples:"
@@ -153,15 +180,16 @@ setup_system() {
     echo ""
 
     # OpenVPN3 + systemd-resolved DNS integration
-    if command -v openvpn3 &> /dev/null && command -v openvpn3-admin &> /dev/null; then
+    if command -v openvpn3 &> /dev/null && command -v openvpn3-admin &> /dev/null && in_chroot; then
+        echo -e "  ${YELLOW}[deferred]${NC} openvpn3 systemd-resolved DNS (needs D-Bus; rerun -s after boot)"
+    elif command -v openvpn3 &> /dev/null && command -v openvpn3-admin &> /dev/null; then
         local current_config
         current_config=$(sudo cat /var/lib/openvpn3/netcfg.json 2>/dev/null || echo "")
         if echo "$current_config" | grep -q '"systemd_resolved" : true'; then
             echo -e "  ${GREEN}[configured]${NC} openvpn3 systemd-resolved DNS"
         else
             echo -n -e "  ${YELLOW}[available]${NC} Configure openvpn3 to use systemd-resolved for DNS? [y/N] "
-            read -r answer
-            if [[ "$answer" =~ ^[Yy]$ ]]; then
+            if confirm; then
                 sudo mkdir -p /var/lib/openvpn3
                 sudo openvpn3-admin netcfg-service --config-set systemd-resolved true
                 echo -e "  ${GREEN}[configured]${NC} openvpn3 systemd-resolved DNS"
@@ -185,8 +213,7 @@ setup_system() {
             echo -e "  ${GREEN}[configured]${NC} openvpn3-tun-dns@tun0 DNS hook"
         else
             echo -n -e "  ${YELLOW}[available]${NC} Install openvpn3 tunnel DNS hook (resolves internal DT hosts)? [y/N] "
-            read -r answer
-            if [[ "$answer" =~ ^[Yy]$ ]]; then
+            if confirm; then
                 sudo install -Dm755 "$tundns_script_src" "$tundns_script_dst"
                 sudo install -Dm644 "$tundns_unit_src" "$tundns_unit_dst"
                 sudo systemctl daemon-reload
@@ -206,8 +233,7 @@ setup_system() {
             echo -e "  ${GREEN}[configured]${NC} hyprpm pacman hook"
         else
             echo -n -e "  ${YELLOW}[available]${NC} Install pacman hook to rebuild hyprpm plugins after Hyprland upgrades? [y/N] "
-            read -r answer
-            if [[ "$answer" =~ ^[Yy]$ ]]; then
+            if confirm; then
                 sed "s/__USER__/$USER/g" "$hook_src" | sudo install -Dm644 /dev/stdin "$hook_dst"
                 echo -e "  ${GREEN}[configured]${NC} hyprpm pacman hook"
             else
@@ -225,8 +251,7 @@ setup_system() {
         echo -e "  ${GREEN}[configured]${NC} hypr-launch launcher"
     else
         echo -n -e "  ${YELLOW}[available]${NC} Install Hyprland launcher to $launch_dst? [y/N] "
-        read -r answer
-        if [[ "$answer" =~ ^[Yy]$ ]]; then
+        if confirm; then
             sudo install -Dm755 "$launch_src" "$launch_dst"
             # Remove the old same-named wrapper that shadowed /usr/bin/start-hyprland.
             [[ -e /usr/local/bin/start-hyprland ]] && sudo rm -f /usr/local/bin/start-hyprland
@@ -240,15 +265,14 @@ setup_system() {
     # in a per-process reuse pool and never trims it (1-2GB/day of window
     # churn). GLVidHeapReuseRatio=0 for Hyprland makes it return freed buffers
     # immediately. Read at compositor startup, so needs a session restart.
-    if [[ -d /proc/driver/nvidia ]]; then
+    if [[ -d /proc/driver/nvidia ]] || pacman -Q nvidia-utils &>/dev/null; then
         local nvprofile_src="$DOTFILES_DIR/etc/nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json"
         local nvprofile_dst="/etc/nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json"
         if [[ -f "$nvprofile_dst" ]] && cmp -s "$nvprofile_src" "$nvprofile_dst"; then
             echo -e "  ${GREEN}[configured]${NC} NVIDIA VRAM buffer-pool profile"
         else
             echo -n -e "  ${YELLOW}[available]${NC} Install NVIDIA profile to stop Hyprland VRAM hoarding? [y/N] "
-            read -r answer
-            if [[ "$answer" =~ ^[Yy]$ ]]; then
+            if confirm; then
                 sudo install -Dm644 "$nvprofile_src" "$nvprofile_dst"
                 echo -e "  ${GREEN}[configured]${NC} NVIDIA VRAM buffer-pool profile"
             else
@@ -266,10 +290,9 @@ setup_system() {
         echo -e "  ${GREEN}[configured]${NC} BT adapter no-autosuspend udev rule"
     else
         echo -n -e "  ${YELLOW}[available]${NC} Install udev rule to stop BT adapter autosuspend (drops mouse mid-use)? [y/N] "
-        read -r answer
-        if [[ "$answer" =~ ^[Yy]$ ]]; then
+        if confirm; then
             sudo install -Dm644 "$btudev_src" "$btudev_dst"
-            sudo udevadm control --reload-rules
+            udev_reload
             echo -e "  ${GREEN}[configured]${NC} BT adapter no-autosuspend udev rule"
         else
             echo -e "  ${YELLOW}[skipped]${NC} BT adapter no-autosuspend udev rule"
@@ -285,11 +308,10 @@ setup_system() {
         echo -e "  ${GREEN}[configured]${NC} Onboard Bluetooth disabled (UB500 only)"
     else
         echo -n -e "  ${YELLOW}[available]${NC} Disable onboard MediaTek Bluetooth so only the UB500 dongle is used? [y/N] "
-        read -r answer
-        if [[ "$answer" =~ ^[Yy]$ ]]; then
+        if confirm; then
             sudo install -Dm644 "$btonboard_src" "$btonboard_dst"
-            sudo udevadm control --reload-rules
-            sudo udevadm trigger --action=add --subsystem-match=usb --attr-match=idVendor=13d3 --attr-match=idProduct=3602
+            udev_reload
+            in_chroot || sudo udevadm trigger --action=add --subsystem-match=usb --attr-match=idVendor=13d3 --attr-match=idProduct=3602 || true
             echo -e "  ${GREEN}[configured]${NC} Onboard Bluetooth disabled (UB500 only)"
         else
             echo -e "  ${YELLOW}[skipped]${NC} Onboard Bluetooth disable"
@@ -310,14 +332,13 @@ setup_system() {
         echo -e "  ${GREEN}[configured]${NC} BT force-central role switch (headset stutter fix)"
     else
         echo -n -e "  ${YELLOW}[available]${NC} Install BT force-central role switch (fixes A2DP stutter when the headset reconnects)? [y/N] "
-        read -r answer
-        if [[ "$answer" =~ ^[Yy]$ ]]; then
+        if confirm; then
             command -v hcitool >/dev/null || sudo pacman -S --needed --noconfirm bluez-deprecated-tools
             sudo install -Dm755 "$btfc_bin_src" "$btfc_bin_dst"
             sudo install -Dm644 "$btfc_svc_src" "$btfc_svc_dst"
             sudo install -Dm644 "$btfc_udev_src" "$btfc_udev_dst"
             sudo systemctl daemon-reload
-            sudo udevadm control --reload-rules
+            udev_reload
             echo -e "  ${GREEN}[configured]${NC} BT force-central role switch"
         else
             echo -e "  ${YELLOW}[skipped]${NC} BT force-central role switch"
@@ -335,11 +356,10 @@ setup_system() {
         echo -e "  ${GREEN}[configured]${NC} desktop headroom (reserved core, systemd-oomd, SysRq)"
     else
         echo -n -e "  ${YELLOW}[available]${NC} Reserve CPU core 0 for the desktop, enable systemd-oomd and SysRq keys? [y/N] "
-        read -r answer
-        if [[ "$answer" =~ ^[Yy]$ ]]; then
+        if confirm; then
             sudo install -Dm644 "$headroom_src" "$headroom_dst"
             sudo install -Dm644 "$sysrq_src" "$sysrq_dst"
-            sudo sysctl -q -p "$sysrq_dst"
+            in_chroot || sudo sysctl -q -p "$sysrq_dst"
             sudo systemctl daemon-reload
             sudo systemctl enable --now systemd-oomd.service
             echo -e "  ${GREEN}[configured]${NC} desktop headroom (applies to user@ on next login)"
@@ -356,8 +376,7 @@ setup_system() {
         echo -e "  ${GREEN}[configured]${NC} rime-umount shutdown service"
     else
         echo -n -e "  ${YELLOW}[available]${NC} Install rime-umount shutdown service (avoids CIFS shutdown hang)? [y/N] "
-        read -r answer
-        if [[ "$answer" =~ ^[Yy]$ ]]; then
+        if confirm; then
             sudo install -Dm644 "$rime_src" "$rime_dst"
             sudo systemctl daemon-reload
             sudo systemctl enable rime-umount.service
@@ -395,8 +414,12 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         -s|--setup-system)
-            setup_system
-            exit 0
+            ACTION="system"
+            shift
+            ;;
+        -y|--yes)
+            ASSUME_YES="true"
+            shift
             ;;
         -n|--dry-run)
             DRY_RUN="true"
@@ -417,6 +440,11 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+if [[ "$ACTION" == "system" ]]; then
+    setup_system
+    exit 0
+fi
 
 # Check if stow is installed
 if ! command -v stow &> /dev/null; then
