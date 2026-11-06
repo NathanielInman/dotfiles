@@ -38,7 +38,6 @@ cd ~/Sites/dot-files
 | ---------- | --------------------------------------------- |
 | `biome`    | Global Biome formatter/linter config          |
 | `cargo`    | Cargo dev profile (small `target/` dirs)      |
-| `cargo`    | Cargo dev profile (small `target/` dirs)      |
 | `chrome`   | Chrome Wayland flags (`chrome-flags.conf`)    |
 | `git`      | Git configuration (delta pager)               |
 | `hyprland` | Wayland compositor (Lua config), lock, idle   |
@@ -58,7 +57,7 @@ cd ~/Sites/dot-files
 
 System-level files that can't be stowed (because they live outside `$HOME`) are tracked under `etc/`, `usr/` and `scripts/` as copies. Install them via `./install.sh -s`, which prompts for each one. Currently covers:
 
-- `etc/pacman.d/hooks/hyprpm.hook`: rebuilds hyprpm plugins automatically after Hyprland upgrades so boot doesn't complain about outdated plugin headers.
+- `etc/pacman.d/hooks/hyprpm.hook`: rebuilds hyprpm plugins automatically after Hyprland upgrades so boot doesn't complain about outdated plugin headers. Only offered when `hyprpm` (a separate package since Hyprland 0.57) is installed; no plugins are in use today.
 - `scripts/hypr-launch` -> `/usr/local/bin/hypr-launch`: sets the NVIDIA/Wayland env and execs Hyprland's own `start-hyprland` watchdog on tty1 login.
 - `etc/nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json`: stops the NVIDIA driver hoarding VRAM freed by Hyprland.
 - `etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules`: keeps the UB500 Bluetooth dongle from autosuspending.
