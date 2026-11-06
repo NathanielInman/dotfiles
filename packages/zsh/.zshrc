@@ -222,3 +222,10 @@ jiratransitions() {
 export ANDROID_HOME="$HOME/Android/Sdk"
 export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
 export PATH="$PATH:/opt/android-sdk/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
+
+# Heavy, rebuildable writers go to the scratch drive (never snapshotted or backed
+# up). Falls back to the defaults on a machine without /scratch.
+if [[ -d /scratch ]]; then
+  export GRADLE_USER_HOME=/scratch/gradle
+  export ANDROID_AVD_HOME=/scratch/avd
+fi
