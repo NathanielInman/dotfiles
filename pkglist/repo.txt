@@ -172,6 +172,7 @@ wl-clipboard
 xdg-desktop-portal-hyprland
 xdg-user-dirs
 xdg-utils
+xorg-server-xvfb
 xsv
 yad
 yazi
