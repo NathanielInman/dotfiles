@@ -63,3 +63,15 @@ hl.window_rule({ name = "slack-workspace", match = { class = "Slack" }, workspac
 hl.window_rule({ name = "discord-workspace", match = { class = "discord" }, workspace = "3" })
 hl.window_rule({ name = "t3code-workspace", match = { class = "com.t3tools.T3Code" }, workspace = "4" })
 hl.window_rule({ name = "vit-workspace", match = { class = "vit" }, workspace = "6" })
+
+-- Detour 33 (Godot): agents run the game with a real window for perf runs and
+-- screenshots. Keep it on workspace 9, silently, so it never lands on the
+-- workspace in use or takes focus. Matched by class: Godot sets it to the
+-- project name at map time, while the title starts as "Godot" and is renamed
+-- to "Detour 33 (DEBUG)" only after mapping, too late for a rule.
+hl.window_rule({
+  name  = "detour33-workspace",
+  match = { class = "^Detour 33$" },
+  workspace = "9 silent",
+  no_initial_focus = true,
+})
