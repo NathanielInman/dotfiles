@@ -9,7 +9,7 @@
   ],
   "modules-right": [
     "custom/currently-playing",
-    "group/details",
+    "custom/roundhouse",
     "pulseaudio",
     "custom/mouse-battery",
     "custom/voxtype",
@@ -86,76 +86,18 @@
     "on-click-right": "~/.config/waybar/scripts/audio-switch.sh input",
     "on-click-middle": "pavucontrol"
   },
-  "group/details": {
-    "orientation": "horizontal",
-    "drawer": {
-      "transition-duration": 300,
-      "transition-left-to-right": false,
-      "click-to-reveal": true
-    },
-    "modules": [
-      "custom/toggle-details",
-      "custom/network-traffic",
-      "temperature",
-      "disk#root",
-      "disk#sites",
-      "custom/rime-disk",
-      "memory",
-      "cpu",
-      "custom/public-ip"
-    ]
+  "custom/roundhouse": {
+    "exec": "~/.local/bin/rh bar",
+    "return-type": "json",
+    "on-click": "~/.local/bin/rh toggle",
+    "on-click-right": "~/.local/bin/rh toggle --tab storage",
+    "tooltip": true
   },
   "custom/mouse-battery": {
     "exec": "~/.config/waybar/scripts/mouse-battery.sh",
     "return-type": "json",
     "interval": 60,
     "format": "{}"
-  },
-  "custom/toggle-details": {
-    "format": "󰋼",
-    "tooltip-format": "Toggle details",
-    "cursor": true
-  },
-  "custom/network-traffic": {
-    "exec": "~/.config/waybar/scripts/network-traffic.sh",
-    "return-type": "",
-    "tail": true
-  },
-  "temperature": {
-    "hwmon-path-abs": "/sys/devices/pci0000:00/0000:00:18.3/hwmon",
-    "input-filename": "temp1_input",
-    "format": " {temperatureC}°C",
-    "critical-temperature": 85,
-    "interval": 5
-  },
-  "disk#root": {
-    "path": "/",
-    "format": " System {used}/{total}",
-    "tooltip-format": "Root (/): {used} used · {free} free · {total} total ({percentage_used}%)",
-    "interval": 25
-  },
-  "disk#sites": {
-    "path": "/home/nate/Sites",
-    "format": " Sites {used}/{total}",
-    "tooltip-format": "Sites (/home/nate/Sites): {used} used · {free} free · {total} total ({percentage_used}%)",
-    "interval": 25
-  },
-  "custom/rime-disk": {
-    "exec": "~/.config/waybar/scripts/rime-disk.sh",
-    "return-type": "json",
-    "interval": 25
-  },
-  "memory": {
-    "format": " {percentage}%",
-    "interval": 5
-  },
-  "cpu": {
-    "format": " {usage}%",
-    "interval": 5
-  },
-  "custom/public-ip": {
-    "exec": "~/.config/waybar/scripts/public-ip.sh",
-    "interval": 60
   },
   "custom/keylights": {
     "exec": "~/.config/waybar/scripts/keylights.sh",

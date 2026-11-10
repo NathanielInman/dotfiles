@@ -21,15 +21,8 @@ window#waybar.hidden {
 #window,
 #custom-currently-playing,
 #pulseaudio,
-#custom-toggle-details,
-#custom-network-traffic,
-#temperature,
-#disk,
-#custom-rime-disk,
-#memory,
-#cpu,
+#custom-roundhouse,
 #custom-mouse-battery,
-#custom-public-ip,
 #custom-keylights,
 #custom-vpn,
 #custom-voxtype,
@@ -45,7 +38,7 @@ window#waybar.hidden {
   border-right: 1px solid #4c566a;
 }
 
-/* Mouse battery (details drawer) */
+/* Mouse battery */
 #custom-mouse-battery {
   color: #a3be8c;
 }
@@ -65,7 +58,7 @@ window#waybar.hidden {
 /* Hover feedback on clickable modules (info-only modules excluded) */
 #custom-currently-playing:hover,
 #pulseaudio:hover,
-#custom-public-ip:hover,
+#custom-roundhouse:hover,
 #custom-keylights:hover,
 #custom-vpn:hover,
 #custom-voxtype:hover,
@@ -77,13 +70,6 @@ window#waybar.hidden {
 #custom-power-menu:hover,
 #custom-timezone:hover {
   background: #373B41;
-}
-
-/* Drawer toggles get a brighter accent too: they reveal/collapse a tray,
-   unlike the one-shot buttons around them */
-#custom-toggle-details:hover {
-  background: #373B41;
-  color: #b8e0ea;
 }
 
 /* Workspaces */
@@ -127,45 +113,22 @@ window#waybar.hidden {
   color: #4c566a;
 }
 
-/* Toggle details button */
-#custom-toggle-details {
+/* Roundhouse: the system drawer behind one lamp. The class follows the
+   machine (calm, heads-up, act), so the bar only lights up when it matters */
+#custom-roundhouse {
   color: #88c0d0;
 }
 
-/* Network traffic */
-#custom-network-traffic {
-  color: #81a1c1;
+#custom-roundhouse.heads-up {
+  color: #ebcb8b;
 }
 
-/* Temperature */
-#temperature {
-  color: #81a1c1;
-}
-
-#temperature.critical {
+#custom-roundhouse.act {
   color: #bf616a;
 }
 
-/* Disk, memory, cpu */
-#disk,
-#custom-rime-disk,
-#memory,
-#cpu {
-  color: #81a1c1;
-}
-
-/* Rime SMB share: dim when not mounted, red-ish when NAS is unreachable */
-#custom-rime-disk.idle {
+#custom-roundhouse.offline {
   color: #4c566a;
-}
-
-#custom-rime-disk.offline {
-  color: #bf616a;
-}
-
-/* Public IP */
-#custom-public-ip {
-  color: #81a1c1;
 }
 
 /* Keylights */
