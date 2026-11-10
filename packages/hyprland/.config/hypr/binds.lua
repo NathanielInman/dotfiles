@@ -4,6 +4,8 @@ local mod = "SUPER"
 hl.bind(mod .. " + Return", hl.dsp.exec_cmd("kitty"))
 hl.bind(mod .. " + T", hl.dsp.exec_cmd("kitty --class float-term"))
 hl.bind(mod .. " + D", hl.dsp.exec_cmd("walker"))
+-- Switchyard board, centered on the focused monitor (the waybar signal opens it above itself)
+hl.bind(mod .. " + Y", hl.dsp.exec_cmd("~/.local/bin/yard toggle --center"))
 hl.bind(mod .. " + P", hl.dsp.exec_cmd("~/.config/hypr/scripts/screenshot.sh"))
 hl.bind(mod .. " + CTRL + P", hl.dsp.exec_cmd("grim ~/Pictures/Screenshots/fullscreen-$(date +%Y%m%d-%H%M%S).png"))
 hl.bind(mod .. " + E", hl.dsp.exec_cmd("thunar"))
