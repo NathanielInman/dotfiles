@@ -20,6 +20,7 @@
     "custom/vpn",
     "custom/silence-notifications",
     "custom/switchyard",
+    "custom/broker",
     "custom/power-menu",
     "custom/timezone",
     "tray"
@@ -168,6 +169,18 @@
     "return-type": "json",
     "on-click": "~/.local/bin/yard toggle",
     "on-click-right": "~/.local/bin/yard ack",
+    "tooltip": true
+  },
+  // Signal Box (credential-broker, settings in ~/.config/broker/board.toml):
+  // the lamp drains with the soonest grant and turns to a key while an agent
+  // is asking. Click opens the panel, right-click opens it on Asks,
+  // middle-click revokes every grant.
+  "custom/broker": {
+    "exec": "/usr/bin/broker bar",
+    "return-type": "json",
+    "on-click": "/usr/bin/broker board",
+    "on-click-right": "/usr/bin/broker board --tab asks",
+    "on-click-middle": "/usr/bin/broker revoke --all",
     "tooltip": true
   },
   "custom/power-menu": {

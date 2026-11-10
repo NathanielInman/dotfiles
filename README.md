@@ -109,7 +109,7 @@ To use one widget without the rest, copy its script into `~/.config/waybar/scrip
 
 ### Companion programs
 
-Two widgets are front ends for programs that live in their own repos. Install the program, then stow its package here.
+Three widgets are front ends for programs that live in their own repos. Install the program, then stow its package here (Signal Box needs nothing stowed: its module is already in the waybar config).
 
 [**Roundhouse**](https://github.com/NathanielInman/roundhouse) is the lamp: one color for the health of the whole machine, and a drawer with CPU, GPU, memory pressure, network, every disk and share, and memory by app.
 
@@ -126,6 +126,13 @@ cd ~/Sites/dot-files && ./install.sh roundhouse
 git clone https://github.com/NathanielInman/switchyard.git ~/Sites/switchyard
 ~/Sites/switchyard/install.sh       # installs yard and yard-board, enables the user units
 cd ~/Sites/dot-files && ./install.sh switchyard
+```
+
+[**Signal Box**](https://github.com/NathanielInman/credential-broker#signal-box) is the key: the secrets agents can use right now through broker, how long each has left, the requests nobody answered, and a revoke for all of it. It comes with credential-broker; the panel needs `gtk-layer-shell`.
+
+```bash
+sudo pacman -S --needed gtk-layer-shell
+cd ~/Sites/credential-broker/packaging/aur/credential-broker-bin && makepkg -si
 ```
 
 ## Field notes

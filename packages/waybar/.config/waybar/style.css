@@ -31,6 +31,7 @@ window#waybar.hidden {
 #custom-pomodoro,
 #custom-silence-notifications,
 #custom-switchyard,
+#custom-broker,
 #custom-power-menu,
 #custom-timezone,
 #tray {
@@ -67,6 +68,7 @@ window#waybar.hidden {
 #custom-pomodoro:hover,
 #custom-silence-notifications:hover,
 #custom-switchyard:hover,
+#custom-broker:hover,
 #custom-power-menu:hover,
 #custom-timezone:hover {
   background: #373B41;
@@ -232,4 +234,36 @@ window#waybar.hidden {
 #tray > .needs-attention {
   -gtk-icon-effect: highlight;
   background: #bf616a;
+}
+
+/* Signal Box: gray when nothing is granted, frost while something is live,
+   amber when an agent is asking or a grant in use is about to end. */
+#custom-broker {
+  color: #88c0d0;
+}
+
+#custom-broker.quiet,
+#custom-broker.error {
+  color: #4c566a;
+}
+
+#custom-broker.ending,
+#custom-broker.night,
+#custom-broker.missed {
+  color: #ebcb8b;
+}
+
+#custom-broker.asking {
+  color: #ebcb8b;
+  animation: broker-ask 1.2s ease-in-out infinite alternate;
+}
+
+#custom-broker.locked {
+  color: #81a1c1;
+}
+
+@keyframes broker-ask {
+  to {
+    color: #6b5d3f;
+  }
 }
