@@ -3,10 +3,6 @@
 #
 # Everything here is optional; the font and colors come from waybar's style.css.
 
-[bar]
-# The number beside the lamp: cpu.temp, cpu, memory, gpu.temp, gpu or none.
-pin = "cpu.temp"
-
 [network]
 # The old details drawer showed the public IP; keep it in the Network tile.
 # Asks ifconfig.co at most once a minute, only while the drawer is open.
