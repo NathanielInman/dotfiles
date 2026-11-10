@@ -23,3 +23,6 @@ _kl() { # $1=addr  $2=on(1)/off(0)  $3=brightness
 _kl "$LEFT" "$on" 3 &
 _kl "$RIGHT" "$on" 35 &
 wait
+
+# Redraw custom/keylights now instead of at its next poll
+pkill -RTMIN+10 -x waybar 2>/dev/null

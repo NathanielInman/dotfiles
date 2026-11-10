@@ -1,4 +1,4 @@
-#\!/usr/bin/env bash
+#!/usr/bin/env bash
 
 CONFIG="$HOME/dt.ovpn"
 
@@ -17,6 +17,8 @@ case "$1" in
       disconnect_all
       openvpn3 session-start --config "$CONFIG"
     fi
+    # Redraw custom/vpn now instead of at its next poll
+    pkill -RTMIN+11 -x waybar 2>/dev/null
     ;;
   list)
     kitty --class float-term -- zsh -c 'openvpn3 sessions-list; sleep 3'

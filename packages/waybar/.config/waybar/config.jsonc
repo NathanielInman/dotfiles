@@ -103,13 +103,31 @@
   "custom/keylights": {
     "exec": "~/.config/waybar/scripts/keylights.sh",
     "return-type": "json",
-    "interval": 5,
+    // The toggle redraws through pkill -RTMIN+10; the poll only catches
+    // changes made from the Elgato app or the lightson/lightsoff aliases
+    "interval": 60,
+    "signal": 10,
     "on-click": "~/.config/waybar/scripts/keylights-toggle.sh"
   },
+  // swaync streams one JSON line per change; alt is notification, none,
+  // dnd-notification or dnd-none (plus inhibited-* while something inhibits)
   "custom/silence-notifications": {
-    "exec": "if [ \"$(swaync-client -D)\" = 'true' ]; then echo ''; else echo ''; fi",
-    "interval": 1,
-    "on-click": "swaync-client -d -sw"
+    "exec": "swaync-client -swb",
+    "return-type": "json",
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "",
+      "none": "",
+      "inhibited-notification": "",
+      "inhibited-none": "",
+      "dnd-notification": "",
+      "dnd-none": "",
+      "dnd-inhibited-notification": "",
+      "dnd-inhibited-none": ""
+    },
+    "tooltip": false,
+    "on-click": "swaync-client -d -sw",
+    "on-click-right": "swaync-client -t -sw"
   },
   "custom/timezone": {
     "exec": "~/.config/waybar/scripts/timezone.sh",
@@ -122,7 +140,9 @@
   },
   "custom/vpn": {
     "exec": "~/.config/waybar/scripts/vpn.sh",
-    "interval": 5,
+    // toggle redraws through pkill -RTMIN+11; the poll catches drops
+    "interval": 30,
+    "signal": 11,
     "on-click": "~/.config/waybar/scripts/vpn.sh toggle",
     "on-click-right": "~/.config/waybar/scripts/vpn.sh list",
     "return-type": "json"
