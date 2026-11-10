@@ -20,7 +20,7 @@
     "group/pill-lamps",
     "group/pill-audio",
     "group/pill-desk",
-    "custom/timezone",
+    "custom/timetable",
     "tray"
   ],
   // Tannoy (~/Sites/tannoy): the cover and now playing share one pill. The
@@ -72,14 +72,13 @@
     },
     "modules": [
       "custom/desk-handle",
-      "custom/pomodoro",
       "custom/keylights",
       "custom/power-menu"
     ]
   },
   "custom/desk-handle": {
     "format": "\uf053",
-    "tooltip-format": "Pomodoro, key lights, power"
+    "tooltip-format": "Key lights, power"
   },
   "hyprland/workspaces": {
     // The workspace's own icon, then a small dim glyph per open window, so
@@ -227,11 +226,19 @@
     "on-click": "swaync-client -d -sw",
     "on-click-right": "swaync-client -t -sw"
   },
-  "custom/timezone": {
-    "exec": "~/.config/waybar/scripts/timezone.sh",
-    "tail": true,
-    "on-click": "kill -USR1 $(pgrep -f 'waybar/scripts/timezone.sh')",
-    "on-click-right": "gnome-calendar"
+  // Timetable (~/Sites/timetable, config in packages/timetable): the clock
+  // with the next event beside it, from the Google Calendar feed in broker.
+  // Amber 10 minutes out, red with Join at start time, a countdown during a
+  // focus block. Click opens the drawer (zones, Join, the day strip, focus
+  // blocks), right-click opens gnome-calendar, middle-click joins the
+  // current or next meeting on workspace 2.
+  "custom/timetable": {
+    "exec": "~/.local/bin/timetable bar",
+    "return-type": "json",
+    "on-click": "~/.local/bin/timetable toggle",
+    "on-click-right": "gnome-calendar",
+    "on-click-middle": "~/.local/bin/timetable join",
+    "tooltip": true
   },
   "tray": {
     "spacing": 8
@@ -274,13 +281,6 @@
     "signal": 9,
     "on-click": "~/.config/waybar/scripts/screen-record.sh",
     "tooltip-format": "Toggle screen recording"
-  },
-  "custom/pomodoro": {
-    "exec": "~/.config/waybar/scripts/pomodoro.sh",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/pomodoro.sh toggle",
-    "on-click-right": "~/.config/waybar/scripts/pomodoro.sh reset",
-    "return-type": "json"
   },
   // Switchyard (~/Sites/switchyard, tasks in packages/switchyard): the board of
   // builds, launches and deploys that replaced the games drawer. The signal

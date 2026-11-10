@@ -53,7 +53,7 @@ tooltip {
 #pill-lamps,
 #pill-audio,
 #pill-desk,
-#custom-timezone,
+#custom-timetable,
 #tray {
   background: rgba(40, 42, 46, 0.84);
   border: 1px solid rgba(76, 86, 106, 0.55);
@@ -95,7 +95,7 @@ window#waybar.empty #window {
 
 /* ---- Modules inside pills ---- */
 #window,
-#custom-timezone {
+#custom-timetable {
   padding: 0 12px;
 }
 
@@ -110,7 +110,6 @@ window#waybar.empty #window {
 #custom-meeting-record,
 #custom-screen-record,
 #custom-desk-handle,
-#custom-pomodoro,
 #custom-keylights,
 #custom-power-menu {
   padding: 0 8px;
@@ -126,13 +125,12 @@ window#waybar.empty #window {
 #custom-voxtype:hover,
 #custom-meeting-record:hover,
 #custom-screen-record:hover,
-#custom-pomodoro:hover,
 #custom-silence-notifications:hover,
 #custom-switchyard:hover,
 #custom-broker:hover,
 #custom-power-menu:hover,
 #custom-desk-handle:hover,
-#custom-timezone:hover {
+#custom-timetable:hover {
   background: rgba(129, 161, 193, 0.18);
 }
 
@@ -345,20 +343,6 @@ window#waybar.empty #window {
   color: @dim;
 }
 
-/* Pomodoro: dim when idle, frost while working, green on a break */
-#custom-pomodoro,
-#custom-pomodoro.idle {
-  color: @dim;
-}
-
-#custom-pomodoro.work {
-  color: @frost;
-}
-
-#custom-pomodoro.break {
-  color: @green;
-}
-
 /* Key lights: warm when on */
 #custom-keylights,
 #custom-keylights.off {
@@ -373,9 +357,44 @@ window#waybar.empty #window {
   color: @dim;
 }
 
-/* ---- Clock ---- */
-#custom-timezone {
+/* ---- Clock (Timetable) ---- */
+
+/* The clock is purple and stays purple (clock_color in Timetable's
+   config); the next event beside it takes the state's color. Calm while
+   free, frost within the hour or during a meeting, amber 10 minutes out,
+   red and pulsing at start time, green while a focus block counts down,
+   dim when the calendar can't be read. */
+#custom-timetable,
+#custom-timetable.free {
   color: @purple;
+}
+
+#custom-timetable.next,
+#custom-timetable.in {
+  color: @frost;
+}
+
+#custom-timetable.soon {
+  color: @yellow;
+}
+
+#custom-timetable.now {
+  color: @red;
+  animation: timetable-now 1s ease-in-out infinite alternate;
+}
+
+#custom-timetable.focus {
+  color: @green;
+}
+
+#custom-timetable.offline {
+  color: @dim;
+}
+
+@keyframes timetable-now {
+  to {
+    color: #6e3b40;
+  }
 }
 
 /* ---- Tray ---- */
