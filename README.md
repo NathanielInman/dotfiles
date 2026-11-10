@@ -54,8 +54,12 @@ Every widget in [`packages/waybar`](packages/waybar/.config/waybar), as it looks
 <!-- bar-widgets:start -->
 | | Widget | What it does | Needs |
 |---|---|---|---|
-| <img src="Pictures/bar/widgets/currently-playing.svg" height="36" alt="Now playing"> | [Now playing](packages/waybar/.config/waybar/scripts/currently-playing.sh) | The current track from playerctl. Click for the previous track, right-click for the next, middle-click to pause. Hidden while do not disturb is on, so song titles stay off screen shares. | `playerctl`, `swaync` |
+| <img src="Pictures/bar/widgets/tannoy.svg" height="36" alt="Tannoy"> | [Tannoy](packages/waybar/.config/waybar/config.jsonc) | Now playing from any MPRIS player, the cover beside it and the text cut at a word. Click for the [Tannoy](https://github.com/NathanielInman/tannoy) drawer: scrub, podcast skips, which player the media keys follow, the output device. Right-click skips, middle-click pauses, scroll seeks. While do not disturb is on only a dim note shows, so titles stay off screen shares. | [Tannoy](https://github.com/NathanielInman/tannoy), `swaync` |
 | <img src="Pictures/bar/widgets/roundhouse.svg" height="36" alt="Roundhouse"> | [Roundhouse](packages/roundhouse/.config/roundhouse/config.toml) | One lamp for the whole machine: green, amber, red. Click it for the [Roundhouse](https://github.com/NathanielInman/roundhouse) drawer: CPU, GPU, memory, disks and why the lamp is lit. | [Roundhouse](https://github.com/NathanielInman/roundhouse) |
+| <img src="Pictures/bar/widgets/switchyard.svg" height="36" alt="Switchyard"> | [Switchyard](packages/switchyard/.config/switchyard/config.toml) | The signal for [Switchyard](https://github.com/NathanielInman/switchyard), the board that builds, launches and deploys everything, one heavy build at a time: blue at rest, amber while building, green when it worked, red when it broke. | [Switchyard](https://github.com/NathanielInman/switchyard) |
+| <img src="Pictures/bar/widgets/broker.svg" height="36" alt="Signal Box"> | [Signal Box](packages/waybar/.config/waybar/config.jsonc) | The lamp for [Signal Box](https://github.com/NathanielInman/credential-broker#signal-box): the secrets agents can use right now through broker. The pie drains with the soonest grant and turns to a key while an agent is asking. Click for the panel, middle-click revokes everything. | [credential-broker](https://github.com/NathanielInman/credential-broker) |
+| <img src="Pictures/bar/widgets/vpn.svg" height="36" alt="VPN"> | [VPN](packages/waybar/.config/waybar/scripts/vpn.sh) | Connects or drops the work VPN (openvpn3). Right-click lists the sessions. | `openvpn3` and an imported profile |
+| <img src="Pictures/bar/widgets/silence-notifications.svg" height="36" alt="Do not disturb"> | [Do not disturb](packages/waybar/.config/waybar/config.jsonc) | Silences notifications (swaync). Also hides the song title while it is on. | `swaync` |
 | <img src="Pictures/bar/widgets/pulseaudio.svg" height="36" alt="Volume"> | [Volume](packages/waybar/.config/waybar/scripts/audio-switch.sh) | Volume and output. Click to switch the output, right-click to switch the input, middle-click for the mixer. | PipeWire (`wpctl`), `walker`, `pavucontrol` |
 | <img src="Pictures/bar/widgets/mouse-battery.svg" height="36" alt="Mouse battery"> | [Mouse battery](packages/waybar/.config/waybar/scripts/mouse-battery.sh) | The Logitech mouse's charge, amber when low, red when nearly empty. | A Logitech mouse (kernel `hidpp` driver) |
 | <img src="Pictures/bar/widgets/voxtype.svg" height="36" alt="Dictation"> | [Dictation](packages/waybar/.config/waybar/scripts/voxtype-status.sh) | [voxtype](https://voxtype.io) speech to text: hold a key, talk, and it types where the cursor is. Red while listening, amber while transcribing. | [voxtype](https://voxtype.io), `jq` |
@@ -63,9 +67,6 @@ Every widget in [`packages/waybar`](packages/waybar/.config/waybar), as it looks
 | <img src="Pictures/bar/widgets/screen-record.svg" height="36" alt="Screen recorder"> | [Screen recorder](packages/waybar/.config/waybar/scripts/screen-record.sh) | Records the screen with wf-recorder. Shows only while recording. | `wf-recorder`, `slurp`, `ffmpeg` |
 | <img src="Pictures/bar/widgets/pomodoro.svg" height="36" alt="Pomodoro"> | [Pomodoro](packages/waybar/.config/waybar/scripts/pomodoro.sh) | 25 minutes of focus, then a 5 minute break. Click to start or pause, right-click to reset. | `notify-send` |
 | <img src="Pictures/bar/widgets/keylights.svg" height="36" alt="Key lights"> | [Key lights](packages/waybar/.config/waybar/scripts/keylights.sh) | Both Elgato Key Lights on or off in one click, over the IoT network. | Elgato Key Lights, `curl` (set the light's IP in the script) |
-| <img src="Pictures/bar/widgets/vpn.svg" height="36" alt="VPN"> | [VPN](packages/waybar/.config/waybar/scripts/vpn.sh) | Connects or drops the work VPN (openvpn3). Right-click lists the sessions. | `openvpn3` and an imported profile |
-| <img src="Pictures/bar/widgets/silence-notifications.svg" height="36" alt="Do not disturb"> | [Do not disturb](packages/waybar/.config/waybar/config.jsonc) | Silences notifications (swaync). Also hides the song title while it is on. | `swaync` |
-| <img src="Pictures/bar/widgets/switchyard.svg" height="36" alt="Switchyard"> | [Switchyard](packages/switchyard/.config/switchyard/config.toml) | The signal for [Switchyard](https://github.com/NathanielInman/switchyard), the board that builds, launches and deploys everything, one heavy build at a time: blue at rest, amber while building, green when it worked, red when it broke. | [Switchyard](https://github.com/NathanielInman/switchyard) |
 | <img src="Pictures/bar/widgets/power-menu.svg" height="36" alt="Power"> | [Power](packages/waybar/.config/waybar/scripts/power-menu.sh) | Idle, lock, log out, suspend, reboot or shut down, through walker. | `walker`, `hyprlock`, `hypridle` |
 | <img src="Pictures/bar/widgets/timezone.svg" height="36" alt="Clock"> | [Clock](packages/waybar/.config/waybar/scripts/timezone.sh) | The date and time. Click to cycle through Chicago, Eastern Europe and GMT; right-click for the calendar. | Nothing extra |
 <!-- bar-widgets:end -->
@@ -109,7 +110,7 @@ To use one widget without the rest, copy its script into `~/.config/waybar/scrip
 
 ### Companion programs
 
-Three widgets are front ends for programs that live in their own repos. Install the program, then stow its package here (Signal Box needs nothing stowed: its module is already in the waybar config).
+Four widgets are front ends for programs that live in their own repos. Install the program, then stow its package here (Signal Box and Tannoy need nothing stowed: their modules are already in the waybar config).
 
 [**Roundhouse**](https://github.com/NathanielInman/roundhouse) is the lamp: one color for the health of the whole machine, and a drawer with CPU, GPU, memory pressure, network, every disk and share, and memory by app.
 
@@ -133,6 +134,16 @@ cd ~/Sites/dot-files && ./install.sh switchyard
 ```bash
 sudo pacman -S --needed gtk-layer-shell
 cd ~/Sites/credential-broker/packaging/aur/credential-broker-bin && makepkg -si
+```
+
+[**Tannoy**](https://github.com/NathanielInman/tannoy) is now playing: the cover and the track from any MPRIS player, cut at a word, and a drawer with a scrub bar, podcast skips, the player the media keys follow and the output device. While do not disturb is on, only a dim note shows. The media keys in `binds.lua` go through it too.
+
+```bash
+sudo pacman -S --needed gtk4 gtk4-layer-shell
+git clone https://github.com/NathanielInman/tannoy.git ~/Sites/tannoy
+cd ~/Sites/tannoy && cargo build --release
+install -Dm755 target/release/tannoy target/release/tannoy-board -t ~/.local/bin/
+tannoy doctor
 ```
 
 ## Field notes

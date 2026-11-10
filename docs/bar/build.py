@@ -179,8 +179,9 @@ def flatten(names: list[str]) -> list[str]:
     return out
 
 
-# Modules that only open a drawer group; they have no state worth drawing
-HANDLES = {"custom/desk-handle"}
+# Modules with no text state worth drawing: the handle that opens a drawer
+# group, and Tannoy's cover (an image module beside its text)
+HANDLES = {"custom/desk-handle", "image#tannoy-art"}
 
 
 def modules():

@@ -57,7 +57,7 @@ def ticking(icon: str, minutes: int, seconds: int, count: int, cls: str) -> Stat
 
 
 WAYBAR = "packages/waybar/.config/waybar"
-SONG = "Lofi Rails - Night Shift"
+SONG = "Lofi Rails \u00b7 Night Shift"
 
 WIDGETS: dict[str, Widget] = {
     "hyprland/workspaces": Widget(
@@ -74,16 +74,18 @@ WIDGETS: dict[str, Widget] = {
         kind="window",
         items=["nvim  src/retry.ts"],
     ),
-    "custom/currently-playing": Widget(
-        "Now playing",
-        "The current track from playerctl. Click for the previous track, right-click for the next, "
-        "middle-click to pause. Hidden while do not disturb is on, so song titles stay off screen shares.",
-        f"{WAYBAR}/scripts/currently-playing.sh",
-        needs='`playerctl`, `swaync`',
+    "custom/tannoy": Widget(
+        "Tannoy",
+        "Now playing from any MPRIS player, the cover beside it and the text cut at a word. Click for the "
+        "[Tannoy](https://github.com/NathanielInman/tannoy) drawer: scrub, podcast skips, which player the media keys "
+        "follow, the output device. Right-click skips, middle-click pauses, scroll seeks. While do not disturb is on "
+        "only a dim note shows, so titles stay off screen shares.",
+        f"{WAYBAR}/config.jsonc",
+        needs='[Tannoy](https://github.com/NathanielInman/tannoy), `swaync`',
         states={
-            "playing": State(f"\uf04b  {SONG}"),
-            "paused": State(f"\uf04c  {SONG}"),
-            "hidden": State(""),
+            "playing": State(SONG, "playing"),
+            "paused": State(SONG, "paused"),
+            "hidden": State("\U000f075a", "hidden"),
         },
         default="playing",
     ),
