@@ -26,7 +26,25 @@
     "tray"
   ],
   "hyprland/workspaces": {
-    "format": "{icon}",
+    // The workspace's own icon, then a small dim glyph per open window, so
+    // a stray Chrome on 8 or a Godot build on 9 shows without switching
+    "format": "{icon}{windows}",
+    "format-window-separator": "",
+    "window-rewrite-default": "<span size='72%' alpha='70%'> </span>",
+    "window-rewrite": {
+      "class<google-chrome>": "<span size='72%' alpha='70%'> </span>",
+      "class<slack>": "<span size='72%' alpha='70%'> </span>",
+      "class<discord>": "<span size='72%' alpha='70%'> </span>",
+      "class<com.t3tools.T3Code>": "<span size='72%' alpha='70%'> </span>",
+      "class<neovide>": "<span size='72%' alpha='70%'> </span>",
+      "class<kitty>": "<span size='72%' alpha='70%'> </span>",
+      "class<float-term>": "<span size='72%' alpha='70%'> </span>",
+      "class<vit>": "<span size='72%' alpha='70%'> </span>",
+      "class<zoom>": "<span size='72%' alpha='70%'> </span>",
+      "class<Godot.*>": "<span size='72%' alpha='70%'> </span>",
+      "class<blender>": "<span size='72%' alpha='70%'> </span>",
+      "class<Emulator>": "<span size='72%' alpha='70%'> </span>"
+    },
     "format-icons": {
       "1": "",
       "2": "",
@@ -59,7 +77,18 @@
   },
   "hyprland/window": {
     "max-length": 60,
-    "separate-outputs": true
+    "separate-outputs": true,
+    // Trade the app's own suffix for its glyph. waybar applies every rule
+    // that matches, so keep them mutually exclusive.
+    "rewrite": {
+      "(.*) - Google Chrome": "  $1",
+      "(.*) - Discord": "  $1",
+      "(.*?)( - Digital Turbine)? - Slack": "  $1",
+      "nate@FROSTYARCH:(.*)": "  $1",
+      "~/(.*)": "  ~/$1",
+      "T3 Code.*": "  T3 Code",
+      "vit": "  tasks"
+    }
   },
   "custom/currently-playing": {
     "exec": "~/.config/waybar/scripts/currently-playing.sh",
