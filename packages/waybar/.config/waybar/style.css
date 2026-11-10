@@ -50,7 +50,6 @@ tooltip {
 /* ---- Pills ---- */
 #workspaces,
 #window,
-#custom-currently-playing,
 #pill-lamps,
 #pill-audio,
 #pill-desk,
@@ -62,15 +61,40 @@ tooltip {
   padding: 0 4px;
 }
 
-/* An empty window title or an empty now-playing leaves no empty pill */
+/* An empty window title leaves no empty pill */
 window#waybar.empty #window {
   background: transparent;
   border-color: transparent;
 }
 
+/* Tannoy's group/pill-media draws its pill from its two modules, not the
+   group: waybar can't hide a group's padding and border when both modules
+   are empty, and an empty pill would sit there whenever nothing plays. The
+   text is a whole pill on its own; while there is a cover (class with-art)
+   the cover takes its left end. */
+#custom-tannoy {
+  background: rgba(40, 42, 46, 0.84);
+  border: 1px solid rgba(76, 86, 106, 0.55);
+  border-radius: 10px;
+  padding: 0 12px;
+}
+
+#custom-tannoy.with-art {
+  border-left: none;
+  border-radius: 0 10px 10px 0;
+  padding-left: 8px;
+}
+
+#image.tannoy-art image {
+  background: rgba(40, 42, 46, 0.84);
+  border: 1px solid rgba(76, 86, 106, 0.55);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  padding: 0 0 0 10px;
+}
+
 /* ---- Modules inside pills ---- */
 #window,
-#custom-currently-playing,
 #custom-timezone {
   padding: 0 12px;
 }
@@ -95,7 +119,6 @@ window#waybar.empty #window {
 }
 
 /* Hover feedback on clickable modules */
-#custom-currently-playing:hover,
 #pulseaudio:hover,
 #custom-roundhouse:hover,
 #custom-keylights:hover,
@@ -111,6 +134,11 @@ window#waybar.empty #window {
 #custom-desk-handle:hover,
 #custom-timezone:hover {
   background: rgba(129, 161, 193, 0.18);
+}
+
+/* Tannoy's text is its own pill, so hover lifts the pill's color instead */
+#custom-tannoy:hover {
+  background: rgba(55, 62, 74, 0.92);
 }
 
 /* ---- Workspaces ---- */
@@ -142,9 +170,18 @@ window#waybar.empty #window {
   color: @bright;
 }
 
-/* ---- Now playing ---- */
-#custom-currently-playing {
+/* ---- Now playing (Tannoy) ---- */
+
+/* Yellow while playing; dim while paused, and while do not disturb leaves
+   only a music glyph in place of the title */
+#custom-tannoy.playing {
   color: @yellow;
+}
+
+#custom-tannoy.paused,
+#custom-tannoy.hidden,
+#custom-tannoy.offline {
+  color: @dim;
 }
 
 /* ---- Lamps ---- */

@@ -16,13 +16,24 @@
     "hyprland/window"
   ],
   "modules-right": [
-    "custom/currently-playing",
+    "group/pill-media",
     "group/pill-lamps",
     "group/pill-audio",
     "group/pill-desk",
     "custom/timezone",
     "tray"
   ],
+  // Tannoy (~/Sites/tannoy): the cover and now playing share one pill. The
+  // daemon follows every MPRIS player over D-Bus and redraws the cover by
+  // sending SIGRTMIN+12; both stay empty (and the pill hidden) while nothing
+  // plays or do not disturb is on.
+  "group/pill-media": {
+    "orientation": "horizontal",
+    "modules": [
+      "image#tannoy-art",
+      "custom/tannoy"
+    ]
+  },
   // Health and state lamps: off is dim, on is a color
   "group/pill-lamps": {
     "orientation": "horizontal",
@@ -135,12 +146,25 @@
       "vit": "  tasks"
     }
   },
-  "custom/currently-playing": {
-    "exec": "~/.config/waybar/scripts/currently-playing.sh",
-    "interval": 3,
-    "on-click": "playerctl previous",
-    "on-click-right": "playerctl next",
-    "on-click-middle": "playerctl play-pause"
+  "image#tannoy-art": {
+    "exec": "~/.local/bin/tannoy art",
+    "size": 18,
+    "interval": "once",
+    "signal": 12,
+    "on-click": "~/.local/bin/tannoy toggle",
+    "tooltip": false
+  },
+  // Click opens the drawer (scrub, podcast skips, player pick, output),
+  // right-click skips, middle-click pauses, scrolling seeks 5 seconds
+  "custom/tannoy": {
+    "exec": "~/.local/bin/tannoy bar",
+    "return-type": "json",
+    "on-click": "~/.local/bin/tannoy toggle",
+    "on-click-right": "~/.local/bin/tannoy next",
+    "on-click-middle": "~/.local/bin/tannoy play-pause",
+    "on-scroll-up": "~/.local/bin/tannoy seek +5",
+    "on-scroll-down": "~/.local/bin/tannoy seek -5",
+    "tooltip": true
   },
   "pulseaudio": {
     "format": "{icon} {volume}%",
