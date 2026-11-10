@@ -114,9 +114,9 @@ window#waybar.hidden {
 }
 
 /* Roundhouse: the system drawer behind one lamp. The class follows the
-   machine (calm, heads-up, act), so the bar only lights up when it matters */
+   machine: green when calm, amber for a heads-up, red when it needs you */
 #custom-roundhouse {
-  color: #88c0d0;
+  color: #a3be8c;
 }
 
 #custom-roundhouse.heads-up {
