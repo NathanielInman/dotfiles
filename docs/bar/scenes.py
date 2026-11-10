@@ -325,3 +325,38 @@ def board(svg: Svg, p: Place, opens, still, t: BoardTimes, lamp: dict[str, list[
         svg.text(cx + cw / 2, 330, chip, 12, FG, anchor="middle")
         cx += cw + 8
     end_spring(svg)
+
+
+# ------------------------------------------------------------ swaync
+
+TOAST_W, TOAST_H = 360, 84
+TOAST_DEFS = (
+    '<linearGradient id="toastbg" x1="0" y1="0" x2="1" y2="0">'
+    '<stop offset="0" stop-color="#445161"/><stop offset=".6" stop-color="#3b4252"/></linearGradient>'
+)
+
+
+def toast(svg: Svg, x: float, y: float, appear: float, dismiss: float, still: float):
+    """A swaync notification card, as packages/swaync/.config/swaync/style.css
+    draws the normal urgency: a frost accent on the left, the summary in
+    frost, the body in snow."""
+    move = svg.keyframes("transform", [
+        (0.0, "translateX(48px)"), (appear, "translateX(48px)"), (appear + 0.25, "translateX(0px)"),
+        (dismiss, "translateX(0px)"), (dismiss + 0.3, "translateX(64px)"),
+    ])
+    show = svg.keyframes("opacity", visible_points([(appear, dismiss + 0.15)], fade=0.2, loop=svg.loop))
+    on = 1 if appear <= still < dismiss else 0
+    svg.add(f'<g class="a" style="animation-name:{move},{show}" opacity="{on}">')
+    svg.add(f'<g transform="translate({x:.1f},{y:.1f})">')
+    svg.add(f'<rect width="{TOAST_W}" height="{TOAST_H}" rx="6" fill="url(#toastbg)" stroke="#5e81ac" filter="url(#shadow)"/>')
+    svg.add(f'<path d="M6,0 h-2 a4,4 0 0 0 -4,4 v{TOAST_H - 8} a4,4 0 0 0 4,4 h2 Z" fill="{FROST}"/>')
+    svg.add(f'<rect x="4" y="0" width="4" height="{TOAST_H}" fill="{FROST}"/>')
+    # The app's icon.
+    svg.add(f'<rect x="18" y="14" width="56" height="56" rx="12" fill="#2e3440"/>')
+    svg.text(46, 54, "\uf198", 30, "#e01e5a", 400, "middle")
+    svg.text(88, 34, "Slack \u00b7 #deploys", 14, FROST, 700)
+    svg.text(88, 56, "storefront 4.2 is on staging", 13.5, "#d8dee9")
+    svg.text(TOAST_W - 44, 34, "now", 12, "#5e81ac", 400, "end")
+    svg.add(f'<rect x="{TOAST_W - 32}" y="14" width="20" height="20" rx="4" fill="#434c5e"/>')
+    svg.text(TOAST_W - 22, 29, "\u00d7", 14, "#d8dee9", 400, "middle")
+    svg.add("</g></g>")

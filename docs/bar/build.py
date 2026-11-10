@@ -50,7 +50,7 @@ BAR_X, BAR_Y, BAR_W = 8, H - BAR_H - 8, W - 16
 BAR_CY = BAR_Y + BAR_H / 2
 PAD = 6
 ZOOM_TY = H - 64  # where the bar's middle sits on screen while zoomed
-STILL = 22.6  # the moment shown with reduced motion: Roundhouse's drawer
+STILL = 5.2  # the moment shown with reduced motion: Roundhouse's drawer
 T = LOOP
 
 # ------------------------------------------------------------------ inputs
@@ -535,7 +535,8 @@ def hero() -> str:
             '<radialGradient id="haze" cx=".85" cy=".1" r=".7"><stop offset="0" stop-color="#88c0d0" stop-opacity=".08"/><stop offset="1" stop-color="#88c0d0" stop-opacity="0"/></radialGradient>'
             '<radialGradient id="warm" cx=".5" cy=".2" r=".9"><stop offset="0" stop-color="#ffd8a8" stop-opacity=".13"/><stop offset="1" stop-color="#ffd8a8" stop-opacity=".02"/></radialGradient>'
             '<filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".5"/></filter>'
-            "</defs>")
+            + scenes.TOAST_DEFS
+            + "</defs>")
 
     # Behind everything, for the edges the zoomed desktop does not cover.
     svg.add(f'<rect width="{W}" height="{H}" fill="{BG1}"/>')
@@ -554,6 +555,10 @@ def hero() -> str:
     svg.add(f'<rect class="a" style="animation-name:{dim}" opacity="0" x="-{W}" y="-{H}" width="{3 * W}" height="{2 * H + BAR_Y - 6}" fill="{BG1}"/>')
     draw_bar(svg, clicks_mod)
     draw_panels(svg, panels, times)
+    # swaync's notification, top right of the screen as its config puts it.
+    if one("toast") is not None:
+        gone = one("toast-dismiss") or one("toast") + 6
+        scenes.toast(svg, W - 14 - scenes.TOAST_W, 14, one("toast"), gone, STILL)
     svg.add("</g>")
 
     # The room lights up with the key lights.
@@ -579,12 +584,12 @@ def hero() -> str:
     svg.add(f'<g class="a" style="animation-name:{name}" transform="translate({sx:.1f} {sy:.1f})">'
             '<path d="M0,0 L0,22 L6,17 L10,26 L14,24 L10,15 L18,15 Z" fill="#eceff4" stroke="#1d2024" stroke-width="1.4" stroke-linejoin="round"/></g>')
 
-    label = ("A Hyprland desktop with a waybar along the bottom. The view zooms into the bar and visits its widgets: "
-             "a pomodoro timer starts, do not disturb turns on and the song title hides itself, a meeting recorder lights up, "
-             "dictation types a comment into the editor. The Switchyard board opens from its signal and starts a storefront build, "
-             "android queues behind it, the Roundhouse lamp turns red and its drawer explains that memory is stalling, its link "
-             "swaps back to the board where storefront finishes and android starts, the key lights warm the room, and the clock "
-             "switches time zones.")
+    label = ("A Hyprland desktop with a waybar along the bottom. A build turns the Roundhouse lamp red; its drawer explains "
+             "that memory is stalling and Switchyard is holding the next build, and its link opens the Switchyard board, where "
+             "storefront finishes, the lamp calms and android starts. Then the view zooms along the bar from left to right: the "
+             "song pauses, the volume switches to the headset, the mouse battery runs low, dictation types a comment into the "
+             "editor, the meeting recorder lights up, a pomodoro starts, the key lights warm the room, the VPN connects, a swaync "
+             "notification arrives and do not disturb silences it and hides the song title, and the clock switches time zones.")
     return svg.render(W, H, label)
 
 

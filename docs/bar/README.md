@@ -69,6 +69,8 @@ Some beats trigger effects that are not a module's text:
 - `drawer-open`: Roundhouse's drawer springs out of the lamp. `handoff`
   closes it and opens the board from the same lamp, as its Switchyard link
   does.
+- `toast` / `toast-dismiss`: a swaync notification slides in at the top
+  right, styled from `packages/swaync/.config/swaync/style.css`, and out.
 - `lights-on` / `lights-off`: the room warms up with the key lights.
 
 A beat can click inside an open panel by name (`board:storefront`,

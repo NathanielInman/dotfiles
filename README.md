@@ -1,7 +1,7 @@
 # Arch + Hyprland dotfiles
 
 <p align="center">
-  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop with a waybar along the bottom. The view zooms into the bar and visits its widgets: a pomodoro timer, do not disturb hiding the song title, a meeting recorder, dictation typing into the editor, the Switchyard board starting a build from its signal, the Roundhouse lamp turning red and its drawer explaining why before linking back to the board, the key lights and the clock's time zones.">
+  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop with a waybar along the bottom. A build turns the Roundhouse lamp red; its drawer explains that memory is stalling and links to the Switchyard board, where the build finishes and the held one starts. Then the view zooms along the bar from left to right: the song pauses, the volume switches to the headset, the mouse battery runs low, dictation types into the editor, the meeting recorder and a pomodoro start, the key lights warm the room, the VPN connects, a swaync notification arrives and do not disturb silences it and hides the song title, and the clock switches time zones.">
 </p>
 
 <p align="center">
