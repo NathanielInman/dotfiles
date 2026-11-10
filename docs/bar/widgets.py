@@ -206,6 +206,20 @@ WIDGETS: dict[str, Widget] = {
         },
         default="idle",
     ),
+    "custom/broker": Widget(
+        "Signal Box",
+        "The lamp for [Signal Box](https://github.com/NathanielInman/credential-broker#signal-box): the secrets agents can use "
+        "right now through broker. The pie drains with the soonest grant and turns to a key while an agent is asking. "
+        "Click for the panel, middle-click revokes everything.",
+        "packages/waybar/.config/waybar/config.jsonc",
+        needs='[credential-broker](https://github.com/NathanielInman/credential-broker)',
+        states={
+            "quiet": State("\U000f0766", "quiet"),
+            "live": State("\U000f0aa0 1", "live"),
+            "asking": State("\U000f0306", "asking"),
+        },
+        default="quiet",
+    ),
     "custom/power-menu": Widget(
         "Power",
         "Idle, lock, log out, suspend, reboot or shut down, through walker.",

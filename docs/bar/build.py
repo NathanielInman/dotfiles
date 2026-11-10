@@ -92,6 +92,9 @@ class Css:
 
     def __init__(self, path: Path):
         text = re.sub(r"/\*.*?\*/", "", path.read_text(encoding="utf-8"), flags=re.S)
+        # @define-color names resolve wherever a value uses them
+        self.defines = dict(re.findall(r"@define-color\s+([\w-]+)\s+([^;]+);", text))
+        text = re.sub(r"@define-color[^;]*;", "", text)
         self.rules = []
         for sel, body in re.findall(r"([^{}]+)\{([^}]*)\}", text):
             decls = {}
@@ -107,6 +110,8 @@ class Css:
         for s, d in self.rules:
             if s == selector and prop in d:
                 found = d[prop]
+        if found and found.startswith("@"):
+            found = self.defines.get(found[1:], found)
         return found
 
     def color(self, css_id: str, cls: str | None) -> str:
@@ -122,7 +127,16 @@ def css_id(module: str) -> str:
 
 CONFIG = load_jsonc(WAYBAR / "config.jsonc")
 CSS = Css(WAYBAR / "style.css")
-BAR_BG = CSS.get("window#waybar", "background") or "#282A2E"
+def opaque(color: str | None) -> str | None:
+    """None for a fully transparent rgba(), which a floating bar uses."""
+    if color and re.fullmatch(r"rgba\([^)]*,\s*0(\.0*)?\)", color.strip()):
+        return None
+    return color
+
+
+# A floating bar is transparent and draws its pills; use the pill color then
+BAR_BG = (opaque(CSS.get("window#waybar", "background"))
+          or CSS.get("#workspaces", "background") or "#282A2E")
 SEP = "#4c566a"
 HOVER = CSS.get("#workspaces button:hover", "background") or "#373B41"
 ACTIVE_LINE = "#81a1c1"
@@ -153,9 +167,25 @@ class Mod:
         return CONFIG.get("hyprland/workspaces", {}).get("format-icons", {}).get(n, n)
 
 
+def flatten(names: list[str]) -> list[str]:
+    """Expands group/* modules into their members, drawer handles left out:
+    the picture shows a drawer's contents as if it were open."""
+    out = []
+    for n in names:
+        if n.startswith("group/"):
+            out += flatten(CONFIG.get(n, {}).get("modules", []))
+        elif n not in HANDLES:
+            out.append(n)
+    return out
+
+
+# Modules that only open a drawer group; they have no state worth drawing
+HANDLES = {"custom/desk-handle"}
+
+
 def modules():
-    left = CONFIG.get("modules-left", []) + CONFIG.get("modules-center", [])
-    right = CONFIG.get("modules-right", [])
+    left = flatten(CONFIG.get("modules-left", []) + CONFIG.get("modules-center", []))
+    right = flatten(CONFIG.get("modules-right", []))
     missing = [m for m in left + right if m not in WIDGETS]
     if missing:
         sys.exit(

@@ -9,14 +9,14 @@ text { white-space: pre; font-variant-ligatures: none; font-feature-settings: "l
 @keyframes k3 { 0.000% { opacity: 0; } 66.667% { opacity: 0; } 68.125% { opacity: 1; } 100.000% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .a { animation: none !important; } }
 </style>
-<rect width="32.7" height="36" rx="7" fill="#282A2E"/>
+<rect width="32.7" height="36" rx="7" fill="rgba(40, 42, 46, 0.84)"/>
 <g class="a" style="animation-name:k1" opacity="1">
-<text x="12.0" y="23.4" font-family="bar" font-size="15" fill="#a3be8c" text-anchor="start">󰍬</text>
+<text x="12.0" y="23.4" font-family="bar" font-size="15" fill="#616E88" text-anchor="start">󰍬</text>
 </g>
 <g class="a" style="animation-name:k2" opacity="0">
-<text x="12.0" y="23.4" font-family="bar" font-size="15" fill="#bf616a" text-anchor="start">󰑊</text>
+<text x="12.0" y="23.4" font-family="bar" font-size="15" fill="#BF616A" text-anchor="start">󰑊</text>
 </g>
 <g class="a" style="animation-name:k3" opacity="0">
-<text x="12.0" y="23.4" font-family="bar" font-size="15" fill="#ebcb8b" text-anchor="start">󰔟</text>
+<text x="12.0" y="23.4" font-family="bar" font-size="15" fill="#EBCB8B" text-anchor="start">󰔟</text>
 </g>
 </svg>
