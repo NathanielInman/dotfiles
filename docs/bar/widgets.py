@@ -36,6 +36,9 @@ class Widget:
     what: str
     # The file that makes it, relative to the repo root.
     source: str
+    # What to install (or own) before the widget works, for the README's
+    # Needs column. Markdown; empty for widgets drawn only in the hero.
+    needs: str = ""
     states: dict[str, State] = field(default_factory=dict)
     default: str = ""
     # "custom" for exec modules; "workspaces", "window" and "tray" are drawn
@@ -76,6 +79,7 @@ WIDGETS: dict[str, Widget] = {
         "The current track from playerctl. Click for the previous track, right-click for the next, "
         "middle-click to pause. Hidden while do not disturb is on, so song titles stay off screen shares.",
         f"{WAYBAR}/scripts/currently-playing.sh",
+        needs='`playerctl`, `swaync`',
         states={
             "playing": State(f"\uf04b  {SONG}"),
             "paused": State(f"\uf04c  {SONG}"),
@@ -88,6 +92,7 @@ WIDGETS: dict[str, Widget] = {
         "One lamp for the whole machine: green, amber, red. Click it for the "
         "[Roundhouse](https://github.com/NathanielInman/roundhouse) drawer: CPU, GPU, memory, disks and why the lamp is lit.",
         "packages/roundhouse/.config/roundhouse/config.toml",
+        needs='[Roundhouse](https://github.com/NathanielInman/roundhouse)',
         states={
             "calm": State("\U000f0765", "calm"),
             "heads-up": State("\U000f0765", "heads-up"),
@@ -99,6 +104,7 @@ WIDGETS: dict[str, Widget] = {
         "Volume",
         "Volume and output. Click to switch the output, right-click to switch the input, middle-click for the mixer.",
         f"{WAYBAR}/scripts/audio-switch.sh",
+        needs='PipeWire (`wpctl`), `walker`, `pavucontrol`',
         states={
             "speakers": State("\uf028 42%"),
             "headset": State("\U000f02ce 42%"),
@@ -110,6 +116,7 @@ WIDGETS: dict[str, Widget] = {
         "Mouse battery",
         "The Logitech mouse's charge, amber when low, red when nearly empty.",
         f"{WAYBAR}/scripts/mouse-battery.sh",
+        needs='A Logitech mouse (kernel `hidpp` driver)',
         states={
             "ok": State("\U000f037d 80%", "ok"),
             "low": State("\U000f037d 18%", "low"),
@@ -122,6 +129,7 @@ WIDGETS: dict[str, Widget] = {
         "[voxtype](https://voxtype.io) speech to text: hold a key, talk, and it types where the cursor is. "
         "Red while listening, amber while transcribing.",
         f"{WAYBAR}/scripts/voxtype-status.sh",
+        needs='[voxtype](https://voxtype.io), `jq`',
         states={
             "idle": State("\U000f036c", "idle"),
             "recording": State("\U000f044a", "recording"),
@@ -133,6 +141,7 @@ WIDGETS: dict[str, Widget] = {
         "Meeting recorder",
         "Records a meeting in 15 minute chunks and transcribes them with voxtype afterwards. Shows only while recording.",
         f"{WAYBAR}/scripts/meeting-record.sh",
+        needs='`pw-record`, voxtype',
         states={"off": State(""), "recording": State("\U000f0ede")},
         default="off",
     ),
@@ -140,6 +149,7 @@ WIDGETS: dict[str, Widget] = {
         "Screen recorder",
         "Records the screen with wf-recorder. Shows only while recording.",
         f"{WAYBAR}/scripts/screen-record.sh",
+        needs='`wf-recorder`, `slurp`, `ffmpeg`',
         states={"off": State(""), "recording": State("\u23fa")},
         default="off",
     ),
@@ -147,6 +157,7 @@ WIDGETS: dict[str, Widget] = {
         "Pomodoro",
         "25 minutes of focus, then a 5 minute break. Click to start or pause, right-click to reset.",
         f"{WAYBAR}/scripts/pomodoro.sh",
+        needs='`notify-send`',
         states={
             "idle": State("\uf017", "idle"),
             "work": ticking("\uf017", 24, 59, 30, "work"),
@@ -158,6 +169,7 @@ WIDGETS: dict[str, Widget] = {
         "Key lights",
         "Both Elgato Key Lights on or off in one click, over the IoT network.",
         f"{WAYBAR}/scripts/keylights.sh",
+        needs="Elgato Key Lights, `curl` (set the light's IP in the script)",
         states={"off": State("\U000f0335", "off"), "on": State("\U000f06e8", "on")},
         default="off",
     ),
@@ -165,6 +177,7 @@ WIDGETS: dict[str, Widget] = {
         "VPN",
         "Connects or drops the work VPN (openvpn3). Right-click lists the sessions.",
         f"{WAYBAR}/scripts/vpn.sh",
+        needs='`openvpn3` and an imported profile',
         states={
             "disconnected": State("\U000f0319", "disconnected"),
             "connected": State("\U000f0318", "connected"),
@@ -175,6 +188,7 @@ WIDGETS: dict[str, Widget] = {
         "Do not disturb",
         "Silences notifications (swaync). Also hides the song title while it is on.",
         f"{WAYBAR}/config.jsonc",
+        needs='`swaync`',
         states={"off": State("\uf0f3"), "on": State("\uf1f6")},
         default="off",
     ),
@@ -183,6 +197,7 @@ WIDGETS: dict[str, Widget] = {
         "The signal for [Switchyard](https://github.com/NathanielInman/switchyard), the board that builds, launches and deploys "
         "everything, one heavy build at a time: blue at rest, amber while building, green when it worked, red when it broke.",
         "packages/switchyard/.config/switchyard/config.toml",
+        needs='[Switchyard](https://github.com/NathanielInman/switchyard)',
         states={
             "idle": State("\U000f0431", "idle"),
             "building": State("\U000f0431", "building"),
@@ -195,6 +210,7 @@ WIDGETS: dict[str, Widget] = {
         "Power",
         "Idle, lock, log out, suspend, reboot or shut down, through walker.",
         f"{WAYBAR}/scripts/power-menu.sh",
+        needs='`walker`, `hyprlock`, `hypridle`',
         states={"on": State("\u23fb")},
         default="on",
     ),
@@ -202,6 +218,7 @@ WIDGETS: dict[str, Widget] = {
         "Clock",
         "The date and time. Click to cycle through Chicago, Eastern Europe and GMT; right-click for the calendar.",
         f"{WAYBAR}/scripts/timezone.sh",
+        needs='Nothing extra',
         states={
             "local": State(" Tue Nov 10  14:32"),
             "chicago": State("America/Chicago:  Tue Nov 10  14:32"),

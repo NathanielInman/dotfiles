@@ -608,14 +608,14 @@ def strip(m: Mod):
 
 
 def write_table():
-    rows = ["| | Widget | What it does |", "|---|---|---|"]
+    rows = ["| | Widget | What it does | Needs |", "|---|---|---|---|"]
     for m in RIGHT:
         if m.w.kind != "custom":
             continue
         slug = m.name.split("/")[-1]
         rows.append(
             f'| <img src="Pictures/bar/widgets/{slug}.svg" height="36" alt="{esc(m.w.name)}"> '
-            f"| [{m.w.name}]({m.w.source}) | {m.w.what} |"
+            f"| [{m.w.name}]({m.w.source}) | {m.w.what} | {m.w.needs} |"
         )
     text = README.read_text(encoding="utf-8")
     start, end = "<!-- bar-widgets:start -->", "<!-- bar-widgets:end -->"
