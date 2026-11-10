@@ -1,30 +1,75 @@
 {
   "layer": "top",
   "position": "bottom",
-  "height": 24,
-  "spacing": 0,
+  // Platform: the bar floats on the wallpaper like the windows do (margins
+  // match gaps_out) and its modules sit in pills (style.css), not in a row
+  // of dividers. Roundhouse, Switchyard and Signal Box anchor to the real
+  // surface through bar-anchor, so margins don't move their drawers.
+  "height": 34,
+  "margin-top": 0,
+  "margin-left": 6,
+  "margin-right": 6,
+  "margin-bottom": 6,
+  "spacing": 6,
   "modules-left": [
     "hyprland/workspaces",
     "hyprland/window"
   ],
   "modules-right": [
     "custom/currently-playing",
-    "custom/roundhouse",
-    "pulseaudio",
-    "custom/mouse-battery",
-    "custom/voxtype",
-    "custom/meeting-record",
-    "custom/screen-record",
-    "custom/pomodoro",
-    "custom/keylights",
-    "custom/vpn",
-    "custom/silence-notifications",
-    "custom/switchyard",
-    "custom/broker",
-    "custom/power-menu",
+    "group/pill-lamps",
+    "group/pill-audio",
+    "group/pill-desk",
     "custom/timezone",
     "tray"
   ],
+  // Health and state lamps: off is dim, on is a color
+  "group/pill-lamps": {
+    "orientation": "horizontal",
+    "modules": [
+      "custom/roundhouse",
+      "custom/switchyard",
+      "custom/broker",
+      "custom/vpn",
+      "custom/silence-notifications"
+    ]
+  },
+  "group/pill-audio": {
+    "orientation": "horizontal",
+    "modules": [
+      "pulseaudio",
+      "custom/mouse-battery"
+    ]
+  },
+  // Dictation and the recorders stay in view (the recorders only show while
+  // recording); the rarely touched toggles slide out of the arrow on hover
+  "group/pill-desk": {
+    "orientation": "horizontal",
+    "modules": [
+      "custom/voxtype",
+      "custom/meeting-record",
+      "custom/screen-record",
+      "group/desk-drawer"
+    ]
+  },
+  "group/desk-drawer": {
+    "orientation": "horizontal",
+    "drawer": {
+      "transition-duration": 260,
+      "transition-left-to-right": false,
+      "children-class": "drawer-child"
+    },
+    "modules": [
+      "custom/desk-handle",
+      "custom/pomodoro",
+      "custom/keylights",
+      "custom/power-menu"
+    ]
+  },
+  "custom/desk-handle": {
+    "format": "\uf053",
+    "tooltip-format": "Pomodoro, key lights, power"
+  },
   "hyprland/workspaces": {
     // The workspace's own icon, then a small dim glyph per open window, so
     // a stray Chrome on 8 or a Godot build on 9 shows without switching

@@ -1,62 +1,100 @@
-/* Nord-themed Waybar */
+/* Nord-themed Waybar: Platform
+ *
+ * The bar floats (margins in config.jsonc) on a transparent surface, and
+ * each group of modules is a frosted pill. Hyprland blurs only layer
+ * surfaces (rules.lua), so the pills read as glass over the wallpaper.
+ *
+ * One palette rule: off is dim, on is a color, and red only ever means
+ * "needs you". Every color is Nord.
+ */
+
+@define-color bar      #282A2E;
+@define-color fg       #C5C8C6;
+@define-color bright   #D8DEE9;
+@define-color dim      #616E88;
+@define-color line     #4C566A;
+@define-color hover    #373B41;
+@define-color frost    #88C0D0;
+@define-color frost2   #8FBCBB;
+@define-color blue     #81A1C1;
+@define-color green    #A3BE8C;
+@define-color yellow   #EBCB8B;
+@define-color orange   #D08770;
+@define-color red      #BF616A;
+@define-color purple   #B48EAD;
 
 * {
   font-family: "PragmataPro Liga", monospace;
-  font-size: 18px;
+  font-size: 15px;
   min-height: 0;
 }
 
+/* Roundhouse's drawer reads this background for its own panel color and
+   replaces the alpha, so the bar can be transparent and the drawer still
+   matches the pills. */
 window#waybar {
-  background: #282A2E;
-  color: #C5C8C6;
-  border-radius: 6px;
+  background: rgba(40, 42, 46, 0);
+  color: @fg;
 }
 
 window#waybar.hidden {
   opacity: 0.2;
 }
 
-/* Module defaults */
+tooltip {
+  background: rgba(40, 42, 46, 0.96);
+  border: 1px solid @line;
+  border-radius: 8px;
+}
+
+/* ---- Pills ---- */
 #workspaces,
 #window,
 #custom-currently-playing,
-#pulseaudio,
+#pill-lamps,
+#pill-audio,
+#pill-desk,
+#custom-timezone,
+#tray {
+  background: rgba(40, 42, 46, 0.84);
+  border: 1px solid rgba(76, 86, 106, 0.55);
+  border-radius: 10px;
+  padding: 0 4px;
+}
+
+/* An empty window title or an empty now-playing leaves no empty pill */
+window#waybar.empty #window {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* ---- Modules inside pills ---- */
+#window,
+#custom-currently-playing,
+#custom-timezone {
+  padding: 0 12px;
+}
+
 #custom-roundhouse,
-#custom-mouse-battery,
-#custom-keylights,
+#custom-switchyard,
+#custom-broker,
 #custom-vpn,
+#custom-silence-notifications,
+#pulseaudio,
+#custom-mouse-battery,
 #custom-voxtype,
 #custom-meeting-record,
 #custom-screen-record,
+#custom-desk-handle,
 #custom-pomodoro,
-#custom-silence-notifications,
-#custom-switchyard,
-#custom-broker,
-#custom-power-menu,
-#custom-timezone,
-#tray {
-  padding: 0 6px;
-  border-right: 1px solid #4c566a;
+#custom-keylights,
+#custom-power-menu {
+  padding: 0 8px;
+  border-radius: 7px;
+  margin: 3px 0;
 }
 
-/* Mouse battery */
-#custom-mouse-battery {
-  color: #a3be8c;
-}
-
-#custom-mouse-battery.low {
-  color: #ebcb8b;
-}
-
-#custom-mouse-battery.critical {
-  color: #bf616a;
-}
-
-#custom-mouse-battery.charging {
-  color: #88c0d0;
-}
-
-/* Hover feedback on clickable modules (info-only modules excluded) */
+/* Hover feedback on clickable modules */
 #custom-currently-playing:hover,
 #pulseaudio:hover,
 #custom-roundhouse:hover,
@@ -70,161 +108,242 @@ window#waybar.hidden {
 #custom-switchyard:hover,
 #custom-broker:hover,
 #custom-power-menu:hover,
+#custom-desk-handle:hover,
 #custom-timezone:hover {
-  background: #373B41;
+  background: rgba(129, 161, 193, 0.18);
 }
 
-/* Workspaces */
+/* ---- Workspaces ---- */
 #workspaces button {
-  padding: 0 6px;
-  color: #C5C8C6;
+  padding: 0 8px;
+  margin: 4px 1px;
+  color: @fg;
   background: transparent;
   border: none;
-  border-bottom: 3px solid transparent;
-  border-radius: 0;
+  border-radius: 7px;
 }
 
 #workspaces button:hover {
-  background: #373B41;
+  background: rgba(129, 161, 193, 0.14);
 }
 
 #workspaces button.active {
-  border-bottom: 3px solid #81a1c1;
+  background: rgba(129, 161, 193, 0.26);
+  color: @bright;
 }
 
 #workspaces button.urgent {
-  background: #bf616a;
+  background: @red;
+  color: @bar;
 }
 
-/* Window title */
+/* ---- Window title ---- */
 #window {
-  color: #C5C8C6;
+  color: @bright;
 }
 
-/* Currently playing */
+/* ---- Now playing ---- */
 #custom-currently-playing {
-  color: #ebcb8b;
+  color: @yellow;
 }
 
-/* Pulseaudio */
-#pulseaudio {
-  color: #a3be8c;
-}
-
-#pulseaudio.muted {
-  color: #4c566a;
-}
+/* ---- Lamps ---- */
 
 /* Roundhouse: the system drawer behind one lamp. The class follows the
    machine: green when calm, amber for a heads-up, red when it needs you */
 #custom-roundhouse {
-  color: #a3be8c;
+  color: @green;
 }
 
 #custom-roundhouse.heads-up {
-  color: #ebcb8b;
+  color: @yellow;
 }
 
 #custom-roundhouse.act {
-  color: #bf616a;
+  color: @red;
 }
 
 #custom-roundhouse.offline {
-  color: #4c566a;
+  color: @dim;
 }
 
-/* Keylights */
-#custom-keylights.on {
-  color: #50fa7b;
-}
-
-#custom-keylights.off {
-  color: #a3be8c;
-}
-
-/* Notifications */
-#custom-silence-notifications {
-  color: #a3be8c;
-}
-
-/* VPN status */
-#custom-vpn.connected {
-  color: #50fa7b;
-}
-
-#custom-vpn.disconnected {
-  color: #a3be8c;
-}
-
-/* Screen recording indicator */
-#custom-voxtype,
-#custom-voxtype.idle,
-#custom-voxtype.stopped {
-  color: #a3be8c;
-}
-
-#custom-voxtype.recording {
-  color: #bf616a;
-}
-
-#custom-voxtype.transcribing {
-  color: #ebcb8b;
-}
-
-#custom-meeting-record {
-  color: #bf616a;
-}
-
-#custom-screen-record {
-  color: #bf616a;
-}
-
-/* Pomodoro timer */
-#custom-pomodoro {
-  color: #a3be8c;
-}
-
-/* Switchyard signal: the aggregate state of every task. Blue at rest like
-   the old games drawer toggle, then the build colors so a compile stays
-   visible without opening anything. */
+/* Switchyard signal: the aggregate state of every task. Frost at rest,
+   then the build colors so a compile stays visible without opening
+   anything. */
 #custom-switchyard {
-  color: #88c0d0;
+  color: @frost;
 }
 
 #custom-switchyard.building,
 #custom-switchyard.queued {
-  color: #ebcb8b;
+  color: @yellow;
 }
 
 #custom-switchyard.running {
-  color: #b8e0ea;
+  color: @frost2;
 }
 
 #custom-switchyard.failed {
-  color: #bf616a;
+  color: @red;
 }
 
 #custom-switchyard.ok {
-  color: #50fa7b;
+  color: @green;
 }
 
 #custom-switchyard.offline {
-  color: #4c566a;
+  color: @dim;
 }
 
-/* Power menu */
+/* Signal Box: dim when nothing is granted, frost while something is live,
+   amber when an agent is asking or a grant in use is about to end. */
+#custom-broker {
+  color: @frost;
+}
+
+#custom-broker.quiet,
+#custom-broker.error {
+  color: @dim;
+}
+
+#custom-broker.ending,
+#custom-broker.night,
+#custom-broker.missed {
+  color: @yellow;
+}
+
+#custom-broker.asking {
+  color: @yellow;
+  animation: broker-ask 1.2s ease-in-out infinite alternate;
+}
+
+#custom-broker.locked {
+  color: @blue;
+}
+
+@keyframes broker-ask {
+  to {
+    color: #6b5d3f;
+  }
+}
+
+/* VPN: dim until connected */
+#custom-vpn,
+#custom-vpn.disconnected {
+  color: @dim;
+}
+
+#custom-vpn.connected {
+  color: @frost;
+}
+
+/* Do not disturb (swaync-client -swb classes): a dim bell normally, a
+   brighter one with notifications waiting, amber while silenced (which
+   also hides the song title) */
+#custom-silence-notifications,
+#custom-silence-notifications.none {
+  color: @dim;
+}
+
+#custom-silence-notifications.notification {
+  color: @fg;
+}
+
+#custom-silence-notifications.dnd-none,
+#custom-silence-notifications.dnd-notification,
+#custom-silence-notifications.dnd-inhibited-none,
+#custom-silence-notifications.dnd-inhibited-notification {
+  color: @yellow;
+}
+
+/* ---- Audio ---- */
+#pulseaudio {
+  color: @frost;
+}
+
+#pulseaudio.muted {
+  color: @dim;
+}
+
+/* Mouse battery: information, so dim until it needs charging */
+#custom-mouse-battery {
+  color: @dim;
+}
+
+#custom-mouse-battery.low {
+  color: @yellow;
+}
+
+#custom-mouse-battery.critical {
+  color: @red;
+}
+
+#custom-mouse-battery.charging {
+  color: @frost;
+}
+
+/* ---- Desk ---- */
+
+/* Dictation: dim mic at rest, red while listening, amber while typing */
+#custom-voxtype,
+#custom-voxtype.idle,
+#custom-voxtype.stopped {
+  color: @dim;
+}
+
+#custom-voxtype.recording {
+  color: @red;
+}
+
+#custom-voxtype.transcribing {
+  color: @yellow;
+}
+
+#custom-meeting-record,
+#custom-screen-record {
+  color: @red;
+}
+
+#custom-desk-handle {
+  color: @dim;
+}
+
+/* Pomodoro: dim when idle, frost while working, green on a break */
+#custom-pomodoro,
+#custom-pomodoro.idle {
+  color: @dim;
+}
+
+#custom-pomodoro.work {
+  color: @frost;
+}
+
+#custom-pomodoro.break {
+  color: @green;
+}
+
+/* Key lights: warm when on */
+#custom-keylights,
+#custom-keylights.off {
+  color: @dim;
+}
+
+#custom-keylights.on {
+  color: @yellow;
+}
+
 #custom-power-menu {
-  color: #a3be8c;
+  color: @dim;
 }
 
-/* Timezone / clock */
+/* ---- Clock ---- */
 #custom-timezone {
-  color: #b48ead;
+  color: @purple;
 }
 
-/* Tray */
+/* ---- Tray ---- */
 #tray {
-  border-right: none;
+  padding: 0 10px;
 }
 
 #tray > .passive {
@@ -233,37 +352,6 @@ window#waybar.hidden {
 
 #tray > .needs-attention {
   -gtk-icon-effect: highlight;
-  background: #bf616a;
-}
-
-/* Signal Box: gray when nothing is granted, frost while something is live,
-   amber when an agent is asking or a grant in use is about to end. */
-#custom-broker {
-  color: #88c0d0;
-}
-
-#custom-broker.quiet,
-#custom-broker.error {
-  color: #4c566a;
-}
-
-#custom-broker.ending,
-#custom-broker.night,
-#custom-broker.missed {
-  color: #ebcb8b;
-}
-
-#custom-broker.asking {
-  color: #ebcb8b;
-  animation: broker-ask 1.2s ease-in-out infinite alternate;
-}
-
-#custom-broker.locked {
-  color: #81a1c1;
-}
-
-@keyframes broker-ask {
-  to {
-    color: #6b5d3f;
-  }
+  background: @red;
+  border-radius: 6px;
 }
