@@ -45,6 +45,7 @@ cd ~/Sites/dot-files
 | `nushell`  | Modern shell                                  |
 | `nvim`     | Standalone lazy.nvim NeoVim config            |
 | `pipewire` | rtkit wait + WirePlumber no-suspend drop-ins  |
+| `roundhouse` | System drawer config: bar pin, public IP, hidden mounts |
 | `starship` | Shell prompt                                  |
 | `swaync`   | Notification center                           |
 | `switchyard` | Task board config: games, deploys, desk tasks |
@@ -62,6 +63,15 @@ The `switchyard` package configures [Switchyard](https://github.com/NathanielInm
 git clone https://github.com/NathanielInman/switchyard.git ~/Sites/switchyard
 ~/Sites/switchyard/install.sh       # builds, installs yard + yard-board to ~/.local/bin, enables the user units
 ./install.sh switchyard             # then the config and tasks (packages/switchyard)
+```
+
+The `roundhouse` package configures [Roundhouse](https://github.com/NathanielInman/roundhouse), the system drawer behind the lamp in waybar: CPU, GPU, memory pressure, network, every disk and share, memory by app, and Switchyard's queue when it runs. It replaced the old `group/details` drawer and its scripts. Install the program first:
+
+```bash
+git clone https://github.com/NathanielInman/roundhouse.git ~/Sites/roundhouse
+cd ~/Sites/roundhouse && cargo build --release
+install -Dm755 target/release/rh target/release/rh-board -t ~/.local/bin/
+./install.sh roundhouse             # then the config (packages/roundhouse)
 ```
 
 System-level files that can't be stowed (because they live outside `$HOME`) are tracked under `etc/`, `usr/` and `scripts/` as copies. Install them via `./install.sh -s`, which prompts for each one (`./install.sh -y -s` answers yes to all; it is safe to run in a chroot, where anything that needs udev or D-Bus waits for first boot). Currently covers:
