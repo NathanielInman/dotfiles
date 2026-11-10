@@ -142,14 +142,18 @@
     "on-click": "voxtype record toggle"
   },
   "custom/meeting-record": {
-    "exec": "if [ -f /tmp/meeting-record.pid ]; then echo '󰻞'; fi",
-    "interval": 1,
+    // Redrawn on start/stop by the script's pkill -RTMIN+8, never polled
+    "exec": "~/.config/waybar/scripts/meeting-record.sh status",
+    "interval": "once",
+    "signal": 8,
     "on-click": "~/.config/waybar/scripts/meeting-record.sh toggle",
     "tooltip-format": "Toggle meeting recording"
   },
   "custom/screen-record": {
-    "exec": "if [ -f /tmp/screen-record.pid ]; then echo '⏺'; fi",
-    "interval": 1,
+    // Redrawn on start/stop by the script's pkill -RTMIN+9, never polled
+    "exec": "~/.config/waybar/scripts/screen-record.sh status",
+    "interval": "once",
+    "signal": 9,
     "on-click": "~/.config/waybar/scripts/screen-record.sh",
     "tooltip-format": "Toggle screen recording"
   },
