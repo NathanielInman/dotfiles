@@ -1,0 +1,869 @@
+<title>Waybar Pitch Book</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single reading column of pitches; each pitch opens on a dark "desk" stage that recreates the real bar and its drawer. */
+:root {
+  --paper: #ECEFF4;
+  --paper-2: #E3E8F0;
+  --ink: #2E3440;
+  --ink-2: #4C566A;
+  --rule: #CDD4E0;
+  --accent: #4F739E;
+  --ok: #5E7F44;
+  --warn: #9A6F1E;
+  --bad: #A8434E;
+
+  --f-display: "Big Shoulders Display", "Barlow Condensed", "Arial Narrow", sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", "PragmataPro Liga", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* The desk: fixed colors taken from waybar/style.css and the Roundhouse drawer, same in both themes */
+  --desk: #1B1E23;
+  --m-bar: #282A2E;
+  --m-fg: #C5C8C6;
+  --m-div: #4C566A;
+  --m-hover: #373B41;
+  --m-panel: #2B2E33;
+  --m-card: #33373D;
+  --m-dim: #6B7486;
+  --m-label: #8C95A6;
+  --n-green: #A3BE8C;
+  --n-yellow: #EBCB8B;
+  --n-red: #BF616A;
+  --n-frost: #88C0D0;
+  --n-blue: #81A1C1;
+  --n-purple: #B48EAD;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #20242A; --paper-2: #282D35; --ink: #E5E9F0; --ink-2: #A7B0BF; --rule: #394150;
+    --accent: #88C0D0; --ok: #A3BE8C; --warn: #EBCB8B; --bad: #D47A83; --desk: #15181C;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #20242A; --paper-2: #282D35; --ink: #E5E9F0; --ink-2: #A7B0BF; --rule: #394150;
+  --accent: #88C0D0; --ok: #A3BE8C; --warn: #EBCB8B; --bad: #D47A83; --desk: #15181C;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 17px;
+  line-height: 1.6;
+}
+.wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 48px 72px;
+  display: grid;
+  gap: 72px;
+}
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.05; margin: 0; }
+h1 { font-size: clamp(48px, 9vw, 96px); font-weight: 800; letter-spacing: 0.01em; text-transform: uppercase; }
+h2 { font-size: clamp(40px, 6vw, 64px); font-weight: 800; text-transform: uppercase; }
+h3 { font-size: 26px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }
+p { margin: 0; max-width: 65ch; }
+.eyebrow {
+  font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2);
+}
+.lede { font-size: 20px; color: var(--ink); max-width: 60ch; }
+.muted { color: var(--ink-2); }
+code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+code { background: var(--paper-2); padding: 1px 5px; border-radius: 4px; }
+a { color: var(--accent); }
+
+/* Header */
+header.top { display: grid; gap: 20px; }
+.line-up { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-family: var(--f-mono); font-size: 13px; color: var(--ink-2); }
+.line-up span.stop { border: 1px solid var(--rule); border-radius: 999px; padding: 2px 10px; }
+.line-up span.stop.new { border-color: var(--accent); color: var(--accent); }
+.line-up .track { flex: 0 0 18px; height: 2px; background: var(--rule); }
+
+/* Summary table + calculator */
+.summary { display: grid; gap: 20px; }
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 15px; }
+th, td { text-align: left; padding: 12px 12px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); font-weight: 400; }
+td.rank { font-family: var(--f-display); font-size: 28px; font-weight: 800; color: var(--ink-2); width: 40px; }
+td .name { font-family: var(--f-display); font-size: 24px; font-weight: 800; text-transform: uppercase; display: block; line-height: 1.1; }
+td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.meter { display: inline-flex; gap: 3px; vertical-align: middle; }
+.meter i { width: 10px; height: 10px; border-radius: 2px; background: var(--rule); display: block; }
+.meter i.on { background: var(--accent); }
+.calc {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px 32px;
+  background: var(--paper-2); border-radius: 10px; padding: 18px 20px;
+}
+.calc label { display: grid; gap: 4px; font-size: 14px; color: var(--ink-2); }
+.calc output { font-family: var(--f-mono); color: var(--ink); font-size: 15px; }
+.calc input[type=range] { width: 100%; accent-color: var(--accent); }
+.calc .total { display: grid; gap: 2px; align-content: center; }
+.calc .total b { font-family: var(--f-display); font-size: 40px; line-height: 1; color: var(--accent); }
+.fine { font-size: 13px; color: var(--ink-2); max-width: 75ch; }
+
+/* Pitch sections */
+section.pitch { display: grid; gap: 28px; scroll-margin-top: 24px; }
+.pitch-head { display: grid; gap: 10px; }
+.pitch-head .promise { font-size: 22px; max-width: 48ch; line-height: 1.4; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px 40px; }
+.cols > div { min-width: 0; display: grid; gap: 12px; align-content: start; }
+ul.plain { margin: 0; padding-left: 18px; display: grid; gap: 8px; max-width: 65ch; }
+ul.plain li::marker { color: var(--accent); }
+.facets { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.facet { border-top: 2px solid var(--accent); padding-top: 10px; display: grid; gap: 4px; }
+.facet b { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); font-weight: 600; }
+.facet p { font-size: 15.5px; }
+.why {
+  font-family: var(--f-display); font-weight: 600; font-size: clamp(26px, 3.6vw, 34px); line-height: 1.2;
+  text-wrap: balance; max-width: 30ch; padding-left: 18px; border-left: 4px solid var(--accent);
+}
+.why small { display: block; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); font-weight: 400; margin-bottom: 6px; }
+.today { background: var(--paper-2); border-radius: 10px; padding: 18px 20px; display: grid; gap: 10px; }
+.today .bugtag { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bad); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips span { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--rule); border-radius: 999px; padding: 2px 9px; color: var(--ink-2); }
+.timeback { font-family: var(--f-mono); font-size: 14px; }
+.timeback b { color: var(--accent); font-size: 18px; }
+dl.build { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; font-size: 15px; }
+dl.build dt { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); padding-top: 3px; }
+dl.build dd { margin: 0; min-width: 0; }
+@media (max-width: 520px) { dl.build { grid-template-columns: 1fr; } dl.build dt { padding-top: 8px; } }
+
+/* State switcher above each mock */
+.switch { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.switch .lbl { font-family: var(--f-mono); font-size: 12px; color: var(--ink-2); margin-right: 4px; }
+.switch button {
+  font: 13px var(--f-mono); color: var(--ink); background: transparent; border: 1px solid var(--rule);
+  border-radius: 999px; padding: 4px 12px; cursor: pointer;
+}
+.switch button[aria-pressed="true"] { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+.switch button:focus-visible, .mock button:focus-visible { outline: 2px solid var(--n-frost); outline-offset: 2px; }
+
+/* ===== The desk stage ===== */
+.stage {
+  background:
+    radial-gradient(1200px 400px at 85% -10%, rgba(136,192,208,0.10), transparent 60%),
+    radial-gradient(800px 300px at 0% 110%, rgba(180,142,173,0.08), transparent 60%),
+    var(--desk);
+  border-radius: 12px;
+  padding: 28px 14px 12px;
+  display: grid;
+  gap: 10px;
+  color: var(--m-fg);
+  overflow: hidden;
+  font-family: var(--f-mono);
+}
+.stage .caption { font-size: 11px; color: var(--m-dim); letter-spacing: 0.06em; text-align: right; }
+.drawer-row { display: flex; justify-content: flex-end; padding-right: clamp(0px, 8vw, 120px); min-height: 40px; }
+.bar-scroll { overflow-x: auto; scrollbar-width: thin; }
+.bar {
+  display: flex; align-items: stretch; height: 30px; background: var(--m-bar); border-radius: 6px;
+  font-size: 13px; color: var(--m-fg); white-space: nowrap; width: max-content; min-width: 100%;
+}
+.bar .left, .bar .right { display: flex; align-items: stretch; }
+.bar .right { margin-left: auto; }
+.mod { display: flex; align-items: center; gap: 6px; padding: 0 8px; border-right: 1px solid var(--m-div); }
+.mod:last-child { border-right: none; }
+.mod.dim { opacity: 0.45; }
+.mod.focus { background: var(--m-hover); box-shadow: inset 0 -2px 0 var(--n-frost); }
+.mod svg, .ic svg { width: 15px; height: 15px; display: block; }
+.ws { display: flex; align-items: stretch; border-right: 1px solid var(--m-div); }
+.ws span { display: flex; align-items: center; padding: 0 9px; border-bottom: 3px solid transparent; }
+.ws span.active { border-bottom-color: var(--n-blue); }
+.c-green { color: var(--n-green); } .c-yellow { color: var(--n-yellow); } .c-red { color: var(--n-red); }
+.c-frost { color: var(--n-frost); } .c-purple { color: var(--n-purple); } .c-dim { color: var(--m-dim); } .c-blue { color: var(--n-blue); }
+.tray { display: flex; gap: 8px; align-items: center; padding: 0 10px; }
+.tray i { width: 13px; height: 13px; border-radius: 3px; display: block; }
+
+/* Drawer, modeled on the Roundhouse drawer */
+.drawer {
+  width: 380px; max-width: 100%; background: var(--m-panel); border: 1px solid #3A3F47; border-radius: 10px;
+  padding: 14px; display: grid; gap: 12px; font-size: 12px; color: var(--m-fg);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+}
+.d-head { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 8px; align-items: center; }
+.d-head .lamp { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.d-head b { font-weight: 600; letter-spacing: 0.1em; font-size: 11px; }
+.d-head small { grid-column: 2; color: var(--m-dim); font-size: 10px; }
+.d-head .chip { grid-row: 1; grid-column: 3; font-size: 10px; padding: 1px 8px; border-radius: 999px; background: rgba(163,190,140,0.15); color: var(--n-green); }
+.d-head .chip.red { background: rgba(191,97,106,0.18); color: var(--n-red); }
+.d-head .chip.yellow { background: rgba(235,203,139,0.16); color: var(--n-yellow); }
+.d-head .chip.frost { background: rgba(136,192,208,0.16); color: var(--n-frost); }
+.d-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px; text-align: center; }
+.d-tabs span { padding: 4px 0; border-radius: 5px; color: var(--m-label); }
+.d-tabs span.on { background: #5E8FA6; color: #1E2227; font-weight: 600; }
+.card { background: var(--m-card); border-radius: 7px; padding: 10px 12px; display: grid; gap: 6px; }
+.lab { font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--m-label); display: flex; justify-content: space-between; gap: 8px; }
+.big { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.row { display: flex; align-items: center; gap: 8px; }
+.row .grow { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.mock button.b {
+  font: 11px var(--f-mono); color: var(--m-fg); background: #3B4049; border: 0; border-radius: 5px;
+  padding: 5px 9px; display: inline-flex; gap: 5px; align-items: center; cursor: pointer;
+}
+.mock button.b svg { width: 12px; height: 12px; }
+.mock button.b.primary { background: var(--n-frost); color: #1E2227; font-weight: 600; }
+.mock button.b.danger { background: var(--n-red); color: #1E2227; font-weight: 600; }
+.list { display: grid; gap: 2px; }
+.list .item { display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: center; padding: 6px 4px; border-bottom: 1px solid #383C43; }
+.list .item:last-child { border-bottom: 0; }
+.list .item svg { width: 14px; height: 14px; }
+.list .item .t { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list .item .s { color: var(--m-dim); font-size: 10.5px; display: block; }
+.d-foot { font-size: 10px; color: var(--m-dim); }
+.levels { display: flex; gap: 2px; align-items: flex-end; height: 22px; }
+.levels i { width: 4px; background: var(--n-red); border-radius: 1px; display: block; height: 30%; }
+.prog { height: 4px; border-radius: 2px; background: #454A53; overflow: hidden; }
+.prog i { display: block; height: 100%; background: var(--n-frost); border-radius: 2px; }
+.ex { font-size: 9.5px; color: var(--m-dim); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* Timetable bits */
+.zones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.zones .card { padding: 8px 10px; gap: 2px; }
+.zones .big { font-size: 20px; }
+.day { position: relative; height: 58px; background: #2E3238; border-radius: 6px; overflow: hidden; }
+.day .ev { position: absolute; top: 8px; height: 26px; border-radius: 4px; background: #4A6577; font-size: 9.5px; padding: 3px 5px; overflow: hidden; white-space: nowrap; color: #E5E9F0; }
+.day .ev.next { background: var(--n-yellow); color: #2E3440; font-weight: 600; }
+.day .free { position: absolute; top: 8px; height: 26px; border-radius: 4px; border: 1px dashed #5B6474; }
+.day .now { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--n-red); }
+.day .ticks { position: absolute; left: 0; right: 0; bottom: 3px; display: flex; justify-content: space-between; padding: 0 4px; font-size: 9px; color: var(--m-dim); }
+
+/* Tannoy bits */
+.art { width: 96px; height: 96px; border-radius: 6px; flex: 0 0 auto;
+  background:
+    radial-gradient(circle at 30% 30%, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle at 70% 22%, #fff 0 1px, transparent 1.5px),
+    radial-gradient(circle at 58% 62%, #fff 0 0.8px, transparent 1.3px),
+    radial-gradient(circle at 20% 75%, #fff 0 0.8px, transparent 1.3px),
+    radial-gradient(circle at 75% 80%, #B48EAD 0 18px, transparent 19px),
+    radial-gradient(120% 90% at 20% 0%, #5E81AC, #2E3440 70%);
+}
+.art.sm { width: 16px; height: 16px; border-radius: 3px; }
+.players { display: flex; gap: 6px; flex-wrap: wrap; }
+.players span { font-size: 10.5px; border: 1px solid #4A505A; padding: 2px 8px; border-radius: 999px; color: var(--m-label); }
+.players span.on { border-color: var(--n-frost); color: var(--n-frost); }
+.np { display: inline-grid; gap: 1px; }
+.np .ul { height: 2px; background: #454A53; border-radius: 1px; overflow: hidden; }
+.np .ul i { display: block; height: 100%; width: 49%; background: var(--n-yellow); }
+
+/* Platform: the after bar */
+.desk-tall { min-height: 120px; align-content: end; }
+.bar.after {
+  height: 34px; background: transparent; gap: 6px; font-size: 13.5px; border-radius: 0; padding: 0 2px;
+}
+.pill { display: flex; align-items: stretch; background: rgba(40,42,46,0.88); border-radius: 10px; border: 1px solid rgba(76,86,106,0.5); padding: 0 4px; }
+.pill .mod { border-right: 0; padding: 0 7px; }
+.pill .ws span { padding: 0 8px; border-bottom: 0; border-radius: 7px; margin: 4px 0; gap: 5px; }
+.pill .ws span.active { background: rgba(129,161,193,0.22); color: #E5E9F0; }
+.pill .ws { border-right: 0; }
+.pill .sub { font-size: 10px; color: var(--m-dim); }
+.togg { display: flex; align-items: stretch; overflow: hidden; max-width: 34px; transition: max-width 260ms ease; }
+.togg.open { max-width: 320px; }
+.togg button.chev { background: transparent; border: 0; color: var(--m-label); padding: 0 8px; cursor: pointer; display: flex; align-items: center; }
+.togg button.chev svg { width: 14px; height: 14px; transition: transform 260ms ease; }
+.togg.open button.chev svg { transform: rotate(180deg); }
+.marker { font-size: 9px; font-weight: 600; background: var(--n-frost); color: #1E2227; border-radius: 50%; width: 15px; height: 15px; display: inline-grid; place-items: center; margin-left: 2px; }
+.anatomy { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px 28px; margin: 0; padding: 0; list-style: none; }
+.anatomy li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; font-size: 15px; }
+.anatomy li span.n { font-family: var(--f-mono); font-size: 11px; font-weight: 600; background: var(--accent); color: var(--paper); border-radius: 50%; width: 20px; height: 20px; display: grid; place-items: center; margin-top: 3px; }
+
+@keyframes pulse { 50% { opacity: 0.35; } }
+.pulse { animation: pulse 1.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .pulse { animation: none; }
+  .togg, .togg button.chev svg { transition: none; }
+}
+
+/* Closing */
+.closing { display: grid; gap: 24px; }
+.maint { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px 32px; }
+.maint div { display: grid; gap: 6px; align-content: start; }
+.maint h3 { font-size: 20px; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <span class="eyebrow">frostyarch · waybar · pitches for Nate, Nov 10 2026</span>
+  <h1>Four more stops on the line</h1>
+  <p class="lede">Roundhouse, Switchyard and Signal Box replaced three tangles of shell with one Rust lamp each. This book pitches the next four. Each one has a mock you can click through, what it fixes on this machine today, the time it hands back, and the reason you'd pay for it if someone else had built it.</p>
+  <div class="line-up" aria-label="The products on the line, existing then proposed">
+    <span class="stop">Roundhouse</span><span class="track"></span>
+    <span class="stop">Switchyard</span><span class="track"></span>
+    <span class="stop">Signal Box</span><span class="track"></span>
+    <span class="stop new">Logbook</span><span class="track"></span>
+    <span class="stop new">Timetable</span><span class="track"></span>
+    <span class="stop new">Platform</span><span class="track"></span>
+    <span class="stop new">Tannoy</span>
+  </div>
+  <p class="fine">The names are working names, picked to sit beside the three you already have. Platform is the bar redesign itself and needs no new program; the other three follow the Roundhouse pattern: a daemon, a <code>bar</code> subcommand that streams JSON, and a GTK layer-shell drawer.</p>
+</header>
+
+<section class="summary" aria-labelledby="sum-h">
+  <h3 id="sum-h">The ranking</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>#</th><th>Product</th><th>Replaces</th><th>Time back a week</th><th>Build</th><th>Screenshot value</th></tr></thead>
+      <tbody>
+        <tr><td class="rank">1</td><td><a href="#logbook" class="name">Logbook</a>Recorder, dictation and transcripts behind one On Air lamp</td><td class="mono">voxtype-status.sh<br>meeting-record.sh<br>screen-record.sh</td><td class="num" id="t-log">20 min</td><td>2 to 3 sessions</td><td><span class="meter" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+        <tr><td class="rank">2</td><td><a href="#timetable" class="name">Timetable</a>The clock becomes your day: next meeting, join, three zones</td><td class="mono">timezone.sh<br>pomodoro.sh</td><td class="num" id="t-tt">20 min</td><td>2 sessions</td><td><span class="meter" aria-label="3 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span></td></tr>
+        <tr><td class="rank">3</td><td><a href="#platform" class="name">Platform</a>Floating, grouped, one palette. The bar people screenshot</td><td class="mono">style.css<br>config.jsonc</td><td class="num">glances, not minutes</td><td>an evening</td><td><span class="meter" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td></tr>
+        <tr><td class="rank">4</td><td><a href="#tannoy" class="name">Tannoy</a>Now playing with art, scrubbing and the right player</td><td class="mono">currently-playing.sh</td><td class="num">seconds</td><td>2 sessions</td><td><span class="meter" aria-label="5 of 5"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="calc">
+    <label for="mtg">Meetings a week <output id="mtg-o" for="mtg">10</output>
+      <input type="range" id="mtg" min="0" max="30" value="10"></label>
+    <label for="rec">Of those, recorded <output id="rec-o" for="rec">4</output>
+      <input type="range" id="rec" min="0" max="30" value="4"></label>
+    <div class="total"><span class="eyebrow">Logbook + Timetable, per year</span><b id="t-year">13 hours</b></div>
+  </div>
+  <p class="fine">These are estimates with the assumptions shown, not measurements: 5 minutes saved per recorded meeting (no terminal, no hunting for the session folder, no waiting on a foreground transcribe) and 2 minutes per meeting for Timetable (finding the link, switching to workspace 2, the late join). A year here is 46 working weeks. Move the sliders to your real week.</p>
+</section>
+
+<!-- ============ 1. LOGBOOK ============ -->
+<section class="pitch" id="logbook" aria-labelledby="log-h">
+  <div class="pitch-head">
+    <span class="eyebrow">Pitch 1 · replaces three scripts and three bar icons</span>
+    <h2 id="log-h">Logbook</h2>
+    <p class="promise">One On Air lamp that is always truthful about your mic, and every meeting turns into a transcript without you opening a terminal.</p>
+  </div>
+
+  <div class="today">
+    <span class="bugtag">Today, confirmed on this machine</span>
+    <p>Stopping the meeting recorder does not stop it. <code>stop_recording</code> sends <code>kill -- -$loop_pid</code> to a process group that doesn't exist, then <code>pkill -P</code> kills only the loop's children. The loop wakes up and starts the next <code>pw-record</code> chunk while the bar icon has already gone dark. A copy of the script with <code>sleep</code> standing in for the mic kept recording five seconds after "stop".</p>
+    <p>The pid files also live in <code>/tmp</code>, which on this desktop is on disk and survives a reboot. A crash mid-recording leaves the red icon lit, and the next click tries to stop a recording that isn't there. Transcribing is a manual <code>meeting-record.sh transcribe &lt;dir&gt;</code> run in a terminal.</p>
+  </div>
+
+  <div class="switch" role="group" aria-label="Logbook state">
+    <span class="lbl">Try a state:</span>
+    <button type="button" data-log="idle" aria-pressed="false">Off air</button>
+    <button type="button" data-log="dictate" aria-pressed="false">Dictating</button>
+    <button type="button" data-log="meeting" aria-pressed="true">Meeting</button>
+    <button type="button" data-log="process" aria-pressed="false">Transcribing</button>
+  </div>
+  <div class="stage mock" aria-label="Mock of the Logbook drawer open above the bar">
+    <div class="drawer-row"><div class="drawer" id="log-drawer"></div></div>
+    <div class="bar-scroll"><div class="bar" id="log-bar"></div></div>
+    <div class="caption">mock · recordings listed are examples</div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>What it does</h3>
+      <ul class="plain">
+        <li>One lamp replaces the dictation, meeting and screen icons: dim when the mic is closed, red with a running clock while anything records, amber while transcripts are being made.</li>
+        <li>It watches PipeWire, so the lamp also lights when Zoom, Chrome or anything else has your mic open, and the drawer says who.</li>
+        <li>Stop really stops. The daemon owns the recorder processes and kills them on stop or on its own exit, and its state lives in <code>$XDG_RUNTIME_DIR</code>, which a reboot clears.</li>
+        <li>On stop, transcription queues itself in Switchyard as a heavy job, so it waits for a running build and runs under <code>lowprio</code>.</li>
+        <li>A macro key drops a "mark" into the meeting. Marks show up as headings in the transcript so you can find the decision that was made at minute 31.</li>
+        <li>Meetings turn on do not disturb (which also hides the song title), the same way screen recording already does.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Time back</h3>
+      <p class="timeback">At your numbers: <b id="log-week">20 min</b> a week.</p>
+      <p>Every recorded meeting today ends with: open a terminal, find the dated folder under <code>~/Audio/meetings</code>, run the transcribe, watch it, open the file. In Logbook the transcript is waiting in the drawer with a Copy button by the time you've refilled your coffee.</p>
+      <p>The bigger saving is the one you can't put a number on: never wondering if the mic is still live after a call.</p>
+    </div>
+  </div>
+
+  <div class="facets">
+    <div class="facet"><b>Work</b><p>Meetings become text you can search, paste into notes or hand to an agent for a summary and action items.</p></div>
+    <div class="facet"><b>Privacy</b><p>The lamp tells the truth about every app that has the mic, not only your own recorder.</p></div>
+    <div class="facet"><b>Game dev</b><p>Screen captures of a Detour 33 or Everspark build land in one list with their length, ready to drag into a devlog.</p></div>
+    <div class="facet"><b>The machine</b><p>Transcribing a long meeting is heavy. Queued behind builds, it never fights a Gradle run for RAM.</p></div>
+  </div>
+
+  <p class="why"><small>Why you'd pay for it</small>You stop worrying that the mic is still recording, and you never open a terminal to get a transcript again.</p>
+
+  <dl class="build">
+    <dt>Built from</dt><dd><div class="chips"><span>bar-anchor</span><span>rh-board anim.rs + stage.rs</span><span>gtk4-layer-shell</span><span>pipewire (registry, no subprocess to watch)</span><span>pw-record / wf-recorder as owned children</span><span>voxtype</span><span>Switchyard heavy queue</span><span>swaync DND</span></div></dd>
+    <dt>First cut</dt><dd>Daemon plus lamp, start and stop for meetings and screen, owned processes, runtime-dir state. Fixes the bug on day one.</dd>
+    <dt>Then</dt><dd>The drawer, auto-transcribe through Switchyard, marks, the PipeWire "who has the mic" list.</dd>
+    <dt>Risk</dt><dd>voxtype's model may hold several GB while transcribing; the Switchyard memory gate covers it. You don't need Logbook to fix the stop bug: <code>setsid</code> on the loop and a <code>kill -- -pgid</code> fixes it in two lines today.</dd>
+  </dl>
+</section>
+
+<hr>
+
+<!-- ============ 2. TIMETABLE ============ -->
+<section class="pitch" id="timetable" aria-labelledby="tt-h">
+  <div class="pitch-head">
+    <span class="eyebrow">Pitch 2 · replaces the clock and the pomodoro</span>
+    <h2 id="tt-h">Timetable</h2>
+    <p class="promise">The clock tells you what's next, puts the join button one click away, and turns the free gaps in your day into focus blocks.</p>
+  </div>
+
+  <div class="today">
+    <span class="bugtag">Today</span>
+    <p>The clock shows one zone at a time. Seeing EET means clicking, which runs <code>pgrep -f</code> to find the script and sends it a signal, then clicking twice more to get back. Right-click opens gnome-calendar, which doesn't show your work calendar's join links. The pomodoro runs its 25 minutes whether or not a meeting starts in 10.</p>
+  </div>
+
+  <div class="switch" role="group" aria-label="Timetable state">
+    <span class="lbl">Try a state:</span>
+    <button type="button" data-tt="free" aria-pressed="false">Free</button>
+    <button type="button" data-tt="soon" aria-pressed="true">7 minutes out</button>
+    <button type="button" data-tt="now" aria-pressed="false">Starting</button>
+    <button type="button" data-tt="in" aria-pressed="false">In the meeting</button>
+  </div>
+  <div class="stage mock" aria-label="Mock of the Timetable drawer open above the clock">
+    <div class="drawer-row"><div class="drawer" id="tt-drawer"></div></div>
+    <div class="bar-scroll"><div class="bar" id="tt-bar"></div></div>
+    <div class="caption">mock · events are examples, times are real offsets for Nov 10</div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>What it does</h3>
+      <ul class="plain">
+        <li>The bar reads "Standup in 7m": calm when the next thing is an hour off, amber at 10 minutes, pulsing red at start time.</li>
+        <li>Join switches to workspace 2 (Work Slack + Zoom) and opens the Zoom or Meet link it found in the event.</li>
+        <li>Chicago, EET and GMT sit side by side in the drawer. No cycling.</li>
+        <li>Free gaps on the day strip are focus blocks. Start one and the timer sizes itself to the gap, then warns you 2 minutes before the next meeting. This absorbs the pomodoro.</li>
+        <li>Notifications at 5 and 1 minutes out go through swaync, so do not disturb still silences them.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Time back</h3>
+      <p class="timeback">At your numbers: <b id="tt-week">20 min</b> a week.</p>
+      <p>Most of it is the small hunt before each meeting: open the calendar tab, find the event, find the link, switch workspace, join a minute late. Timetable makes that one click from where your eyes already are.</p>
+      <p>The focus blocks matter more than the minutes. A timer that knows your calendar stops you starting deep work you'll have to drop in 10 minutes.</p>
+    </div>
+  </div>
+
+  <div class="facets">
+    <div class="facet"><b>Work</b><p>On time to every call without keeping a calendar tab open on workspace 1.</p></div>
+    <div class="facet"><b>Focus</b><p>Pomodoros that fit the real gaps in your day.</p></div>
+    <div class="facet"><b>People abroad</b><p>The EET and GMT times are on screen when you're picking a slot for someone overseas.</p></div>
+    <div class="facet"><b>Evenings</b><p>After your last event the bar says so, which is a nicer cue to stop than the clock.</p></div>
+  </div>
+
+  <p class="why"><small>Why you'd pay for it</small>You're never the one who joins two minutes late from the wrong workspace, and focus time stops colliding with meetings.</p>
+
+  <dl class="build">
+    <dt>Built from</dt><dd><div class="chips"><span>bar-anchor</span><span>rh-board stage</span><span>ical parser</span><span>broker (holds the calendar's private iCal URL)</span><span>hyprland IPC</span><span>swaync</span></div></dd>
+    <dt>Data</dt><dd>Your Google Calendar's secret iCal address, kept in broker rather than in a config file. The daemon refreshes it every 5 minutes. No OAuth app to register.</dd>
+    <dt>First cut</dt><dd>Next event in the bar, Join, the three zones.</dd>
+    <dt>Then</dt><dd>Day strip, focus blocks, retire <code>pomodoro.sh</code> and <code>timezone.sh</code>.</dd>
+    <dt>Risk</dt><dd>The secret iCal feed can lag a few minutes behind edits. A late-added meeting may appear late; the drawer shows when it last refreshed.</dd>
+  </dl>
+</section>
+
+<hr>
+
+<!-- ============ 3. PLATFORM ============ -->
+<section class="pitch" id="platform" aria-labelledby="pf-h">
+  <div class="pitch-head">
+    <span class="eyebrow">Pitch 3 · the bar itself, config and CSS only</span>
+    <h2 id="pf-h">Platform</h2>
+    <p class="promise">The same bar, laid out so it reads in one glance and makes the screenshot.</p>
+  </div>
+
+  <div class="today">
+    <span class="bugtag">Today</span>
+    <p>Sixteen modules, each with a 1px divider, flush against the screen edge so the 6px corner radius never shows. "Off" icons (key lights, VPN, notifications) use the same green as healthy things, so a glance can't tell on from off. Two colors are from Dracula, not Nord: <code>#50fa7b</code> and <code>#b8e0ea</code>. 18px text in a 24px bar is cramped.</p>
+  </div>
+
+  <div class="switch" role="group" aria-label="Before or after">
+    <span class="lbl">Compare:</span>
+    <button type="button" data-pf="before" aria-pressed="false">Before (today)</button>
+    <button type="button" data-pf="after" aria-pressed="true">After</button>
+  </div>
+  <div class="stage mock desk-tall" aria-label="Mock of the whole bar before and after the redesign">
+    <div class="bar-scroll"><div id="pf-bar"></div></div>
+    <div class="caption" id="pf-cap">after · click the arrow to open the toggles</div>
+  </div>
+
+  <ol class="anatomy">
+    <li><span class="n">1</span><span><b>Float it.</b> An 8px margin matching <code>gaps_out</code>, so the bar sits on the wallpaper like the windows do.</span></li>
+    <li><span class="n">2</span><span><b>Pills, not dividers.</b> Workspaces, window, then media, lamps, audio, toggles, clock, tray. Four groups to read, not sixteen.</span></li>
+    <li><span class="n">3</span><span><b>Toggles in a drawer.</b> Key lights, VPN, notifications and power collapse behind one arrow (waybar <code>group</code> with <code>drawer</code>). Anything that is <em>on</em> stays visible.</span></li>
+    <li><span class="n">4</span><span><b>One palette rule.</b> Off is dim, on is the accent, and red only ever means "needs you". Every color from Nord.</span></li>
+    <li><span class="n">5</span><span><b>Room to breathe.</b> A 34px bar with 15px text, and workspace icons that carry a small count of windows.</span></li>
+    <li><span class="n">6</span><span><b>Glass, without the halo.</b> Blur only on layer surfaces (the bar and the drawers), so Slack's menus stay clean.</span></li>
+  </ol>
+
+  <div class="facets">
+    <div class="facet"><b>Glance speed</b><p>Anything that isn't dim is something that's on. You read state from color alone.</p></div>
+    <div class="facet"><b>r/unixporn</b><p>A floating, grouped, frosted bar with drawers opening out of it is the image people upvote.</p></div>
+    <div class="facet"><b>The README</b><p><code>docs/bar/build.py</code> redraws the hero and widget strips from the real CSS, so they update with the redesign for free.</p></div>
+  </div>
+
+  <p class="why"><small>Why you'd pay for it</small>It's the screenshot. Everything else in this book makes the bar useful; this makes it the bar people ask about.</p>
+
+  <dl class="build">
+    <dt>Touches</dt><dd><code>waybar/config.jsonc</code>, <code>waybar/style.css</code>, one layer rule in <code>hypr/rules.lua</code>.</dd>
+    <dt>Effort</dt><dd>An evening. Do it first if the post is the priority; it doesn't depend on the other three.</dd>
+    <dt>Risk</dt><dd>Roundhouse and Switchyard anchor their drawers to the clicked icon through <code>bar-anchor</code>, which reads the waybar CSS and JSONC. A margin and new padding change the geometry it computes, so test both drawers after.</dd>
+  </dl>
+</section>
+
+<hr>
+
+<!-- ============ 4. TANNOY ============ -->
+<section class="pitch" id="tannoy" aria-labelledby="tn-h">
+  <div class="pitch-head">
+    <span class="eyebrow">Pitch 4 · replaces currently-playing.sh</span>
+    <h2 id="tn-h">Tannoy</h2>
+    <p class="promise">Now playing with the cover art, a scrub bar and the right player, and still invisible on a screen share.</p>
+  </div>
+
+  <div class="today">
+    <span class="bugtag">Today</span>
+    <p>Every field is cut at 20 characters mid-word, which is why the bar reads "StarTalk - Why We Haven't Reach". With Chrome and Spotify both open, playerctl picks one and you don't choose which. There's no position, no skip for podcasts, and five processes start every 3 seconds to draw it.</p>
+  </div>
+
+  <div class="switch" role="group" aria-label="Tannoy state">
+    <span class="lbl">Try a state:</span>
+    <button type="button" data-tn="play" aria-pressed="true">Playing</button>
+    <button type="button" data-tn="pause" aria-pressed="false">Paused</button>
+    <button type="button" data-tn="dnd" aria-pressed="false">Do not disturb</button>
+  </div>
+  <div class="stage mock" aria-label="Mock of the Tannoy drawer open above the now playing module">
+    <div class="drawer-row"><div class="drawer" id="tn-drawer"></div></div>
+    <div class="bar-scroll"><div class="bar" id="tn-bar"></div></div>
+    <div class="caption">mock · sample track and placeholder art</div>
+  </div>
+
+  <div class="cols">
+    <div>
+      <h3>What it does</h3>
+      <ul class="plain">
+        <li>A 16px cover beside a title that ends in a real ellipsis, with a thin progress line under it.</li>
+        <li>The drawer: big art, scrubbing, and ±15s skips that appear when the track is a podcast.</li>
+        <li>Player chips. Pick Spotify over the YouTube tab once and it stays picked.</li>
+        <li>The output device sits in the drawer too, using the same switch as the volume module.</li>
+        <li>Do not disturb still hides the title, and now the drawer says why it's hidden.</li>
+        <li>MPRIS over D-Bus with change signals: it redraws when the track changes, not every 3 seconds.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Time back</h3>
+      <p class="timeback">Honestly: <b>seconds</b>.</p>
+      <p>Picking the right player and scrubbing a podcast without alt-tabbing to Spotify saves a few seconds, several times a day. This one is about how the desk feels and looks, and the pitch should say so.</p>
+    </div>
+  </div>
+
+  <div class="facets">
+    <div class="facet"><b>Listening</b><p>Podcasts get skips, music gets art, and the right app answers the media keys.</p></div>
+    <div class="facet"><b>Screen shares</b><p>The privacy rule you already rely on keeps working, now with a visible reason.</p></div>
+    <div class="facet"><b>r/unixporn</b><p>Album art in the bar plus a frosted drawer is the second-most screenshotted thing after the bar itself.</p></div>
+  </div>
+
+  <p class="why"><small>Why you'd pay for it</small>It's the widget that makes someone ask "what bar is that?", and it plays from the app you meant.</p>
+
+  <dl class="build">
+    <dt>Built from</dt><dd><div class="chips"><span>zbus (MPRIS)</span><span>bar-anchor</span><span>rh-board stage</span><span>wpctl switch from audio-switch.sh</span><span>swaync DND state</span></div></dd>
+    <dt>Effort</dt><dd>Two sessions. Cover art arrives as <code>mpris:artUrl</code>, a file or https URL that needs caching.</dd>
+    <dt>Risk</dt><dd>Chrome only reports art for some sites. Fall back to the player's icon.</dd>
+  </dl>
+</section>
+
+<hr>
+
+<section class="closing" aria-labelledby="cl-h">
+  <h2 id="cl-h">Riding along</h2>
+  <p>You called these maintenance, and they are. Each one is waybar config, not a new program, and fits in a single commit.</p>
+  <div class="maint">
+    <div><h3>Stop polling</h3><p>About 500 process launches a minute, by my count from the config, mostly printing nothing. <code>swaync-client -swb</code> streams do not disturb, <code>playerctl --follow</code> streams tracks until Tannoy exists, and the two record icons go away with Logbook.</p></div>
+    <div><h3>App icons on workspaces</h3><p><code>window-rewrite</code> in <code>hyprland/workspaces</code> shows what's open where, and title rewrites turn <code>nate@FROSTYARCH:~/Sites/dot-files</code> into an icon and a folder name.</p></div>
+    <div><h3>Layer blur</h3><p>Blur for the bar and drawer namespaces only. Window blur stays off because of the Slack menu halo.</p></div>
+    <div><h3>The hotkey sheet</h3><p>Switchyard's shelf already lists your binds (<code>binds = true</code>). SUPER+/ still opens the old <code>hotkeys.sh</code>, and it and <code>commands.sh</code> can be deleted.</p></div>
+  </div>
+  <p class="muted">Suggested order: the two-line stop fix today, then Platform if the post comes first or Logbook if the time does. Timetable next, then Tannoy, which looks best on the new Platform anyway.</p>
+</section>
+
+</div>
+
+<script>
+(function () {
+  // ---------- icons (24px stroke set) ----------
+  const P = {
+    dot: '<circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/>',
+    mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+    rec: '<circle cx="12" cy="12" r="7" fill="currentColor" stroke="none"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    bulb: '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+    vpn: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+    bell: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/>',
+    signal: '<rect x="8" y="2" width="8" height="13" rx="4"/><circle cx="12" cy="6" r="1.4" fill="currentColor"/><circle cx="12" cy="11" r="1.4" fill="currentColor"/><path d="M12 15v7M9 22h6"/>',
+    key: '<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3"/>',
+    power: '<path d="M12 3v9M6.3 6.3a8 8 0 1 0 11.4 0"/>',
+    vol: '<path d="M4 9h4l5-4v14l-5-4H4zM16 9a4 4 0 0 1 0 6"/>',
+    mouse: '<rect x="7" y="3" width="10" height="18" rx="5"/><path d="M12 7v4"/>',
+    bt: '<path d="M7 7l10 10-5 4V3l5 4L7 17"/>',
+    pause: '<rect x="7" y="5" width="3" height="14" fill="currentColor"/><rect x="14" y="5" width="3" height="14" fill="currentColor"/>',
+    play: '<path d="M8 5l11 7-11 7z" fill="currentColor"/>',
+    prev: '<path d="M6 5v14M18 5l-9 7 9 7z" fill="currentColor"/>',
+    next: '<path d="M18 5v14M6 5l9 7-9 7z" fill="currentColor"/>',
+    cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    stop: '<rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor"/>',
+    flag: '<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+    screen: '<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
+    copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/>',
+    folder: '<path d="M3 6h6l2 2h10v11H3z"/>',
+    video: '<rect x="3" y="7" width="12" height="10" rx="2"/><path d="M15 10l6-3v10l-6-3"/>',
+    hour: '<path d="M7 3h10M7 21h10M8 3c0 6 8 6 8 9s-8 3-8 9M16 3c0 6-8 6-8 9s8 3 8 9"/>',
+    check: '<path d="M5 12l5 5 9-10"/>',
+    chev: '<path d="M15 6l-6 6 6 6"/>',
+    browser: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/>',
+    robot: '<rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4"/><circle cx="9.5" cy="13" r="1" fill="currentColor"/><circle cx="14.5" cy="13" r="1" fill="currentColor"/>',
+    pencil: '<path d="M4 20l4-1 11-11-3-3L5 16z"/>',
+    list: '<path d="M9 6h11M9 12h11M9 18h11M4 6h1M4 12h1M4 18h1"/>',
+    back15: '<path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/>',
+    fwd15: '<path d="M20 12a8 8 0 1 1-3-6.2M20 4v4h-4"/>',
+    people: '<circle cx="9" cy="9" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M16 6a3 3 0 0 1 0 6M18 15c2 .5 3 2 3 5"/>',
+    music: '<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>'
+  };
+  const I = (n, cls) => `<span class="ic ${cls || ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg></span>`;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- shared bar pieces ----------
+  const ws = `<div class="ws"><span>${I('browser')}</span><span class="active">${I('robot')}</span><span>${I('pencil')}</span><span>${I('list')}</span></div><div class="mod">nate@FROSTYARCH:~/Sites/dot-files</div>`;
+  const tray = `<div class="tray"><i style="background:#8FBCBB"></i><i style="background:#5E81AC"></i><i style="background:#7289DA"></i><i style="background:#81A1C1"></i></div>`;
+  const M = (html, cls) => `<div class="mod ${cls || ''}">${html}</div>`;
+  const np = (cls) => M(`${I('pause', 'c-yellow')}<span class="c-yellow">StarTalk - Why We Haven't Reach</span>`, cls);
+  const lamp = (cls) => M(I('dot', 'c-green'), cls);
+  const vol = (cls) => M(`${I('vol', 'c-green')}<span class="c-green">35%</span>${I('bt', 'c-green')}`, cls);
+  const mouse = (cls) => M(`${I('mouse', 'c-green')}<span class="c-green">80%</span>`, cls);
+  const clock = (cls) => M(`<span class="c-purple">Tue Nov 10&nbsp;&nbsp;12:50</span>`, cls);
+  const toggles = (cls) => M(I('bulb', 'c-green'), cls) + M(I('vpn', 'c-green'), cls) + M(I('bell', 'c-green'), cls) + M(I('signal', 'c-frost'), cls) + M(I('key', 'c-frost'), cls) + M(I('power', 'c-green'), cls);
+
+  function pressed(group, attr, val) {
+    document.querySelectorAll(`[${attr}]`).forEach(b => b.setAttribute('aria-pressed', String(b.getAttribute(attr) === val)));
+  }
+
+  // ---------- 1. LOGBOOK ----------
+  const logBar = document.getElementById('log-bar');
+  const logDrawer = document.getElementById('log-drawer');
+  let logState = 'meeting', secs = 41 * 60 + 12, levelTimer = null;
+  const fmt = s => [Math.floor(s / 3600), Math.floor(s / 60) % 60, s % 60].map(n => String(n).padStart(2, '0')).join(':');
+
+  function logLamp() {
+    if (logState === 'idle') return M(I('mic', 'c-dim'), 'focus');
+    if (logState === 'dictate') return M(`${I('mic', 'c-red pulse')}<span class="c-red">listening</span>`, 'focus');
+    if (logState === 'meeting') return M(`${I('rec', 'c-red')}<span class="c-red" id="log-clock">${fmt(secs)}</span>`, 'focus');
+    return M(`${I('hour', 'c-yellow')}<span class="c-yellow">2/3</span>`, 'focus');
+  }
+  const recents = `
+    <div class="list">
+      <div class="item">${I('people', 'c-frost')}<span class="t">Meeting · today 10:02<span class="s">52 min · 4 marks · transcript ready</span></span><button class="b" type="button">${I('copy')}Copy</button></div>
+      <div class="item">${I('screen', 'c-frost')}<span class="t">Screen · today 09:15<span class="s">2:14 · loudness normalized · recording-20261110-091532.mp4</span></span><button class="b" type="button">${I('folder')}Open</button></div>
+      <div class="item">${I('people', 'c-frost')}<span class="t">Meeting · yesterday 14:30<span class="s">31 min · transcript ready</span></span><button class="b" type="button">${I('copy')}Copy</button></div>
+    </div>`;
+  function logCard() {
+    if (logState === 'idle') return `
+      <div class="card"><div class="lab"><span>Mic</span><span>closed</span></div>
+        <div class="row"><span class="grow">Nothing is listening. No app has the mic open.</span></div>
+        <div class="btns"><button class="b primary" type="button">${I('people')}Record meeting</button><button class="b" type="button">${I('screen')}Record screen</button><button class="b" type="button">${I('mic')}Dictate</button></div></div>`;
+    if (logState === 'dictate') return `
+      <div class="card"><div class="lab"><span>Dictation · voxtype</span><span>typing into Neovide</span></div>
+        <div class="row"><div class="levels" id="lv"></div><span class="grow c-dim">release the key to type it</span></div></div>`;
+    if (logState === 'meeting') return `
+      <div class="card"><div class="lab"><span>Meeting · chunk 3 · default input</span><span>DND on</span></div>
+        <div class="row"><span class="big c-red" id="log-big">${fmt(secs)}</span><div class="levels" id="lv"></div></div>
+        <div class="lab"><span>Also using the mic</span><span>zoom · chrome</span></div>
+        <div class="btns"><button class="b danger" type="button">${I('stop')}Stop</button><button class="b" type="button">${I('flag')}Mark  (macro key)</button></div></div>`;
+    return `
+      <div class="card"><div class="lab"><span>Transcribing · meeting 10:02</span><span>switchyard · lowprio</span></div>
+        <div class="row"><span class="grow">Chunk 2 of 3</span><span class="c-yellow">~3 min left</span></div>
+        <div class="prog"><i style="width:58%"></i></div>
+        <div class="lab"><span>Queued behind</span><span>det33 build</span></div></div>`;
+  }
+  function renderLog() {
+    const chip = { idle: ['off air', 'frost'], dictate: ['listening', 'red'], meeting: ['on air', 'red'], process: ['transcribing', 'yellow'] }[logState];
+    const lampColor = { idle: 'c-dim', dictate: 'c-red', meeting: 'c-red', process: 'c-yellow' }[logState];
+    logBar.innerHTML = `<div class="right">${np('dim')}${lamp('dim')}${vol('dim')}${mouse('dim')}${logLamp()}${M(I('clock', 'c-green'), 'dim')}${toggles('dim')}${clock('dim')}${tray}</div>`;
+    logDrawer.innerHTML = `
+      <div class="d-head"><span class="lamp ${lampColor}"></span><b>LOGBOOK</b><span class="chip ${chip[1]}">${chip[0]}</span><small>3 recordings today · ~/Audio</small></div>
+      <div class="d-tabs"><span class="on">Now</span><span>Recordings</span><span>Transcripts</span></div>
+      ${logCard()}
+      <div class="lab"><span>Recent</span><span>examples</span></div>
+      ${recents}
+      <div class="d-foot">1-3 tabs · Esc close · right-click the lamp to stop everything</div>`;
+    startLevels();
+  }
+  function startLevels() {
+    clearInterval(levelTimer);
+    const lv = document.getElementById('lv');
+    if (!lv) return;
+    lv.innerHTML = Array.from({ length: 14 }, () => '<i></i>').join('');
+    const bars = lv.querySelectorAll('i');
+    const draw = () => bars.forEach((b, i) => { b.style.height = (20 + Math.abs(Math.sin(Date.now() / 260 + i * 0.9)) * 60 + Math.random() * 20) + '%'; });
+    draw();
+    if (!reduce) levelTimer = setInterval(draw, 140);
+  }
+  setInterval(() => {
+    if (logState !== 'meeting') return;
+    secs++;
+    const a = document.getElementById('log-clock'), b = document.getElementById('log-big');
+    if (a) a.textContent = fmt(secs);
+    if (b) b.textContent = fmt(secs);
+  }, 1000);
+  document.querySelectorAll('[data-log]').forEach(btn => btn.addEventListener('click', () => {
+    logState = btn.dataset.log; pressed('log', 'data-log', logState); renderLog();
+  }));
+  renderLog();
+
+  // ---------- 2. TIMETABLE ----------
+  const ttBar = document.getElementById('tt-bar');
+  const ttDrawer = document.getElementById('tt-drawer');
+  let ttState = 'soon';
+  // Day strip 08:00 to 18:00; now is 12:50
+  const pct = (h, m) => ((h - 8) * 60 + m) / 600 * 100;
+  const ev = (h1, m1, h2, m2, label, cls) => `<div class="ev ${cls || ''}" style="left:${pct(h1, m1)}%;width:${pct(h2, m2) - pct(h1, m1)}%">${label}</div>`;
+  const fr = (h1, m1, h2, m2) => `<div class="free" style="left:${pct(h1, m1)}%;width:${pct(h2, m2) - pct(h1, m1)}%"></div>`;
+  function ttMod() {
+    const s = {
+      free: `${I('cal', 'c-green')}<span class="c-green">free until 13:00</span>`,
+      soon: `${I('cal', 'c-yellow')}<span class="c-yellow">Standup in 7m</span>`,
+      now: `${I('video', 'c-red pulse')}<span class="c-red">Standup · Join</span>`,
+      in: `${I('people', 'c-frost')}<span class="c-frost">Standup · 9m left</span>`
+    }[ttState];
+    return M(s, 'focus') + M(`<span class="c-purple">Tue Nov 10&nbsp;&nbsp;12:50</span>`, 'focus');
+  }
+  function renderTT() {
+    const chip = { free: ['free', ''], soon: ['next 7m', 'yellow'], now: ['starting', 'red'], in: ['in a meeting', 'frost'] }[ttState];
+    const nextTitle = ttState === 'in' ? 'Sprint review · 14:00 to 15:00' : 'Daily standup · 13:00 to 13:15';
+    const nextBtns = ttState === 'in'
+      ? `<button class="b" type="button">${I('flag')}Leave and mark done</button>`
+      : `<button class="b ${ttState === 'free' ? '' : 'primary'}" type="button">${I('video')}Join on workspace 2</button><button class="b" type="button">${I('copy')}Copy link</button>`;
+    ttBar.innerHTML = `<div class="right">${np('dim')}${lamp('dim')}${vol('dim')}${mouse('dim')}${M(I('mic', 'c-dim'), 'dim')}${toggles('dim')}${ttMod()}${tray}</div>`;
+    ttDrawer.innerHTML = `
+      <div class="d-head"><span class="lamp c-${chip[1] || 'green'}"></span><b>TIMETABLE</b><span class="chip ${chip[1]}">${chip[0]}</span><small>Tue Nov 10 · 4 events · refreshed 2 min ago</small></div>
+      <div class="zones">
+        <div class="card"><div class="lab"><span>Chicago</span><span>CST</span></div><div class="big">12:50</div></div>
+        <div class="card"><div class="lab"><span>EET</span><span>+8h</span></div><div class="big">20:50</div></div>
+        <div class="card"><div class="lab"><span>GMT</span><span>+6h</span></div><div class="big">18:50</div></div>
+      </div>
+      <div class="card"><div class="lab"><span>${ttState === 'in' ? 'After this' : 'Next'}</span><span>zoom · LaunchPad team</span></div>
+        <div class="row"><span class="grow" style="font-size:14px">${nextTitle}</span></div>
+        <div class="btns">${nextBtns}</div></div>
+      <div class="lab"><span>Today</span><span class="ex">example events</span></div>
+      <div class="day">
+        ${ev(9, 30, 10, 0, '1:1')}${fr(10, 0, 12, 0)}${ev(13, 0, 13, 15, '', ttState === 'in' ? '' : 'next')}${ev(14, 0, 15, 0, 'Sprint review', ttState === 'in' ? 'next' : '')}${fr(15, 0, 16, 30)}${ev(16, 30, 17, 0, 'Interview')}
+        <div class="now" style="left:${pct(12, 50)}%"></div>
+        <div class="ticks"><span>8</span><span>10</span><span>12</span><span>14</span><span>16</span><span>18</span></div>
+      </div>
+      <div class="card"><div class="lab"><span>Focus</span><span>absorbs the pomodoro</span></div>
+        <div class="row"><span class="grow">15:00 to 16:30 is free. 85 min of focus, warned at 16:28.</span></div>
+        <div class="btns"><button class="b" type="button">${I('clock')}Start focus block</button></div></div>
+      <div class="d-foot">Esc close · right-click the clock for gnome-calendar</div>`;
+  }
+  document.querySelectorAll('[data-tt]').forEach(btn => btn.addEventListener('click', () => {
+    ttState = btn.dataset.tt; pressed('tt', 'data-tt', ttState); renderTT();
+  }));
+  renderTT();
+
+  // ---------- 3. PLATFORM ----------
+  const pfBar = document.getElementById('pf-bar');
+  const pfCap = document.getElementById('pf-cap');
+  const mk = n => `<span class="marker" aria-label="note ${n}">${n}</span>`;
+  function renderPF(which) {
+    if (which === 'before') {
+      pfBar.className = 'bar';
+      pfBar.innerHTML = `<div class="left">${ws}</div><div class="right">${np()}${lamp()}${vol()}${mouse()}${M(I('mic', 'c-green'))}${M(I('clock', 'c-green'))}${toggles()}${clock()}${tray}</div>`;
+      pfCap.textContent = 'before · today’s bar, recreated from style.css';
+      return;
+    }
+    pfBar.className = 'bar after';
+    pfBar.innerHTML = `
+      <div class="left" style="gap:6px">
+        <div class="pill">${mk(1)}<div class="ws"><span>${I('browser')}<span class="sub">3</span></span><span class="active">${I('robot')}<span class="sub">2</span></span><span>${I('pencil')}<span class="sub">1</span></span><span>${I('list')}<span class="sub">1</span></span></div></div>
+        <div class="pill"><div class="mod" style="color:#D8DEE9">${I('screen', 'c-frost')}dot-files</div></div>
+      </div>
+      <div class="right" style="gap:6px">
+        <div class="pill">${mk(2)}<div class="mod"><span class="art sm"></span><span class="c-yellow">StarTalk · Why We Haven’t Re…</span></div></div>
+        <div class="pill"><div class="mod">${I('dot', 'c-green')}</div><div class="mod">${I('signal', 'c-frost')}</div><div class="mod">${I('key', 'c-dim')}</div></div>
+        <div class="pill"><div class="mod">${I('vol', 'c-frost')}<span>35%</span></div><div class="mod">${I('mouse', 'c-dim')}<span class="c-dim">80%</span></div></div>
+        <div class="pill">${mk(3)}<div class="togg" id="togg"><button class="chev" type="button" aria-expanded="false" aria-label="Show toggles">${I('chev')}</button>
+          <div class="mod">${I('mic', 'c-dim')}</div><div class="mod">${I('clock', 'c-dim')}</div><div class="mod">${I('bulb', 'c-dim')}</div><div class="mod">${I('vpn', 'c-dim')}</div><div class="mod">${I('bell', 'c-dim')}</div><div class="mod">${I('power', 'c-dim')}</div></div></div>
+        <div class="pill">${mk(4)}<div class="mod"><span style="color:#D8DEE9">12:50</span><span class="c-dim">Tue 10</span></div></div>
+        <div class="pill">${tray}</div>
+      </div>`;
+    pfCap.textContent = 'after · click the arrow to open the toggles · off is dim, on is color';
+    const tg = document.getElementById('togg');
+    const btn = tg.querySelector('button');
+    btn.addEventListener('click', () => { const o = tg.classList.toggle('open'); btn.setAttribute('aria-expanded', String(o)); });
+  }
+  document.querySelectorAll('[data-pf]').forEach(btn => btn.addEventListener('click', () => {
+    pressed('pf', 'data-pf', btn.dataset.pf); renderPF(btn.dataset.pf);
+  }));
+  renderPF('after');
+
+  // ---------- 4. TANNOY ----------
+  const tnBar = document.getElementById('tn-bar');
+  const tnDrawer = document.getElementById('tn-drawer');
+  let tnState = 'play';
+  function renderTN() {
+    const playing = tnState === 'play';
+    const mod = tnState === 'dnd'
+      ? M(`${I('music', 'c-dim')}<span class="c-dim">hidden</span>`, 'focus')
+      : M(`<span class="art sm"></span><span class="np"><span class="${playing ? 'c-yellow' : 'c-dim'}">StarTalk · Why We Haven’t Re…</span><span class="ul"><i></i></span></span>`, 'focus');
+    tnBar.innerHTML = `<div class="right">${mod}${lamp('dim')}${vol('dim')}${mouse('dim')}${M(I('mic', 'c-dim'), 'dim')}${toggles('dim')}${clock('dim')}${tray}</div>`;
+    const chip = { play: ['playing', ''], pause: ['paused', 'frost'], dnd: ['hidden', 'yellow'] }[tnState];
+    const body = tnState === 'dnd'
+      ? `<div class="card"><div class="lab"><span>Hidden</span><span>do not disturb is on</span></div>
+           <div class="row"><span class="grow">The title stays off the bar while you share your screen. The controls still work.</span></div>
+           <div class="btns"><button class="b" type="button">${I('prev')}</button><button class="b" type="button">${I('play')}</button><button class="b" type="button">${I('next')}</button></div></div>`
+      : `<div class="row" style="align-items:flex-start;gap:12px">
+           <div class="art"></div>
+           <div style="display:grid;gap:4px;min-width:0">
+             <span class="lab"><span>Podcast · sample track</span></span>
+             <span style="font-size:14px;line-height:1.3">Why We Haven’t Reached the Stars</span>
+             <span class="c-dim">StarTalk</span>
+           </div>
+         </div>
+         <div style="display:grid;gap:4px"><div class="prog"><i style="width:49%"></i></div><div class="lab"><span>23:41</span><span>48:10</span></div></div>
+         <div class="btns" style="justify-content:center">
+           <button class="b" type="button" aria-label="Back 15 seconds">${I('back15')}15</button>
+           <button class="b" type="button" aria-label="Previous">${I('prev')}</button>
+           <button class="b primary" type="button" aria-label="${playing ? 'Pause' : 'Play'}">${I(playing ? 'pause' : 'play')}</button>
+           <button class="b" type="button" aria-label="Next">${I('next')}</button>
+           <button class="b" type="button" aria-label="Forward 15 seconds">15${I('fwd15')}</button>
+         </div>`;
+    tnDrawer.innerHTML = `
+      <div class="d-head"><span class="lamp c-${tnState === 'dnd' ? 'yellow' : 'green'}"></span><b>TANNOY</b><span class="chip ${chip[1]}">${chip[0]}</span><small>Spotify · 3 players</small></div>
+      ${body}
+      <div class="lab"><span>Players</span><span>media keys follow the pick</span></div>
+      <div class="players"><span class="on">Spotify</span><span>Chrome · YouTube</span><span>mpv</span></div>
+      <div class="card"><div class="lab"><span>Output</span><span>change</span></div><div class="row">${I('bt', 'c-frost')}<span class="grow">Headset (Bluetooth) · 35%</span></div></div>
+      <div class="d-foot">Esc close · scroll on the bar to seek</div>`;
+  }
+  document.querySelectorAll('[data-tn]').forEach(btn => btn.addEventListener('click', () => {
+    tnState = btn.dataset.tn; pressed('tn', 'data-tn', tnState); renderTN();
+  }));
+  renderTN();
+
+  // ---------- calculator ----------
+  const mtg = document.getElementById('mtg'), rec = document.getElementById('rec');
+  function calc() {
+    let m = +mtg.value, r = +rec.value;
+    if (r > m) { r = m; rec.value = m; }
+    document.getElementById('mtg-o').textContent = m;
+    document.getElementById('rec-o').textContent = r;
+    const lw = r * 5, tw = m * 2;
+    const mins = v => v >= 60 ? `${Math.floor(v / 60)} h ${v % 60} min` : `${v} min`;
+    ['t-log', 'log-week'].forEach(id => document.getElementById(id).textContent = mins(lw));
+    ['t-tt', 'tt-week'].forEach(id => document.getElementById(id).textContent = mins(tw));
+    const yr = Math.round((lw + tw) * 46 / 60);
+    document.getElementById('t-year').textContent = `${yr} hours`;
+  }
+  mtg.addEventListener('input', calc); rec.addEventListener('input', calc);
+  calc();
+})();
+</script>
