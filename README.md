@@ -92,7 +92,7 @@ git clone https://github.com/NathanielInman/switchyard.git ~/Sites/switchyard
 ./install.sh switchyard             # then the config and tasks (packages/switchyard)
 ```
 
-The `roundhouse` package configures [Roundhouse](https://github.com/NathanielInman/roundhouse), the system drawer behind the lamp in waybar: CPU, GPU, memory pressure, network, every disk and share, memory by app, and Switchyard's queue when it runs. It replaced the old `group/details` drawer and its scripts. Install the program first:
+The `roundhouse` package configures [Roundhouse](https://github.com/NathanielInman/roundhouse), the system drawer behind the lamp in waybar: CPU, GPU, memory pressure, network, every disk and share, memory by app, and a link to the Switchyard board when it runs. It replaced the old `group/details` drawer and its scripts. Install the program first:
 
 ```bash
 git clone https://github.com/NathanielInman/roundhouse.git ~/Sites/roundhouse
