@@ -16,11 +16,3 @@ name = "ban"
 label = "Ban the current wallpaper"
 steps = ["pkill -USR2 -f '[w]allpaper.sh'"]
 
-[task.shortcuts]
-description = "key binds cheat sheet"
-run = "~/.config/waybar/scripts/hotkeys.sh"
-
-[task.app-names]
-label = "app names"
-description = "CLI tools worth remembering"
-run = "~/.config/waybar/scripts/commands.sh"
