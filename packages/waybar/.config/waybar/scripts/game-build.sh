@@ -82,6 +82,24 @@ current_state() {
   echo "$st"
 }
 
+# Godot 4.7.2 sometimes dies on its way out of --headless --import, after the
+# import itself has finished: 'Parameter "singleton" is null' at
+# EditorNode::is_cmdline_mode, then SIGABRT on a worker thread. It is a race in
+# the editor's shutdown, rare and not reproducible on demand, and it has hit
+# several projects here (2026-11-09), so it is not a project's build failing.
+# A crash (exit 128 or above, i.e. killed by a signal) gets two more goes;
+# an ordinary non-zero exit is a real import failure and fails at once.
+headless_import() {
+  local rc attempt
+  for attempt in 1 2 3; do
+    godot-mono --headless --import
+    rc=$?
+    [ "$rc" -lt 128 ] && return "$rc"
+    printf '===== godot crashed leaving the import (exit %s, try %s of 3) =====\n' "$rc" "$attempt"
+  done
+  return "$rc"
+}
+
 case "${1:-}" in
   status)
     game="$2"
@@ -266,7 +284,7 @@ case "${1:-}" in
       exit 0
     fi
 
-    if { dotnet build && godot-mono --headless --import; } > "$lf" 2>&1; then
+    if { dotnet build && headless_import; } > "$lf" 2>&1; then
       # det33 plays from a local-disk mirror rather than the CIFS repo: paging
       # the game over SMB mid-session caused ~130ms off-CPU frame stalls (see
       # docs/perf-status.md, 2026-08-14). tools/run-local.sh prints the mirror
