@@ -28,6 +28,11 @@ My Arch Linux desktop: Hyprland, waybar, kitty, zsh and Neovim. Each tool is its
 - **A one-reboot rebuild.** [`rebuild/`](rebuild/README.md) takes a blank machine from the Arch ISO to a working Hyprland session with every package installed.
 - **[Field notes](#field-notes)** for the problems real hardware threw at it, so you don't lose the evening I did.
 
+<p align="center">
+  <img src="Pictures/desktop.png" width="100%" alt="A real screenshot of the desktop: Neovide with the waybar stylesheet and the Hyprland window rules side by side, kitty showing fastfetch, and the Roundhouse drawer open above the bar with CPU, GPU, memory, network and memory by app.">
+  <br><sub>The real thing: Neovide on the waybar stylesheet and the Lua window rules, kitty, and the Roundhouse drawer open over the bar.</sub>
+</p>
+
 ## Quick start
 
 ```bash
