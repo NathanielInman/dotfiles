@@ -47,6 +47,7 @@ window#waybar.hidden {
 #custom-compass,
 #custom-benchmark,
 #custom-eversparkforge,
+#custom-etb,
 #custom-launchpad,
 #custom-power-menu,
 #custom-timezone,
@@ -92,6 +93,7 @@ window#waybar.hidden {
 #custom-compass:hover,
 #custom-benchmark:hover,
 #custom-eversparkforge:hover,
+#custom-etb:hover,
 #custom-launchpad:hover,
 #custom-power-menu:hover,
 #custom-timezone:hover {
@@ -275,6 +277,7 @@ window#waybar.hidden {
 #custom-compass.idle,
 #custom-benchmark.idle,
 #custom-eversparkforge.idle,
+#custom-etb.idle,
 #custom-launchpad.idle {
   color: #ffffff;
 }
@@ -285,6 +288,7 @@ window#waybar.hidden {
 #custom-compass.building,
 #custom-benchmark.building,
 #custom-eversparkforge.building,
+#custom-etb.building,
 #custom-launchpad.building {
   color: #ebcb8b;
 }
@@ -295,6 +299,7 @@ window#waybar.hidden {
 #custom-compass.failed,
 #custom-benchmark.failed,
 #custom-eversparkforge.failed,
+#custom-etb.failed,
 #custom-launchpad.failed {
   color: #bf616a;
 }
@@ -305,6 +310,7 @@ window#waybar.hidden {
 #custom-compass.ok,
 #custom-benchmark.ok,
 #custom-eversparkforge.ok,
+#custom-etb.ok,
 #custom-launchpad.ok {
   color: #50fa7b;
 }

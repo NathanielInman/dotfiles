@@ -183,6 +183,7 @@
       "custom/compass",
       "custom/benchmark",
       "custom/eversparkforge",
+      "custom/etb",
       "custom/launchpad",
       "custom/hotkeys",
       "custom/commands",
@@ -234,6 +235,13 @@
     "interval": 1,
     "on-click": "~/.config/waybar/scripts/game-build.sh build eversparkforge",
     "on-click-right": "~/.config/waybar/scripts/game-build.sh log eversparkforge"
+  },
+  "custom/etb": {
+    "exec": "~/.config/waybar/scripts/game-build.sh status etb",
+    "return-type": "json",
+    "interval": 1,
+    "on-click": "~/.config/waybar/scripts/game-build.sh build etb",
+    "on-click-right": "~/.config/waybar/scripts/game-build.sh log etb"
   },
   "custom/benchmark": {
     "exec": "~/.config/waybar/scripts/game-build.sh status benchmark",

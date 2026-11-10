@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Waybar game build/launch buttons for det33, gym, compass, eversparkforge, detour33.
+# Waybar game build/launch buttons for det33, gym, compass, eversparkforge, detour33, etb.
 #
 # Click a button and the build runs headless in the background; the button
 # itself becomes the status light. No terminal is spawned. If the build
@@ -31,6 +31,7 @@ game_dir() {
     det33|gym|compass|benchmark) echo "$HOME/Sites/det33-godot" ;;
     eversparkforge)              echo "$HOME/Sites/everspark-forge-godot" ;;
     detour33)                    echo "$HOME/Sites/detour-33" ;;
+    etb)                         echo "$HOME/Sites/exploring-the-bleak" ;;
   esac
 }
 
@@ -41,6 +42,7 @@ game_scene() {
     compass)        echo "res://Scenes/Test/CompassTest.tscn" ;;
     eversparkforge) echo "res://Scenes/Main/Boot.tscn" ;;
     detour33)       echo "res://Scenes/Menu.tscn" ;;
+    etb)            echo "res://Scenes/Main/FloorScene.tscn" ;;
     benchmark)      echo "" ;;  # not a scene launch — see the _run branch
   esac
 }
@@ -53,6 +55,16 @@ game_label() {
     eversparkforge) echo "forge" ;;
     detour33)       echo "detour33" ;;
     benchmark)      echo "bench" ;;
+    etb)            echo "ETB" ;;
+  esac
+}
+
+# Extra command-line args for the launch. ETB's demo is one floor; a fresh
+# seed per click shows a different floor and environment each time (the seed
+# is printed in the "Floor ..." line of the log, to replay it with make run).
+game_args() {
+  case "$1" in
+    etb) echo "-- seed:$(( (RANDOM << 15) | RANDOM ))" ;;
   esac
 }
 
@@ -130,7 +142,7 @@ case "${1:-}" in
   # that opening the drawer acknowledges.
   drawer-status)
     building=(); failed=(); okg=()
-    for g in det33 gym compass eversparkforge benchmark detour33; do
+    for g in det33 gym compass eversparkforge benchmark detour33 etb; do
       case "$(current_state "$g")" in
         building) building+=("$g") ;;
         failed)   failed+=("$g") ;;
@@ -327,9 +339,9 @@ case "${1:-}" in
       # window ever appears, log ends at the session header. Keeping the game
       # in the foreground makes the unit live exactly as long as the session.
       bash -c '
-        dir="$1"; scene="$2"; lf="$3"; game="$4"; last=0; lasth=0
+        dir="$1"; scene="$2"; lf="$3"; game="$4"; args="$5"; last=0; lasth=0
         printf "===== running from %s =====\n" "$dir" >> "$lf"
-        godot-mono --path "$dir" "$scene" 2>&1 | while IFS= read -r line; do
+        godot-mono --path "$dir" "$scene" $args 2>&1 | while IFS= read -r line; do
           printf "%s\n" "$line" >> "$lf"
           # Godot prints engine + C# exceptions as a line starting with
           # "ERROR:"/"SCRIPT ERROR:" (C# shows e.g. "ERROR: System.Foo...").
@@ -361,7 +373,7 @@ report in ~/Downloads/hitches-$game (read it with tools/analyze-hitch.py)" \
               fi ;;
           esac
         done
-      ' _ "$rundir" "$scene" "$lf" "$game" >/dev/null 2>&1
+      ' _ "$rundir" "$scene" "$lf" "$game" "$(game_args "$game")" >/dev/null 2>&1
     else
       set_state "$game" failed
       err="$(grep -m1 -E ': error|error CS|: error|Error:' "$lf")"
