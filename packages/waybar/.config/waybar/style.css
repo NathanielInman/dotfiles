@@ -37,18 +37,7 @@ window#waybar.hidden {
 #custom-screen-record,
 #custom-pomodoro,
 #custom-silence-notifications,
-#custom-wallpaper,
-#custom-hotkeys,
-#custom-commands,
-#custom-toggle-games,
-#custom-det33,
-#custom-detour33,
-#custom-gym,
-#custom-compass,
-#custom-benchmark,
-#custom-eversparkforge,
-#custom-etb,
-#custom-launchpad,
+#custom-switchyard,
 #custom-power-menu,
 #custom-timezone,
 #tray {
@@ -84,17 +73,7 @@ window#waybar.hidden {
 #custom-screen-record:hover,
 #custom-pomodoro:hover,
 #custom-silence-notifications:hover,
-#custom-wallpaper:hover,
-#custom-hotkeys:hover,
-#custom-commands:hover,
-#custom-det33:hover,
-#custom-detour33:hover,
-#custom-gym:hover,
-#custom-compass:hover,
-#custom-benchmark:hover,
-#custom-eversparkforge:hover,
-#custom-etb:hover,
-#custom-launchpad:hover,
+#custom-switchyard:hover,
 #custom-power-menu:hover,
 #custom-timezone:hover {
   background: #373B41;
@@ -102,8 +81,7 @@ window#waybar.hidden {
 
 /* Drawer toggles get a brighter accent too: they reveal/collapse a tray,
    unlike the one-shot buttons around them */
-#custom-toggle-details:hover,
-#custom-toggle-games:hover {
+#custom-toggle-details:hover {
   background: #373B41;
   color: #b8e0ea;
 }
@@ -204,12 +182,6 @@ window#waybar.hidden {
   color: #a3be8c;
 }
 
-/* Games drawer text buttons: white */
-#custom-hotkeys,
-#custom-commands {
-  color: #ffffff;
-}
-
 /* VPN status */
 #custom-vpn.connected {
   color: #50fa7b;
@@ -247,72 +219,32 @@ window#waybar.hidden {
   color: #a3be8c;
 }
 
-/* Wallpaper button */
-#custom-wallpaper {
-  color: #ffffff;
-}
-
-/* Games drawer toggle: blue like the details drawer; takes on build state
-   colors so compiles stay visible while the drawer is collapsed */
-#custom-toggle-games {
+/* Switchyard signal: the aggregate state of every task. Blue at rest like
+   the old games drawer toggle, then the build colors so a compile stays
+   visible without opening anything. */
+#custom-switchyard {
   color: #88c0d0;
 }
 
-#custom-toggle-games.building {
+#custom-switchyard.building,
+#custom-switchyard.queued {
   color: #ebcb8b;
 }
 
-#custom-toggle-games.failed {
+#custom-switchyard.running {
+  color: #b8e0ea;
+}
+
+#custom-switchyard.failed {
   color: #bf616a;
 }
 
-#custom-toggle-games.ok {
+#custom-switchyard.ok {
   color: #50fa7b;
 }
 
-/* Game & app build buttons */
-#custom-det33.idle,
-#custom-detour33.idle,
-#custom-gym.idle,
-#custom-compass.idle,
-#custom-benchmark.idle,
-#custom-eversparkforge.idle,
-#custom-etb.idle,
-#custom-launchpad.idle {
-  color: #ffffff;
-}
-
-#custom-det33.building,
-#custom-detour33.building,
-#custom-gym.building,
-#custom-compass.building,
-#custom-benchmark.building,
-#custom-eversparkforge.building,
-#custom-etb.building,
-#custom-launchpad.building {
-  color: #ebcb8b;
-}
-
-#custom-det33.failed,
-#custom-detour33.failed,
-#custom-gym.failed,
-#custom-compass.failed,
-#custom-benchmark.failed,
-#custom-eversparkforge.failed,
-#custom-etb.failed,
-#custom-launchpad.failed {
-  color: #bf616a;
-}
-
-#custom-det33.ok,
-#custom-detour33.ok,
-#custom-gym.ok,
-#custom-compass.ok,
-#custom-benchmark.ok,
-#custom-eversparkforge.ok,
-#custom-etb.ok,
-#custom-launchpad.ok {
-  color: #50fa7b;
+#custom-switchyard.offline {
+  color: #4c566a;
 }
 
 /* Power menu */

@@ -19,7 +19,7 @@
     "custom/keylights",
     "custom/vpn",
     "custom/silence-notifications",
-    "group/games",
+    "custom/switchyard",
     "custom/power-menu",
     "custom/timezone",
     "tray"
@@ -168,103 +168,6 @@
     "interval": 1,
     "on-click": "swaync-client -d -sw"
   },
-  "group/games": {
-    "orientation": "horizontal",
-    "drawer": {
-      "transition-duration": 300,
-      "transition-left-to-right": false,
-      "click-to-reveal": true
-    },
-    "modules": [
-      "custom/toggle-games",
-      "custom/det33",
-      "custom/detour33",
-      "custom/gym",
-      "custom/compass",
-      "custom/benchmark",
-      "custom/eversparkforge",
-      "custom/etb",
-      "custom/launchpad",
-      "custom/hotkeys",
-      "custom/commands",
-      "custom/wallpaper"
-    ]
-  },
-  "custom/toggle-games": {
-    "exec": "~/.config/waybar/scripts/game-build.sh drawer-status",
-    "return-type": "json",
-    "interval": 1,
-    "format": "{}",
-    "cursor": true,
-    // release, not on-click: a press handler on this module would swallow the
-    // click before the group's click-to-reveal sees it and the drawer would
-    // stop opening. The release still lands here, so this runs on every toggle.
-    "on-click-release": "~/.config/waybar/scripts/game-build.sh drawer-toggled"
-  },
-  "custom/det33": {
-    "exec": "~/.config/waybar/scripts/game-build.sh status det33",
-    "return-type": "json",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/game-build.sh build det33",
-    "on-click-right": "~/.config/waybar/scripts/game-build.sh log det33"
-  },
-  "custom/detour33": {
-    "exec": "~/.config/waybar/scripts/game-build.sh status detour33",
-    "return-type": "json",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/game-build.sh build detour33",
-    "on-click-right": "~/.config/waybar/scripts/game-build.sh log detour33"
-  },
-  "custom/gym": {
-    "exec": "~/.config/waybar/scripts/game-build.sh status gym",
-    "return-type": "json",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/game-build.sh build gym",
-    "on-click-right": "~/.config/waybar/scripts/game-build.sh log gym"
-  },
-  "custom/compass": {
-    "exec": "~/.config/waybar/scripts/game-build.sh status compass",
-    "return-type": "json",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/game-build.sh build compass",
-    "on-click-right": "~/.config/waybar/scripts/game-build.sh log compass"
-  },
-  "custom/eversparkforge": {
-    "exec": "~/.config/waybar/scripts/game-build.sh status eversparkforge",
-    "return-type": "json",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/game-build.sh build eversparkforge",
-    "on-click-right": "~/.config/waybar/scripts/game-build.sh log eversparkforge"
-  },
-  "custom/etb": {
-    "exec": "~/.config/waybar/scripts/game-build.sh status etb",
-    "return-type": "json",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/game-build.sh build etb",
-    "on-click-right": "~/.config/waybar/scripts/game-build.sh log etb"
-  },
-  "custom/benchmark": {
-    "exec": "~/.config/waybar/scripts/game-build.sh status benchmark",
-    "return-type": "json",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/game-build.sh build benchmark",
-    "on-click-right": "~/.config/waybar/scripts/game-build.sh log benchmark"
-  },
-  "custom/launchpad": {
-    "exec": "~/.config/waybar/scripts/launchpad-build.sh status",
-    "return-type": "json",
-    "interval": 1,
-    "on-click": "~/.config/waybar/scripts/launchpad-build.sh build",
-    "on-click-right": "~/.config/waybar/scripts/launchpad-build.sh log"
-  },
-  "custom/hotkeys": {
-    "format": "shortcuts",
-    "on-click": "~/.config/waybar/scripts/hotkeys.sh"
-  },
-  "custom/commands": {
-    "format": "app names",
-    "on-click": "~/.config/waybar/scripts/commands.sh"
-  },
   "custom/timezone": {
     "exec": "~/.config/waybar/scripts/timezone.sh",
     "tail": true,
@@ -314,11 +217,16 @@
     "on-click-right": "~/.config/waybar/scripts/pomodoro.sh reset",
     "return-type": "json"
   },
-  "custom/wallpaper": {
-    "format": "rotate wallpaper",
-    "on-click": "pkill -USR1 -f wallpaper.sh",
-    "on-click-right": "pkill -USR2 -f wallpaper.sh",
-    "tooltip-format": "Random wallpaper (left: next, right: ban current)"
+  // Switchyard (~/Sites/switchyard, tasks in packages/switchyard): the board of
+  // builds, launches and deploys that replaced the games drawer. The signal
+  // takes the aggregate state as its CSS class; click opens the board right
+  // above it, right-click acknowledges failures.
+  "custom/switchyard": {
+    "exec": "~/.local/bin/yard bar",
+    "return-type": "json",
+    "on-click": "~/.local/bin/yard toggle",
+    "on-click-right": "~/.local/bin/yard ack",
+    "tooltip": true
   },
   "custom/power-menu": {
     "format": "⏻",
