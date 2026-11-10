@@ -1,0 +1,127 @@
+# Godot games. Ported from waybar/scripts/game-build.sh: build headless in a
+# capped unit, launch Godot when it passes, keep build and runtime output in
+# one log under ~/Downloads, and notify on runtime errors while you play.
+
+[defaults]
+tags = ["games"]
+heavy = true
+errors = ["csharp", "godot"]
+steps = [
+  "dotnet build",
+  { name = "import", cmd = "godot-mono --headless --import" },
+]
+
+# Godot 4.7.2 sometimes dies on its way out of --headless --import after the
+# import itself has finished (SIGABRT in EditorNode::is_cmdline_mode). A crash
+# gets two more goes; an ordinary non-zero exit is a real failure.
+[defaults.retry]
+step = 2
+on = "signal"
+attempts = 3
+
+[[defaults.watch]]
+match = '^(USER )?(SCRIPT )?ERROR:|^Unhandled [Ee]xception'
+title = "runtime error"
+urgency = "critical"
+throttle = 15
+
+# ---------------------------------------------------------------- det33
+
+[task.det33]
+description = "Boot.tscn"
+dir = "~/Sites/det33-godot"
+pin = 1
+log = "~/Downloads/game-det33.log"
+env = { DET33_HITCH_DIR = "~/Downloads/hitches-det33" }
+# det33 plays from a local-disk mirror rather than the CIFS repo: paging the
+# game over SMB mid-session caused ~130ms frame stalls (docs/perf-status.md).
+# A mirror failure is a build failure, never a silent CIFS fallback.
+steps = [
+  "dotnet build",
+  { name = "import", cmd = "godot-mono --headless --import" },
+  { name = "mirror", cmd = "bash tools/run-local.sh mirror > \"$YARD_SCRATCH/rundir\"" },
+]
+run = "mkdir -p \"$DET33_HITCH_DIR\" && exec godot-mono --path \"$(cat \"$YARD_SCRATCH/rundir\")\" res://Scenes/Main/Boot.tscn"
+
+[[task.det33.watch]]
+match = '^(USER )?(SCRIPT )?ERROR:|^Unhandled [Ee]xception'
+title = "runtime error"
+urgency = "critical"
+throttle = 15
+
+# Shift+F4 in game toggles hitch hunt mode; say so without opening the log.
+[[task.det33.watch]]
+match = '^\[hitch\] hunt'
+title = "hitch hunt"
+urgency = "low"
+throttle = 0
+
+[[task.det33.watch]]
+match = '^\[hitch\] ====='
+title = "frame hitch (report in ~/Downloads/hitches-det33)"
+urgency = "low"
+throttle = 15
+
+[task.gym]
+description = "Workbench.tscn"
+dir = "~/Sites/det33-godot"
+pin = 5
+log = "~/Downloads/game-gym.log"
+# Stays on the repo: Workbench authoring writes to res://.
+run = "godot-mono --path . res://Scenes/Test/Workbench.tscn"
+
+[task.compass]
+description = "CompassTest.tscn"
+dir = "~/Sites/det33-godot"
+pin = 6
+log = "~/Downloads/game-compass.log"
+run = "godot-mono --path . res://Scenes/Test/CompassTest.tscn"
+
+# A quality gate, not a play session: runs the seeded high-load scenario and
+# judges it against the committed baseline. Green means performance held.
+# Exit 2 (no baseline, scenario mismatch) fails too: a gate that cannot judge
+# must never show green. Takes the screen for about 3 minutes.
+[task.benchmark]
+label = "bench"
+description = "load bench vs baseline"
+dir = "~/Sites/det33-godot"
+pin = 8
+log = "~/Downloads/game-benchmark.log"
+notify = "always"
+notify_tail = 6
+watch = []
+steps = [
+  { name = "load bench", cmd = "bash tools/load-bench.sh clean" },
+  { name = "gate", cmd = "csv=\"$(find profiles -name 'loadbench-*.csv' -newermt '-30 minutes' 2>/dev/null | sort | tail -1)\"; [ -n \"$csv\" ] || { echo 'error: the run did not reach gameplay, no CSV'; exit 1; }; python3 tools/analyze-loadbench.py --gate \"$csv\"" },
+]
+
+# ---------------------------------------------------------------- others
+
+[task.detour33]
+description = "Menu.tscn · ws 9"
+dir = "~/Sites/detour-33"
+pin = 3
+log = "~/Downloads/game-detour33.log"
+run = "godot-mono --path . res://Scenes/Menu.tscn"
+
+[task.eversparkforge]
+label = "forge"
+description = "Boot.tscn"
+dir = "~/Sites/everspark-forge-godot"
+pin = 4
+log = "~/Downloads/game-eversparkforge.log"
+run = "godot-mono --path . res://Scenes/Main/Boot.tscn"
+
+# ETB's demo is one floor; a fresh seed per click shows a different floor and
+# environment. Hold the tile (or Shift+its letter) to replay a recent seed.
+[task.etb]
+label = "ETB"
+description = "FloorScene.tscn"
+dir = "~/Sites/exploring-the-bleak"
+pin = 2
+log = "~/Downloads/game-etb.log"
+run = "godot-mono --path . res://Scenes/Main/FloorScene.tscn -- seed:{seed}"
+
+[task.etb.params.seed]
+default = "random:u30"
+history = 10

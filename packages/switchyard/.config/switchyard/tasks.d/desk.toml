@@ -1,0 +1,26 @@
+# Small desktop actions that used to sit in the waybar games drawer.
+
+[defaults]
+tags = ["desk"]
+dir = "~"
+notify = "failure"
+
+# [w] keeps pkill from matching the bash -c running it.
+[task.wallpaper]
+label = "rotate wallpaper"
+description = "next random wallpaper"
+steps = ["pkill -USR1 -f '[w]allpaper.sh'"]
+
+[[task.wallpaper.variants]]
+name = "ban"
+label = "Ban the current wallpaper"
+steps = ["pkill -USR2 -f '[w]allpaper.sh'"]
+
+[task.shortcuts]
+description = "key binds cheat sheet"
+run = "~/.config/waybar/scripts/hotkeys.sh"
+
+[task.app-names]
+label = "app names"
+description = "CLI tools worth remembering"
+run = "~/.config/waybar/scripts/commands.sh"

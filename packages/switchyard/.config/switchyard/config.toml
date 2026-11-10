@@ -1,0 +1,125 @@
+# Switchyard: the board behind the waybar signal (custom/switchyard).
+# https://github.com/NathanielInman/switchyard (reference: docs/design.md)
+#
+# Tasks live in tasks.d/ here rather than in each repo, so repos I do not
+# own (LaunchPad) stay clean and everything is in one place.
+
+scan = []
+path_prepend = ["~/.config/switchyard/bin", "~/.local/bin", "~/.cargo/bin"]
+ok_flash = 6
+
+terminal = ["kitty", "--class", "float-term", "--hold", "-e"]
+editor = ["kitty", "--class", "float-term", "-e", "nvim", "+{line}", "{file}"]
+
+# CLAUDE.md "Heavy builds on this workstation": one heavy build at a time,
+# only with ~16 GB free, capped at 16G with idle CPU weight and nice 19.
+[mainline]
+min_free = "16G"
+mem = "16G"
+idle_cpu = true
+nice = 19
+
+[board]
+width = 660
+font = "PragmataPro Liga"
+
+[[tab]]
+name = "Games"
+tags = ["games"]
+
+[[tab]]
+name = "Deploys"
+tags = ["deploy"]
+
+[[tab]]
+name = "Desk"
+tags = ["desk"]
+
+[bar]
+icon = "󰐱"
+
+[shelf]
+stale_days = 30
+tools = "none"
+binds = true
+
+# The old "app names" list (waybar/scripts/commands.sh).
+[[shelf.tool]]
+name = "scc"
+desc = "count lines of code in a repo per language"
+[[shelf.tool]]
+name = "tokei"
+desc = "count lines of code per language"
+[[shelf.tool]]
+name = "onefetch"
+desc = "repo summary, like work per author"
+[[shelf.tool]]
+name = "okular"
+desc = "pdf, epub, cbr, cbz reader"
+[[shelf.tool]]
+name = "lsusb"
+desc = "USB devices and their details"
+[[shelf.tool]]
+name = "kooha"
+desc = "screen recorder for Wayland"
+[[shelf.tool]]
+name = "duf"
+desc = "a nicer df (disk free)"
+[[shelf.tool]]
+name = "didyoumean"
+desc = "spell checker for the terminal"
+[[shelf.tool]]
+name = "trans"
+desc = "translate-shell: translation in the terminal"
+[[shelf.tool]]
+name = "udict"
+desc = "Urban Dictionary in the terminal"
+[[shelf.tool]]
+name = "sdcv"
+desc = "offline dictionary"
+[[shelf.tool]]
+name = "xsv"
+desc = "split, join and analyze CSV files"
+[[shelf.tool]]
+name = "dog"
+desc = "DNS lookups"
+[[shelf.tool]]
+name = "neofetch"
+desc = "system information splash"
+[[shelf.tool]]
+name = "inxi"
+desc = "system information, like HWiNFO"
+[[shelf.tool]]
+name = "ncdu"
+desc = "disk usage explorer"
+[[shelf.tool]]
+name = "glow"
+desc = "markdown viewer for the terminal"
+[[shelf.tool]]
+name = "glances"
+desc = "an alternative to top"
+[[shelf.tool]]
+name = "gping"
+desc = "ping several hosts and compare them"
+[[shelf.tool]]
+name = "pueue"
+desc = "shell command queue"
+[[shelf.tool]]
+name = "feh"
+desc = "image viewer"
+[[shelf.tool]]
+name = "bandwhich"
+desc = "bandwidth use by process"
+[[shelf.tool]]
+name = "vfox"
+desc = "language version manager, like asdf"
+[[shelf.tool]]
+name = "fselect"
+desc = "SQL-like file search: fselect name where name ~= 'nate'"
+[[shelf.tool]]
+name = "yazi"
+desc = "terminal file browser"
+[[shelf.tool]]
+name = "cronie"
+desc = "cron service (crontab -e)"
+cmd = "crontab -l; exec $SHELL"

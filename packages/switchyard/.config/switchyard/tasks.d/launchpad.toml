@@ -1,0 +1,31 @@
+# The DT LaunchPad Android app. Lives here, not in the repo, which I do not
+# own. Ported from waybar/scripts/launchpad-build.sh: boot the emulator (in
+# its own unit, so it outlives the build), assemble the APK under the heavy
+# limits, install, launch, pull the emulator onto the current workspace, then
+# follow the app's logcat until you stop it.
+
+[task.launchpad]
+label = "LaunchPad"
+description = "APK to emulator"
+dir = "~/Sites/LaunchPad"
+tags = ["games", "work"]
+pin = 7
+heavy = true
+log = "~/Downloads/launchpad-build.log"
+errors = ["gradle"]
+# Pin JDK 21: the build targets 17 and AGP 8.13 does not support JDK 26.
+env = { JAVA_HOME = "/usr/lib/jvm/java-21-openjdk", ANDROID_HOME = "~/Android/Sdk", ANDROID_SDK_ROOT = "~/Android/Sdk" }
+steps = [
+  { name = "emulator", cmd = "launchpad.sh emulator" },
+  # The repo's gradle.properties asks for an 8 GB daemon plus a 4 GB Kotlin
+  # daemon; these flags keep it inside the 16G cap (see CLAUDE.md).
+  { name = "assembleDebug", cmd = "./gradlew --no-daemon --max-workers=4 -Dorg.gradle.jvmargs='-Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8' -Pkotlin.compiler.execution.strategy=in-process :app:assembleDebug" },
+  { name = "install", cmd = "launchpad.sh install" },
+]
+run = "launchpad.sh logcat"
+
+[[task.launchpad.watch]]
+match = 'FATAL EXCEPTION|AndroidRuntime.* E '
+title = "runtime error"
+urgency = "critical"
+throttle = 15

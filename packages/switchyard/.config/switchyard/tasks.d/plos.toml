@@ -1,0 +1,32 @@
+# Plains of Sedia deploys (plos-origins scripts/deploy.sh, ADR 0091).
+# --restart is left out on purpose: it drops every player and asks on a
+# terminal first, so it stays a deliberate command-line act.
+
+[defaults]
+tags = ["deploy"]
+dir = "~/Sites/plos-origins"
+
+[task.plos-live]
+label = "plos: what is live"
+description = "deploy.sh --deployed"
+steps = ["scripts/deploy.sh --deployed"]
+notify = "always"
+notify_tail = 1
+
+[task.plos-deploy]
+label = "plos deploy"
+description = "reload, keeps every connection"
+heavy = true
+confirm = "hold"
+steps = ["scripts/deploy.sh"]
+notify = "always"
+notify_tail = 3
+
+[task.plos-upgrade]
+label = "plos upgrade"
+description = "portal upgrade, clients reconnect"
+heavy = true
+confirm = "hold"
+steps = ["scripts/deploy.sh --upgrade"]
+notify = "always"
+notify_tail = 3

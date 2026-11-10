@@ -47,6 +47,7 @@ cd ~/Sites/dot-files
 | `pipewire` | rtkit wait + WirePlumber no-suspend drop-ins  |
 | `starship` | Shell prompt                                  |
 | `swaync`   | Notification center                           |
+| `switchyard` | Task board config: games, deploys, desk tasks |
 | `t3code`   | T3 Code color theme                           |
 | `task`     | Taskwarrior + vit config                      |
 | `topgrade` | Upgrade-everything config                     |
@@ -54,6 +55,14 @@ cd ~/Sites/dot-files
 | `walker`   | Application launcher                          |
 | `waybar`   | Status bar                                    |
 | `zsh`      | Zsh + Oh-My-Zsh config                        |
+
+The `switchyard` package configures [Switchyard](https://github.com/NathanielInman/switchyard), the board behind the signal icon in waybar: it builds and launches the games, runs deploys and holds the small desk scripts, one heavy build at a time. Install the program itself before stowing the package:
+
+```bash
+git clone https://github.com/NathanielInman/switchyard.git ~/Sites/switchyard
+~/Sites/switchyard/install.sh       # builds, installs yard + yard-board to ~/.local/bin, enables the user units
+./install.sh switchyard             # then the config and tasks (packages/switchyard)
+```
 
 System-level files that can't be stowed (because they live outside `$HOME`) are tracked under `etc/`, `usr/` and `scripts/` as copies. Install them via `./install.sh -s`, which prompts for each one (`./install.sh -y -s` answers yes to all; it is safe to run in a chroot, where anything that needs udev or D-Bus waits for first boot). Currently covers:
 
