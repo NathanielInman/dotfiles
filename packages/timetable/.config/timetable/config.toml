@@ -1,0 +1,23 @@
+# Timetable (~/Sites/timetable): the agenda clock in the bar. Every key is
+# documented in its README and docs/design.md; only what differs from the
+# defaults is here.
+
+[calendar]
+# The Google Calendar secret iCal address lives in broker's public tier (no
+# touch), never in this file. The daemon asks once at start, again when the
+# address stops working, and on `timetable refresh`.
+url_command = "broker get TIMETABLE_ICAL_URL"
+
+[clock]
+zone = "America/Chicago"
+
+[bar]
+# The clock stays purple while the event beside it turns amber or red.
+clock_color = "#B48EAD"
+
+[join]
+# Work Slack + Zoom
+workspace = "2"
+
+[drawer]
+calendar_hint = "right-click the clock for gnome-calendar"
