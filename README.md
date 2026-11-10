@@ -1,7 +1,7 @@
 # Dot-Files
 
 <p align="center">
-  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop with a waybar along the bottom. The view zooms into the bar and visits its widgets: a pomodoro timer, do not disturb hiding the song title, a meeting recorder, dictation typing into the editor, the Switchyard signal and Roundhouse lamp with its drawer, the key lights and the clock's time zones.">
+  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop with a waybar along the bottom. The view zooms into the bar and visits its widgets: a pomodoro timer, do not disturb hiding the song title, a meeting recorder, dictation typing into the editor, the Switchyard board starting a build from its signal, the Roundhouse lamp turning red and its drawer explaining why before linking back to the board, the key lights and the clock's time zones.">
 </p>
 
 This contains all of my dot files and step-by-step instructions on how to build an Arch distribution similar to mine: Hyprland, waybar, NeoVim and zsh. Most configurations are detailed with comments. All dot files are purposefully compact with little ricing; the bar is where the effort went.

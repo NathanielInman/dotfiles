@@ -23,6 +23,8 @@ font file.
 | `packages/waybar/.config/waybar/style.css` | Every color: `#custom-pomodoro.work` colors the pomodoro in its `work` state, the same rule waybar uses. |
 | [`widgets.py`](widgets.py) | What each module prints in each state, its name and the sentence in the README table. |
 | [`story.py`](story.py) | The hero's timeline: camera moves, clicks, state changes, captions. |
+| [`scenes.py`](scenes.py) | Roundhouse's drawer and Switchyard's board, drawn as their own READMEs draw them, with the spots a beat can click. |
+| [`svgkit.py`](svgkit.py) | The embedded font, the SVG builder and its keyframes. |
 
 ## Adding a widget
 
@@ -58,8 +60,20 @@ font file.
 
 ## Scenes
 
-Some beats trigger effects that are drawn by hand in `build.py` rather than
-from a module: `type` (dictated words appear in the editor), `drawer-open` /
-`drawer-close` (Roundhouse's drawer over the lamp) and `lights-on` /
-`lights-off` (the room warms up with the key lights). A new kind of effect
-is a function in `build.py` called from `hero()`.
+Some beats trigger effects that are not a module's text:
+
+- `type`: dictated words appear in the editor.
+- `board-open` / `board-close`: Switchyard's board springs out of its signal.
+  Its story is `storefront-build`, `android-queue`, `android-held`,
+  `storefront-done` and `android-build`.
+- `drawer-open`: Roundhouse's drawer springs out of the lamp. `handoff`
+  closes it and opens the board from the same lamp, as its Switchyard link
+  does.
+- `lights-on` / `lights-off`: the room warms up with the key lights.
+
+A beat can click inside an open panel by name (`board:storefront`,
+`drawer:switchyard`); the spots are `BOARD_SPOTS` and `DRAWER_SPOTS` in
+`scenes.py`. If Roundhouse or Switchyard change their interface, update
+`scenes.py` from their `docs/assets/hero.py`. A new kind of effect is a
+function in `scenes.py` called from `draw_panels()` or `hero()` in
+`build.py`.

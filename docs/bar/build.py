@@ -18,21 +18,10 @@ are the same ones waybar draws. BAR_FONT picks the font file; the default is
 JetBrains Mono Nerd Font Propo (OFL). Needs fontTools.
 """
 
-import base64
-import io
 import json
-import math
-import os
 import re
 import sys
 from pathlib import Path
-
-import logging
-
-from fontTools import subset
-from fontTools.ttLib import TTFont
-
-logging.getLogger("fontTools.subset").setLevel(logging.ERROR)
 
 sys.dont_write_bytecode = True  # no __pycache__ next to widgets.py and story.py
 
@@ -40,14 +29,17 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 
+import scenes  # noqa: E402
 from story import BEATS, DICTATED, LOOP, MOVE, ZOOM  # noqa: E402
+from svgkit import (  # noqa: E402
+    BG0, BG1, BOLD, DIM, FAINT, FG, FROST, GO, ORANGE, REG, VIOLET, WIN, WIN_BAR, WIN_LINE,
+    Svg, at, esc, visible_points,
+)
 from widgets import WIDGETS, Widget  # noqa: E402
 
 WAYBAR = ROOT / "packages/waybar/.config/waybar"
 OUT = ROOT / "Pictures/bar"
 README = ROOT / "README.md"
-FONT_PATH = Path(os.environ.get("BAR_FONT", "/usr/share/fonts/TTF/JetBrainsMonoNerdFontPropo-Regular.ttf"))
-FONT_BOLD = Path(os.environ.get("BAR_FONT_BOLD", str(FONT_PATH).replace("-Regular", "-Bold")))
 
 # The hero's canvas and the bar inside it. The real bar is 24px tall with an
 # 18px font; this keeps that ratio at a size a README can show.
@@ -58,16 +50,8 @@ BAR_X, BAR_Y, BAR_W = 8, H - BAR_H - 8, W - 16
 BAR_CY = BAR_Y + BAR_H / 2
 PAD = 6
 ZOOM_TY = H - 64  # where the bar's middle sits on screen while zoomed
-STILL = 19.8  # the moment shown with reduced motion
+STILL = 22.6  # the moment shown with reduced motion: Roundhouse's drawer
 T = LOOP
-
-# Nord, as the desktop around the bar.
-BG0, BG1 = "#14171c", "#0d0f12"
-WIN, WIN_LINE, WIN_BAR = "#1d2025", "#353a42", "#262a30"
-FG, DIM, FAINT = "#c5c8c6", "#7c838e", "#4c566a"
-FROST, GO, CAUTION, STOP, VIOLET, ORANGE = "#88c0d0", "#a3be8c", "#ebcb8b", "#bf616a", "#b48ead", "#d08770"
-PANEL, PANEL_LINE, TILE, TILE_LINE = "#25282c", "#41464e", "#2c2f34", "#363a40"
-
 
 # ------------------------------------------------------------------ inputs
 
@@ -142,148 +126,6 @@ BAR_BG = CSS.get("window#waybar", "background") or "#282A2E"
 SEP = "#4c566a"
 HOVER = CSS.get("#workspaces button:hover", "background") or "#373B41"
 ACTIVE_LINE = "#81a1c1"
-
-
-# Waybar draws these from an emoji font; the Nerd Font has its own versions.
-SUBST = {"\u23f3": "\U000f051f", "\u23fa": "\U000f044a"}
-
-
-def shown(s: str) -> str:
-    return "".join(SUBST.get(c, c) for c in s)
-
-
-class Font:
-    def __init__(self, path: Path):
-        self.path = path
-        f = TTFont(path)
-        self.cmap = f.getBestCmap()
-        self.hmtx = f["hmtx"].metrics
-        self.upm = f["head"].unitsPerEm
-        self.missing = set()
-
-    def width(self, s: str, size: float) -> float:
-        w = 0.0
-        for ch in shown(s):
-            g = self.cmap.get(ord(ch))
-            if g is None:
-                self.missing.add(ch)
-                w += 0.6 * self.upm
-            else:
-                w += self.hmtx[g][0]
-        return w * size / self.upm
-
-
-REG = Font(FONT_PATH)
-BOLD = Font(FONT_BOLD) if FONT_BOLD.exists() else REG
-
-
-def subset_font(font: Font, chars: set[str]) -> str:
-    opts = subset.Options()
-    opts.flavor = "woff"
-    opts.hinting = False
-    opts.desubroutinize = True
-    opts.name_IDs = [0, 1, 2, 3, 4, 5, 6, 13, 14]  # keep the copyright and license
-    opts.notdef_outline = True
-    s = subset.Subsetter(opts)
-    s.populate(unicodes=sorted({ord(c) for c in chars if ord(c) in font.cmap}))
-    f = TTFont(font.path)
-    s.subset(f)
-    buf = io.BytesIO()
-    f.flavor = "woff"
-    f.save(buf)
-    return base64.b64encode(buf.getvalue()).decode()
-
-
-# ------------------------------------------------------------------ drawing
-
-def esc(s: str) -> str:
-    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
-
-def pct(t: float) -> str:
-    return f"{max(0.0, min(100.0, t / T * 100)):.3f}%"
-
-
-class Svg:
-    def __init__(self, loop: float):
-        self.loop = loop
-        self.body: list[str] = []
-        self.css: list[str] = []
-        self.chars = {"bar": set(), "bold": set()}
-        self.n = 0
-
-    def add(self, s: str):
-        self.body.append(s)
-
-    def text(self, x, y, s, size=FS, fill=FG, weight=400, anchor="start", extra=""):
-        s = shown(s)
-        self.chars["bold" if weight >= 600 else "bar"].update(s)
-        fam = "barb" if weight >= 600 else "bar"
-        self.add(
-            f'<text x="{x:.1f}" y="{y:.1f}" font-family="{fam}" font-size="{size}" fill="{fill}" '
-            f'text-anchor="{anchor}"{extra}>{esc(s)}</text>'
-        )
-
-    def keyframes(self, prop: str, points: list[tuple[float, str]]) -> str:
-        """Linear keyframes through (seconds, value) points; returns the name."""
-        self.n += 1
-        name = f"k{self.n}"
-        pts = sorted(points, key=lambda p: p[0])
-        if pts[0][0] > 0:
-            pts.insert(0, (0.0, pts[0][1]))
-        if pts[-1][0] < self.loop:
-            pts.append((self.loop, pts[-1][1]))
-        frames, last = [], -1.0
-        for t, v in pts:
-            t = max(t, last + 0.0005)  # strictly increasing
-            last = t
-            frames.append(f"{max(0.0, min(100.0, t / self.loop * 100)):.3f}% {{ {prop}: {v}; }}")
-        self.css.append(f"@keyframes {name} {{ {' '.join(frames)} }}")
-        return name
-
-    def render(self, width, height, label, scale=1.0) -> str:
-        fonts = []
-        for fam, key, font in (("bar", "bar", REG), ("barb", "bold", BOLD)):
-            if self.chars[key]:
-                data = subset_font(font, self.chars[key] | {" "})
-                fonts.append(f'@font-face {{ font-family: "{fam}"; src: url(data:font/woff;base64,{data}) format("woff"); }}')
-        style = "\n".join(
-            fonts
-            + ['text { white-space: pre; font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }']
-            + [f".a {{ animation-duration: {self.loop}s; animation-iteration-count: infinite; animation-timing-function: linear; }}"]
-            + self.css
-            + ["@media (prefers-reduced-motion: reduce) { .a { animation: none !important; } }"]
-        )
-        return (
-            f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width * scale:.0f}" '
-            f'height="{height * scale:.0f}" xml:space="preserve" role="img" aria-label="{esc(label)}">\n'
-            "<!-- Generated by docs/bar/build.py. Glyphs: JetBrains Mono Nerd Font (SIL OFL 1.1). -->\n"
-            f"<style>\n{style}\n</style>\n" + "\n".join(self.body) + "\n</svg>\n"
-        )
-
-
-def visible_points(intervals, fade=0.07, loop=T):
-    """Opacity points for an element visible during the given intervals."""
-    ivs = sorted(intervals)
-    merged = []
-    for a, b in ivs:
-        if merged and a <= merged[-1][1] + 1e-6:
-            merged[-1][1] = max(merged[-1][1], b)
-        else:
-            merged.append([a, b])
-    pts = []
-    on0 = any(a <= 0 for a, _ in merged)
-    pts.append((0.0, "1" if on0 else "0"))
-    for a, b in merged:
-        if a > 0:
-            pts += [(a, "0"), (a + fade, "1")]
-        if b < loop:
-            pts += [(b, "1"), (b + fade, "0")]
-    return pts
-
-
-def at(intervals, t):
-    return any(a <= t < b for a, b in intervals)
 
 
 # ------------------------------------------------------------------ the bar
@@ -583,49 +425,58 @@ def draw_desktop(svg: Svg, typing: tuple[float, float] | None):
         y += 24
 
 
-def draw_drawer(svg: Svg, t_open: float, t_close: float):
-    """Roundhouse's drawer over the lamp, with the reason it is red."""
-    lamp_x = center("custom/roundhouse", t_open)
-    dw, dh = 440, 214
-    dx = min(max(lamp_x - dw / 2, BAR_X + 8), BAR_X + BAR_W - dw - 8)
-    dy = BAR_Y - 10 - dh
-    spring = svg.keyframes("transform", [
-        (0, "translateY(18px) scale(.05)"), (t_open, "translateY(18px) scale(.05)"),
-        (t_open + 0.1, "translateY(8px) scale(.55)"), (t_open + 0.2, "translateY(2px) scale(.92)"),
-        (t_open + 0.3, "translateY(-1px) scale(1.03)"), (t_open + 0.45, "translateY(0px) scale(.99)"),
-        (t_open + 0.6, "translateY(0px) scale(1)"), (t_close, "translateY(0px) scale(1)"),
-        (t_close + 0.3, "translateY(14px) scale(.4)"),
-    ])
-    show = svg.keyframes("opacity", visible_points([(t_open, t_close + 0.25)], fade=0.12))
-    still = 1 if t_open <= STILL < t_close else 0
-    svg.add(f'<g class="a" style="animation-name:{spring},{show};transform-origin:{lamp_x:.1f}px {BAR_Y}px" opacity="{still}">')
-    svg.add(f'<g transform="translate({dx:.1f},{dy:.1f})">')
-    svg.add(f'<rect width="{dw}" height="{dh}" rx="14" fill="{PANEL}" stroke="{PANEL_LINE}" filter="url(#shadow)"/>')
-    svg.add(f'<circle cx="22" cy="26" r="5" fill="{STOP}"/>')
-    svg.text(36, 31, "FROSTYARCH", 14, FG, 700, extra=' letter-spacing="1.5"')
-    svg.add(f'<rect x="{dw - 98}" y="15" width="82" height="22" rx="11" fill="{STOP}" fill-opacity=".16"/>')
-    svg.text(dw - 57, 30, "needs you", 12, STOP, 700, "middle")
-    svg.add(f'<rect x="14" y="48" width="{dw - 28}" height="28" rx="8" fill="{TILE}"/>')
-    svg.add(f'<rect x="17" y="51" width="128" height="22" rx="6" fill="{FROST}"/>')
-    svg.text(81, 66.5, "Machine", 12, "#1d2024", 700, "middle")
-    svg.text(210, 66.5, "Storage", 12, DIM, 700, "middle")
-    svg.add(f'<circle cx="{dw - 132}" cy="62" r="2.6" fill="{FROST}"/>')
-    svg.text(dw - 122, 66.5, "Switchyard ↗", 12, DIM)
-    svg.add(f'<rect x="14" y="86" width="{dw - 28}" height="30" rx="8" fill="{STOP}" fill-opacity=".1" stroke="{STOP}" stroke-opacity=".4"/>')
-    svg.text(26, 106, "everything is stalling on memory (22% of the last 10 s)", 12, FG)
-    svg.add(f'<rect x="14" y="124" width="{dw - 28}" height="30" rx="8" fill="{TILE}" stroke="{TILE_LINE}"/>')
-    svg.text(26, 144, "Switchyard is holding android: Roundhouse says ev…", 12, FG)
-    tw = (dw - 36) / 2
-    for i, (label, aside, aside_color, value) in enumerate([
-        ("CPU", "71 / 95°C", GO, "64%"),
-        ("MEMORY", "SWAP 2 G", DIM, "58G / 60 G"),
-    ]):
-        x = 14 + i * (tw + 8)
-        svg.add(f'<rect x="{x:.1f}" y="162" width="{tw:.1f}" height="40" rx="8" fill="{TILE}" stroke="{TILE_LINE}"/>')
-        svg.text(x + 10, 178, label, 10, DIM, 700, extra=' letter-spacing="1"')
-        svg.text(x + tw - 10, 178, aside, 10, aside_color, 700, "end")
-        svg.text(x + 10, 195, value, 13, FG, 700)
-    svg.add("</g></g>")
+DRAWER_SCALE, BOARD_SCALE = 0.95, 1.0
+
+
+def pair(opens: list[tuple[float, str]], closes: list[float]):
+    """(open time, anchor module, close time) for each opening."""
+    out = []
+    for t, anchor in sorted(opens):
+        c = min((x for x in closes if x > t), default=T - 0.5)
+        out.append((t, anchor, c))
+    return out
+
+
+class Panels:
+    """When each panel is open, where, and where clicks on it land."""
+
+    def __init__(self, scenes: dict[str, list[float]]):
+        get = lambda k: scenes.get(k, [])  # noqa: E731
+        self.board = pair([(t, "custom/switchyard") for t in get("board-open")] + [(t, "custom/roundhouse") for t in get("handoff")],
+                          get("board-close"))
+        self.drawer = pair([(t, "custom/roundhouse") for t in get("drawer-open")], get("drawer-close") + get("handoff"))
+
+    def where(self, kind: str, t_open: float, anchor: str) -> scenes.Place:
+        w, h, k = (scenes.BOARD_W, scenes.BOARD_H, BOARD_SCALE) if kind == "board" else (scenes.DRAWER_W, scenes.DRAWER_H, DRAWER_SCALE)
+        return scenes.place(center(anchor, t_open), BAR_Y, W, w, h, k)
+
+    def hotspot(self, target: str, t: float):
+        kind, part = target.split(":", 1)
+        spots = scenes.BOARD_SPOTS if kind == "board" else scenes.DRAWER_SPOTS
+        for o, anchor, c in getattr(self, kind):
+            if o <= t <= c:
+                return self.where(kind, o, anchor).screen(*spots[part])
+        sys.exit(f"story.py: a click on {target} at {t}s, when that panel is not open")
+
+
+def draw_panels(svg: Svg, panels: Panels, scene_times: dict[str, list[float]]):
+    first = lambda k, d: (scene_times.get(k) or [d])[0]  # noqa: E731
+    times = scenes.BoardTimes(
+        storefront_build=first("storefront-build", T),
+        android_queue=first("android-queue", T),
+        android_held=first("android-held", T),
+        storefront_done=first("storefront-done", T),
+        android_build=first("android-build", T),
+        end=T,
+    )
+    lamp: dict[str, list[tuple[float, float]]] = {}
+    for a, b, st in segments("custom/roundhouse"):
+        lamp.setdefault(st, []).append((a, b))
+    for o, anchor, c in panels.drawer:
+        yard = CSS.color("custom-switchyard", WIDGETS["custom/switchyard"].states[state_at("custom/switchyard", o)].cls)
+        scenes.drawer(svg, panels.where("drawer", o, anchor), [(o, c)], STILL, yard)
+    for o, anchor, c in panels.board:
+        scenes.board(svg, panels.where("board", o, anchor), [(o, c)], STILL, times, lamp)
 
 
 def draw_caption(svg: Svg, captions):
@@ -634,6 +485,11 @@ def draw_caption(svg: Svg, captions):
     for i, (t, name, words) in enumerate(captions):
         end = captions[i + 1][0] if i + 1 < len(captions) else T
         end = min(end, t + 4.2)
+        # A caption leaves when the camera moves on, so a title card never
+        # outlives its zoom.
+        moves = [s for s, _ in CAM_MOVES[1:] if s > t + 0.5]
+        if moves:
+            end = min(end, moves[0] + 0.2)
         vis = svg.keyframes("opacity", visible_points([(t, end)], fade=0.25))
         svg.add(f'<g class="a" style="animation-name:{vis}" opacity="{1 if t <= STILL < end else 0}">')
         z = cam_at(t + 0.3)[0]
@@ -654,9 +510,17 @@ def draw_caption(svg: Svg, captions):
 
 def hero() -> str:
     svg = Svg(T)
-    clicks_mod, clicks_all, captions, scenes = [], [], [], {}
+    svg.css.append(scenes.PULSE_CSS)
+    clicks_mod, clicks_all, captions, times = [], [], [], {}
     for b in BEATS:
-        if isinstance(b.click, str):
+        if b.scene:
+            times.setdefault(b.scene, []).append(b.t)
+    panels = Panels(times)
+    for b in BEATS:
+        if isinstance(b.click, str) and ":" in b.click:
+            x, y = panels.hotspot(b.click, b.t)
+            clicks_all.append((b.t, to_screen(x, y, b.t)))
+        elif isinstance(b.click, str):
             clicks_mod.append((b.t, b.click))
             x, w = layout(b.t - 0.01)[b.click]
             clicks_all.append((b.t, to_screen(x + w / 2, BAR_CY, b.t)))
@@ -664,8 +528,7 @@ def hero() -> str:
             clicks_all.append((b.t, b.click))
         if b.caption:
             captions.append((b.t, *b.caption))
-        if b.scene:
-            scenes[b.scene] = b.t
+    one = lambda k: (times.get(k) or [None])[0]  # noqa: E731
 
     svg.add('<defs>'
             f'<linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{BG0}"/><stop offset="1" stop-color="{BG1}"/></linearGradient>'
@@ -684,19 +547,18 @@ def hero() -> str:
         pts.append((t, f"translate({tx:.2f}px, {ty:.2f}px) scale({z:.4f})"))
     cam = svg.keyframes("transform", pts)
     svg.add(f'<g class="a" style="animation-name:{cam};transform-origin:0 0">')
-    typing = (scenes["type"], scenes["type"] + 1.4) if "type" in scenes else None
+    typing = (one("type"), one("type") + 1.4) if one("type") is not None else None
     draw_desktop(svg, typing)
     # The desktop dims as the camera closes in on the bar.
     dim = svg.keyframes("opacity", [(t, f"{0.72 * (cam_at(t)[0] - 1) / (ZOOM - 1):.3f}") for t in samples])
     svg.add(f'<rect class="a" style="animation-name:{dim}" opacity="0" x="-{W}" y="-{H}" width="{3 * W}" height="{2 * H + BAR_Y - 6}" fill="{BG1}"/>')
     draw_bar(svg, clicks_mod)
-    if "drawer-open" in scenes:
-        draw_drawer(svg, scenes["drawer-open"], scenes.get("drawer-close", T - 1))
+    draw_panels(svg, panels, times)
     svg.add("</g>")
 
     # The room lights up with the key lights.
-    if "lights-on" in scenes:
-        on, off = scenes["lights-on"], scenes.get("lights-off", T - 1)
+    if one("lights-on") is not None:
+        on, off = one("lights-on"), one("lights-off") or T - 1
         name = svg.keyframes("opacity", visible_points([(on, off)], fade=0.5))
         svg.add(f'<rect class="a" style="animation-name:{name}" opacity="0" width="{W}" height="{H}" fill="url(#warm)"/>')
 
@@ -719,8 +581,10 @@ def hero() -> str:
 
     label = ("A Hyprland desktop with a waybar along the bottom. The view zooms into the bar and visits its widgets: "
              "a pomodoro timer starts, do not disturb turns on and the song title hides itself, a meeting recorder lights up, "
-             "dictation types a comment into the editor, a build turns the Switchyard signal amber, the Roundhouse lamp turns red "
-             "and its drawer explains that memory is stalling, the key lights warm the room, and the clock switches time zones.")
+             "dictation types a comment into the editor. The Switchyard board opens from its signal and starts a storefront build, "
+             "android queues behind it, the Roundhouse lamp turns red and its drawer explains that memory is stalling, its link "
+             "swaps back to the board where storefront finishes and android starts, the key lights warm the room, and the clock "
+             "switches time zones.")
     return svg.render(W, H, label)
 
 
