@@ -1,7 +1,7 @@
 # Arch + Hyprland dotfiles
 
 <p align="center">
-  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop with a waybar along the bottom. A build turns the Roundhouse lamp red; its drawer explains that memory is stalling and links to the Switchyard board, where the build finishes and the held one starts. Then the view zooms along the bar from left to right: the song pauses, the volume switches to the headset, the mouse battery runs low, dictation types into the editor, the meeting recorder and a pomodoro start, the key lights warm the room, the VPN connects, a swaync notification arrives and do not disturb silences it and hides the song title, and the clock switches time zones.">
+  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop with a waybar along the bottom. A build turns the Roundhouse lamp red; its drawer explains that memory is stalling and links to the Switchyard board, where the build finishes and the held one starts. Then the view zooms along the bar from left to right: the song pauses, the volume switches to the headset, the mouse battery runs low, dictation types into the editor, the meeting recorder lights up, the clock starts a focus block, the key lights warm the room, the VPN connects, a swaync notification arrives and do not disturb silences it and hides the song title, and the clock names the next meeting, then turns red to join it.">
 </p>
 
 <p align="center">
@@ -65,21 +65,20 @@ Every widget in [`packages/waybar`](packages/waybar/.config/waybar), as it looks
 | <img src="Pictures/bar/widgets/voxtype.svg" height="36" alt="Dictation"> | [Dictation](packages/waybar/.config/waybar/scripts/voxtype-status.sh) | [voxtype](https://voxtype.io) speech to text: hold a key, talk, and it types where the cursor is. Red while listening, amber while transcribing. | [voxtype](https://voxtype.io), `jq` |
 | <img src="Pictures/bar/widgets/meeting-record.svg" height="36" alt="Meeting recorder"> | [Meeting recorder](packages/waybar/.config/waybar/scripts/meeting-record.sh) | Records a meeting in 15 minute chunks and transcribes them with voxtype afterwards. Shows only while recording. | `pw-record`, voxtype |
 | <img src="Pictures/bar/widgets/screen-record.svg" height="36" alt="Screen recorder"> | [Screen recorder](packages/waybar/.config/waybar/scripts/screen-record.sh) | Records the screen with wf-recorder. Shows only while recording. | `wf-recorder`, `slurp`, `ffmpeg` |
-| <img src="Pictures/bar/widgets/pomodoro.svg" height="36" alt="Pomodoro"> | [Pomodoro](packages/waybar/.config/waybar/scripts/pomodoro.sh) | 25 minutes of focus, then a 5 minute break. Click to start or pause, right-click to reset. | `notify-send` |
 | <img src="Pictures/bar/widgets/keylights.svg" height="36" alt="Key lights"> | [Key lights](packages/waybar/.config/waybar/scripts/keylights.sh) | Both Elgato Key Lights on or off in one click, over the IoT network. | Elgato Key Lights, `curl` (set the light's IP in the script) |
 | <img src="Pictures/bar/widgets/power-menu.svg" height="36" alt="Power"> | [Power](packages/waybar/.config/waybar/scripts/power-menu.sh) | Idle, lock, log out, suspend, reboot or shut down, through walker. | `walker`, `hyprlock`, `hypridle` |
-| <img src="Pictures/bar/widgets/timezone.svg" height="36" alt="Clock"> | [Clock](packages/waybar/.config/waybar/scripts/timezone.sh) | The date and time. Click to cycle through Chicago, Eastern Europe and GMT; right-click for the calendar. | Nothing extra |
+| <img src="Pictures/bar/widgets/timetable.svg" height="36" alt="Timetable"> | [Timetable](packages/timetable/.config/timetable/config.toml) | The clock with your next meeting beside it: amber 10 minutes out, red with Join at start time, a countdown during a focus block. Click for the [Timetable](https://github.com/NathanielInman/timetable) drawer: Chicago, EET and GMT side by side, Join on workspace 2, the day with its free gaps, and focus blocks that end before the next meeting. Middle-click joins, right-click opens the calendar. | [Timetable](https://github.com/NathanielInman/timetable), a Google Calendar secret iCal address in broker |
 <!-- bar-widgets:end -->
 
-To use one widget without the rest, copy its script into `~/.config/waybar/scripts/`, its block from [`config.jsonc`](packages/waybar/.config/waybar/config.jsonc) and its `#custom-<name>` rules from [`style.css`](packages/waybar/.config/waybar/style.css). The pomodoro, for example:
+To use one widget without the rest, copy its script into `~/.config/waybar/scripts/`, its block from [`config.jsonc`](packages/waybar/.config/waybar/config.jsonc) and its `#custom-<name>` rules from [`style.css`](packages/waybar/.config/waybar/style.css). The key lights, for example:
 
 ```jsonc
-"custom/pomodoro": {
-  "exec": "~/.config/waybar/scripts/pomodoro.sh",
-  "interval": 1,
-  "on-click": "~/.config/waybar/scripts/pomodoro.sh toggle",
-  "on-click-right": "~/.config/waybar/scripts/pomodoro.sh reset",
-  "return-type": "json"
+"custom/keylights": {
+  "exec": "~/.config/waybar/scripts/keylights.sh",
+  "return-type": "json",
+  "interval": 60,
+  "signal": 10,
+  "on-click": "~/.config/waybar/scripts/keylights-toggle.sh"
 }
 ```
 
@@ -107,10 +106,11 @@ To use one widget without the rest, copy its script into `~/.config/waybar/scrip
 | | `t3code` | T3 Code color theme |
 | Companions | `roundhouse` | Config for the Roundhouse drawer (see below) |
 | | `switchyard` | Tasks for the Switchyard board (see below) |
+| | `timetable` | Where Timetable reads the calendar, and the purple clock (see below) |
 
 ### Companion programs
 
-Four widgets are front ends for programs that live in their own repos. Install the program, then stow its package here (Signal Box and Tannoy need nothing stowed: their modules are already in the waybar config).
+Five widgets are front ends for programs that live in their own repos. Install the program, then stow its package here (Signal Box and Tannoy need nothing stowed: their modules are already in the waybar config).
 
 [**Roundhouse**](https://github.com/NathanielInman/roundhouse) is the lamp: one color for the health of the whole machine, and a drawer with CPU, GPU, memory pressure, network, every disk and share, and memory by app.
 
@@ -144,6 +144,18 @@ git clone https://github.com/NathanielInman/tannoy.git ~/Sites/tannoy
 cd ~/Sites/tannoy && cargo build --release
 install -Dm755 target/release/tannoy target/release/tannoy-board -t ~/.local/bin/
 tannoy doctor
+```
+
+[**Timetable**](https://github.com/NathanielInman/timetable) is the clock: the next meeting beside the time, amber 10 minutes out and red with Join at start time, and a drawer with Chicago, EET and GMT, the day with its free gaps, and focus blocks that end two minutes before the next meeting (it replaced the pomodoro and `timezone.sh`). It reads Google Calendar's secret iCal address, which lives in broker as `TIMETABLE_ICAL_URL` (public tier, so no touch), never in a file here. Join switches to workspace 2 and opens the Zoom or Meet link; reminders at 5 and 1 minutes go through swaync.
+
+```bash
+sudo pacman -S --needed gtk4 gtk4-layer-shell
+git clone https://github.com/NathanielInman/timetable.git ~/Sites/timetable
+cd ~/Sites/timetable && cargo build --release
+install -Dm755 target/release/timetable target/release/timetable-board -t ~/.local/bin/
+broker set TIMETABLE_ICAL_URL --public --desc "Google Calendar secret iCal address for Timetable"
+cd ~/Sites/dot-files && ./install.sh timetable
+timetable doctor
 ```
 
 ## Field notes

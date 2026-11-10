@@ -3,7 +3,7 @@
 Chrome, to check a change without watching the whole loop.
 
     python3 docs/bar/preview.py 2.5 8 19.8          # hero at those seconds
-    python3 docs/bar/preview.py --svg Pictures/bar/widgets/pomodoro.svg 0 2
+    python3 docs/bar/preview.py --svg Pictures/bar/widgets/timetable.svg 0 2
 
 PNGs go to /tmp/bar-preview, or --out DIR.
 """

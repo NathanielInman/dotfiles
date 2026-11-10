@@ -7,7 +7,7 @@ real config, so the order, spacing and colors match the bar on the desk.
 ```sh
 python3 docs/bar/build.py                  # writes Pictures/bar/ and the README table
 python3 docs/bar/preview.py 2.5 19.8       # PNGs of the hero at those seconds
-python3 docs/bar/preview.py --svg Pictures/bar/widgets/pomodoro.svg 0 2
+python3 docs/bar/preview.py --svg Pictures/bar/widgets/timetable.svg 0 2
 ```
 
 Needs Python with fontTools and the `ttf-jetbrains-mono-nerd` package (the
@@ -20,7 +20,7 @@ font file.
 | Input | Gives |
 |---|---|
 | `packages/waybar/.config/waybar/config.jsonc` | Which modules exist and their order, the workspace icons. |
-| `packages/waybar/.config/waybar/style.css` | Every color: `#custom-pomodoro.work` colors the pomodoro in its `work` state, the same rule waybar uses. |
+| `packages/waybar/.config/waybar/style.css` | Every color: `#custom-timetable.soon` colors the clock in its `soon` state, the same rule waybar uses. |
 | [`widgets.py`](widgets.py) | What each module prints in each state, its name and the sentence in the README table. |
 | [`story.py`](story.py) | The hero's timeline: camera moves, clicks, state changes, captions. |
 | [`scenes.py`](scenes.py) | Roundhouse's drawer and Switchyard's board, drawn as their own READMEs draw them, with the spots a beat can click. |

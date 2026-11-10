@@ -6,7 +6,7 @@ there. `build.py` refuses to run while a module in the config has no entry,
 so a new widget cannot slip into the bar without being described here.
 
 Colors are not set here: they come from the real style.css, by the module's
-CSS id (`#custom-pomodoro`) and the state's class (`.work`), the same way
+CSS id (`#custom-timetable`) and the state's class (`.soon`), the same way
 waybar picks them.
 
 A state's text is exactly what the module prints: an empty string hides the
@@ -155,18 +155,6 @@ WIDGETS: dict[str, Widget] = {
         states={"off": State(""), "recording": State("\u23fa")},
         default="off",
     ),
-    "custom/pomodoro": Widget(
-        "Pomodoro",
-        "25 minutes of focus, then a 5 minute break. Click to start or pause, right-click to reset.",
-        f"{WAYBAR}/scripts/pomodoro.sh",
-        needs='`notify-send`',
-        states={
-            "idle": State("\uf017", "idle"),
-            "work": ticking("\uf017", 24, 59, 30, "work"),
-            "break": ticking("\uf0f4", 4, 12, 30, "break"),
-        },
-        default="idle",
-    ),
     "custom/keylights": Widget(
         "Key lights",
         "Both Elgato Key Lights on or off in one click, over the IoT network.",
@@ -230,17 +218,23 @@ WIDGETS: dict[str, Widget] = {
         states={"on": State("\u23fb")},
         default="on",
     ),
-    "custom/timezone": Widget(
-        "Clock",
-        "The date and time. Click to cycle through Chicago, Eastern Europe and GMT; right-click for the calendar.",
-        f"{WAYBAR}/scripts/timezone.sh",
-        needs='Nothing extra',
+    "custom/timetable": Widget(
+        "Timetable",
+        "The clock with your next meeting beside it: amber 10 minutes out, red with Join at start time, a countdown "
+        "during a focus block. Click for the [Timetable](https://github.com/NathanielInman/timetable) drawer: "
+        "Chicago, EET and GMT side by side, Join on workspace 2, the day with its free gaps, and focus blocks that "
+        "end before the next meeting. Middle-click joins, right-click opens the calendar.",
+        "packages/timetable/.config/timetable/config.toml",
+        needs='[Timetable](https://github.com/NathanielInman/timetable), a Google Calendar secret iCal address in broker',
         states={
-            "local": State(" Tue Nov 10  14:32"),
-            "chicago": State("America/Chicago:  Tue Nov 10  14:32"),
-            "eet": State("EET:  Tue Nov 10  22:32"),
+            "free": State("Tue Nov 10  14:32", "free"),
+            "soon": State("\U000f00ed Standup in 7m  Tue Nov 10  14:53", "soon"),
+            "now": State("\U000f0567 Standup \u00b7 Join  Tue Nov 10  15:00", "now"),
+            "focus": State(
+                [f"\U000f051b Focus 49:{59 - i:02d}  Tue Nov 10  14:32" for i in range(30)], "focus"
+            ),
         },
-        default="local",
+        default="free",
     ),
     "tray": Widget(
         "Tray",

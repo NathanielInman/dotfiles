@@ -619,8 +619,9 @@ def hero() -> str:
              "that memory is stalling and Switchyard is holding the next build, and its link opens the Switchyard board, where "
              "storefront finishes, the lamp calms and android starts. Then the view zooms along the bar from left to right: the "
              "song pauses, the volume switches to the headset, the mouse battery runs low, dictation types a comment into the "
-             "editor, the meeting recorder lights up, a pomodoro starts, the key lights warm the room, the VPN connects, a swaync "
-             "notification arrives and do not disturb silences it and hides the song title, and the clock switches time zones.")
+             "editor, the meeting recorder lights up, the clock starts a focus block, the key lights warm the room, the VPN connects, "
+             "a swaync notification arrives and do not disturb silences it and hides the song title, and the clock names the "
+             "next meeting, then turns red to join it.")
     return svg.render(W, H, label)
 
 
