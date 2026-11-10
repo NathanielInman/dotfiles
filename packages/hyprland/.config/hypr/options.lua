@@ -47,9 +47,14 @@ hl.config({
 
     -- Blur (on by default in Hyprland) samples the transparent margins of
     -- GTK menu surfaces, producing a smeared "halo" around Slack's dropdowns
-    -- (Slack runs --gtk-version=3, so its menus are native GTK). Disabled.
+    -- (Slack runs --gtk-version=3, so its menus are native GTK). So blur is
+    -- on only for layer surfaces: rules.lua turns it off for every window
+    -- and on for the bar and its drawers. Popups stay unblurred.
     blur = {
-      enabled = false,
+      enabled = true,
+      size = 6,
+      passes = 2,
+      popups = false,
     },
   },
 
