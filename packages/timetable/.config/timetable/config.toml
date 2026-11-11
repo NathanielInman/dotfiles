@@ -8,6 +8,9 @@
 # address stops working, and on `timetable refresh`.
 url_command = "broker get TIMETABLE_ICAL_URL"
 
+# Lunch has a guest on it, so it is not own time on its own.
+own_time = ["Lunch"]
+
 [clock]
 zone = "America/Chicago"
 
