@@ -1,0 +1,12 @@
+# Written by `logbook setup`. Logbook queues each finished meeting here,
+# so a transcript waits for the main line like any heavy build.
+
+[task.logbook-transcribe]
+label = "logbook transcribe"
+description = "a meeting into transcript.md"
+dir = "~"
+tags = ["logbook"]
+heavy = true
+shelf = true
+notify = "failure"
+steps = ["/home/nate/.local/bin/logbook transcribe '{dir}'"]
