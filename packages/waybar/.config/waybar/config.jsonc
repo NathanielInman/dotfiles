@@ -255,9 +255,12 @@
   // Switchyard (~/Sites/switchyard, tasks in packages/switchyard): the board of
   // builds, launches and deploys that replaced the games drawer. The signal
   // takes the aggregate state as its CSS class; click opens the board right
-  // above it, right-click acknowledges failures.
+  // above it, right-click acknowledges failures. Waybar runs `yard bar` once
+  // and leaves the module empty if it exits (killed, or a crash), so
+  // restart-interval starts it again after 5 seconds.
   "custom/switchyard": {
     "exec": "~/.local/bin/yard bar",
+    "restart-interval": 5,
     "return-type": "json",
     "on-click": "~/.local/bin/yard toggle",
     "on-click-right": "~/.local/bin/yard ack",
