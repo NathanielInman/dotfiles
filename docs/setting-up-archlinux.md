@@ -742,6 +742,17 @@ C# is already installed in the step above.
 pacman -S godot-mono
 ```
 
+Arch's `godot-mono` links the system Embree, whose AVX-512 path segfaults in occlusion culling on the Ryzen 9800X3D, so day to day the official builds run instead, unpacked under `/scratch/godot` (the package stays for its dependencies and as a fallback):
+
+```
+mkdir -p /scratch/godot/std-4.7.2 && cd /scratch/godot
+curl -LO https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_mono_linux_x86_64.zip
+curl -LO https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+unzip Godot_v4.7.2-stable_mono_linux_x86_64.zip && unzip -d std-4.7.2 Godot_v4.7.2-stable_linux.x86_64.zip && rm *.zip
+```
+
+`./install.sh -s` puts the `godot` and `godot-mono` launchers (`usr/local/bin/` in this repo) in `/usr/local/bin`, ahead of `/usr/bin/godot-mono` on PATH and visible to Switchyard's units. 4.7.2 sometimes aborts on its way out of `--headless --import` after the import has finished (`ERROR: Parameter "singleton" is null`, at `is_cmdline_mode`, exit 134). The launchers turn core dumps off for `--import` runs only, so each of those leaves one journal line instead of a 60-270 MB dump; game and test crashes keep theirs. Switchyard's game tasks retry the import when it dies by signal.
+
 To build release exports (`godot-mono --headless --export-release`) you also need the
 matching export templates, which are AUR-only:
 

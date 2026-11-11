@@ -1,0 +1,17 @@
+#!/bin/sh
+# Official Godot .NET build, unpacked in /scratch/godot. Arch's godot-mono links
+# the system Embree, whose AVX-512 path segfaults in occlusion culling on the
+# Ryzen 9800X3D. Remove this file to go back to /usr/bin/godot-mono.
+#
+# Godot 4.7.2 can abort on its way out of `--import` after the import has
+# finished (ERROR: Parameter "singleton" is null, at is_cmdline_mode). The
+# import is complete and Switchyard retries the step, so don't keep a
+# 60-270 MB core dump for it: systemd-coredump still logs the crash. Game and
+# test runs keep their dumps.
+GODOT=/scratch/godot/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64
+if [ ! -x "$GODOT" ]; then
+  echo "godot-mono: $GODOT is missing; see Game development in docs/setting-up-archlinux.md" >&2
+  exit 127
+fi
+for a in "$@"; do [ "$a" = --import ] && ulimit -c 0; done
+exec "$GODOT" "$@"

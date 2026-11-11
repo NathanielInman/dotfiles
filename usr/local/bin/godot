@@ -1,0 +1,15 @@
+#!/bin/sh
+# Official Godot build (no C#), unpacked in /scratch/godot. For the plain
+# GDScript projects; the C# ones use godot-mono.
+#
+# Godot 4.7.2 aborts on its way out of every `--import` after the import has
+# finished (ERROR: Parameter "singleton" is null, at is_cmdline_mode), exit
+# 134. The import is complete, so don't keep a 60 MB core dump for it:
+# systemd-coredump still logs the crash. Game and test runs keep their dumps.
+GODOT=/scratch/godot/std-4.7.2/Godot_v4.7.2-stable_linux.x86_64
+if [ ! -x "$GODOT" ]; then
+  echo "godot: $GODOT is missing; see Game development in docs/setting-up-archlinux.md" >&2
+  exit 127
+fi
+for a in "$@"; do [ "$a" = --import ] && ulimit -c 0; done
+exec "$GODOT" "$@"

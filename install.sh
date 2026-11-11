@@ -345,6 +345,30 @@ setup_system() {
         fi
     fi
 
+    # Godot launchers: run the official builds in /scratch/godot and skip the
+    # core dump when 4.7.2 aborts on its way out of --import. In /usr/local/bin
+    # so Switchyard's units, which have no ~/.local/bin on PATH, get them too.
+    local g godot_ok=true
+    for g in godot godot-mono; do
+        cmp -s "$DOTFILES_DIR/usr/local/bin/$g" "/usr/local/bin/$g" || godot_ok=false
+    done
+    if $godot_ok; then
+        echo -e "  ${GREEN}[configured]${NC} Godot launchers"
+    else
+        echo -n -e "  ${YELLOW}[available]${NC} Install the godot and godot-mono launchers to /usr/local/bin? [y/N] "
+        if confirm; then
+            for g in godot godot-mono; do
+                sudo install -Dm755 "$DOTFILES_DIR/usr/local/bin/$g" "/usr/local/bin/$g"
+            done
+            # The hand-made symlink this replaces would shadow nothing (it is
+            # later on PATH) but would confuse; drop it.
+            [[ -L "$HOME/.local/bin/godot" ]] && rm -f "$HOME/.local/bin/godot"
+            echo -e "  ${GREEN}[configured]${NC} Godot launchers"
+        else
+            echo -e "  ${YELLOW}[skipped]${NC} Godot launchers"
+        fi
+    fi
+
     # Desktop headroom: pin user@.service (apps, agents, builds) off CPU core 0
     # so Hyprland and the terminal always have a free core, let systemd-oomd
     # kill runaway jobs under memory pressure, and enable the SysRq rescue keys.
