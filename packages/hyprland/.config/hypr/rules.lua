@@ -76,13 +76,13 @@ hl.window_rule({
   no_initial_focus = true,
 })
 
--- Blur belongs to the bar, its drawers and Walker (styled as one of the
--- bar's pills) only (see decoration.blur in options.lua): no window blurs,
+-- Blur belongs to the bar, its drawers, Walker and swaync (both styled as
+-- the bar's pills) only (see decoration.blur in options.lua): no window blurs,
 -- so Slack's GTK menus keep no halo.
 hl.window_rule({ name = "no-window-blur", match = { class = ".*" }, no_blur = true })
 hl.layer_rule({
   name         = "bar-blur",
-  match        = { namespace = "^(waybar|roundhouse|switchyard|broker-board|tannoy|timetable|walker)$" },
+  match        = { namespace = "^(waybar|roundhouse|switchyard|broker-board|tannoy|timetable|walker|swaync-notification-window|swaync-control-center)$" },
   blur         = true,
   ignore_alpha = 0.3,
 })
