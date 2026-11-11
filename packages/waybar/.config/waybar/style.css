@@ -41,10 +41,17 @@ window#waybar.hidden {
   opacity: 0.2;
 }
 
+/* Tooltips take the pills' border and corners. They are popups, which
+   Hyprland doesn't blur, so they stay a little more opaque than the pills. */
 tooltip {
-  background: rgba(40, 42, 46, 0.96);
-  border: 1px solid @line;
-  border-radius: 8px;
+  background: rgba(40, 42, 46, 0.95);
+  border: 1px solid rgba(76, 86, 106, 0.55);
+  border-radius: 10px;
+}
+
+tooltip label {
+  color: @fg;
+  padding: 2px 4px;
 }
 
 /* ---- Pills ---- */
