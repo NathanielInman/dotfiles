@@ -26,7 +26,8 @@ hl.bind(mod .. " + Slash", hl.dsp.exec_cmd("~/.local/bin/yard toggle --center"),
 hl.bind("ALT + Tab", hl.dsp.exec_cmd("walker --provider windows"), { description = "Switch windows · window list alt-tab" })
 hl.bind("code:191", hl.dsp.exec_cmd("voxtype record start"), { description = "Dictation, hold to talk · voice speech voxtype transcribe" })
 hl.bind("code:191", hl.dsp.exec_cmd("voxtype record stop"), { release = true, description = "Dictation, release to type · voice speech voxtype transcribe" })
-hl.bind("code:192", hl.dsp.exec_cmd("~/.config/waybar/scripts/meeting-record.sh toggle"), { description = "Record a meeting · audio transcribe notes" })
+hl.bind("code:192", hl.dsp.exec_cmd("~/.local/bin/logbook toggle meeting"), { description = "Record a meeting, transcribed when it stops · audio transcribe notes logbook" })
+hl.bind("SHIFT + code:192", hl.dsp.exec_cmd("~/.local/bin/logbook mark"), { description = "Mark this moment in the meeting · heading transcript logbook" })
 
 -- Window management
 hl.bind(mod .. " + Q", hl.dsp.window.close(), { description = "Close window · quit" })              -- graceful close (everyday)
@@ -79,7 +80,7 @@ hl.bind("XF86AudioNext", hl.dsp.exec_cmd("~/.local/bin/tannoy next"), { descript
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("~/.local/bin/tannoy previous"), { description = "Previous track · music media" })
 
 -- Utilities
-hl.bind(mod .. " + R", hl.dsp.exec_cmd("~/.config/waybar/scripts/screen-record.sh"), { description = "Record screen · video capture screencast" })
+hl.bind(mod .. " + R", hl.dsp.exec_cmd("~/.local/bin/logbook toggle screen"), { description = "Record screen · video capture screencast logbook" })
 hl.bind(mod .. " + I", hl.dsp.exec_cmd("hyprpicker -a -n"), { description = "Pick a color · eyedropper colour hex" })
 hl.bind(mod .. " + O", hl.dsp.exec_cmd("walker --provider symbols"), { description = "Symbols and emoji · unicode glyph" })
 
