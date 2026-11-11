@@ -69,6 +69,7 @@ hypridle
 hyprland
 hyprlock
 hyprpicker
+hyprpolkitagent
 icoutils
 inxi
 jdk-openjdk

@@ -56,7 +56,7 @@ Do everything that doesn't need a running desktop from the archiso, so the first
    ./install.sh -s                       # in a chroot systemctl enables units and skips --now/daemon-reload
    ```
 
-   `systemctl --user` needs a running user manager, so enable the user units (`waybar`, `headset-autoswitch`, `elephant`) from the first Hyprland terminal. PipeWire's sockets are enabled by default.
+   `systemctl --user` needs a running user manager, so enable the user units (`waybar`, `headset-autoswitch`, `elephant`, `hyprpolkitagent`) from the first Hyprland terminal. PipeWire's sockets are enabled by default.
 
 4. **Leave the chroot**, point `resolv.conf` at resolved (arch-chroot bind-mounts over it, so do it from outside), and reboot. This is the only reboot:
 
@@ -321,6 +321,7 @@ Now for installing window manager stuff (Hyprland)
 - `swappy` - screenshot annotation tool
 - `hyprlock` - screen locker for Hyprland
 - `hypridle` - idle management daemon for Hyprland
+- `hyprpolkitagent` - polkit authentication agent: the password dialog for `pkexec`, privileged mounts and settings panels. Without one these fail with "No authentication agent found" and no prompt ever appears. Runs as a user service (`systemctl --user enable --now hyprpolkitagent.service`), which `graphical-session.target` starts through `hyprland-session.target`
 - `pamixer` - pulseaudio/pipewire CLI mixer
 - `pavucontrol` - GUI volume mixer for per-app and per-device levels
 - `playerctl` - MPRIS media player controller
@@ -340,11 +341,11 @@ Now for installing window manager stuff (Hyprland)
 - `sway-audio-idle-inhibit-git` (**AUR**) - holds off hypridle while audio is playing, started from `autostart.lua`
 
 ```
-pacman -S hyprland swaync kitty noto-fonts noto-fonts-emoji adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpicker swayosd neovide pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+pacman -S hyprland swaync kitty noto-fonts noto-fonts-emoji adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpolkitagent hyprpicker swayosd neovide pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
 paru -S waybar-git walker elephant-all sway-audio-idle-inhibit-git
 ```
 
-walker needs the `elephant` daemon running as a user service. `elephant service enable` writes `~/.config/systemd/user/elephant.service` and enables it. `autostart.lua` also starts `hyprland-session.target`, which is stowed with the `hyprland` package (`packages/hyprland/.config/systemd/user/`), so it doesn't need to be created by hand.
+Enable the polkit agent with `systemctl --user enable --now hyprpolkitagent.service`. walker needs the `elephant` daemon running as a user service. `elephant service enable` writes `~/.config/systemd/user/elephant.service` and enables it. `autostart.lua` also starts `hyprland-session.target`, which is stowed with the `hyprland` package (`packages/hyprland/.config/systemd/user/`), so it doesn't need to be created by hand.
 
 The Elgato Key Lights are driven over their built-in HTTP API with nothing but `curl` (already installed) - no extra packages or helper CLIs. The `lightson`/`lightsoff` shell aliases (in `.zshrc`) and the waybar keylights widget (`custom/keylights`, with its status script `keylights.sh` and on-click `keylights-toggle.sh`) all hit the same endpoint: `PUT http://<addr>:9123/elgato/lights` with `{"numberOfLights":1,"lights":[{"on":0|1,"brightness":0-100,"temperature":143-344}]}` to set state, and `GET` of the same path to read it.
 
