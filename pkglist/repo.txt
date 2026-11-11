@@ -163,6 +163,7 @@ usbutils
 uv
 vim
 vit
+webkitgtk-6.0
 wf-recorder
 wget
 wine
