@@ -5,7 +5,7 @@
 
 [network]
 # The old details drawer showed the public IP; keep it in the Network tile.
-# Asks ifconfig.co at most once a minute, only while the drawer is open.
+# Asks two STUN servers at most once a minute, only while the drawer is open.
 public_ip = true
 
 [storage]
