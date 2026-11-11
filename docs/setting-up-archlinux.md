@@ -302,7 +302,7 @@ Now for installing window manager stuff (Hyprland)
 - `hyprland` - tiling Wayland compositor with dynamic tiling, animations, and scripting
 - `waybar-git` (**AUR**) - highly customizable bar for Wayland compositors. Not the `extra/waybar` release: since the Hyprland config moved to the Lua root, `hyprctl dispatch workspace N` (the legacy keyword form) is rejected, and waybar 0.15.0's `hyprland/workspaces` still hardcodes it, so clicking a workspace icon does nothing. Upstream fixed it in April 2026 (`IPC::dispatch` detects the Lua protocol and emits `hl.dsp.*`) but no release has shipped it. Swap back to `pacman -S waybar` once a release newer than 0.15.0 lands. `paru --noconfirm` refuses the `waybar` -> `waybar-git` conflict and `yes |` loops on the provider prompt, so answer by hand or `printf '1\ny\ny\ny\n' | paru -S --skipreview aur/waybar-git`. Until [Waybar PR #5287](https://github.com/Alexays/Waybar/pull/5287) is merged, the build also needs `docs/patches/waybar-pr5287-sni-combined-registration.diff` applied in `prepare()` (add it to `source=`, `git apply` it): Electron 44+ apps (Slack 4.52+, Signal) register their tray icon as a combined `bus_name/object_path` string, waybar's watcher rejects it as an invalid bus name, and the app then drops the icon entirely. Any waybar-git rebuild from a plain PKGBUILD loses the Slack tray icon again.
 - `walker` - Wayland-native GTK4 application launcher (requires `elephant` provider daemon)
-- `elephant-all` - general-purpose data provider daemon for walker (includes all providers)
+- `elephant-all` - general-purpose data provider daemon for walker (includes all providers). Its clipboard provider records the clipboard history, which Super+Alt+V opens as `walker --provider clipboard`
 - `swaync` - notification center with history panel for Wayland
 - `kitty` - GPU-accelerated terminal emulator with ligature support
 - `noto-fonts` - emoji extras & base fonts
@@ -314,7 +314,6 @@ Now for installing window manager stuff (Hyprland)
 - `ttf-jetbrains-mono-nerd` - additional fallback fonts
 - `awww` - wallpaper daemon for Wayland (fork of swww; binaries `awww`/`awww-daemon`, which the configs call)
 - `wl-clipboard` - command-line clipboard utilities for Wayland (wl-copy, wl-paste)
-- `copyq` - clipboard manager with searchable history and system tray
 - `blueman` - Bluetooth manager with system tray applet
 - `grim` - screenshot utility for Wayland
 - `slurp` - region selection tool for Wayland screenshots
@@ -341,7 +340,7 @@ Now for installing window manager stuff (Hyprland)
 - `sway-audio-idle-inhibit-git` (**AUR**) - holds off hypridle while audio is playing, started from `autostart.lua`
 
 ```
-pacman -S hyprland swaync kitty noto-fonts noto-fonts-emoji adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard copyq yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpolkitagent hyprpicker swayosd neovide pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+pacman -S hyprland swaync kitty noto-fonts noto-fonts-emoji adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpolkitagent hyprpicker swayosd neovide pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
 paru -S waybar-git walker elephant-all sway-audio-idle-inhibit-git
 ```
 

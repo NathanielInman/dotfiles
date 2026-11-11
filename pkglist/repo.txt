@@ -27,7 +27,6 @@ ccid
 chafa
 cifs-utils
 cloudflared
-copyq
 cronie
 curl
 diff-so-fancy

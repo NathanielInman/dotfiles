@@ -11,7 +11,8 @@ hl.bind(mod .. " + CTRL + P", hl.dsp.exec_cmd("grim ~/Pictures/Screenshots/fulls
 hl.bind(mod .. " + E", hl.dsp.exec_cmd("thunar"))
 hl.bind(mod .. " + V", hl.dsp.exec_cmd("walker --provider files"))
 hl.bind(mod .. " + C", hl.dsp.exec_cmd("galculator"))
-hl.bind(mod .. " + ALT + V", hl.dsp.exec_cmd("copyq toggle"))
+-- Clipboard history: elephant records it, walker shows it with the launcher's theme
+hl.bind(mod .. " + ALT + V", hl.dsp.exec_cmd("walker --provider clipboard"))
 hl.bind(mod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind(mod .. " + Escape", hl.dsp.exec_cmd("hyprlock --immediate-render"))
 -- Key bind cheat sheet: Switchyard's shelf lists every bind (shelf.binds)
