@@ -126,33 +126,25 @@ WIDGETS: dict[str, Widget] = {
         },
         default="ok",
     ),
-    "custom/voxtype": Widget(
-        "Dictation",
-        "[voxtype](https://voxtype.io) speech to text: hold a key, talk, and it types where the cursor is. "
-        "Red while listening, amber while transcribing.",
-        f"{WAYBAR}/scripts/voxtype-status.sh",
-        needs='[voxtype](https://voxtype.io), `jq`',
+    "custom/logbook": Widget(
+        "Logbook",
+        "One On Air lamp for the mic: dim while nothing listens, frost while another app has the mic, red with a "
+        "running clock while a meeting or the screen records, red while dictating, amber while a transcript is made. "
+        "Click for the [Logbook](https://github.com/NathanielInman/logbook) drawer: the live recording with Stop and "
+        "Mark, who else has the mic, every recording and its transcript with Copy. Right-click stops, middle-click "
+        "dictates.",
+        "packages/waybar/.config/waybar/config.jsonc",
+        needs='[Logbook](https://github.com/NathanielInman/logbook), [voxtype](https://voxtype.io), '
+        '`wf-recorder`, `slurp`, `ffmpeg`',
         states={
-            "idle": State("\U000f036c", "idle"),
-            "recording": State("\U000f044a", "recording"),
-            "transcribing": State("\u23f3", "transcribing"),
+            "off": State("\U000f036c", "off"),
+            "mic": State("\U000f036c chrome", "mic"),
+            "recording": State(
+                [f"\U000f044a 00:41:{12 + i:02d}" for i in range(30)], "recording"
+            ),
+            "dictating": State("\U000f036c listening", "dictating"),
+            "transcribing": State(["\U000f051f 1/3", "\U000f051f 2/3", "\U000f051f 3/3"], "transcribing", every=2.0),
         },
-        default="idle",
-    ),
-    "custom/meeting-record": Widget(
-        "Meeting recorder",
-        "Records a meeting in 15 minute chunks and transcribes them with voxtype afterwards. Shows only while recording.",
-        f"{WAYBAR}/scripts/meeting-record.sh",
-        needs='`pw-record`, voxtype',
-        states={"off": State(""), "recording": State("\U000f0ede")},
-        default="off",
-    ),
-    "custom/screen-record": Widget(
-        "Screen recorder",
-        "Records the screen with wf-recorder. Shows only while recording.",
-        f"{WAYBAR}/scripts/screen-record.sh",
-        needs='`wf-recorder`, `slurp`, `ffmpeg`',
-        states={"off": State(""), "recording": State("\u23fa")},
         default="off",
     ),
     "custom/keylights": Widget(

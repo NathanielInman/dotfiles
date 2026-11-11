@@ -332,7 +332,7 @@ Now for installing window manager stuff (Hyprland)
 - `xdg-user-dirs` - help ensure well-known user directories are created automatically
 - `xdg-utils` - for helpful things such as mime detection
 - `yad` - GTK dialog tool; powers the waybar hotkeys (⌨) and commands cheat-sheet buttons
-- `wf-recorder` - screen recording backend for the Super+R / waybar screen-record script
+- `wf-recorder` - screen recording backend for Logbook (Super+R, `logbook toggle screen`)
 - `hyprpicker` - screen color picker bound to Super+I
 - `swayosd` - on-screen volume/brightness popups, started from `autostart.lua` and driven by the media keys in `binds.lua`
 - `neovide` - GPU NeoVim GUI that `autostart.lua` opens on login (`scripts/neovide-autostart.sh`)
@@ -989,7 +989,7 @@ voxtype setup
 voxtype setup gpu --enable  # optional, requires vulkan-icd-loader
 ```
 
-Voxtype runs as a daemon and is bound to F13 (code:191) as push-to-talk in `~/.config/hypr/binds.lua`. The waybar module shows recording/transcribing status. A meeting recording script (`~/.config/waybar/scripts/meeting-record.sh`) captures audio to 15-minute WAV chunks for later batch transcription via `voxtype transcribe`, toggled with F14 (code:192).
+Voxtype runs as a daemon and is bound to F13 (code:191) as push-to-talk in `~/.config/hypr/binds.lua`. [Logbook](https://github.com/NathanielInman/logbook)'s lamp in waybar shows when it listens. Logbook also records meetings to 15-minute WAV chunks and transcribes them with `voxtype transcribe` when they stop, toggled with F14 (code:192); Shift+F14 marks a moment.
 
 Now for any other essentials for arch
 

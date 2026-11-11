@@ -1,7 +1,7 @@
 # Arch + Hyprland dotfiles
 
 <p align="center">
-  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop with a waybar along the bottom. A build turns the Roundhouse lamp red; its drawer explains that memory is stalling and links to the Switchyard board, where the build finishes and the held one starts. Then the view zooms along the bar from left to right: the song pauses, the volume switches to the headset, the mouse battery runs low, dictation types into the editor, the meeting recorder lights up, the clock starts a focus block, the key lights warm the room, the VPN connects, a swaync notification arrives and do not disturb silences it and hides the song title, and the clock names the next meeting, then turns red to join it.">
+  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop with a waybar along the bottom. A build turns the Roundhouse lamp red; its drawer explains that memory is stalling and links to the Switchyard board, where the build finishes and the held one starts. Then the view zooms along the bar from left to right: the song pauses, the volume switches to the headset, the mouse battery runs low, the Logbook lamp listens while dictation types into the editor, then goes on air for a meeting, the clock starts a focus block, the key lights warm the room, the VPN connects, a swaync notification arrives and do not disturb silences it and hides the song title, and the clock names the next meeting, then turns red to join it.">
 </p>
 
 <p align="center">
@@ -62,9 +62,7 @@ Every widget in [`packages/waybar`](packages/waybar/.config/waybar), as it looks
 | <img src="Pictures/bar/widgets/silence-notifications.svg" height="36" alt="Do not disturb"> | [Do not disturb](packages/waybar/.config/waybar/config.jsonc) | Silences notifications (swaync). Also hides the song title while it is on. | `swaync` |
 | <img src="Pictures/bar/widgets/pulseaudio.svg" height="36" alt="Volume"> | [Volume](packages/waybar/.config/waybar/scripts/audio-switch.sh) | Volume and output. Click to switch the output, right-click to switch the input, middle-click for the mixer. | PipeWire (`wpctl`), `walker`, `pavucontrol` |
 | <img src="Pictures/bar/widgets/mouse-battery.svg" height="36" alt="Mouse battery"> | [Mouse battery](packages/waybar/.config/waybar/scripts/mouse-battery.sh) | The Logitech mouse's charge, amber when low, red when nearly empty. | A Logitech mouse (kernel `hidpp` driver) |
-| <img src="Pictures/bar/widgets/voxtype.svg" height="36" alt="Dictation"> | [Dictation](packages/waybar/.config/waybar/scripts/voxtype-status.sh) | [voxtype](https://voxtype.io) speech to text: hold a key, talk, and it types where the cursor is. Red while listening, amber while transcribing. | [voxtype](https://voxtype.io), `jq` |
-| <img src="Pictures/bar/widgets/meeting-record.svg" height="36" alt="Meeting recorder"> | [Meeting recorder](packages/waybar/.config/waybar/scripts/meeting-record.sh) | Records a meeting in 15 minute chunks and transcribes them with voxtype afterwards. Shows only while recording. | `pw-record`, voxtype |
-| <img src="Pictures/bar/widgets/screen-record.svg" height="36" alt="Screen recorder"> | [Screen recorder](packages/waybar/.config/waybar/scripts/screen-record.sh) | Records the screen with wf-recorder. Shows only while recording. | `wf-recorder`, `slurp`, `ffmpeg` |
+| <img src="Pictures/bar/widgets/logbook.svg" height="36" alt="Logbook"> | [Logbook](packages/waybar/.config/waybar/config.jsonc) | One On Air lamp for the mic: dim while nothing listens, frost while another app has the mic, red with a running clock while a meeting or the screen records, red while dictating, amber while a transcript is made. Click for the [Logbook](https://github.com/NathanielInman/logbook) drawer: the live recording with Stop and Mark, who else has the mic, every recording and its transcript with Copy. Right-click stops, middle-click dictates. | [Logbook](https://github.com/NathanielInman/logbook), [voxtype](https://voxtype.io), `wf-recorder`, `slurp`, `ffmpeg` |
 | <img src="Pictures/bar/widgets/keylights.svg" height="36" alt="Key lights"> | [Key lights](packages/waybar/.config/waybar/scripts/keylights.sh) | Both Elgato Key Lights on or off in one click, over the IoT network. | Elgato Key Lights, `curl` (set the light's IP in the script) |
 | <img src="Pictures/bar/widgets/power-menu.svg" height="36" alt="Power"> | [Power](packages/waybar/.config/waybar/scripts/power-menu.sh) | Idle, lock, log out, suspend, reboot or shut down, through walker. | `walker`, `hyprlock`, `hypridle` |
 | <img src="Pictures/bar/widgets/timetable.svg" height="36" alt="Timetable"> | [Timetable](packages/timetable/.config/timetable/config.toml) | The clock with your next meeting beside it: amber 10 minutes out, red with Join at start time, a countdown during a focus block. Click for the [Timetable](https://github.com/NathanielInman/timetable) drawer: Chicago, EET and GMT side by side, Join on workspace 2, the day with its free gaps, and focus blocks that end before the next meeting. Middle-click joins, right-click opens the calendar. | [Timetable](https://github.com/NathanielInman/timetable), a Google Calendar secret iCal address in broker |
@@ -110,7 +108,7 @@ To use one widget without the rest, copy its script into `~/.config/waybar/scrip
 
 ### Companion programs
 
-Five widgets are front ends for programs that live in their own repos. Install the program, then stow its package here (Signal Box and Tannoy need nothing stowed: their modules are already in the waybar config).
+Six widgets are front ends for programs that live in their own repos. Install the program, then stow its package here (Signal Box, Tannoy and Logbook need nothing stowed: their modules are already in the waybar config).
 
 [**Roundhouse**](https://github.com/NathanielInman/roundhouse) is the lamp: one color for the health of the whole machine, and a drawer with CPU, GPU, memory pressure, network, every disk and share, and memory by app.
 
@@ -144,6 +142,17 @@ git clone https://github.com/NathanielInman/tannoy.git ~/Sites/tannoy
 cd ~/Sites/tannoy && cargo build --release
 install -Dm755 target/release/tannoy target/release/tannoy-board -t ~/.local/bin/
 tannoy doctor
+```
+
+[**Logbook**](https://github.com/NathanielInman/logbook) is the mic lamp: one icon for meetings, screen captures, dictation and any other app with the mic open, and a drawer with the live recording (Stop, Mark), the recordings on disk and their transcripts. It replaced `meeting-record.sh`, `screen-record.sh` and `voxtype-status.sh`. A stopped meeting queues its transcript in Switchyard as a heavy task (`tasks.d/logbook.toml` in the `switchyard` package), so it waits behind builds. F14 (`code:192`) records a meeting, Shift+F14 drops a mark that becomes a heading in the transcript, and Super+R records a region of the screen.
+
+```bash
+sudo pacman -S --needed gtk4 gtk4-layer-shell clang wf-recorder slurp ffmpeg
+git clone https://github.com/NathanielInman/logbook.git ~/Sites/logbook
+cd ~/Sites/logbook && cargo build --release
+install -Dm755 target/release/logbook target/release/logbook-board -t ~/.local/bin/
+logbook setup --systemd     # the Switchyard task and the user service
+logbook doctor
 ```
 
 [**Timetable**](https://github.com/NathanielInman/timetable) is the clock: the next meeting beside the time, amber 10 minutes out and red with Join at start time, and a drawer with Chicago, EET and GMT, the day with its free gaps, and focus blocks that end two minutes before the next meeting (it replaced the pomodoro and `timezone.sh`). It reads Google Calendar's secret iCal address, which lives in broker as `TIMETABLE_ICAL_URL` (public tier, so no touch), never in a file here. Join switches to workspace 2 and opens the Zoom or Meet link; reminders at 5 and 1 minutes go through swaync.
