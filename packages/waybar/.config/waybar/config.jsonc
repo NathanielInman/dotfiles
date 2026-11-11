@@ -57,9 +57,7 @@
   "group/pill-desk": {
     "orientation": "horizontal",
     "modules": [
-      "custom/voxtype",
-      "custom/meeting-record",
-      "custom/screen-record",
+      "custom/logbook",
       "group/desk-drawer"
     ]
   },
@@ -228,35 +226,20 @@
     "on-click-right": "~/.config/waybar/scripts/vpn.sh list",
     "return-type": "json"
   },
-  "custom/voxtype": {
-    "exec": "~/.config/waybar/scripts/voxtype-status.sh",
-    "interval": 0,
+  // Logbook (~/Sites/logbook): one On Air lamp for the mic. Dim while
+  // nothing listens, frost while another app (Zoom, Chrome) has the mic,
+  // red with a running clock while a meeting or the screen records, red and
+  // pulsing while dictating, amber while a capture saves or a transcript is
+  // made. It replaced voxtype-status.sh, meeting-record.sh and
+  // screen-record.sh. Click opens the drawer, right-click stops every
+  // recording, middle-click dictates.
+  "custom/logbook": {
+    "exec": "~/.local/bin/logbook bar",
     "return-type": "json",
-    "format": "{icon}",
-    "format-icons": {
-      "idle": "󰍬",
-      "recording": "󰑊",
-      "transcribing": "⏳",
-      "stopped": "󰍭"
-    },
-    "tooltip": true,
-    "on-click": "voxtype record toggle"
-  },
-  "custom/meeting-record": {
-    // Redrawn on start/stop by the script's pkill -RTMIN+8, never polled
-    "exec": "~/.config/waybar/scripts/meeting-record.sh status",
-    "interval": "once",
-    "signal": 8,
-    "on-click": "~/.config/waybar/scripts/meeting-record.sh toggle",
-    "tooltip-format": "Toggle meeting recording"
-  },
-  "custom/screen-record": {
-    // Redrawn on start/stop by the script's pkill -RTMIN+9, never polled
-    "exec": "~/.config/waybar/scripts/screen-record.sh status",
-    "interval": "once",
-    "signal": 9,
-    "on-click": "~/.config/waybar/scripts/screen-record.sh",
-    "tooltip-format": "Toggle screen recording"
+    "on-click": "~/.local/bin/logbook toggle",
+    "on-click-right": "~/.local/bin/logbook stop",
+    "on-click-middle": "~/.local/bin/logbook dictate",
+    "tooltip": true
   },
   // Switchyard (~/Sites/switchyard, tasks in packages/switchyard): the board of
   // builds, launches and deploys that replaced the games drawer. The signal

@@ -113,9 +113,7 @@ window#waybar.empty #window {
 #custom-silence-notifications,
 #pulseaudio,
 #custom-mouse-battery,
-#custom-voxtype,
-#custom-meeting-record,
-#custom-screen-record,
+#custom-logbook,
 #custom-desk-handle,
 #custom-keylights,
 #custom-power-menu {
@@ -129,9 +127,7 @@ window#waybar.empty #window {
 #custom-roundhouse:hover,
 #custom-keylights:hover,
 #custom-vpn:hover,
-#custom-voxtype:hover,
-#custom-meeting-record:hover,
-#custom-screen-record:hover,
+#custom-logbook:hover,
 #custom-silence-notifications:hover,
 #custom-switchyard:hover,
 #custom-broker:hover,
@@ -326,24 +322,37 @@ window#waybar.empty #window {
 
 /* ---- Desk ---- */
 
-/* Dictation: dim mic at rest, red while listening, amber while typing */
-#custom-voxtype,
-#custom-voxtype.idle,
-#custom-voxtype.stopped {
+/* Logbook: the mic lamp. Dim while nothing listens, frost while another
+   app has the mic, red while Logbook records (with its clock) or voxtype
+   listens, amber while a capture saves or a transcript is made. */
+#custom-logbook,
+#custom-logbook.off,
+#custom-logbook.offline {
   color: @dim;
 }
 
-#custom-voxtype.recording {
+#custom-logbook.mic {
+  color: @frost;
+}
+
+#custom-logbook.recording,
+#custom-logbook.dictating {
   color: @red;
 }
 
-#custom-voxtype.transcribing {
+#custom-logbook.dictating {
+  animation: logbook-listen 1s ease-in-out infinite alternate;
+}
+
+#custom-logbook.processing,
+#custom-logbook.transcribing {
   color: @yellow;
 }
 
-#custom-meeting-record,
-#custom-screen-record {
-  color: @red;
+@keyframes logbook-listen {
+  to {
+    color: #6e3b40;
+  }
 }
 
 #custom-desk-handle {
