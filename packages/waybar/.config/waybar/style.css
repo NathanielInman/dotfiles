@@ -394,6 +394,11 @@ window#waybar.empty #window {
   color: @green;
 }
 
+/* Your own time (Focus time, lunch): a soft green, nothing urgent. */
+#custom-timetable.own {
+  color: alpha(@green, 0.72);
+}
+
 #custom-timetable.offline {
   color: @dim;
 }
