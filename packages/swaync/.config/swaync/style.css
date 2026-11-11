@@ -1,140 +1,230 @@
-/* Nord-themed SwayNC */
+/* Nord SwayNC, styled like Walker's dmenu and Waybar's pills
+ *
+ * Same palette, font and glass as packages/walker's nord theme: a frosted
+ * panel with a thin slate border, rounded corners, and the bar's blue tint
+ * for hover. Hyprland blurs the swaync layers (rules.lua).
+ *
+ * Urgency follows the bar's one palette rule: low is dim, normal is frost,
+ * and red only ever means "needs you". Some senders (e.g. kitty relaying
+ * Claude Code) omit the urgency hint, so swaync adds no urgency class and
+ * the card falls back to the base (normal) look.
+ *
+ * swaync loads its default stylesheet first; with cssPriority "user" these
+ * rules win over it regardless of selector specificity.
+ */
+
+@define-color fg       #C5C8C6;
+@define-color bright   #D8DEE9;
+@define-color dim      #616E88;
+@define-color line     #4C566A;
+@define-color frost    #88C0D0;
+@define-color blue     #81A1C1;
+@define-color yellow   #EBCB8B;
+@define-color red      #BF616A;
+
+:root {
+  --cc-bg: rgba(40, 42, 46, 0.9);
+  --noti-bg: 40, 42, 46;
+  --noti-bg-alpha: 0.9;
+  --noti-border-color: rgba(76, 86, 106, 0.55);
+  --noti-bg-hover: rgba(129, 161, 193, 0.12);
+  --noti-bg-focus: rgba(129, 161, 193, 0.12);
+  --noti-close-bg: rgba(76, 86, 106, 0.3);
+  --noti-close-bg-hover: rgba(191, 97, 106, 0.4);
+  --text-color: #C5C8C6;
+  --text-color-disabled: #616E88;
+  --bg-selected: #81A1C1;
+  --border-radius: 12px;
+  --font-size-body: 14px;
+  --font-size-summary: 15px;
+}
 
 * {
   font-family: "PragmataPro Liga", monospace;
   font-size: 14px;
 }
 
-.control-center {
-  background: #2e3440;
-  border: 2px solid #4c566a;
-  border-radius: 6px;
-  color: #d8dee9;
-}
-
-.control-center .notification-row {
-  border-bottom: 1px solid #3b4252;
-}
-
-/* Base card doubles as the "normal" look: some senders (e.g. kitty
-   relaying Claude Code) omit the urgency hint, so swaync adds no urgency
-   class and the card falls back to this rule. */
+/* ---- Cards ---- */
 .notification {
-  background: linear-gradient(to right, #445161, #3b4252 60%);
-  border: 1px solid #5e81ac;
-  border-left: 4px solid #88c0d0;
-  border-radius: 6px;
-  margin: 4px;
-  padding: 8px;
-  color: #d8dee9;
+  background: rgba(40, 42, 46, 0.9);
+  border: 1px solid rgba(76, 86, 106, 0.55);
+  border-radius: 12px;
+  padding: 6px;
+  color: @fg;
+}
+
+.notification-row:focus,
+.notification-group:focus {
+  background: transparent;
+}
+
+.notification-default-action {
+  border-radius: 9px;
+}
+
+.notification-default-action:hover {
+  background: rgba(129, 161, 193, 0.12);
 }
 
 .notification .summary {
-  color: #88c0d0;
+  color: @frost;
+  font-size: 15px;
   font-weight: bold;
 }
 
 .notification .body {
-  color: #d8dee9;
+  color: @fg;
 }
 
 .notification .time {
-  color: #5e81ac;
+  color: @dim;
+  font-size: 12px;
+  font-weight: normal;
 }
 
-/* Critical: aurora-red error card. Left accent bar plus a wine-tinted
-   gradient bleeding back into the normal surface (GTK4, so no box-shadow). */
+/* Critical: the same panel with a red edge and a faint wine tint */
 .notification.critical {
-  background: linear-gradient(to right, #4c3b45, #3b4252 60%);
-  border: 1px solid #bf616a;
-  border-left: 4px solid #bf616a;
+  background: rgba(54, 40, 46, 0.92);
+  border: 1px solid rgba(191, 97, 106, 0.75);
 }
 
 .notification.critical .summary {
-  color: #bf616a;
+  color: @red;
 }
 
 .notification.critical .body {
-  color: #e5e9f0;
+  color: @bright;
 }
 
-.notification.critical .time {
-  color: #d08770;
-}
-
-/* Low: quiet polar-night card that stays out of the way. */
-.notification.low {
-  background: #353c48;
-  border: 1px solid #434c5e;
-  border-left: 4px solid #4c566a;
-}
-
+/* Low: quiet, so it stays out of the way */
 .notification.low .summary {
-  color: #81a1c1;
+  color: @blue;
+  font-weight: normal;
 }
 
+.notification.low .body,
 .notification.low .time {
-  color: #4c566a;
+  color: @dim;
 }
 
+/* ---- Buttons: dim keycaps, like Walker's F1-F4 hints ---- */
 .close-button {
-  background: #434c5e;
-  color: #d8dee9;
-  border-radius: 4px;
+  background: rgba(76, 86, 106, 0.3);
+  color: @dim;
   border: none;
-  padding: 2px 8px;
+  border-radius: 7px;
+  min-width: 22px;
+  min-height: 22px;
 }
 
 .close-button:hover {
-  background: #bf616a;
+  background: rgba(191, 97, 106, 0.4);
+  color: @bright;
 }
 
-.control-center .widget-title {
-  color: #81a1c1;
-  font-weight: bold;
-  margin: 8px;
-}
-
-.control-center .widget-title button {
-  background: #434c5e;
-  color: #d8dee9;
-  border-radius: 4px;
+.notification-action > button,
+.inline-reply-button {
+  background: rgba(76, 86, 106, 0.3);
+  color: @fg;
   border: none;
+  border-radius: 7px;
+}
+
+.notification-action > button:hover,
+.inline-reply-button:hover {
+  background: rgba(129, 161, 193, 0.18);
+  color: @bright;
+}
+
+.inline-reply-entry {
+  background: rgba(55, 59, 65, 0.6);
+  border: 1px solid rgba(76, 86, 106, 0.4);
+  border-radius: 8px;
+  color: @bright;
+  caret-color: @frost;
+}
+
+progressbar progress {
+  background: @frost;
+  border-radius: 4px;
+}
+
+/* ---- Control center: the same panel as Walker ---- */
+.control-center {
+  background: rgba(40, 42, 46, 0.9);
+  border: 1px solid rgba(76, 86, 106, 0.55);
+  border-radius: 12px;
+  color: @fg;
+}
+
+/* Cards inside the panel are opaque: a collapsed group stacks its other
+   cards behind the top one, and glass would let them show through */
+.control-center .notification {
+  background: rgb(50, 53, 59);
+  border-color: rgba(76, 86, 106, 0.55);
+  box-shadow: none;
+}
+
+.control-center .notification.critical {
+  background: rgb(62, 45, 52);
+  border-color: rgba(191, 97, 106, 0.75);
+}
+
+.control-center .control-center-list-placeholder {
+  color: @dim;
+}
+
+.control-center .widget-title > label {
+  color: @bright;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.control-center .widget-title > button {
+  background: rgba(76, 86, 106, 0.3);
+  color: @fg;
+  border: none;
+  border-radius: 7px;
   padding: 4px 12px;
 }
 
-.control-center .widget-title button:hover {
-  background: #bf616a;
+.control-center .widget-title > button:hover {
+  background: rgba(191, 97, 106, 0.4);
+  color: @bright;
 }
 
-.control-center .widget-dnd {
-  margin: 8px;
-  color: #d8dee9;
+.control-center .widget-dnd label {
+  color: @fg;
+  font-size: 14px;
 }
 
 .control-center .widget-dnd > switch {
-  background: #434c5e;
-  border-radius: 12px;
+  background: rgba(76, 86, 106, 0.45);
+  border: none;
+  border-radius: 7px;
 }
 
+/* Amber while silenced, like the bar's do not disturb bell */
 .control-center .widget-dnd > switch:checked {
-  background: #81a1c1;
+  background: @yellow;
 }
 
 .control-center .widget-dnd > switch slider {
-  background: #d8dee9;
-  border-radius: 50%;
+  background: @bright;
+  border-radius: 5px;
 }
 
 .widget-inhibitors {
-  margin: 8px;
-  color: #d8dee9;
+  color: @fg;
 }
 
-.floating-notifications {
-  background: transparent;
+.widget-inhibitors > button {
+  background: rgba(76, 86, 106, 0.3);
+  border: none;
+  border-radius: 7px;
 }
 
+.floating-notifications,
 .blank-window {
   background: transparent;
 }
