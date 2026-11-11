@@ -1,18 +1,27 @@
-@define-color selected-text #81a1c1;
-@define-color text #d8dee9;
-@define-color base #2e3440;
-@define-color border #d8dee9;
-@define-color foreground #d8dee9;
-@define-color background #2e3440;
+/* Nord Walker, styled as one of Waybar's pills (packages/waybar style.css)
+ *
+ * Same palette, font and glass: a frosted panel with a thin slate border,
+ * rounded corners, and the bar's blue tint for the selected row. Hyprland
+ * blurs the "walker" layer (rules.lua) so the panel reads as glass like
+ * the bar does.
+ */
+
+@define-color fg       #C5C8C6;
+@define-color bright   #D8DEE9;
+@define-color dim      #616E88;
+@define-color line     #4C566A;
+@define-color frost    #88C0D0;
+@define-color blue     #81A1C1;
+@define-color red      #BF616A;
 
 * {
   all: unset;
 }
 
 * {
-  font-family: monospace;
-  font-size: 18px;
-  color: @text;
+  font-family: "PragmataPro Liga", monospace;
+  font-size: 16px;
+  color: @fg;
 }
 
 scrollbar {
@@ -27,38 +36,63 @@ scrollbar {
   -gtk-icon-size: 32px;
 }
 
+/* The pill: waybar's pill background a little more opaque, since the
+   panel sits over windows instead of the wallpaper */
 .box-wrapper {
-  background: alpha(@base, 0.95);
-  padding: 20px;
-  border: 2px solid @border;
+  background: rgba(40, 42, 46, 0.9);
+  border: 1px solid rgba(76, 86, 106, 0.55);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
 .search-container {
-  background: @base;
-  padding: 10px;
+  background: rgba(55, 59, 65, 0.6);
+  border: 1px solid rgba(76, 86, 106, 0.4);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.input {
+  caret-color: @frost;
+  color: @bright;
 }
 
 .input placeholder {
-  opacity: 0.5;
+  color: @dim;
+  opacity: 1;
 }
 
-.input:focus,
-.input:active {
-  box-shadow: none;
-  outline: none;
+.input selection {
+  background: rgba(129, 161, 193, 0.3);
 }
 
-child:selected .item-box * {
-  color: @selected-text;
+.elephant-hint,
+.placeholder {
+  color: @dim;
+  padding: 10px 12px;
 }
 
+/* Rows take the bar's hover and active-workspace tints */
 .item-box {
-  padding-left: 14px;
+  border-radius: 7px;
+  padding: 10px 12px;
+}
+
+child:hover .item-box {
+  background: rgba(129, 161, 193, 0.12);
+}
+
+child:selected .item-box {
+  background: rgba(129, 161, 193, 0.26);
+}
+
+child:selected .item-box .item-text {
+  color: @bright;
 }
 
 .item-text-box {
   all: unset;
-  padding: 14px 0;
 }
 
 .item-subtext {
@@ -69,16 +103,64 @@ child:selected .item-box * {
 }
 
 .item-image {
-  margin-right: 14px;
+  margin-right: 12px;
   -gtk-icon-transform: scale(0.9);
 }
 
-.current {
-  font-style: italic;
+/* F1, F2...: small dim keycaps, like the bar's quiet modules */
+.item-quick-activation {
+  color: @dim;
+  font-size: 13px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(76, 86, 106, 0.3);
 }
 
-.keybind-hints {
-  background: @background;
+child:selected .item-quick-activation {
+  color: @blue;
+}
+
+/* The row a dmenu caller marks with --current */
+.current {
+  font-style: normal;
+  color: @frost;
+}
+
+.preview {
+  border: 1px solid rgba(76, 86, 106, 0.55);
+  border-radius: 8px;
+  color: @fg;
+}
+
+.keybinds {
+  padding-top: 10px;
+  border-top: 1px solid rgba(76, 86, 106, 0.4);
+  font-size: 12px;
+  color: @dim;
+}
+
+.keybind-button {
+  opacity: 0.7;
+}
+
+.keybind-button:hover {
+  opacity: 1;
+}
+
+.keybind-bind {
+  text-transform: lowercase;
+  opacity: 0.6;
+}
+
+.keybind-label {
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid @line;
+}
+
+.error {
   padding: 10px;
-  margin-top: 10px;
+  border-radius: 7px;
+  background: @red;
+  color: #282A2E;
 }
