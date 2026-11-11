@@ -1,25 +1,61 @@
+/* Nord SwayOSD, styled like Walker, swaync and Waybar's pills
+ *
+ * The same frosted panel (Hyprland blurs the "swayosd" layer, rules.lua),
+ * thin slate border and rounded corners. The level fills frost, and goes
+ * dim while muted, following the bar's rule: off is dim, on is a color.
+ */
+
+@define-color fg     #C5C8C6;
+@define-color bright #D8DEE9;
+@define-color dim    #616E88;
+@define-color frost  #88C0D0;
+
 window#osd {
-    border-radius: 999px;
-    background-color: rgba(46, 52, 64, 0.9);
+  background: rgba(40, 42, 46, 0.9);
+  border: 1px solid rgba(76, 86, 106, 0.55);
+  border-radius: 12px;
 }
 
 window#osd #container {
-    margin: 16px;
+  margin: 14px 18px;
 }
 
 window#osd image,
 window#osd label {
-    color: #d8dee9;
+  color: @bright;
+  font-family: "PragmataPro Liga", monospace;
 }
 
-window#osd progressbar trough {
-    background-color: rgba(216, 222, 233, 0.2);
-    border-radius: 999px;
-    min-height: 6px;
+window#osd progressbar,
+window#osd segmentedprogress {
+  min-height: 6px;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
 }
 
-window#osd progressbar progress {
-    background-color: #81a1c1;
-    border-radius: 999px;
-    min-height: 6px;
+window#osd trough,
+window#osd segment {
+  min-height: inherit;
+  border-radius: inherit;
+  border: none;
+  background: rgba(76, 86, 106, 0.45);
+}
+
+window#osd progress,
+window#osd segment.active {
+  min-height: inherit;
+  border-radius: inherit;
+  border: none;
+  background: @frost;
+}
+
+/* Muted */
+window#osd image:disabled {
+  color: @dim;
+}
+
+window#osd progressbar:disabled progress,
+window#osd segmentedprogress:disabled segment.active {
+  background: @dim;
 }
