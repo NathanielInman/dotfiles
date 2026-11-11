@@ -81,49 +81,25 @@
     "tooltip-format": "Key lights, power"
   },
   "hyprland/workspaces": {
-    // The workspace's own icon, then a small dim glyph per open window, so
-    // a stray Chrome on 8 or a Godot build on 9 shows without switching
-    "format": "{icon}{windows}",
+    // A dim number, then a glyph per open window: a mini list of what each
+    // workspace holds, with no assumptions about what goes where. An empty
+    // workspace shows only its number.
+    "format": "<span alpha='55%'>{id}</span>{windows}",
     "format-window-separator": "",
-    "window-rewrite-default": "<span size='72%' alpha='70%'> </span>",
+    "window-rewrite-default": " ",
     "window-rewrite": {
-      "class<google-chrome>": "<span size='72%' alpha='70%'> </span>",
-      "class<slack>": "<span size='72%' alpha='70%'> </span>",
-      "class<discord>": "<span size='72%' alpha='70%'> </span>",
-      "class<com.t3tools.T3Code>": "<span size='72%' alpha='70%'> </span>",
-      "class<neovide>": "<span size='72%' alpha='70%'> </span>",
-      "class<kitty>": "<span size='72%' alpha='70%'> </span>",
-      "class<float-term>": "<span size='72%' alpha='70%'> </span>",
-      "class<vit>": "<span size='72%' alpha='70%'> </span>",
-      "class<zoom>": "<span size='72%' alpha='70%'> </span>",
-      "class<Godot.*>": "<span size='72%' alpha='70%'> </span>",
-      "class<blender>": "<span size='72%' alpha='70%'> </span>",
-      "class<Emulator>": "<span size='72%' alpha='70%'> </span>"
-    },
-    "format-icons": {
-      "1": "",
-      "2": "",
-      "3": "",
-      "4": "",
-      "5": "",
-      "6": "",
-      "7": "",
-      "8": "",
-      "9": "",
-      "10": ""
-    },
-    "tooltips": {
-      "1": "Browser (Chrome)",
-      "2": "Work Slack + Zoom",
-      "3": "Discord",
-      "4": "T3 Code",
-      "5": "Notes / todos",
-      "6": "Background Work",
-      "7": "Critical Work",
-      "8": "Regular Work",
-      "9": "Cosmetic Work",
-      "10": "Bug Work",
-      "default": "{name}"
+      "class<google-chrome>": " ",
+      "class<slack>": " ",
+      "class<discord>": " ",
+      "class<com.t3tools.T3Code>": " ",
+      "class<neovide>": " ",
+      "class<kitty>": " ",
+      "class<float-term>": " ",
+      "class<vit>": " ",
+      "class<zoom>": " ",
+      "class<Godot.*>": " ",
+      "class<blender>": " ",
+      "class<Emulator>": " "
     },
     "ignore-workspaces": [
       "^1[1-9]$",
