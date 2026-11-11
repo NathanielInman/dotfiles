@@ -35,6 +35,10 @@ ignored_containers = [
 "Blender MCP" = "uv venv -q --allow-existing --python /usr/bin/python3 ~/.local/share/blender-mcp && uv pip install -q --upgrade --python ~/.local/share/blender-mcp 'git+https://projects.blender.org/lab/blender_mcp.git#subdirectory=mcp'"
 
 [post_commands]
+# Upgrades can leave dependencies nothing needs any more. pacman lists them
+# and asks before removing; with none it prints nothing. Targets go in on
+# stdin because topgrade runs this in zsh, which won't word-split $o.
+"Remove orphans" = "o=$(pacman -Qdtq) || exit 0; printf '%s\\n' \"$o\" | sudo pacman -Rns -"
 # Long-running GTK daemons keep old (now-deleted) .so mappings after an
 # in-place glibc/gtk upgrade and eventually segfault; bounce waybar so it
 # reloads against the fresh libraries. Restart is instant and stateless.
