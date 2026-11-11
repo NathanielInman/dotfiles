@@ -127,6 +127,7 @@ qt6-multimedia-ffmpeg
 qt6-wayland
 ripgrep
 rsync
+rtkit
 rustup
 scrcpy
 sd

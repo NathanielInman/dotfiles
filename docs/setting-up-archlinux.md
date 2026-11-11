@@ -274,6 +274,7 @@ Sound and bluetooth. PipeWire replaces PulseAudio and is enabled **per-user** la
 - `pipewire-audio` - the default audio server for pipewire
 - `pipewire-alsa` - provides support for older ALSA API applications
 - `pipewire-pulse` - provides support for older pulse audio API applications
+- `rtkit` - grants PipeWire realtime priority so audio keeps playing under heavy CPU load. Only an optional dependency of `pipewire`, so nothing else installs it
 - `bluez` - bluetooth protocol stack
 - `bluez-utils` - provides bluetoothctl utility
 - `bluez-deprecated-tools` - `hcitool` (RSSI, link role/policy); needed by the `bt-force-central` fix below
@@ -281,7 +282,7 @@ Sound and bluetooth. PipeWire replaces PulseAudio and is enabled **per-user** la
 - `blueberry` - bluetooth GUI applet (**AUR**, install with `paru`, not pacman)
 
 ```
-pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse bluez bluez-utils bluez-deprecated-tools headsetcontrol
+pacman -S alsa-utils pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse rtkit bluez bluez-utils bluez-deprecated-tools headsetcontrol
 paru -S blueberry
 systemctl enable bluetooth.service --now
 ```
@@ -480,7 +481,7 @@ systemctl --user enable pipewire pipewire-pulse wireplumber --now
 Two problems need fixing, and the `pipewire` stow package has a drop-in for each:
 
 - **Node suspend/idle.** When Zoom goes quiet, the PipeWire sink can take a second or two to wake up and clip the start of sentences. The `pw-metadata` runtime commands don't survive a reboot, so `~/.config/wireplumber/wireplumber.conf.d/50-no-suspend.conf` sets `session.suspend-timeout-seconds = 0` on every ALSA node.
-- **No realtime priority.** PipeWire gets realtime scheduling from `rtkit`, which is D-Bus activated. At login PipeWire can ask before rtkit is up; the request fails silently and every audio thread stays at nice 0 / `SCHED_OTHER` until the next restart, so a busy CPU makes playback stutter even with the network fine. `~/.config/systemd/user/pipewire.service.d/10-wait-for-rtkit.conf` wakes rtkit before PipeWire starts. `wireplumber` and `pipewire-pulse` are ordered after `pipewire.service`, so it covers all three.
+- **No realtime priority.** PipeWire gets realtime scheduling from `rtkit`, which is D-Bus activated. At login PipeWire can ask before rtkit is up; the request fails silently and every audio thread stays at nice 0 / `SCHED_OTHER` until the next restart, so a busy CPU makes playback stutter even with the network fine. `~/.config/systemd/user/pipewire.service.d/10-wait-for-rtkit.conf` wakes rtkit before PipeWire starts. `wireplumber` and `pipewire-pulse` are ordered after `pipewire.service`, so it covers all three. The drop-in can't install rtkit, and it starts PipeWire anyway when rtkit is missing, so check with the loop below: the 2026-11 reinstall ran five days without rtkit (PipeWire logs `RTKit error: org.freedesktop.DBus.Error.ServiceUnknown`) before anyone noticed.
 
 ```
 ./install.sh pipewire
