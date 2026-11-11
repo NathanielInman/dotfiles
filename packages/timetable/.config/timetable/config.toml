@@ -18,6 +18,9 @@ clock_color = "#B48EAD"
 [join]
 # Work Slack + Zoom
 workspace = "2"
+# Chrome's work profile ("Profile 1"), not whichever Chrome profile was
+# used last.
+opener = 'google-chrome-stable --profile-directory="Profile 1"'
 
 [drawer]
 calendar_hint = "right-click the clock for gnome-calendar"
