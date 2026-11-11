@@ -26,7 +26,8 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("bash -c 'until swayosd-server; do sleep 1; done'")
   hl.exec_cmd("sway-audio-idle-inhibit")
   hl.exec_cmd("walker --gapplication-service")
-  hl.exec_cmd("voxtype")
+  -- voxtype runs as a systemd user service (voxtype.service, enabled via
+  -- `systemctl --user enable voxtype`) so it restarts if PipeWire drops it
 
   -- App launches per workspace
   -- Chrome flags (wayland, restore-last-session) live in ~/.config/chrome-flags.conf

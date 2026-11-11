@@ -1002,7 +1002,13 @@ voxtype setup
 voxtype setup gpu --enable  # optional, requires vulkan-icd-loader
 ```
 
-Voxtype runs as a daemon and is bound to F13 (code:191) as push-to-talk in `~/.config/hypr/binds.lua`. [Logbook](https://github.com/NathanielInman/logbook)'s lamp in waybar shows when it listens. Logbook also records meetings to 15-minute WAV chunks and transcribes them with `voxtype transcribe` when they stop, toggled with F14 (code:192); Shift+F14 marks a moment.
+Enable the daemon as a user service so it starts with the session and comes back if PipeWire restarts under it (the `hyprland` package stows a `voxtype.service.d/10-restart.conf` drop-in that sets `Restart=always`):
+
+```
+systemctl --user enable --now voxtype
+```
+
+Voxtype is bound to F13 (code:191) as push-to-talk in `~/.config/hypr/binds.lua`. [Logbook](https://github.com/NathanielInman/logbook)'s lamp in waybar shows when it listens. Logbook also records meetings to 15-minute WAV chunks and transcribes them with `voxtype transcribe` when they stop, toggled with F14 (code:192); Shift+F14 marks a moment.
 
 Now for any other essentials for arch
 
