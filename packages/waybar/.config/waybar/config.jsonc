@@ -53,11 +53,13 @@
     ]
   },
   // Dictation and the recorders stay in view (the recorders only show while
-  // recording); the rarely touched toggles slide out of the arrow on hover
+  // recording); the rarely touched toggles slide out of the arrow on hover.
+  // Anything that is on stays in view: lit key lights leave the drawer.
   "group/pill-desk": {
     "orientation": "horizontal",
     "modules": [
       "custom/logbook",
+      "custom/keylights#lit",
       "group/desk-drawer"
     ]
   },
@@ -171,11 +173,20 @@
     "interval": 60,
     "format": "{}"
   },
+  // Key lights: the drawer holds the lamp while it is off, and
+  // custom/keylights#lit shows it beside Logbook while it is on. The toggle
+  // redraws both through pkill -RTMIN+10; the poll only catches changes made
+  // from the Elgato app or the lightson/lightsoff aliases.
   "custom/keylights": {
-    "exec": "~/.config/waybar/scripts/keylights.sh",
+    "exec": "~/.config/waybar/scripts/keylights.sh off",
     "return-type": "json",
-    // The toggle redraws through pkill -RTMIN+10; the poll only catches
-    // changes made from the Elgato app or the lightson/lightsoff aliases
+    "interval": 60,
+    "signal": 10,
+    "on-click": "~/.config/waybar/scripts/keylights-toggle.sh"
+  },
+  "custom/keylights#lit": {
+    "exec": "~/.config/waybar/scripts/keylights.sh on",
+    "return-type": "json",
     "interval": 60,
     "signal": 10,
     "on-click": "~/.config/waybar/scripts/keylights-toggle.sh"

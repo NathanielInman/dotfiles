@@ -21,6 +21,7 @@ JetBrains Mono Nerd Font Propo (OFL). Needs fontTools.
 import json
 import re
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 sys.dont_write_bytecode = True  # no __pycache__ next to widgets.py and story.py
@@ -122,7 +123,8 @@ class Css:
 def css_id(module: str) -> str:
     if module.startswith("hyprland/"):
         return module.split("/", 1)[1]
-    return module.replace("/", "-")
+    # waybar leaves a "#name" suffix out of the CSS id (it becomes a class)
+    return module.split("#", 1)[0].replace("/", "-")
 
 
 CONFIG = load_jsonc(WAYBAR / "config.jsonc")
@@ -630,6 +632,23 @@ def hero() -> str:
 STRIP_STEP = 1.6
 
 
+def with_parts(m: Mod) -> Mod:
+    """A module drawn as one widget with its "#name" parts (the lit key
+    lights beside the drawer): each state shows whichever part prints it."""
+    parts = [m.w] + [p.w for p in RIGHT if p.name.split("#", 1)[0] == m.name and p is not m]
+    states = {
+        s: next((p.states[s] for p in parts if s in p.states and any(p.states[s].frames)), st)
+        for s, st in m.w.states.items()
+    }
+    return Mod(m.name, replace(m.w, states=states))
+
+
+def own_widgets() -> list[Mod]:
+    """The right side's custom modules with a strip and a table row each;
+    "#name" parts are drawn inside their module's strip instead."""
+    return [with_parts(m) for m in RIGHT if m.w.kind == "custom" and "#" not in m.name]
+
+
 def strip(m: Mod):
     states = [s for s, st in m.w.states.items() if any(st.frames)]
     if not states:
@@ -646,9 +665,7 @@ def strip(m: Mod):
 
 def write_table():
     rows = ["| | Widget | What it does | Needs |", "|---|---|---|---|"]
-    for m in RIGHT:
-        if m.w.kind != "custom":
-            continue
+    for m in own_widgets():
         slug = m.name.split("/")[-1]
         rows.append(
             f'| <img src="Pictures/bar/widgets/{slug}.svg" height="36" alt="{esc(m.w.name)}"> '
@@ -667,9 +684,7 @@ def main():
     (OUT / "widgets").mkdir(parents=True, exist_ok=True)
     (OUT / "hero.svg").write_text(hero(), encoding="utf-8")
     keep = set()
-    for m in RIGHT:
-        if m.w.kind != "custom":
-            continue
+    for m in own_widgets():
         s = strip(m)
         if s:
             slug = m.name.split("/")[-1]

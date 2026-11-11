@@ -152,7 +152,15 @@ WIDGETS: dict[str, Widget] = {
         "Both Elgato Key Lights on or off in one click, over the IoT network.",
         f"{WAYBAR}/scripts/keylights.sh",
         needs="Elgato Key Lights, `curl` (set the light's IP in the script)",
-        states={"off": State("\U000f0335", "off"), "on": State("\U000f06e8", "on")},
+        states={"off": State("\U000f0335", "off"), "on": State("", "on")},
+        default="off",
+    ),
+    # The same lamp outside the desk drawer, shown only while the lights are on
+    "custom/keylights#lit": Widget(
+        "Key lights",
+        "",
+        f"{WAYBAR}/scripts/keylights.sh",
+        states={"off": State("", "off"), "on": State("\U000f06e8", "on")},
         default="off",
     ),
     "custom/vpn": Widget(

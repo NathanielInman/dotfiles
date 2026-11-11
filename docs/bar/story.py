@@ -82,7 +82,7 @@ BEATS: list[Beat] = [
     Beat(22.4, set={"custom/timetable": "focus"},
          caption=("Timetable", "a focus block that ends before the next meeting")),
     Beat(23.8, camera=(ZOOM, "custom/keylights")),
-    Beat(24.4, click="custom/keylights", set={"custom/keylights": "on"}, scene="lights-on",
+    Beat(24.4, click="custom/keylights", set={"custom/keylights": "on", "custom/keylights#lit": "on"}, scene="lights-on",
          caption=("Key lights", "both Elgato lights in one click")),
     Beat(25.8, camera=(ZOOM, "custom/vpn")),
     Beat(26.3, click="custom/vpn", set={"custom/vpn": "connected"},
@@ -104,6 +104,7 @@ BEATS: list[Beat] = [
          set={
              "custom/timetable": "free",
              "custom/keylights": "off",
+             "custom/keylights#lit": "off",
              "custom/silence-notifications": "off",
              "custom/tannoy": "playing",
              "custom/logbook": "off",
