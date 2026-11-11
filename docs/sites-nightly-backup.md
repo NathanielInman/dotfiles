@@ -43,8 +43,8 @@ just that commit to a backup ref:
 GIT_INDEX_FILE=$tmp git read-tree HEAD      # seed temp index from HEAD
 GIT_INDEX_FILE=$tmp git add -A              # capture the dirty tree (temp index only)
 tree=$(GIT_INDEX_FILE=$tmp git write-tree)
-commit=$(git commit-tree "$tree" -p HEAD -m "chore(backup): nightly snapshot ...")
-git push --force origin "$commit:refs/heads/backup/auto/<host>/<branch>"
+commit=$(git commit-tree "$tree" -p HEAD -m "chore(backup): nightly snapshot ... [skip ci]")
+git push -o ci.skip --force origin "$commit:refs/heads/backup/auto/<host>/<branch>"
 ```
 
 Your real index, `HEAD`, current branch, and working files are never touched. The
@@ -52,10 +52,22 @@ backup branch is a single rolling snapshot per source branch (force-updated nigh
 because uncommitted work is cumulative, last night's snapshot already contains
 everything you haven't self-committed, so no branch sprawl or history pruning is needed.
 
+### No CI on backup pushes
+
+Backup pushes never start a pipeline. The nightly job re-pushes the same WIP every
+night, so on work repos each push used to run (or fail) a full GitLab pipeline,
+spending company CI minutes and sending failure mail for a branch nobody reviews.
+
+- Every backup commit message ends in `[skip ci]`, which GitLab and GitHub Actions
+  both honor. On owned repos this also keeps a 3am WIP commit from deploying.
+- Pushes to GitLab remotes add `-o ci.skip`, so GitLab creates no pipeline at all
+  (not even a "skipped" one). GitHub rejects push options, so they are only sent
+  when the remote URL contains `gitlab`.
+
 ### No LLM by design
 
-Commit messages are deterministic (`chore: nightly backup <ts>` /
-`chore(backup): nightly snapshot <ts>`) - Claude is intentionally **not** invoked. The
+Commit messages are deterministic (`chore: nightly backup <ts> [skip ci]` /
+`chore(backup): nightly snapshot <ts> [skip ci]`) - Claude is intentionally **not** invoked. The
 backup has to succeed unattended at 3am even when rate-limited or offline, so it must
 never depend on a network LLM or an OAuth token refresh.
 

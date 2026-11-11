@@ -59,6 +59,18 @@ HOST="$(printf '%s' "$(uname -n)" | tr 'A-Z' 'a-z' | tr -c 'a-z0-9._-' '-')"
 
 # --- helpers ---------------------------------------------------------------
 
+# Backup pushes must never start CI: they re-push the same WIP nightly and would
+# burn pipeline minutes (and send failure mail) on work repos. Every backup commit
+# carries "[skip ci]" (honored by GitLab and GitHub Actions); GitLab remotes also
+# get the ci.skip push option so no pipeline is created at all. GitHub rejects
+# push options, so they're only sent to GitLab.
+SKIP_CI_TAG='[skip ci]'
+ci_skip_opts() {
+  local url
+  url="$(git -C "$1" remote get-url origin 2>/dev/null)"
+  [[ "${url,,}" == *gitlab* ]] && printf '%s\n' -o ci.skip
+}
+
 # Lowercased first path segment of a remote URL (the github org / gitlab top
 # group). Handles https://, ssh://, and scp-style git@host:owner/repo forms.
 repo_owner() {
@@ -129,10 +141,12 @@ snapshot_and_push() {
   rm -f "$idx"
 
   commit="$(git -C "$repo" commit-tree "$tree" -p HEAD \
-              -m "chore(backup): nightly snapshot $TS")" || {
+              -m "chore(backup): nightly snapshot $TS $SKIP_CI_TAG")" || {
     log "  ERROR: failed to build snapshot commit"; return 1; }
 
-  if git -C "$repo" push --no-verify --force origin "$commit:$ref" >>"$LOG_FILE" 2>&1; then
+  local -a opts
+  mapfile -t opts < <(ci_skip_opts "$repo")
+  if git -C "$repo" push --no-verify "${opts[@]}" --force origin "$commit:$ref" >>"$LOG_FILE" 2>&1; then
     log "  snapshot pushed -> $ref"
   else
     log "  !!! ERROR: snapshot push FAILED -> $ref (backup did not reach remote)"
@@ -151,15 +165,17 @@ commit_and_push() {
   fi
 
   git -C "$repo" add -A -- . "${EXCLUDES[@]}"
-  git -C "$repo" commit -m "chore: nightly backup $TS" >>"$LOG_FILE" 2>&1 || {
+  git -C "$repo" commit -m "chore: nightly backup $TS $SKIP_CI_TAG" >>"$LOG_FILE" 2>&1 || {
     log "  nothing staged to commit (all changes excluded?)"; return 0; }
 
-  if git -C "$repo" push --no-verify >>"$LOG_FILE" 2>&1; then
+  local -a opts
+  mapfile -t opts < <(ci_skip_opts "$repo")
+  if git -C "$repo" push --no-verify "${opts[@]}" >>"$LOG_FILE" 2>&1; then
     log "  committed + pushed on '$branch'"
   else
     local ref="refs/heads/backup/auto/$HOST/$branch"
     log "  ! upstream push rejected; force-pushing backup ref instead"
-    if git -C "$repo" push --no-verify --force origin "HEAD:$ref" >>"$LOG_FILE" 2>&1; then
+    if git -C "$repo" push --no-verify "${opts[@]}" --force origin "HEAD:$ref" >>"$LOG_FILE" 2>&1; then
       log "  committed locally + pushed -> $ref"
     else
       log "  !!! ERROR: commit made locally but BOTH pushes FAILED (not on remote)"
