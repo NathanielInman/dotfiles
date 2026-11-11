@@ -101,6 +101,7 @@ To use one widget without the rest, copy its script into `~/.config/waybar/scrip
 | | `cargo` | Cargo dev profile that keeps `target/` small |
 | | `task` | Taskwarrior and vit |
 | | `topgrade` | Upgrade everything in one command |
+| | `paru` | AUR helper config: removes build-only dependencies after each install |
 | | `t3code` | T3 Code color theme |
 | Companions | `roundhouse` | Config for the Roundhouse drawer (see below) |
 | | `switchyard` | Tasks for the Switchyard board (see below) |

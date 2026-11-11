@@ -27,6 +27,7 @@ ccid
 chafa
 cifs-utils
 cloudflared
+cmake
 cronie
 curl
 diff-so-fancy
@@ -56,6 +57,7 @@ glab
 glances
 glow
 gnome-keyring
+go
 godot-mono
 gping
 gpu-screen-recorder

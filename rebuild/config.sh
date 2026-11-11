@@ -32,7 +32,7 @@
 : "${CORE_PACKAGES:=base base-devel linux linux-firmware amd-ucode btrfs-progs limine efibootmgr \
 nvidia-open nvidia-utils zram-generator snapper snap-pac sudo git stow zsh openssh cifs-utils}"
 
-: "${STOW_PACKAGES:=hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade task chrome pipewire cargo}"
+: "${STOW_PACKAGES:=hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade task chrome pipewire cargo paru}"
 
 : "${SYSTEM_UNITS:=systemd-networkd systemd-resolved systemd-timesyncd sshd pcscd.socket bluetooth \
 cronie docker.socket fstrim.timer paccache.timer systemd-oomd \

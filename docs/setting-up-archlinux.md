@@ -43,7 +43,7 @@ Do everything that doesn't need a running desktop from the archiso, so the first
 
    ```
    git clone https://github.com/NathanielInman/dotfiles.git ~/Sites/dot-files && cd ~/Sites/dot-files
-   ./install.sh hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade task chrome pipewire cargo
+   ./install.sh hyprland waybar swaync walker kitty zsh git nvim starship vim topgrade task chrome pipewire cargo paru
    (cd ~/.oh-my-zsh && git init -q && git remote add origin https://github.com/ohmyzsh/ohmyzsh.git \
      && git fetch -q --depth=1 origin master && git checkout -q -f -B master FETCH_HEAD)   # not the installer: it replaces .zshrc
    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
@@ -52,7 +52,8 @@ Do everything that doesn't need a running desktop from the archiso, so the first
    broot --install                       # writes the `br` launcher that .zshrc sources
    rustup default stable                 # before any AUR build, so nothing pulls in the conflicting `rust`
    git clone https://aur.archlinux.org/paru-bin.git /tmp/paru-bin && (cd /tmp/paru-bin && makepkg -si)
-   grep -v '^#' pkglist/aur.txt | paru -S --needed -   # openvpn3 needs --nocheck; waybar-git asks about its conflict
+   grep -v '^#' pkglist/aur.txt | paru -S --needed --removemake -   # openvpn3 needs --nocheck; waybar-git asks about its conflict
+   pacman -Qdtq                          # orphaned build tools: should print nothing (paru's RemoveMake)
    ./install.sh -s                       # in a chroot systemctl enables units and skips --now/daemon-reload
    ```
 

@@ -81,7 +81,9 @@ do_aur() {
     for p in $(grep -v '^#' "$SRC/pkglist/aur.txt"); do
         [[ $p == paru-bin ]] && continue
         pacman -Q "$p" &>/dev/null && continue
-        flags=(--needed --noconfirm --skipreview)
+        # --removemake: --noconfirm answers paru's "remove make dependencies?"
+        # with no, which left 25 orphans after the 2026-11 reinstall.
+        flags=(--needed --noconfirm --skipreview --removemake)
         # openvpn3's dbus test aborts in makepkg's sandbox; the build is fine.
         [[ $p == openvpn3 ]] && flags+=(--mflags --nocheck)
         echo "--- AUR: $p"
@@ -142,6 +144,16 @@ EOF
     crontab -l
 }
 
+do_orphans() {
+    # Last, so it catches leftovers from every step above: build tools that
+    # an AUR package or cargo pulled in and nothing needs any more. Anything
+    # wanted for itself belongs in pkglist/, which installs it explicitly.
+    local o
+    o=$(pacman -Qdtq) || { echo "no orphans"; return 0; }
+    echo "removing orphans: $(echo $o)"
+    sudo pacman -Rns --noconfirm $o
+}
+
 do_system_files() {
     # hypr-launch, NVIDIA profile, Bluetooth fixes, headroom, rime-umount, VPN
     # DNS hook. Chroot-safe; anything needing D-Bus is deferred to first boot.
@@ -167,4 +179,5 @@ step minor claude "Claude Code native install" do_claude
 step minor pipx "trcli via pipx" do_pipx
 step minor mime "Default apps (xdg-mime)" do_mime
 step minor crontab "User crontab" do_crontab
+step minor orphans "Remove orphaned build dependencies" do_orphans
 rb_summary
