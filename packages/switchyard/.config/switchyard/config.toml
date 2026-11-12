@@ -129,7 +129,7 @@ cmd = "crontab -l; exec $SHELL"
 [inspection]
 roots = ["~/Sites/*"]
 mine = ["nathanielinman", "theoestudio", "twinspear-games"]
-me = ["Nathaniel Inman", "NBInman", "NathanielInman", "Nathaniel B. Inman"]
+me = ["Nathaniel Inman", "NBInman", "NathanielInman", "Nathaniel B. Inman", "Nate", "nbinman@gmail.com"]
 ignore = ["*.lock", "package-lock.json", "pnpm-lock.yaml", "CHANGELOG.md", "package.json", "*.d.ts"]
 
 # CLAUDE.md: nothing but me may be a contributor on my repos, so a bot or
