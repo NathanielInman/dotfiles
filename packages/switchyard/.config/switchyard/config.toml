@@ -123,3 +123,16 @@ desc = "terminal file browser"
 name = "cronie"
 desc = "cron service (crontab -e)"
 cmd = "crontab -l; exec $SHELL"
+
+# Inspection: one row per repo in ~/Sites with the thing it most needs from
+# me, tagged by remote owner and host (#digitalturbine, #twinspear-games).
+[inspection]
+roots = ["~/Sites/*"]
+mine = ["nathanielinman", "theoestudio", "twinspear-games"]
+me = ["Nathaniel Inman", "NBInman", "NathanielInman", "Nathaniel B. Inman"]
+ignore = ["*.lock", "package-lock.json", "pnpm-lock.yaml", "CHANGELOG.md", "package.json", "*.d.ts"]
+
+# CLAUDE.md: nothing but me may be a contributor on my repos, so a bot or
+# other author committing to one is "act", not the default "tidy".
+[inspection.severity]
+foreign_author = "act"
