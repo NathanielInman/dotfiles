@@ -1,32 +1,35 @@
-"""The README hero's story: Roundhouse and Switchyard first, then the rest of
-the bar from left to right, one widget at a time.
+"""The README hero's story: Roundhouse and Switchyard first, then each app
+in the suite opens out of its place in the bar, with the small widgets in
+between, left to right.
 
 Each beat happens at `t` seconds into the loop and may:
 
-- `camera`: zoom to `zoom` (1 is the whole desktop) centered on a module,
-  or on the whole screen with `focus=None`. The camera starts moving at `t`
-  and arrives `MOVE` seconds later.
+- `camera`: (zoom, module) zooms to `zoom` (1 is the whole desktop)
+  centered on a module; (1.0, None) shows the whole desktop; "panel:<name>"
+  frames that panel (open now or opening at this beat) with room for a
+  caption. The camera starts moving at `t` and arrives `MOVE` seconds later.
 - `click`: click a module (the cursor goes there; a ripple marks it), a
-  part of an open panel ("board:storefront", "drawer:switchyard"; the spots
-  are in scenes.py), or a screen point given as (x, y).
-- `set`: put modules in new states, by name from widgets.py.
-- `caption`: show "Name: text" at the top until the next caption.
-- `scene`: start a scene effect build.py knows: "type" (dictated words
-  appear in the editor); "board-open" / "board-close" (Switchyard's board
-  over its signal) and "drawer-open" (Roundhouse's drawer over the lamp),
-  with "handoff" closing the drawer and opening the board from the lamp;
-  the board's story ("storefront-build", "android-queue", "android-held",
-  "storefront-done", "android-build"); "toast" / "toast-dismiss" (a swaync
-  notification slides in and out); "lights-on" / "lights-off" (the room
-  warms up).
+  spot in an open panel ("tannoy:chip:Chrome"; each app names its spots),
+  "outside" (the desktop, which closes a panel), or a screen point (x, y).
+- `hover`: move the cursor onto a module without clicking.
+- `set`: put modules in new states, by name from widgets.py. A drawer
+  group ("group/desk-drawer") is "open" or "closed".
+- `open`: (panel, look) springs a panel out of its module (scenes.ANCHORS)
+  showing that look; `via` names another module to spring it from.
+- `look`: (panel, look) switches an open panel to another look.
+- `close`: a panel's name, or a list of names, folds it back.
+- `caption`: show "Name: text" until the next caption.
+- `scene`: "type" (dictated words appear in the editor), "toast" /
+  "toast-dismiss" (a swaync notification), "lights-on" / "lights-off" (the
+  room warms up with the key lights).
 
-To show off a new widget, add a few beats (and widen `LOOP` if needed).
-Every state must be back to its default by the end of the loop.
+The looks each panel can show are in scenes.LOOKS. Every module must be
+back in its default state, and every panel closed, by the end of the loop.
 """
 
 from dataclasses import dataclass, field
 
-LOOP = 36.0  # seconds
+LOOP = 60.0  # seconds
 MOVE = 0.7  # camera travel time
 ZOOM = 2.3
 
@@ -34,9 +37,14 @@ ZOOM = 2.3
 @dataclass
 class Beat:
     t: float
-    camera: tuple[float, str | None] | None = None  # (zoom, module or None)
+    camera: tuple[float, str | None] | str | None = None
     click: str | tuple[float, float] | None = None
+    hover: str | None = None
     set: dict[str, str] = field(default_factory=dict)
+    open: tuple[str, str] | None = None
+    via: str | None = None
+    look: tuple[str, str] | None = None
+    close: str | list[str] | None = None
     caption: tuple[str, str] | None = None
     scene: str | None = None
 
@@ -44,71 +52,124 @@ class Beat:
 DICTATED = "// back off and retry, give up after five tries"
 
 BEATS: list[Beat] = [
-    # The money shot first: a heavy build turns the lamp red, Roundhouse's
-    # drawer says why, and its link opens Switchyard's board from the lamp.
-    Beat(0.6, set={"custom/switchyard": "building"}, scene="storefront-build"),
-    Beat(0.7, scene="android-queue"),
+    # Roundhouse and Switchyard: a heavy build turns the lamp red, the
+    # drawer says why, and its link opens the board from the same lamp.
+    Beat(0.6, set={"custom/switchyard": "building"}),
     Beat(0.9, camera=(2.0, "custom/roundhouse")),
-    Beat(1.8, set={"custom/roundhouse": "act"}, scene="android-held",
+    Beat(1.8, set={"custom/roundhouse": "act"},
          caption=("Roundhouse", "one lamp for the whole machine, red when it needs you")),
-    Beat(2.9, camera=(1.0, None)),
-    Beat(3.6, click="custom/roundhouse", scene="drawer-open",
+    Beat(2.9, camera="panel:roundhouse"),
+    Beat(3.4, click="custom/roundhouse", open=("roundhouse", "act"),
          caption=("Roundhouse", "click it to see why: memory is stalling")),
-    Beat(6.4, click="drawer:switchyard", scene="handoff",
-         caption=("Switchyard", "its link opens the build board from the same lamp")),
-    Beat(7.6, scene="storefront-done", set={"custom/roundhouse": "calm"},
+    Beat(6.4, click="roundhouse:switchyard", close="roundhouse", open=("switchyard", "held"), via="custom/roundhouse",
+         camera="panel:switchyard",
+         caption=("Switchyard", "its link opens the build board: android is held until memory frees")),
+    Beat(8.6, look=("switchyard", "done"), set={"custom/roundhouse": "calm"},
          caption=("Switchyard", "storefront finishes, the lamp calms, the held build starts")),
-    Beat(8.1, scene="android-build"),
-    Beat(9.6, click=(300.0, 240.0), scene="board-close"),
-    # Then the rest of the bar, left to right.
-    Beat(10.2, camera=(ZOOM, "custom/tannoy")),
-    Beat(11.0, click="custom/tannoy", set={"custom/tannoy": "paused"},
-         caption=("Tannoy", "middle-click pauses, click opens the player")),
-    Beat(12.4, camera=(ZOOM, "pulseaudio")),
-    Beat(13.0, click="pulseaudio", set={"pulseaudio": "headset"},
+    Beat(10.6, click="outside", close="switchyard"),
+    Beat(10.8, camera=(1.0, None)),
+
+    # Tannoy: the player slides out of the cover.
+    Beat(11.4, camera="panel:tannoy"),
+    Beat(11.9, click="image#tannoy-art", open=("tannoy", "song"),
+         caption=("Tannoy", "now playing, and the player slides out of the cover")),
+    Beat(13.6, click="tannoy:chip:Chrome", look=("tannoy", "podcast"), set={"custom/tannoy": "podcast"},
+         caption=("Tannoy", "pick which player the media keys follow")),
+    Beat(15.4, click="outside", close="tannoy"),
+
+    # Signal Box: an agent asks for a secret, a touch grants it, and the
+    # panel shows everything live and revokes it.
+    Beat(15.9, camera="panel:request", open=("request", "ask"), set={"custom/broker": "asking"},
+         caption=("Signal Box", "an agent asks for a secret; broker asks you")),
+    Beat(17.8, look=("request", "granted"), set={"custom/broker": "granted"},
+         caption=("Signal Box", "a YubiKey touch grants it for an hour")),
+    Beat(18.9, close="request"),
+    Beat(19.2, camera="panel:signalbox"),
+    Beat(19.7, click="custom/broker", open=("signalbox", "live"),
+         caption=("Signal Box", "every secret agents can use right now, and for how long")),
+    Beat(21.6, click="signalbox:revoke-all", look=("signalbox", "empty"), set={"custom/broker": "quiet"},
+         caption=("Signal Box", "Revoke all, and the lamp goes dim")),
+    Beat(23.0, click="custom/broker", close="signalbox"),
+
+    # The small widgets in between.
+    Beat(23.6, camera=(ZOOM, "pulseaudio")),
+    Beat(24.2, click="pulseaudio", set={"pulseaudio": "headset"},
          caption=("Volume", "click to switch to the headset")),
-    Beat(14.2, camera=(ZOOM, "custom/mouse-battery"), set={"custom/switchyard": "ok"}),
-    Beat(14.7, set={"custom/mouse-battery": "low"},
+    Beat(25.2, camera=(ZOOM, "custom/mouse-battery")),
+    Beat(25.6, set={"custom/mouse-battery": "low"},
          caption=("Mouse battery", "amber when it needs charging")),
-    Beat(15.8, camera=(ZOOM, "custom/logbook"), set={"custom/logbook": "dictating"},
-         caption=("Logbook", "hold a key and talk; the lamp listens with you")),
-    Beat(17.4, camera=(1.0, None), set={"custom/logbook": "off", "custom/switchyard": "idle"}),
-    Beat(18.2, scene="type",
-         caption=("Dictation", "voxtype types it where the cursor is")),
-    Beat(20.0, camera=(ZOOM, "custom/logbook")),
-    Beat(20.7, set={"custom/logbook": "recording"},
-         caption=("Logbook", "a meeting on air; its transcript makes itself after")),
-    Beat(21.8, camera=(ZOOM, "custom/timetable")),
-    Beat(22.4, set={"custom/timetable": "focus"},
+
+    # Logbook: a meeting on air, then its transcript.
+    Beat(26.6, camera=(ZOOM, "custom/logbook")),
+    Beat(27.0, set={"custom/logbook": "mic"},
+         caption=("Logbook", "frost: Chrome has the mic, and Logbook says so")),
+    Beat(28.2, camera="panel:logbook"),
+    Beat(28.6, click="custom/logbook", open=("logbook", "mic")),
+    Beat(29.8, click="logbook:record-meeting", look=("logbook", "onair"),
+         set={"custom/logbook": "recording", "custom/silence-notifications": "on", "custom/tannoy": "hidden"},
+         caption=("Logbook", "Record meeting: on air, and do not disturb hides the song")),
+    Beat(31.4, click="logbook:mark", look=("logbook", "marked"),
+         caption=("Logbook", "Mark the moment to come back to")),
+    Beat(32.6, click="logbook:stop", look=("logbook", "transcribing"),
+         set={"custom/logbook": "transcribing", "custom/silence-notifications": "off", "custom/tannoy": "podcast"},
+         caption=("Logbook", "Stop: the transcript makes itself, one Switchyard task")),
+    Beat(34.4, look=("logbook", "ready"), set={"custom/logbook": "mic"},
+         caption=("Logbook", "ready to copy")),
+    Beat(35.4, click="outside", close="logbook"),
+    Beat(35.8, camera=(1.0, None), set={"custom/logbook": "dictating"}),
+    Beat(36.2, scene="type",
+         caption=("Dictation", "middle-click the lamp and talk; voxtype types where the cursor is")),
+    Beat(37.8, set={"custom/logbook": "off"}),
+
+    # The desk drawer: rarely touched toggles wait behind the arrow.
+    Beat(38.4, camera=(ZOOM, "custom/desk-handle")),
+    Beat(38.9, hover="custom/desk-handle", set={"group/desk-drawer": "open"},
+         caption=("Desk", "the key lights and the power menu wait behind the arrow")),
+    Beat(40.1, click="custom/keylights", set={"custom/keylights": "on", "custom/keylights#lit": "on"}, scene="lights-on",
+         caption=("Key lights", "both Elgato lights in one click; lit, the lamp stays in view")),
+    Beat(41.3, hover="custom/logbook", set={"group/desk-drawer": "closed"}),
+
+    # Timetable: the clock says what's next.
+    Beat(42.0, camera=(ZOOM, "custom/timetable"), set={"custom/timetable": "next"},
+         caption=("Timetable", "the clock names the next meeting")),
+    Beat(43.2, camera="panel:timetable"),
+    Beat(43.6, click="custom/timetable", open=("timetable", "next"),
+         caption=("Timetable", "three zones, Join, and the day with its free gaps")),
+    Beat(45.4, click="timetable:focus", look=("timetable", "focus"), set={"custom/timetable": "focus"},
          caption=("Timetable", "a focus block that ends before the next meeting")),
-    Beat(23.8, camera=(ZOOM, "custom/keylights")),
-    Beat(24.4, click="custom/keylights", set={"custom/keylights": "on", "custom/keylights#lit": "on"}, scene="lights-on",
-         caption=("Key lights", "both Elgato lights in one click")),
-    Beat(25.8, camera=(ZOOM, "custom/vpn")),
-    Beat(26.3, click="custom/vpn", set={"custom/vpn": "connected"},
-         caption=("VPN", "one click for the work VPN")),
-    # A notification arrives, and do not disturb puts it (and the song
-    # title) away.
-    Beat(27.6, camera=(1.0, None)),
-    Beat(28.1, scene="toast",
-         caption=("Notifications", "swaync, in the same Nord colors")),
-    Beat(29.7, click="custom/silence-notifications", set={"custom/silence-notifications": "on"}, scene="toast-dismiss",
-         caption=("Do not disturb", "silences them, and hides the song title for screen shares")),
-    Beat(30.2, set={"custom/tannoy": "hidden"}),
-    Beat(31.2, camera=(ZOOM, "custom/timetable"), set={"custom/timetable": "soon"},
-         caption=("Timetable", "the clock says what's next, amber 10 minutes out")),
-    Beat(32.4, set={"custom/timetable": "now"},
+    Beat(47.2, click="outside", close="timetable"),
+    Beat(47.6, camera=(ZOOM, "custom/timetable")),
+    Beat(48.2, set={"custom/timetable": "soon"},
+         caption=("Timetable", "amber 10 minutes out")),
+    Beat(49.3, set={"custom/timetable": "now"},
          caption=("Timetable", "red at start time; middle-click joins on workspace 2")),
-    # Back to the whole desk; everything returns to rest.
-    Beat(33.8, camera=(1.0, None), scene="lights-off",
+
+    # The VPN, then a notification, and do not disturb puts it (and the
+    # song title) away.
+    Beat(50.6, camera=(ZOOM, "custom/vpn")),
+    Beat(51.1, click="custom/vpn", set={"custom/vpn": "connected"},
+         caption=("VPN", "one click for the work VPN")),
+    Beat(52.3, camera=(1.0, None)),
+    Beat(52.8, scene="toast",
+         caption=("Notifications", "swaync, in the same Nord colors")),
+    Beat(54.2, camera=(ZOOM, "custom/broker")),
+    Beat(54.8, click="custom/silence-notifications", set={"custom/silence-notifications": "on"}, scene="toast-dismiss",
+         caption=("Do not disturb", "silences them, and hides the song title for screen shares")),
+    Beat(55.3, set={"custom/tannoy": "hidden"}),
+    Beat(57.0, camera=(1.0, None)),
+
+    # Back to rest.
+    Beat(57.6, scene="lights-off",
          set={
              "custom/timetable": "free",
              "custom/keylights": "off",
              "custom/keylights#lit": "off",
              "custom/silence-notifications": "off",
              "custom/tannoy": "playing",
+             "custom/broker": "live",
              "custom/logbook": "off",
              "custom/vpn": "disconnected",
+             "custom/switchyard": "idle",
              "pulseaudio": "speakers",
              "custom/mouse-battery": "ok",
          }),

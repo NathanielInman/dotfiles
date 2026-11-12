@@ -23,6 +23,13 @@ class State:
     # The CSS class the module gets in this state, if any.
     cls: str | None = None
     every: float = 1.0
+    # Drawn after the text in the module's own color, whatever the class:
+    # Timetable's date and time stay purple while the event beside it
+    # changes color.
+    tail: str = ""
+    # The media pill's cover: a symbol from Tannoy's cover_defs() ("song",
+    # "pod"), drawn by the image module beside the text.
+    art: str | None = None
 
     @property
     def frames(self) -> list[str]:
@@ -41,38 +48,45 @@ class Widget:
     needs: str = ""
     states: dict[str, State] = field(default_factory=dict)
     default: str = ""
-    # "custom" for exec modules; "workspaces", "window" and "tray" are drawn
-    # by build.py from the fields below.
+    # "custom" for exec modules; "workspaces", "window", "tray" and "image"
+    # are drawn by build.py from the fields below.
     kind: str = "custom"
-    # Workspaces: (name, active) pairs; window: the title; tray: icon
-    # glyphs with their colors.
+    # Workspaces: (id, [window classes], active), drawn through the
+    # config's window-rewrite; window: the raw title, drawn through its
+    # rewrite rules; tray: icon glyphs with their colors; image: the module
+    # whose state's `art` it shows.
     items: list = field(default_factory=list)
 
 
-def ticking(icon: str, minutes: int, seconds: int, count: int, cls: str) -> State:
+def ticking(icon: str, minutes: int, seconds: int, count: int, cls: str, tail: str = "") -> State:
     """A timer counting down one second per frame."""
     total = minutes * 60 + seconds
     frames = [f"{icon} {(total - i) // 60:02d}:{(total - i) % 60:02d}" for i in range(count)]
-    return State(frames, cls)
+    return State(frames, cls, tail=tail)
 
 
 WAYBAR = "packages/waybar/.config/waybar"
-SONG = "Lofi Rails \u00b7 Night Shift"
+# What Tannoy prints for the two players in the tour: cut at a word, with
+# a real ellipsis.
+SONG = "Marlow Fen \u00b7 Paper Lanterns"
+PODCAST = "Slow Signals \u00b7 Where the Night Trains\u2026"
+DAY = "  Tue Nov 10  "
 
 WIDGETS: dict[str, Widget] = {
     "hyprland/workspaces": Widget(
         "Workspaces",
-        "One icon per workspace, each with a job (browser, chat, editor, notes); the active one is underlined.",
+        "A dim number, then a glyph per open window; the active one is lit.",
         f"{WAYBAR}/config.jsonc",
         kind="workspaces",
-        items=[("1", False), ("2", False), ("4", True), ("5", False)],
+        items=[("1", ["google-chrome"], False), ("2", ["slack"], False), ("3", ["com.t3tools.T3Code"], False),
+               ("4", ["neovide", "kitty"], True)],
     ),
     "hyprland/window": Widget(
         "Window title",
         "The focused window's title.",
         f"{WAYBAR}/config.jsonc",
         kind="window",
-        items=["nvim  src/retry.ts"],
+        items=["~/Sites/ledger"],
     ),
     "custom/tannoy": Widget(
         "Tannoy",
@@ -83,11 +97,20 @@ WIDGETS: dict[str, Widget] = {
         f"{WAYBAR}/config.jsonc",
         needs='[Tannoy](https://github.com/NathanielInman/tannoy), `swaync`',
         states={
-            "playing": State(SONG, "playing"),
-            "paused": State(SONG, "paused"),
+            "playing": State(SONG, "playing with-art", art="song"),
+            "paused": State(SONG, "paused with-art", art="song"),
+            "podcast": State(PODCAST, "playing with-art", art="pod"),
             "hidden": State("\U000f075a", "hidden"),
         },
         default="playing",
+    ),
+    # Tannoy's cover, the left end of the media pill
+    "image#tannoy-art": Widget(
+        "Cover",
+        "",
+        f"{WAYBAR}/config.jsonc",
+        kind="image",
+        items=["custom/tannoy"],
     ),
     "custom/roundhouse": Widget(
         "Roundhouse",
@@ -108,7 +131,7 @@ WIDGETS: dict[str, Widget] = {
         f"{WAYBAR}/scripts/audio-switch.sh",
         needs='PipeWire (`wpctl`), `walker`, `pavucontrol`',
         states={
-            "speakers": State("\uf028 42%"),
+            "speakers": State("\uf027 42%"),
             "headset": State("\U000f02ce 42%"),
             "muted": State("\uf026 muted", "muted"),
         },
@@ -140,7 +163,7 @@ WIDGETS: dict[str, Widget] = {
             "off": State("\U000f036c", "off"),
             "mic": State("\U000f036c chrome", "mic"),
             "recording": State(
-                [f"\U000f044a 00:41:{12 + i:02d}" for i in range(30)], "recording"
+                [f"\U000f044a 00:24:{12 + i:02d}" for i in range(30)], "recording"
             ),
             "dictating": State("\U000f036c listening", "dictating"),
             "transcribing": State(["\U000f051f 1/3", "\U000f051f 2/3", "\U000f051f 3/3"], "transcribing", every=2.0),
@@ -154,6 +177,14 @@ WIDGETS: dict[str, Widget] = {
         needs="Elgato Key Lights, `curl` (set the light's IP in the script)",
         states={"off": State("\U000f0335", "off"), "on": State("", "on")},
         default="off",
+    ),
+    # The arrow the desk drawer slides out of
+    "custom/desk-handle": Widget(
+        "Desk drawer",
+        "",
+        f"{WAYBAR}/config.jsonc",
+        states={"on": State("\uf053")},
+        default="on",
     ),
     # The same lamp outside the desk drawer, shown only while the lights are on
     "custom/keylights#lit": Widget(
@@ -179,7 +210,7 @@ WIDGETS: dict[str, Widget] = {
         "Silences notifications (swaync). Also hides the song title while it is on.",
         f"{WAYBAR}/config.jsonc",
         needs='`swaync`',
-        states={"off": State("\uf0f3"), "on": State("\uf1f6")},
+        states={"off": State("\uf0f3", "none"), "on": State("\uf1f6", "dnd-none")},
         default="off",
     ),
     "custom/switchyard": Widget(
@@ -204,11 +235,12 @@ WIDGETS: dict[str, Widget] = {
         "packages/waybar/.config/waybar/config.jsonc",
         needs='[credential-broker](https://github.com/NathanielInman/credential-broker)',
         states={
-            "quiet": State("\U000f0766", "quiet"),
-            "live": State("\U000f0aa0 1", "live"),
+            "live": State("\U000f0aa1 6", "live"),
             "asking": State("\U000f0306", "asking"),
+            "granted": State("\U000f0aa1 7", "live"),
+            "quiet": State("\U000f0766", "quiet"),
         },
-        default="quiet",
+        default="live",
     ),
     "custom/power-menu": Widget(
         "Power",
@@ -227,12 +259,11 @@ WIDGETS: dict[str, Widget] = {
         "packages/timetable/.config/timetable/config.toml",
         needs='[Timetable](https://github.com/NathanielInman/timetable), a Google Calendar secret iCal address in broker',
         states={
-            "free": State("Tue Nov 10  14:32", "free"),
-            "soon": State("\U000f00ed Standup in 7m  Tue Nov 10  14:53", "soon"),
-            "now": State("\U000f0567 Standup \u00b7 Join  Tue Nov 10  15:00", "now"),
-            "focus": State(
-                [f"\U000f051b Focus 49:{59 - i:02d}  Tue Nov 10  14:32" for i in range(30)], "focus"
-            ),
+            "free": State("free until 15:00", "free", tail=DAY + "14:32"),
+            "next": State("\U000f00ed Standup in 27m", "next", tail=DAY + "14:33"),
+            "focus": ticking("\U000f051b Focus", 25, 0, 30, "focus", tail=DAY + "14:33"),
+            "soon": State("\U000f00ed Standup in 2m", "soon", tail=DAY + "14:58"),
+            "now": State("\U000f0567 Standup \u00b7 Join", "now", tail=DAY + "15:00"),
         },
         default="free",
     ),

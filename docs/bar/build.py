@@ -5,23 +5,26 @@ widget table in the README.
     python3 docs/bar/build.py
 
 Reads the real bar (packages/waybar/.config/waybar/config.jsonc for the
-module order, style.css for the colors), widgets.py for what each module
-shows, and story.py for the hero's timeline. Writes:
+pills, the module order and the window rewrites, style.css for the colors
+and the padding), widgets.py for what each module shows, story.py for the
+hero's timeline, and each app's own README hero for its panel (apps.py).
+Writes:
 
 - Pictures/bar/hero.svg: the animated hero (pure CSS animation, so GitHub
-  plays it in an <img>; reduced motion gets a still with the drawer open).
+  plays it in an <img>; reduced motion gets a still with a drawer open).
 - Pictures/bar/widgets/<module>.svg: each widget cycling through its states.
 - The table between the `bar-widgets` markers in README.md.
 
 The glyphs come from a Nerd Font subset embedded in each SVG, so the icons
 are the same ones waybar draws. BAR_FONT picks the font file; the default is
-JetBrains Mono Nerd Font Propo (OFL). Needs fontTools.
+JetBrains Mono Nerd Font Propo (OFL). Needs fontTools, and the apps checked
+out beside dot-files (see apps.py).
 """
 
 import json
 import re
 import sys
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 sys.dont_write_bytecode = True  # no __pycache__ next to widgets.py and story.py
@@ -42,17 +45,9 @@ WAYBAR = ROOT / "packages/waybar/.config/waybar"
 OUT = ROOT / "Pictures/bar"
 README = ROOT / "README.md"
 
-# The hero's canvas and the bar inside it. The real bar is 24px tall with an
-# 18px font; this keeps that ratio at a size a README can show.
-W, H = 1200, 600
-FS = 15
-BAR_H = 28
-BAR_X, BAR_Y, BAR_W = 8, H - BAR_H - 8, W - 16
-BAR_CY = BAR_Y + BAR_H / 2
-PAD = 6
-ZOOM_TY = H - 64  # where the bar's middle sits on screen while zoomed
-STILL = 5.2  # the moment shown with reduced motion: Roundhouse's drawer
 T = LOOP
+STILL = 5.0  # the moment shown with reduced motion: Roundhouse's drawer
+
 
 # ------------------------------------------------------------------ inputs
 
@@ -89,13 +84,15 @@ def load_jsonc(path: Path):
 
 
 class Css:
-    """Just enough of style.css to color modules the way waybar does."""
+    """Just enough of style.css to color and pad modules the way waybar does."""
 
     def __init__(self, path: Path):
         text = re.sub(r"/\*.*?\*/", "", path.read_text(encoding="utf-8"), flags=re.S)
         # @define-color names resolve wherever a value uses them
         self.defines = dict(re.findall(r"@define-color\s+([\w-]+)\s+([^;]+);", text))
         text = re.sub(r"@define-color[^;]*;", "", text)
+        # @keyframes blocks nest braces; they only matter by name
+        text = re.sub(r"@keyframes[^{]*\{(?:[^{}]*\{[^}]*\})*[^}]*\}", "", text)
         self.rules = []
         for sel, body in re.findall(r"([^{}]+)\{([^}]*)\}", text):
             decls = {}
@@ -116,8 +113,27 @@ class Css:
         return found
 
     def color(self, css_id: str, cls: str | None) -> str:
-        c = self.get(f"#{css_id}.{cls}", "color") if cls else None
-        return c or self.get(f"#{css_id}", "color") or self.get("window#waybar", "color") or FG
+        for c in reversed((cls or "").split()):
+            found = self.get(f"#{css_id}.{c}", "color")
+            if found:
+                return found
+        return self.get(f"#{css_id}", "color") or self.get("window#waybar", "color") or FG
+
+    def animated(self, css_id: str, cls: str | None) -> bool:
+        return any(self.get(f"#{css_id}.{c}", "animation") for c in (cls or "").split())
+
+    def pad(self, selector: str) -> tuple[float, float]:
+        """(left, right) padding in px from a `padding` (and `padding-left`)."""
+        p = self.get(selector, "padding")
+        left = right = 0.0
+        if p:
+            v = [float(x.rstrip("px")) for x in p.split()]
+            top_, right_, bottom_, left_ = {1: v * 4, 2: v + v, 3: v + [v[1]], 4: v}[len(v)]
+            left, right = left_, right_
+        pl = self.get(selector, "padding-left")
+        if pl is not None:
+            left = float(pl.rstrip("px"))
+        return left, right
 
 
 def css_id(module: str) -> str:
@@ -129,92 +145,166 @@ def css_id(module: str) -> str:
 
 CONFIG = load_jsonc(WAYBAR / "config.jsonc")
 CSS = Css(WAYBAR / "style.css")
-def opaque(color: str | None) -> str | None:
-    """None for a fully transparent rgba(), which a floating bar uses."""
-    if color and re.fullmatch(r"rgba\([^)]*,\s*0(\.0*)?\)", color.strip()):
-        return None
-    return color
 
+# The hero's canvas: a desktop at the bar's real size, so the bar's font
+# and padding are waybar's own and the camera zooms in to read it.
+W, H = 1792, 1008
+FS = float(CSS.get("*", "font-size").rstrip("px"))
+BAR_H = CONFIG.get("height", 34)
+BAR_X = CONFIG.get("margin-left", 6)
+BAR_W = W - BAR_X - CONFIG.get("margin-right", 6)
+BAR_Y = H - CONFIG.get("margin-bottom", 6) - BAR_H
+BAR_CY = BAR_Y + BAR_H / 2
+BASE_Y = BAR_CY + FS * 0.36
+SPACING = CONFIG.get("spacing", 0)
+S = W / 1200  # captions and the cursor read at the size the old 1200 px hero had
 
-# A floating bar is transparent and draws its pills; use the pill color then
-BAR_BG = (opaque(CSS.get("window#waybar", "background"))
-          or CSS.get("#workspaces", "background") or "#282A2E")
-SEP = "#4c566a"
-HOVER = CSS.get("#workspaces button:hover", "background") or "#373B41"
-ACTIVE_LINE = "#81a1c1"
+PILL = CSS.get("#workspaces", "background")
+PILL_LINE = CSS.get("#workspaces", "border").split(" ", 2)[2]
+HOVER = CSS.get("#pulseaudio:hover", "background")
+WS_HOVER = CSS.get("#workspaces button:hover", "background")
+WS_ACTIVE = CSS.get("#workspaces button.active", "background")
+BRIGHT = CSS.defines["bright"]
+ART = CONFIG["image#tannoy-art"]["size"]
+ART_PAD = CSS.pad("#image.tannoy-art image")[0]
+TRAY_GAP = CONFIG.get("tray", {}).get("spacing", 8)
 
 
 # ------------------------------------------------------------------ the bar
+
+def rewrite_title(title: str) -> str:
+    """hyprland/window's rewrite rules, applied as waybar does (all that match)."""
+    for pat, rep in CONFIG.get("hyprland/window", {}).get("rewrite", {}).items():
+        m = re.fullmatch(pat, title)
+        if m:
+            title = m.expand(rep.replace("$", "\\"))
+    return title
+
+
+def window_glyph(cls: str) -> str:
+    ws = CONFIG.get("hyprland/workspaces", {})
+    for key, rep in ws.get("window-rewrite", {}).items():
+        m = re.fullmatch(r"class<(.*)>", key)
+        if m and re.fullmatch(m.group(1), cls):
+            return rep
+    return ws.get("window-rewrite-default", "")
+
 
 class Mod:
     def __init__(self, name: str, widget: Widget):
         self.name = name
         self.w = widget
         self.css = css_id(name)
-        self.border = name != "tray"
+        self.drawer: str | None = None  # the drawer group that hides it
 
-    def state_width(self, state: str) -> float:
-        w = self.w
-        if w.kind == "workspaces":
-            return sum(REG.width(self.ws_icon(n), FS) + 2 * PAD for n, _ in w.items) + 1
-        if w.kind == "window":
-            return REG.width(w.items[0], FS) + 2 * PAD + 1
-        if w.kind == "tray":
-            return sum(REG.width(g, FS) for g, _ in w.items) + 8 * (len(w.items) - 1) + 2 * PAD
-        frames = w.states[state].frames
-        widest = max(REG.width(f, FS) for f in frames)
-        return 0.0 if widest == 0 else widest + 2 * PAD + (1 if self.border else 0)
+    def lpad(self, state: str) -> float:
+        st = self.w.states.get(state)
+        left = CSS.pad(f"#{self.css}")[0]
+        for c in (st.cls or "").split() if st else []:
+            if CSS.get(f"#{self.css}.{c}", "padding-left") is not None:
+                left = CSS.pad(f"#{self.css}.{c}")[0]
+        return left
 
-    def ws_icon(self, n: str) -> str:
-        return CONFIG.get("hyprland/workspaces", {}).get("format-icons", {}).get(n, n)
+    def text_width(self, state: str) -> float:
+        st = self.w.states[state]
+        widest = max(REG.width(f, FS) for f in st.frames)
+        return 0.0 if widest == 0 else widest + REG.width(st.tail, FS)
+
+    def width(self, t: float) -> float:
+        if self.drawer and state_at(self.drawer, t) != "open":
+            return 0.0
+        k = self.w.kind
+        if k == "workspaces":
+            l, r = CSS.pad("#workspaces")
+            return l + r + sum(ws_button(n, wins)[1] for n, wins, _ in self.w.items)
+        if k == "window":
+            l, r = CSS.pad("#window")
+            return l + r + REG.width(rewrite_title(self.w.items[0]), FS)
+        if k == "tray":
+            l, r = CSS.pad("#tray")
+            return l + r + sum(REG.width(g, FS) for g, _ in self.w.items) + TRAY_GAP * (len(self.w.items) - 1)
+        if k == "image":
+            other = self.w.items[0]
+            return ART_PAD + ART if ALL[other].w.states[state_at(other, t)].art else 0.0
+        state = state_at(self.name, t)
+        tw = self.text_width(state)
+        if tw == 0:
+            return 0.0
+        return self.lpad(state) + tw + CSS.pad(f"#{self.css}")[1]
 
 
-def flatten(names: list[str]) -> list[str]:
-    """Expands group/* modules into their members, drawer handles left out:
-    the picture shows a drawer's contents as if it were open."""
+def ws_button(n: str, wins: list[str]) -> tuple[str, float]:
+    """A workspace button's label after window-rewrite, and its width with
+    its padding and margin."""
+    label = "".join(window_glyph(c) for c in wins)
+    pl, pr = CSS.pad("#workspaces button")
+    return label, 1 + pl + REG.width(n + label, FS) + pr + 1
+
+
+@dataclass
+class Entry:
+    """One top-level item of the bar: a pill of modules."""
+    name: str
+    mods: list[str]
+    pad: tuple[float, float]  # the group's own padding inside its border
+
+
+DRAWERS: dict[str, list[str]] = {}  # drawer group -> the modules it hides
+
+
+def expand(name: str) -> list[str]:
+    g = CONFIG.get(name, {})
+    members = g.get("modules", [])
+    if "drawer" not in g:
+        return [m for n in members for m in (expand(n) if n.startswith("group/") else [n])]
+    # The first module is the drawer's handle; the rest slide out beside it.
+    DRAWERS[name] = members[1:]
+    lead, rest = members[0], members[1:]
+    return rest + [lead] if not g["drawer"].get("transition-left-to-right", True) else [lead] + rest
+
+
+def entries(names: list[str]) -> list[Entry]:
     out = []
     for n in names:
         if n.startswith("group/"):
-            out += flatten(CONFIG.get(n, {}).get("modules", []))
-        elif n not in HANDLES:
-            out.append(n)
+            out.append(Entry(n, expand(n), CSS.pad(f"#{n.split('/', 1)[1]}")))
+        else:
+            out.append(Entry(n, [n], (0.0, 0.0)))
     return out
 
 
-# Modules with no text state worth drawing: the handle that opens a drawer
-# group, and Tannoy's cover (an image module beside its text)
-HANDLES = {"custom/desk-handle", "image#tannoy-art"}
+LEFT = entries(CONFIG.get("modules-left", []) + CONFIG.get("modules-center", []))
+RIGHT = entries(CONFIG.get("modules-right", []))
+missing = [m for e in LEFT + RIGHT for m in e.mods if m not in WIDGETS]
+if missing:
+    sys.exit(
+        "build.py: these modules are in config.jsonc but not in docs/bar/widgets.py:\n  "
+        + "\n  ".join(missing)
+        + "\nAdd an entry for each (name, what it does, its states), then run again."
+    )
+ALL = {m: Mod(m, WIDGETS[m]) for e in LEFT + RIGHT for m in e.mods}
+for g, hidden in DRAWERS.items():
+    for m in hidden:
+        ALL[m].drawer = g
 
-
-def modules():
-    left = flatten(CONFIG.get("modules-left", []) + CONFIG.get("modules-center", []))
-    right = flatten(CONFIG.get("modules-right", []))
-    missing = [m for m in left + right if m not in WIDGETS]
-    if missing:
-        sys.exit(
-            "build.py: these modules are in config.jsonc but not in docs/bar/widgets.py:\n  "
-            + "\n  ".join(missing)
-            + "\nAdd an entry for each (name, what it does, its states), then run again."
-        )
-    return [Mod(m, WIDGETS[m]) for m in left], [Mod(m, WIDGETS[m]) for m in right]
-
-
-LEFT, RIGHT = modules()
-ALL = {m.name: m for m in LEFT + RIGHT}
-
-# Each module's states over the loop.
+# Each module's (and drawer's) states over the loop.
 CHANGES: dict[str, list[tuple[float, str]]] = {m: [(0.0, ALL[m].w.default)] for m in ALL}
+CHANGES.update({g: [(0.0, "closed")] for g in DRAWERS})
 for b in BEATS:
     for m, s in b.set.items():
-        if m not in ALL:
+        if m in DRAWERS:
+            if s not in ("open", "closed"):
+                sys.exit(f"story.py: beat at {b.t}s sets {m} to {s!r}; a drawer is 'open' or 'closed'")
+        elif m not in ALL:
             sys.exit(f"story.py: beat at {b.t}s sets {m}, which is not in the bar")
-        if s not in ALL[m].w.states:
+        elif s not in ALL[m].w.states:
             sys.exit(f"story.py: beat at {b.t}s sets {m} to {s!r}; widgets.py has {list(ALL[m].w.states)}")
         CHANGES[m].append((b.t, s))
 for m, ch in CHANGES.items():
-    ch.sort()
-    if ALL[m].w.states and ch[-1][1] != ALL[m].w.default:
-        sys.exit(f"story.py: {m} ends the loop as {ch[-1][1]!r}; set it back to {ALL[m].w.default!r}")
+    ch.sort(key=lambda c: c[0])
+    default = "closed" if m in DRAWERS else ALL[m].w.default
+    if (m in DRAWERS or ALL[m].w.states) and ch[-1][1] != default:
+        sys.exit(f"story.py: {m} ends the loop as {ch[-1][1]!r}; set it back to {default!r}")
 
 
 def state_at(m: str, t: float) -> str:
@@ -235,27 +325,56 @@ def segments(m: str):
     return out
 
 
-def layout(t: float) -> dict[str, tuple[float, float]]:
-    pos = {}
+def entry_width(e: Entry, t: float) -> tuple[float, list[float]]:
+    ws = [ALL[m].width(t) for m in e.mods]
+    if not any(ws):
+        return 0.0, ws
+    return 1 + e.pad[0] + sum(ws) + e.pad[1] + 1, ws
+
+
+def layout(t: float):
+    """Where everything is at time t: {module: (x, w)}, {entry: (x, w)}."""
+    mods, pills = {}, {}
+
+    def place(e: Entry, x: float, ew: float, ws: list[float]):
+        pills[e.name] = (x, ew)
+        mx = x + 1 + e.pad[0]
+        for m, w in zip(e.mods, ws):
+            mods[m] = (mx, w)
+            mx += w
+
     x = BAR_X
-    for m in LEFT:
-        w = m.state_width(state_at(m.name, t))
-        pos[m.name] = (x, w)
-        x += w
+    for e in LEFT:
+        ew, ws = entry_width(e, t)
+        place(e, x, ew, ws)
+        if ew:
+            x += ew + SPACING
     x = BAR_X + BAR_W
-    for m in reversed(RIGHT):
-        w = m.state_width(state_at(m.name, t))
-        x -= w
-        pos[m.name] = (x, w)
-    return pos
+    for e in reversed(RIGHT):
+        ew, ws = entry_width(e, t)
+        if ew:
+            x -= ew
+        place(e, x, ew, ws)
+        if ew:
+            x -= SPACING
+    return mods, pills
 
 
 TIMES = sorted({0.0} | {t for ch in CHANGES.values() for t, _ in ch})
 
 
 def center(m: str, t: float) -> float:
-    x, w = layout(t)[m]
+    x, w = layout(t)[0][m]
     return x + w / 2
+
+
+def overlap_check():
+    for t in TIMES:
+        _, pills = layout(t)
+        left_end = max(x + w for e, (x, w) in pills.items() if any(e == le.name for le in LEFT) and w)
+        right_start = min(x for e, (x, w) in pills.items() if any(e == re_.name for re_ in RIGHT) and w)
+        if right_start - left_end < 24:
+            sys.exit(f"build.py: at {t}s the bar's right side runs into its left side; shorten a state's text")
 
 
 # ------------------------------------------------------------------ camera
@@ -264,48 +383,129 @@ def ease(u: float) -> float:
     return u * u * (3 - 2 * u)
 
 
-def cam_target(zoom: float, focus: str | None, t: float):
+def clamp_cam(z: float, tx: float, ty: float):
+    """Keeps the view inside the desktop."""
+    return (z, min(0.0, max(W - W * z, tx)), min(0.0, max(H - H * z, ty)))
+
+
+def frame_box(x0, y0, x1, y1, top=96, bottom=12, side=80):
+    """The camera that fits a box under the caption, its bottom near the
+    screen's bottom edge."""
+    z = min(W / (x1 - x0 + 2 * side), (H - top - bottom) / (y1 - y0), 2.2)
+    z = max(1.0, z)
+    tx = W / 2 - (x0 + x1) / 2 * z
+    ty = H - bottom - y1 * z
+    if y0 * z + ty < top:
+        ty = top - y0 * z
+    return clamp_cam(z, tx, ty)
+
+
+def cam_target(spec, t: float, panels: "Panels"):
+    if isinstance(spec, str) and spec.startswith("panel:"):
+        o = panels.opening(spec.split(":", 1)[1], t)
+        p = panels.place(o)
+        w, h = o.size()
+        return frame_box(p.x, p.bottom - h, p.x + w, BAR_Y + BAR_H)
+    zoom, focus = spec
     if focus is None or zoom <= 1.0:
-        return (1.0, W / 2, BAR_CY)
-    half = W / (2 * zoom)
-    fx = min(max(center(focus, t), BAR_X + half), BAR_X + BAR_W - half)
-    return (zoom, fx, ZOOM_TY)
+        return (1.0, 0.0, 0.0)
+    return clamp_cam(zoom, W / 2 - center(focus, t) * zoom, H / 2 - BAR_CY * zoom)
 
 
-CAM_MOVES = [(0.0, (1.0, W / 2, BAR_CY))]
-for b in BEATS:
-    if b.camera:
-        CAM_MOVES.append((b.t, cam_target(b.camera[0], b.camera[1], b.t + MOVE)))
+class Camera:
+    def __init__(self, panels: "Panels"):
+        self.moves = [(0.0, (1.0, 0.0, 0.0))]
+        self.on_bar = [(0.0, False)]  # zoomed in on a module, not framing a panel
+        for b in BEATS:
+            if b.camera:
+                self.moves.append((b.t, cam_target(b.camera, b.t + MOVE, panels)))
+                self.on_bar.append((b.t, isinstance(b.camera, tuple) and b.camera[1] is not None and b.camera[0] > 1))
+
+    def bar_zoom(self, t: float) -> bool:
+        return [on for when, on in self.on_bar if when <= t][-1]
+
+    def at(self, t: float):
+        cur = self.moves[0][1]
+        for start, target in self.moves[1:]:
+            if t < start:
+                break
+            u = min(1.0, (t - start) / MOVE)
+            k = ease(u)
+            cur = tuple(c + (g - c) * k for c, g in zip(cur, target))
+            if u < 1.0:
+                return cur
+        return cur
+
+    def to_screen(self, x: float, y: float, t: float):
+        z, tx, ty = self.at(t)
+        return (x * z + tx, y * z + ty)
 
 
-def cam_at(t: float):
-    cur = CAM_MOVES[0][1]
-    for start, target in CAM_MOVES[1:]:
-        if t < start:
-            break
-        u = min(1.0, (t - start) / MOVE)
-        k = ease(u)
-        cur = tuple(c + (g - c) * k for c, g in zip(cur, target))
-        if u < 1.0:
-            return cur
-    return cur
+# ------------------------------------------------------------------ panels
 
+class Panels:
+    """Every opening of every panel, from the story's open/look/close beats."""
 
-def cam_transform(c) -> tuple[float, float, float]:
-    z, fx, ty = c
-    return (W / 2 - fx * z, ty - BAR_CY * z, z)
+    def __init__(self):
+        self.openings: list[scenes.Opening] = []
+        now: dict[str, scenes.Opening] = {}
+        for b in BEATS:
+            closes = [b.close] if isinstance(b.close, str) else (b.close or [])
+            for name in closes:
+                if name not in now:
+                    sys.exit(f"story.py: beat at {b.t}s closes {name}, which is not open")
+                now.pop(name).t_close = b.t
+            if b.open:
+                name, key = b.open
+                if name not in scenes.ANCHORS:
+                    sys.exit(f"story.py: beat at {b.t}s opens {name}; scenes.ANCHORS has {list(scenes.ANCHORS)}")
+                scenes.look(name, key)
+                now[name] = scenes.Opening(name, b.via or scenes.ANCHORS[name], b.t, T, [(b.t, key)])
+                self.openings.append(now[name])
+            if b.look:
+                name, key = b.look
+                if name not in now:
+                    sys.exit(f"story.py: beat at {b.t}s changes {name}'s look, but it is not open")
+                scenes.look(name, key)
+                now[name].looks.append((b.t, key))
+        if now:
+            sys.exit(f"story.py: {', '.join(now)} still open at the end of the loop; close it")
 
+    def opening(self, name: str, t: float) -> scenes.Opening:
+        """The opening of `name` that is open at t, or the next one."""
+        for o in self.openings:
+            if o.panel == name and o.t_close >= t - MOVE:
+                return o
+        sys.exit(f"story.py: the camera frames {name} at {t}s, but it does not open after that")
 
-def to_screen(x: float, y: float, t: float):
-    tx, ty, z = cam_transform(cam_at(t))
-    return (x * z + tx, y * z + ty)
+    def place(self, o: scenes.Opening) -> scenes.Place:
+        w, h = o.size()
+        if o.anchor is None:
+            return scenes.place_window(W, BAR_Y - 70 - h, w, h)
+        return scenes.place_above(center(o.anchor, o.t_open), BAR_Y, W, w)
+
+    def hotspot(self, target: str, t: float):
+        name, spot = target.split(":", 1)
+        for o in self.openings:
+            if o.panel == name and o.t_open <= t <= o.t_close:
+                key = o.look_at(t - 0.01)
+                lk = scenes.look(name, key)
+                if spot not in lk.spots:
+                    sys.exit(f"story.py: a click on {target} at {t}s; the {key!r} look has {list(lk.spots)}")
+                return self.place(o).screen(lk, *lk.spots[spot])
+        sys.exit(f"story.py: a click on {target} at {t}s, when that panel is not open")
+
+    def draw(self, svg: Svg):
+        for o in self.openings:
+            scenes.panel(svg, o, self.place(o), STILL)
 
 
 # ------------------------------------------------------------------ pieces
 
-def draw_module_states(svg: Svg, m: Mod, x0: float, y0: float, timeline=None, loop=T, still=STILL, border=True):
+def draw_module_states(svg: Svg, m: Mod, x0: float, y0: float, timeline=None, loop=T, still=STILL, art_w=0.0):
     """The module's text for each state (and frame), shown when it is active.
-    Coordinates are relative to the module's left edge."""
+    Coordinates are relative to the module's left edge; `art_w` moves the
+    text of states with a cover past it (the strips draw the cover inline)."""
     w = m.w
     base_y = y0 + BAR_H / 2 + FS * 0.36
     segs = timeline if timeline is not None else segments(m.name)
@@ -314,7 +514,8 @@ def draw_module_states(svg: Svg, m: Mod, x0: float, y0: float, timeline=None, lo
         if not mine or not any(f for f in st.frames):
             continue
         color = CSS.color(m.css, st.cls)
-        width = m.state_width(state)
+        pulse = ' class="pulse"' if CSS.animated(m.css, st.cls) else ""
+        lp = m.lpad(state) + (art_w if st.art else 0.0)
         for i, frame in enumerate(st.frames):
             if len(st.frames) == 1:
                 ivs = mine
@@ -334,77 +535,124 @@ def draw_module_states(svg: Svg, m: Mod, x0: float, y0: float, timeline=None, lo
             else:
                 name = svg.keyframes("opacity", visible_points(ivs, loop=loop))
                 svg.add(f'<g class="a" style="animation-name:{name}" opacity="{1 if at(ivs, still) else 0}">')
-            svg.text(x0 + PAD, base_y, frame, FS, color)
-            if border and m.border:
-                svg.add(f'<rect x="{x0 + width - 1:.1f}" y="{y0}" width="1" height="{BAR_H}" fill="{SEP}"/>')
+            svg.text(x0 + lp, base_y, frame, FS, color, extra=pulse)
+            if st.tail:
+                svg.text(x0 + lp + REG.width(frame, FS), base_y, st.tail, FS, CSS.color(m.css, None))
             svg.add("</g>")
 
 
-def draw_bar(svg: Svg, clicks: list[tuple[float, str]]):
-    svg.add(f'<rect x="{BAR_X}" y="{BAR_Y}" width="{BAR_W}" height="{BAR_H}" rx="6" fill="{BAR_BG}"/>')
-    base_y = BAR_Y + BAR_H / 2 + FS * 0.36
-    for m in LEFT + RIGHT:
-        xs = [(t, layout(t)[m.name][0]) for t in TIMES]
-        moving = len({round(x, 2) for _, x in xs}) > 1
-        x_still = layout(STILL)[m.name][0]
-        if moving:
+def draw_cover(svg: Svg, m: Mod, x0: float, y0: float, timeline=None, loop=T, still=STILL):
+    """The image module: the followed module's cover, state by state."""
+    other = ALL[m.w.items[0]]
+    segs = timeline if timeline is not None else segments(other.name)
+    for art in sorted({other.w.states[s].art for _, _, s in segs} - {None}):
+        ivs = [(a, b) for a, b, s in segs if other.w.states[s].art == art]
+        name = svg.keyframes("opacity", visible_points(ivs, fade=0.12, loop=loop))
+        svg.add(f'<g class="a" style="animation-name:{name}" opacity="{1 if at(ivs, still) else 0}">')
+        svg.add(f'<use href="#{art}" x="{x0 + ART_PAD:.1f}" y="{y0 + (BAR_H - ART) / 2:.1f}" width="{ART}" height="{ART}"/>')
+        svg.add("</g>")
+
+
+def geometry_rects(svg: Svg, boxes: list[tuple[float, float, float]], y: float, h: float, rx: float, fill: str, stroke=None):
+    """A rect that snaps between (t, x, w) geometries: one per distinct box,
+    shown while it applies."""
+    spans: dict[tuple[float, float], list[tuple[float, float]]] = {}
+    for i, (t, x, w) in enumerate(boxes):
+        end = boxes[i + 1][0] if i + 1 < len(boxes) else T
+        if w and end > t:
+            spans.setdefault((round(x, 1), round(w, 1)), []).append((t, end))
+    line = f' stroke="{stroke}"' if stroke else ""
+    for (x, w), ivs in spans.items():
+        if len(spans) == 1 and ivs == [(0.0, T)]:
+            svg.add(f'<rect x="{x + .5:.1f}" y="{y + .5:.1f}" width="{w - 1:.1f}" height="{h - 1:.1f}" rx="{rx}" fill="{fill}"{line}/>')
+            continue
+        name = svg.keyframes("opacity", visible_points(ivs, fade=0.06, loop=T))
+        svg.add(f'<rect class="a" style="animation-name:{name}" opacity="{1 if at(ivs, STILL) else 0}" '
+                f'x="{x + .5:.1f}" y="{y + .5:.1f}" width="{w - 1:.1f}" height="{h - 1:.1f}" rx="{rx}" fill="{fill}"{line}/>')
+
+
+def draw_bar(svg: Svg, touches: list[tuple[float, str]]):
+    lays = [(t, layout(t)) for t in TIMES]
+    # The pills.
+    for e in LEFT + RIGHT:
+        boxes = [(t, *lay[1][e.name]) for t, lay in lays]
+        geometry_rects(svg, boxes, BAR_Y, BAR_H, 10, PILL, PILL_LINE)
+    # The modules, each moving as the pills around it grow and shrink.
+    for m in ALL.values():
+        xs = [(t, lay[0][m.name][0]) for t, lay in lays]
+        x_still = layout(STILL)[0][m.name][0]
+        if len({round(x, 2) for _, x in xs}) > 1:
             pts = []
             for i, (t, x) in enumerate(xs):
                 if i:
                     pts.append((t, f"translate({xs[i - 1][1]:.1f}px, 0px)"))
-                pts.append((t + (0.08 if i else 0), f"translate({x:.1f}px, 0px)"))
+                pts.append((t + (0.06 if i else 0), f"translate({x:.1f}px, 0px)"))
             name = svg.keyframes("transform", pts)
             svg.add(f'<g class="a" style="animation-name:{name}" transform="translate({x_still:.1f} 0)">')
         else:
             svg.add(f'<g transform="translate({xs[0][1]:.1f} 0)">')
-        # Hover highlight around each click on this module.
-        for t, target in clicks:
+        # A drawer's modules show only while it is open.
+        if m.drawer:
+            ivs = [(a, b) for a, b, s in segments(m.drawer) if s == "open"]
+            name = svg.keyframes("opacity", visible_points(ivs, fade=0.2, loop=T))
+            svg.add(f'<g class="a" style="animation-name:{name}" opacity="{1 if at(ivs, STILL) else 0}">')
+        # Hover feedback around each click or hover on this module.
+        for t, target in touches:
             if target == m.name:
-                w = layout(t - 0.01)[m.name][1]
+                w = layout(t - 0.01)[0][m.name][1] or layout(t + 0.3)[0][m.name][1]
                 name = svg.keyframes("opacity", visible_points([(t - 0.4, t + 0.45)], fade=0.12))
-                svg.add(f'<rect class="a" style="animation-name:{name}" opacity="0" x="0" y="{BAR_Y}" width="{w:.1f}" height="{BAR_H}" fill="{HOVER}"/>')
+                svg.add(f'<rect class="a" style="animation-name:{name}" opacity="0" x="0" y="{BAR_Y + 4}" '
+                        f'width="{w:.1f}" height="{BAR_H - 8}" rx="7" fill="{HOVER}"/>')
         kind = m.w.kind
         if kind == "workspaces":
-            x = 0.0
-            for n, active in m.w.items:
-                icon = m.ws_icon(n)
-                bw = REG.width(icon, FS) + 2 * PAD
-                svg.text(x + PAD, base_y, icon, FS, FG)
+            x = CSS.pad("#workspaces")[0]
+            pl = CSS.pad("#workspaces button")[0]
+            for n, wins, active in m.w.items:
+                label, bw = ws_button(n, wins)
                 if active:
-                    svg.add(f'<rect x="{x:.1f}" y="{BAR_Y + BAR_H - 3}" width="{bw:.1f}" height="3" fill="{ACTIVE_LINE}"/>')
+                    svg.add(f'<rect x="{x + 1:.1f}" y="{BAR_Y + 5}" width="{bw - 2:.1f}" height="{BAR_H - 10}" rx="7" fill="{WS_ACTIVE}"/>')
+                color = BRIGHT if active else FG
+                svg.text(x + 1 + pl, BASE_Y, n, FS, color, extra=' fill-opacity=".55"')
+                svg.text(x + 1 + pl + REG.width(n, FS), BASE_Y, label, FS, color)
                 x += bw
-            svg.add(f'<rect x="{x:.1f}" y="{BAR_Y}" width="1" height="{BAR_H}" fill="{SEP}"/>')
         elif kind == "window":
-            title = m.w.items[0]
-            svg.text(PAD, base_y, title, FS, CSS.color("window", None))
-            svg.add(f'<rect x="{REG.width(title, FS) + 2 * PAD:.1f}" y="{BAR_Y}" width="1" height="{BAR_H}" fill="{SEP}"/>')
+            svg.text(CSS.pad("#window")[0], BASE_Y, rewrite_title(m.w.items[0]), FS, CSS.color("window", None))
         elif kind == "tray":
-            x = PAD
+            x = CSS.pad("#tray")[0]
             for g, color in m.w.items:
-                svg.text(x, base_y, g, FS, color)
-                x += REG.width(g, FS) + 8
+                svg.text(x, BASE_Y, g, FS, color)
+                x += REG.width(g, FS) + TRAY_GAP
+        elif kind == "image":
+            draw_cover(svg, m, 0.0, BAR_Y)
         else:
             draw_module_states(svg, m, 0.0, BAR_Y)
+        if m.drawer:
+            svg.add("</g>")
         svg.add("</g>")
 
 
-def code_line(svg: Svg, x, y, parts):
+def code_line(svg: Svg, x, y, parts, size):
     for s, color in parts:
-        svg.text(x, y, s, 13, color)
-        x += REG.width(s, 13)
+        svg.text(x, y, s, size, color)
+        x += REG.width(s, size)
+
+
+def window(svg: Svg, x, y, w, h, title):
+    svg.add(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="12" fill="{WIN}" stroke="{WIN_LINE}"/>')
+    svg.add(f'<path d="M{x},{y + 12} a12,12 0 0 1 12,-12 h{w - 24} a12,12 0 0 1 12,12 v22 h-{w} Z" fill="{WIN_BAR}"/>')
+    svg.text(x + 18, y + 24, title, 15, DIM)
 
 
 def draw_desktop(svg: Svg, typing: tuple[float, float] | None):
     svg.add(f'<rect width="{W}" height="{H}" fill="url(#bg)"/>')
     svg.add(f'<rect width="{W}" height="{H}" fill="url(#haze)"/>')
     # The editor, where dictation lands.
-    ex, ey, ew, eh = 36, 30, 700, 488
-    svg.add(f'<rect x="{ex}" y="{ey}" width="{ew}" height="{eh}" rx="10" fill="{WIN}" stroke="{WIN_LINE}"/>')
-    svg.add(f'<path d="M{ex},{ey + 10} a10,10 0 0 1 10,-10 h{ew - 20} a10,10 0 0 1 10,10 v18 h-{ew} Z" fill="{WIN_BAR}"/>')
-    svg.text(ex + 14, ey + 19, "src/retry.ts", 12, DIM)
-    K, S, N, F, C = VIOLET, GO, ORANGE, FROST, FAINT
+    fs, lh = 19, 35
+    ex, ey, ew, eh = 52, 46, 1060, 860
+    window(svg, ex, ey, ew, eh, "~/Sites/ledger/src/retry.ts")
+    K, Sg, N, F, C = VIOLET, GO, ORANGE, FROST, FAINT
     lines = [
-        [("import", K), (" { sleep } ", FG), ("from", K), (' "./time"', S), (";", FG)],
+        [("import", K), (" { sleep } ", FG), ("from", K), (' "./time"', Sg), (";", FG)],
         [],
         [("export async function", K), (" retry", F), ("<T>(", FG)],
         [("  run: () => Promise<T>,", FG)],
@@ -421,27 +669,25 @@ def draw_desktop(svg: Svg, typing: tuple[float, float] | None):
         [("  }", FG)],
         [("}", FG)],
     ]
-    y = ey + 58
+    y = ey + 84
     for i, parts in enumerate(lines):
-        svg.text(ex + 22, y, f"{i + 1:>2}", 13, C)
+        svg.text(ex + 28, y, f"{i + 1:>2}", fs, C)
         if parts is None:
             if typing:
                 t0, t1 = typing
-                full = REG.width("  " + DICTATED, 13)
+                full = REG.width("  " + DICTATED, fs)
                 svg.add('<clipPath id="typed"><rect class="a" style="animation-name:'
                         + svg.keyframes("width", [(0, "0px"), (t0, "0px"), (t1, f"{full:.0f}px"), (T - 2.4, f"{full:.0f}px"), (T - 2.2, "0px")])
-                        + f'" x="{ex + 56}" y="{y - 14}" width="{full if t1 <= STILL else 0:.0f}" height="20"/></clipPath>')
+                        + f'" x="{ex + 78}" y="{y - 20}" width="{full if t1 <= STILL else 0:.0f}" height="30"/></clipPath>')
                 svg.add('<g clip-path="url(#typed)">')
-                svg.text(ex + 56, y, "  " + DICTATED, 13, DIM)
+                svg.text(ex + 78, y, "  " + DICTATED, fs, DIM)
                 svg.add("</g>")
         elif parts:
-            code_line(svg, ex + 56, y, parts)
-        y += 24
+            code_line(svg, ex + 78, y, parts, fs)
+        y += lh
     # A terminal beside it.
-    tx, ty, tw, th = 760, 70, 400, 300
-    svg.add(f'<rect x="{tx}" y="{ty}" width="{tw}" height="{th}" rx="10" fill="{WIN}" stroke="{WIN_LINE}"/>')
-    svg.add(f'<path d="M{tx},{ty + 10} a10,10 0 0 1 10,-10 h{tw - 20} a10,10 0 0 1 10,10 v18 h-{tw} Z" fill="{WIN_BAR}"/>')
-    svg.text(tx + 14, ty + 19, "kitty", 12, DIM)
+    tx, ty, tw, th = 1144, 100, 600, 420
+    window(svg, tx, ty, tw, th, "kitty")
     rows = [
         [("~/Sites/ledger", F), (" main ", VIOLET), ("❯", GO), (" pnpm test retry", FG)],
         [(" ✓ ", GO), ("retries five times", DIM)],
@@ -452,113 +698,87 @@ def draw_desktop(svg: Svg, typing: tuple[float, float] | None):
         [],
         [("~/Sites/ledger", F), (" main ", VIOLET), ("❯", GO)],
     ]
-    y = ty + 54
+    y = ty + 76
     for parts in rows:
-        code_line(svg, tx + 16, y, parts)
-        y += 24
+        code_line(svg, tx + 22, y, parts, 18)
+        y += 34
 
 
-DRAWER_SCALE, BOARD_SCALE = 0.95, 1.0
-
-
-def pair(opens: list[tuple[float, str]], closes: list[float]):
-    """(open time, anchor module, close time) for each opening."""
-    out = []
-    for t, anchor in sorted(opens):
-        c = min((x for x in closes if x > t), default=T - 0.5)
-        out.append((t, anchor, c))
-    return out
-
-
-class Panels:
-    """When each panel is open, where, and where clicks on it land."""
-
-    def __init__(self, scenes: dict[str, list[float]]):
-        get = lambda k: scenes.get(k, [])  # noqa: E731
-        self.board = pair([(t, "custom/switchyard") for t in get("board-open")] + [(t, "custom/roundhouse") for t in get("handoff")],
-                          get("board-close"))
-        self.drawer = pair([(t, "custom/roundhouse") for t in get("drawer-open")], get("drawer-close") + get("handoff"))
-
-    def where(self, kind: str, t_open: float, anchor: str) -> scenes.Place:
-        w, h, k = (scenes.BOARD_W, scenes.BOARD_H, BOARD_SCALE) if kind == "board" else (scenes.DRAWER_W, scenes.DRAWER_H, DRAWER_SCALE)
-        return scenes.place(center(anchor, t_open), BAR_Y, W, w, h, k)
-
-    def hotspot(self, target: str, t: float):
-        kind, part = target.split(":", 1)
-        spots = scenes.BOARD_SPOTS if kind == "board" else scenes.DRAWER_SPOTS
-        for o, anchor, c in getattr(self, kind):
-            if o <= t <= c:
-                return self.where(kind, o, anchor).screen(*spots[part])
-        sys.exit(f"story.py: a click on {target} at {t}s, when that panel is not open")
-
-
-def draw_panels(svg: Svg, panels: Panels, scene_times: dict[str, list[float]]):
-    first = lambda k, d: (scene_times.get(k) or [d])[0]  # noqa: E731
-    times = scenes.BoardTimes(
-        storefront_build=first("storefront-build", T),
-        android_queue=first("android-queue", T),
-        android_held=first("android-held", T),
-        storefront_done=first("storefront-done", T),
-        android_build=first("android-build", T),
-        end=T,
-    )
-    lamp: dict[str, list[tuple[float, float]]] = {}
-    for a, b, st in segments("custom/roundhouse"):
-        lamp.setdefault(st, []).append((a, b))
-    for o, anchor, c in panels.drawer:
-        yard = CSS.color("custom-switchyard", WIDGETS["custom/switchyard"].states[state_at("custom/switchyard", o)].cls)
-        scenes.drawer(svg, panels.where("drawer", o, anchor), [(o, c)], STILL, yard)
-    for o, anchor, c in panels.board:
-        scenes.board(svg, panels.where("board", o, anchor), [(o, c)], STILL, times, lamp)
-
-
-def draw_caption(svg: Svg, captions):
-    """Zoomed in, a title card in the dimmed space above the bar; zoomed out,
-    a small pill at the top so the desktop stays visible."""
+def draw_caption(svg: Svg, captions, cam: Camera):
+    """Zoomed in on a module, a title card in the dimmed space above the
+    bar; otherwise a pill at the top, over the desktop or above a panel."""
     for i, (t, name, words) in enumerate(captions):
         end = captions[i + 1][0] if i + 1 < len(captions) else T
         end = min(end, t + 4.2)
         # A caption leaves when the camera moves on, so a title card never
         # outlives its zoom.
-        moves = [s for s, _ in CAM_MOVES[1:] if s > t + 0.5]
+        moves = [s for s, _ in cam.moves[1:] if s > t + 0.5]
         if moves:
             end = min(end, moves[0] + 0.2)
         vis = svg.keyframes("opacity", visible_points([(t, end)], fade=0.25))
         svg.add(f'<g class="a" style="animation-name:{vis}" opacity="{1 if t <= STILL < end else 0}">')
-        z = cam_at(t + 0.3)[0]
-        if z > 1.9:
-            bar_top = ZOOM_TY - BAR_H * z / 2
+        z, _, ty = cam.at(t + MOVE)
+        if cam.bar_zoom(t + 0.01):
+            bar_top = BAR_Y * z + ty
             cy = bar_top / 2 + 10
-            svg.text(W / 2, cy - 8, name, 34, FROST, 700, "middle")
-            svg.text(W / 2, cy + 30, words, 20, FG, 400, "middle")
+            svg.text(W / 2, cy - 10 * S, name, 34 * S, FROST, 700, "middle")
+            svg.text(W / 2, cy + 30 * S, words, 20 * S, FG, 400, "middle")
         else:
+            fs = 15 * S
             label = f"{name}  "
-            width = BOLD.width(label, 15) + REG.width(words, 15) + 36
+            width = BOLD.width(label, fs) + REG.width(words, fs) + 36 * S
             x0 = (W - width) / 2
-            svg.add(f'<rect x="{x0:.1f}" y="18" width="{width:.1f}" height="36" rx="18" fill="#101216" fill-opacity=".86" stroke="#3b4048"/>')
-            svg.text(x0 + 18, 41, label, 15, FROST, 700)
-            svg.text(x0 + 18 + BOLD.width(label, 15), 41, words, 15, FG)
+            svg.add(f'<rect x="{x0:.1f}" y="{18 * S:.1f}" width="{width:.1f}" height="{36 * S:.1f}" rx="{18 * S:.1f}" '
+                    f'fill="#101216" fill-opacity=".88" stroke="#3b4048"/>')
+            svg.text(x0 + 18 * S, 41 * S, label, fs, FROST, 700)
+            svg.text(x0 + 18 * S + BOLD.width(label, fs), 41 * S, words, fs, FG)
         svg.add("</g>")
+
+
+ALT = (
+    "A Hyprland desktop under a floating waybar of frosted pills: workspaces with a glyph per open window, the window "
+    "title, Tannoy's cover and song, a pill of lamps, the audio pill, the desk pill and the Timetable clock. A build "
+    "turns the Roundhouse lamp red; its drawer says memory is stalling, and its link opens the Switchyard board, where "
+    "android is held until storefront finishes, the lamp calms and android starts. The Tannoy player slides out of the "
+    "cover, and picking Chrome swaps the bar to a podcast. An agent asks for a secret: broker's request window waits "
+    "for a YubiKey touch while the Signal Box lamp turns to an amber key, then the Signal Box panel lists every live "
+    "grant and Revoke all dims the lamp. The volume switches to the headset and the mouse battery runs low. Logbook's "
+    "lamp turns frost when Chrome takes the mic; its drawer records the meeting on air, with do not disturb hiding the "
+    "song, marks a moment, and stops, and the transcript is made and ready to copy; dictation types a comment into the "
+    "editor. The desk drawer slides the key lights and the power menu out of its arrow, and the key lights warm the "
+    "room. The Timetable clock names the next meeting, its drawer starts a focus block, then the clock turns amber and "
+    "red to join. The VPN connects, a swaync notification arrives, and do not disturb silences it and hides the song."
+)
 
 
 def hero() -> str:
     svg = Svg(T)
-    svg.css.append(scenes.PULSE_CSS)
-    clicks_mod, clicks_all, captions, times = [], [], [], {}
+    svg.css.append(scenes.css())
+    overlap_check()
+    panels = Panels()
+    cam = Camera(panels)
+    touches, clicks, captions, times = [], [], [], {}
     for b in BEATS:
         if b.scene:
             times.setdefault(b.scene, []).append(b.t)
-    panels = Panels(times)
-    for b in BEATS:
-        if isinstance(b.click, str) and ":" in b.click:
-            x, y = panels.hotspot(b.click, b.t)
-            clicks_all.append((b.t, to_screen(x, y, b.t)))
-        elif isinstance(b.click, str):
-            clicks_mod.append((b.t, b.click))
-            x, w = layout(b.t - 0.01)[b.click]
-            clicks_all.append((b.t, to_screen(x + w / 2, BAR_CY, b.t)))
-        elif b.click:
-            clicks_all.append((b.t, b.click))
+        for target, ripple in ((b.click, True), (b.hover, False)):
+            if target is None:
+                continue
+            if target == "outside":
+                p = (W * 0.3, H * 0.3)
+            elif isinstance(target, str) and target in ALL:
+                touches.append((b.t, target))
+                x, w = layout(b.t - 0.01)[0][target]
+                if not w:
+                    sys.exit(f"story.py: a click on {target} at {b.t}s, when it is not in the bar")
+                p = cam.to_screen(x + w / 2, BAR_CY, b.t)
+            elif isinstance(target, str) and ":" in target:
+                p = cam.to_screen(*panels.hotspot(target, b.t), b.t)
+            elif isinstance(target, str):
+                sys.exit(f"story.py: beat at {b.t}s clicks {target}, which is not a module, a panel spot or 'outside'")
+            else:
+                p = target
+            clicks.append((b.t, p, ripple))
         if b.caption:
             captions.append((b.t, *b.caption))
     one = lambda k: (times.get(k) or [None])[0]  # noqa: E731
@@ -568,27 +788,27 @@ def hero() -> str:
             '<radialGradient id="haze" cx=".85" cy=".1" r=".7"><stop offset="0" stop-color="#88c0d0" stop-opacity=".08"/><stop offset="1" stop-color="#88c0d0" stop-opacity="0"/></radialGradient>'
             '<radialGradient id="warm" cx=".5" cy=".2" r=".9"><stop offset="0" stop-color="#ffd8a8" stop-opacity=".13"/><stop offset="1" stop-color="#ffd8a8" stop-opacity=".02"/></radialGradient>'
             '<filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000" flood-opacity=".5"/></filter>'
-            + scenes.TOAST_DEFS
+            + scenes.TOAST_DEFS + scenes.defs()
             + "</defs>")
 
     # Behind everything, for the edges the zoomed desktop does not cover.
     svg.add(f'<rect width="{W}" height="{H}" fill="{BG1}"/>')
     # Everything the camera moves.
+    samples = sorted({0.0, T} | {s + MOVE * k / 10 for s, _ in cam.moves[1:] for k in range(11)})
     pts = []
-    samples = sorted({0.0, T} | {s + MOVE * k / 10 for s, _ in CAM_MOVES[1:] for k in range(11)})
     for t in samples:
-        tx, ty, z = cam_transform(cam_at(t))
+        z, tx, ty = cam.at(t)
         pts.append((t, f"translate({tx:.2f}px, {ty:.2f}px) scale({z:.4f})"))
-    cam = svg.keyframes("transform", pts)
-    svg.add(f'<g class="a" style="animation-name:{cam};transform-origin:0 0">')
+    move = svg.keyframes("transform", pts)
+    svg.add(f'<g class="a" style="animation-name:{move};transform-origin:0 0">')
     typing = (one("type"), one("type") + 1.4) if one("type") is not None else None
     draw_desktop(svg, typing)
-    # The desktop dims as the camera closes in on the bar.
-    dim = svg.keyframes("opacity", [(t, f"{0.72 * (cam_at(t)[0] - 1) / (ZOOM - 1):.3f}") for t in samples])
+    # The desktop dims as the camera closes in.
+    dim = svg.keyframes("opacity", [(t, f"{min(0.72, 0.72 * (cam.at(t)[0] - 1) / (ZOOM - 1)):.3f}") for t in samples])
     svg.add(f'<rect class="a" style="animation-name:{dim}" opacity="0" x="-{W}" y="-{H}" width="{3 * W}" height="{2 * H + BAR_Y - 6}" fill="{BG1}"/>')
-    draw_bar(svg, clicks_mod)
-    draw_panels(svg, panels, times)
-    # swaync's notification, top right of the screen as its config puts it.
+    draw_bar(svg, touches)
+    panels.draw(svg)
+    # swaync's notification, top right as its config puts it.
     if one("toast") is not None:
         gone = one("toast-dismiss") or one("toast") + 6
         scenes.toast(svg, W - 14 - scenes.TOAST_W, 14, one("toast"), gone, STILL)
@@ -600,31 +820,27 @@ def hero() -> str:
         name = svg.keyframes("opacity", visible_points([(on, off)], fade=0.5))
         svg.add(f'<rect class="a" style="animation-name:{name}" opacity="0" width="{W}" height="{H}" fill="url(#warm)"/>')
 
-    draw_caption(svg, captions)
+    draw_caption(svg, captions, cam)
 
     # The cursor and its clicks, in screen space.
     rest = (W * 0.66, H * 0.42)
     cpts = [(0.0, rest)]
-    for t, p in clicks_all:
+    for t, p, _ in clicks:
         cpts += [(t - 0.5, p), (t + 0.3, p)]
     cpts.append((T - 0.6, rest))
     name = svg.keyframes("transform", [(t, f"translate({x:.1f}px, {y:.1f}px)") for t, (x, y) in cpts])
-    for i, (t, (x, y)) in enumerate(clicks_all):
+    for t, (x, y), ripple in clicks:
+        if not ripple:
+            continue
         rip = svg.keyframes("transform", [(0, "scale(.3)"), (t, "scale(.3)"), (t + 0.45, "scale(1.7)"), (t + 0.46, "scale(.3)")])
         op = svg.keyframes("opacity", [(0, "0"), (t - 0.01, "0"), (t, ".9"), (t + 0.45, "0")])
-        svg.add(f'<circle class="a" style="animation-name:{rip},{op};transform-box:fill-box;transform-origin:center" opacity="0" cx="{x:.1f}" cy="{y:.1f}" r="16" fill="none" stroke="{FROST}" stroke-width="2.5"/>')
+        svg.add(f'<circle class="a" style="animation-name:{rip},{op};transform-box:fill-box;transform-origin:center" opacity="0" '
+                f'cx="{x:.1f}" cy="{y:.1f}" r="{16 * S:.1f}" fill="none" stroke="{FROST}" stroke-width="{2.5 * S:.1f}"/>')
     sx, sy = next((p for t, p in reversed(cpts) if t <= STILL), rest)
     svg.add(f'<g class="a" style="animation-name:{name}" transform="translate({sx:.1f} {sy:.1f})">'
-            '<path d="M0,0 L0,22 L6,17 L10,26 L14,24 L10,15 L18,15 Z" fill="#eceff4" stroke="#1d2024" stroke-width="1.4" stroke-linejoin="round"/></g>')
-
-    label = ("A Hyprland desktop with a waybar along the bottom. A build turns the Roundhouse lamp red; its drawer explains "
-             "that memory is stalling and Switchyard is holding the next build, and its link opens the Switchyard board, where "
-             "storefront finishes, the lamp calms and android starts. Then the view zooms along the bar from left to right: the "
-             "song pauses, the volume switches to the headset, the mouse battery runs low, dictation types a comment into the "
-             "editor, the meeting recorder lights up, the clock starts a focus block, the key lights warm the room, the VPN connects, "
-             "a swaync notification arrives and do not disturb silences it and hides the song title, and the clock names the "
-             "next meeting, then turns red to join it.")
-    return svg.render(W, H, label)
+            f'<path transform="scale({S:.3f})" d="M0,0 L0,22 L6,17 L10,26 L14,24 L10,15 L18,15 Z" fill="#eceff4" '
+            'stroke="#1d2024" stroke-width="1.4" stroke-linejoin="round"/></g>')
+    return svg.render(W, H, ALT)
 
 
 # ------------------------------------------------------------------ strips
@@ -635,18 +851,21 @@ STRIP_STEP = 1.6
 def with_parts(m: Mod) -> Mod:
     """A module drawn as one widget with its "#name" parts (the lit key
     lights beside the drawer): each state shows whichever part prints it."""
-    parts = [m.w] + [p.w for p in RIGHT if p.name.split("#", 1)[0] == m.name and p is not m]
+    parts = [m.w] + [p.w for p in ALL.values() if p.name.split("#", 1)[0] == m.name and p is not m]
     states = {
         s: next((p.states[s] for p in parts if s in p.states and any(p.states[s].frames)), st)
         for s, st in m.w.states.items()
     }
-    return Mod(m.name, replace(m.w, states=states))
+    out = Mod(m.name, replace(m.w, states=states))
+    return out
 
 
 def own_widgets() -> list[Mod]:
     """The right side's custom modules with a strip and a table row each;
-    "#name" parts are drawn inside their module's strip instead."""
-    return [with_parts(m) for m in RIGHT if m.w.kind == "custom" and "#" not in m.name]
+    "#name" parts are drawn inside their module's strip instead, and the
+    handle and the cover belong to their pills."""
+    right = [m for e in RIGHT for m in e.mods]
+    return [with_parts(ALL[m]) for m in right if ALL[m].w.kind == "custom" and "#" not in m and ALL[m].w.what]
 
 
 def strip(m: Mod):
@@ -655,11 +874,23 @@ def strip(m: Mod):
         return None
     loop = STRIP_STEP * len(states) if len(states) > 1 else T
     timeline = [(i * STRIP_STEP, (i + 1) * STRIP_STEP, s) for i, s in enumerate(states)] if len(states) > 1 else [(0.0, loop, states[0])]
-    width = max(m.state_width(s) for s in states) - 1 + 2 * PAD
+    arts = any(m.w.states[s].art for s in states)
+    art_w = ART_PAD + ART if arts else 0.0
+    width = max(m.lpad(s) + m.text_width(s) + CSS.pad(f"#{m.css}")[1] for s in states) + art_w + 8
     height = BAR_H + 8
     svg = Svg(loop)
-    svg.add(f'<rect width="{width:.1f}" height="{height}" rx="7" fill="{BAR_BG}"/>')
-    draw_module_states(svg, m, PAD, 4, timeline=timeline, loop=loop, still=0.0, border=False)
+    defs = scenes.apps.tannoy_defs() if arts else ""
+    svg.add(f"<defs>{defs}</defs>")
+    # Opaque: the pill's own color is see-through for the wallpaper, and a
+    # README can be white behind it.
+    svg.add(f'<rect x=".5" y=".5" width="{width - 1:.1f}" height="{height - 1}" rx="12" fill="{CSS.defines["bar"]}" stroke="{PILL_LINE}"/>')
+    if arts:
+        for art in sorted({m.w.states[s].art for s in states} - {None}):
+            ivs = [(a, b) for a, b, s in timeline if m.w.states[s].art == art]
+            name = svg.keyframes("opacity", visible_points(ivs, loop=loop))
+            svg.add(f'<g class="a" style="animation-name:{name}" opacity="{1 if at(ivs, 0.0) else 0}">'
+                    f'<use href="#{art}" x="{4 + ART_PAD:.1f}" y="{4 + (BAR_H - ART) / 2:.1f}" width="{ART}" height="{ART}"/></g>')
+    draw_module_states(svg, m, 4, 4, timeline=timeline, loop=loop, still=0.0, art_w=art_w)
     return svg.render(round(width, 1), height, f"{m.w.name}: " + ", ".join(states), scale=1.5)
 
 
