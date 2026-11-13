@@ -217,7 +217,7 @@ WIDGETS: dict[str, Widget] = {
         "hides the song title.",
         f"{WAYBAR}/config.jsonc",
         needs='`swaync`',
-        states={"off": State("\uf0f3", "none"), "on": State("\uf1f6", "dnd-none")},
+        states={"off": State("\uf0f3", "none"), "on": State("", "dnd-none")},
         default="off",
     ),
     # The bell outside the desk drawer, only while do not disturb is on.
