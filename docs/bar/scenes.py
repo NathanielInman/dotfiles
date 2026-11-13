@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from functools import cache
 
 import apps
-from svgkit import FROST, GO, STOP, Svg, at, visible_points
+from svgkit import FROST, Svg, at, visible_points
 
 PULSE_CSS = (
     ".pulse { animation: pulse 1.4s ease-in-out infinite; }\n"
@@ -39,14 +39,13 @@ ANCHORS = {
 # only read when the story uses it.
 LOOKS = {
     "roundhouse": {
-        # Memory is stalling and Switchyard holds android: its phase is
-        # waiting, which dots the link to the board.
-        "act": lambda: apps.roundhouse("act", "waiting"),
-        "calm": lambda: apps.roundhouse("calm", "building"),
+        "act": lambda: apps.roundhouse("act"),
+        "calm": lambda: apps.roundhouse("calm"),
     },
     "switchyard": {
-        "held": lambda: apps.switchyard("held", STOP),
-        "done": lambda: apps.switchyard("done", GO),
+        "build": lambda: apps.switchyard("build"),
+        "held": lambda: apps.switchyard("held"),
+        "done": lambda: apps.switchyard("done"),
     },
     "signalbox": {
         "live": lambda: apps.signal_box("live"),

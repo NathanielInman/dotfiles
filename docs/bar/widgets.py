@@ -213,10 +213,19 @@ WIDGETS: dict[str, Widget] = {
     ),
     "custom/silence-notifications": Widget(
         "Do not disturb",
-        "Silences notifications (swaync). Also hides the song title while it is on.",
+        "Silences notifications (swaync). It waits in the desk drawer and steps out of it while it is on, which also "
+        "hides the song title.",
         f"{WAYBAR}/config.jsonc",
         needs='`swaync`',
         states={"off": State("\uf0f3", "none"), "on": State("\uf1f6", "dnd-none")},
+        default="off",
+    ),
+    # The bell outside the desk drawer, only while do not disturb is on.
+    "custom/silence-notifications#on": Widget(
+        "Do not disturb",
+        "",
+        f"{WAYBAR}/config.jsonc",
+        states={"off": State("", "none"), "on": State("\uf1f6", "dnd-none")},
         default="off",
     ),
     "custom/switchyard": Widget(

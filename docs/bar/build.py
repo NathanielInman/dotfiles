@@ -737,19 +737,21 @@ def draw_caption(svg: Svg, captions, cam: Camera):
 
 ALT = (
     "A Hyprland desktop under a floating waybar of frosted pills: workspaces with a glyph per open window, the window "
-    "title, Tannoy's cover and song, a pill of lamps, the audio pill, the desk pill and the Timetable clock. A build "
-    "turns the Roundhouse lamp red; its drawer says memory is stalling, and its link opens the Switchyard board, where "
-    "android is held until storefront finishes, the lamp calms and android starts. The Tannoy player slides out of the "
-    "cover, and picking Chrome swaps the bar to a podcast. An agent asks for a secret: broker's request window waits "
+    "title, Tannoy's cover and song, a pill of lamps for the programs in the suite, the audio pill, the desk pill "
+    "with its drawer arrow and the Timetable clock. The tour goes left to right. The Tannoy player slides out of the "
+    "cover, and picking Chrome swaps the bar to a podcast. A build turns the Roundhouse lamp red; its drawer says "
+    "memory is stalling, then memory frees and the lamp calms. The Switchyard board opens from its own signal, "
+    "android waiting for memory until storefront finishes. An agent asks for a secret: broker's request window waits "
     "for a YubiKey touch while the Signal Box lamp turns to an amber key, then the Signal Box panel lists every live "
-    "grant and Revoke all dims the lamp. The volume switches to the headset and the mouse battery runs low. Logbook's "
-    "lamp turns frost when Chrome takes the mic; its drawer records the meeting on air, with do not disturb hiding the "
-    "song, marks a moment, and stops, and the transcript is made and ready to copy; dictation types a comment into the "
-    "editor. The desk drawer slides the key lights and the power menu out of its arrow, and the key lights warm the "
-    "room. The Timetable clock names the next meeting, its drawer starts a focus block, then the clock turns amber and "
-    "red to join. The Tablet lamp starts the work VPN, pulses amber through the web sign-in and turns frost; its drawer "
-    "shows the tunnel held with both probes answering, then stale when nothing gets through, and Reconnect brings it "
-    "back. A swaync notification arrives, and do not disturb silences it and hides the song."
+    "grant and Revoke all dims the lamp. The Tablet lamp starts the work VPN, pulses amber through the web sign-in "
+    "and turns frost; its drawer shows the tunnel held, then stale when nothing gets through, and Reconnect brings it "
+    "back. Logbook's lamp turns frost when Chrome takes the mic; its drawer records the meeting on air while do not "
+    "disturb steps out of the desk drawer and hides the song, marks a moment and stops, and the transcript is ready "
+    "to copy; dictation types a comment into the editor. The volume switches to the headset and the mouse battery "
+    "runs low. A swaync notification arrives, the desk drawer slides do not disturb, the key lights and the power "
+    "menu out of its arrow, do not disturb silences the notification and the key lights warm the room, and both stay "
+    "in view when the drawer closes. The Timetable clock names the next meeting, its drawer starts a focus block, "
+    "then the clock turns amber and red to join."
 )
 
 

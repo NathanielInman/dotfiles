@@ -94,25 +94,24 @@ def scoped(svg: str, prefix: str) -> str:
 
 # ------------------------------------------------------------ Roundhouse
 
-def roundhouse(level="calm", yard="building", tab="machine") -> Look:
-    """The drawer on `tab` at a lamp `level`, the dot on its Switchyard link
-    colored by Switchyard's phase `yard`."""
+def roundhouse(level="calm", tab="machine") -> Look:
+    """The drawer on `tab` with the lamp at `level`."""
     rh = app("roundhouse")
     out: list[str] = []
-    rh["drawer"](out.append, tab=tab, level=level, yard=yard, clip="rh")
+    rh["drawer"](out.append, tab=tab, level=level, clip="rh")
     return Look("".join(out), rh["DRAWER_W"], rh["drawer_height"](tab, level), dict(rh["DRAWER_SPOTS"]))
 
 
 # ------------------------------------------------------------ Switchyard
 
-def switchyard(story: str, roundhouse_color: str) -> Look:
+def switchyard(story: str) -> Look:
     """The board at a moment of the tour's story: "build" (storefront on the
-    main line, android queued behind it), "held" (Roundhouse holds android)
-    or "done" (storefront finished, android on the main line). The link to
-    Roundhouse is dotted with the lamp's color."""
+    main line, android queued behind it), "held" (android waits for memory
+    on Switchyard's own gate) or "done" (storefront finished, android on
+    the main line)."""
     sy = app("switchyard")
     task, tasks = sy["task"], sy["TASKS"]
-    held = task("android", "APK to emulator", "held: Roundhouse says act", "waiting", "g")
+    held = task("android", "APK to emulator", "waiting for 16 GB free (11 GB available)", "waiting", "g")
     queued = tasks["android"][0]
     tiles = {
         "build": {"storefront": tasks["storefront"][0], "android": queued},
@@ -123,9 +122,9 @@ def switchyard(story: str, roundhouse_color: str) -> Look:
     pen = sy["Pen"]()
     h = sy["BH_GRID"]
     sy["board_panel"](pen, h)
-    sy["board_header"](pen, roundhouse=roundhouse_color)
+    sy["board_header"](pen)
     label, used, cap, waiting = sy["MAINLINE"][mainline]
-    sy["board_mainline"](pen, label, used, cap, "" if story == "held" else waiting)
+    sy["board_mainline"](pen, label, used, cap, waiting)
     for i, name in enumerate(sy["ORDER"]):
         t = tiles.get(name) or tasks[name][1 if name == "ledger-api" else 0]
         if name == "ledger-api":
