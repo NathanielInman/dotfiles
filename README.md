@@ -30,8 +30,8 @@ My Arch Linux desktop: Hyprland, waybar, kitty, zsh and Neovim. Each tool is its
 - **[Field notes](#field-notes)** for the problems real hardware threw at it, so you don't lose the evening I did.
 
 <p align="center">
-  <img src="Pictures/desktop.png" width="100%" alt="A real screenshot of the desktop: Neovide with the waybar stylesheet and the Hyprland window rules side by side, kitty showing fastfetch, and the Roundhouse drawer open above the bar with CPU, GPU, memory, network and memory by app.">
-  <br><sub>The real thing: Neovide on the waybar stylesheet and the Lua window rules, kitty, and the Roundhouse drawer open over the bar.</sub>
+  <img src="Pictures/desktop.png" width="100%" alt="A real screenshot of the desktop: Neovide split between a Godot shader and a Makefile, kitty showing fastfetch, and the Roundhouse drawer open above the bar with a CPU heads-up, CPU, GPU, memory, pressure, network, the audio devices and memory by app. The bar has the lamps pill (Roundhouse, Switchyard, Signal Box, Tablet and Logbook) and the desk pill closed to its arrow.">
+  <br><sub>The real thing: Neovide on a Godot shader and a Makefile, kitty, and the Roundhouse drawer open over the bar.</sub>
 </p>
 
 ## Quick start
