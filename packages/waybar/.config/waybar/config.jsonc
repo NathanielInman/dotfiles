@@ -41,7 +41,7 @@
       "custom/roundhouse",
       "custom/switchyard",
       "custom/broker",
-      "custom/vpn",
+      "custom/tablet",
       "custom/silence-notifications"
     ]
   },
@@ -228,14 +228,19 @@
   "tray": {
     "spacing": 8
   },
-  "custom/vpn": {
-    "exec": "~/.config/waybar/scripts/vpn.sh",
-    // toggle redraws through pkill -RTMIN+11; the poll catches drops
-    "interval": 30,
-    "signal": 11,
-    "on-click": "~/.config/waybar/scripts/vpn.sh toggle",
-    "on-click-right": "~/.config/waybar/scripts/vpn.sh list",
-    "return-type": "json"
+  // Tablet (~/Sites/tablet, config in packages/tablet): the VPN lamp. Dim
+  // while off, frost while the tunnel is up and its probes answer, amber
+  // while it connects, waits on the sign-in or an agent asks for it, orange
+  // when openvpn3 says connected but nothing gets through (stale), red when
+  // it failed, dropped or openvpn3 needs a rebuild. Click connects or
+  // disconnects (or reconnects what is stale), right-click opens the drawer,
+  // middle-click checks now.
+  "custom/tablet": {
+    "exec": "~/.local/bin/tablet bar",
+    "return-type": "json",
+    "on-click": "~/.local/bin/tablet flip",
+    "on-click-right": "~/.local/bin/tablet toggle",
+    "on-click-middle": "~/.local/bin/tablet check"
   },
   // Logbook (~/Sites/logbook): one On Air lamp for the mic. Dim while
   // nothing listens, frost while another app (Zoom, Chrome) has the mic,

@@ -1,0 +1,26 @@
+# Tablet (~/Sites/tablet): the VPN lamp in the bar.
+#
+# The DigitalTurbine VPN (CloudConnexa through openvpn3). scripts/openvpn3-tun-dns
+# puts the resolvers and zones on the tunnel; Tablet checks they are there and
+# that the probes answer through it, so a tunnel openvpn3 calls connected but
+# nothing gets through shows as stale.
+[[profile]]
+name = "dt"
+ovpn = "~/dt.ovpn"
+dns = ["100.127.255.250", "100.96.0.1"]
+zones = ["digitalturbine.com", "digitalturbine.io"]
+probes = [
+  "grafana.internal.ss-prod.digitalturbine.com:443",
+  "nexus.gcp-dev.digitalturbine.io:443",
+]
+
+# Split tunnel: public control planes never go through it.
+[[profile.outside]]
+host = "*.googleapis.com"
+note = "GKE control planes are public and allowlisted by IP; use Connect Gateway"
+
+[doctor]
+# The AUR build loses its libraries on protobuf or jsoncpp bumps; rebuild it,
+# then let the D-Bus services restart on the new binaries.
+repair = "paru -S --rebuild --noconfirm openvpn3 && sudo pkill -f openvpn3-service-"
+terminal = "kitty --class float-term --hold sh -c"

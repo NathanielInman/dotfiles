@@ -109,7 +109,7 @@ window#waybar.empty #window {
 #custom-roundhouse,
 #custom-switchyard,
 #custom-broker,
-#custom-vpn,
+#custom-tablet,
 #custom-silence-notifications,
 #pulseaudio,
 #custom-mouse-battery,
@@ -126,7 +126,7 @@ window#waybar.empty #window {
 #pulseaudio:hover,
 #custom-roundhouse:hover,
 #custom-keylights:hover,
-#custom-vpn:hover,
+#custom-tablet:hover,
 #custom-logbook:hover,
 #custom-silence-notifications:hover,
 #custom-switchyard:hover,
@@ -265,14 +265,44 @@ window#waybar.empty #window {
   }
 }
 
-/* VPN: dim until connected */
-#custom-vpn,
-#custom-vpn.disconnected {
+/* Tablet: dim while off, frost while held and checked, amber while it
+   connects, waits on a sign-in or an agent asks (pulsing), orange when the
+   tunnel is stale, red when it failed, dropped or openvpn3 is broken */
+#custom-tablet,
+#custom-tablet.off,
+#custom-tablet.offline {
   color: @dim;
 }
 
-#custom-vpn.connected {
+#custom-tablet.held {
   color: @frost;
+}
+
+#custom-tablet.degraded {
+  color: @yellow;
+}
+
+#custom-tablet.connecting,
+#custom-tablet.signin,
+#custom-tablet.asking {
+  color: @yellow;
+  animation: tablet-wait 1.2s ease-in-out infinite alternate;
+}
+
+#custom-tablet.stale {
+  color: @orange;
+}
+
+#custom-tablet.failed,
+#custom-tablet.dropped,
+#custom-tablet.broken {
+  color: @red;
+}
+
+@keyframes tablet-wait {
+  to {
+    color: #6b5d3f;
+  }
 }
 
 /* Do not disturb (swaync-client -swb classes): a dim bell normally, a
