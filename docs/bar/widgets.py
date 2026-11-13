@@ -194,16 +194,22 @@ WIDGETS: dict[str, Widget] = {
         states={"off": State("", "off"), "on": State("\U000f06e8", "on")},
         default="off",
     ),
-    "custom/vpn": Widget(
-        "VPN",
-        "Connects or drops the work VPN (openvpn3). Right-click lists the sessions.",
-        f"{WAYBAR}/scripts/vpn.sh",
-        needs='`openvpn3` and an imported profile',
+    "custom/tablet": Widget(
+        "Tablet",
+        "The lamp for [Tablet](https://github.com/NathanielInman/tablet), the work VPN through openvpn3: frost only while "
+        "the tunnel is up and its probes answer, amber while it connects or waits on the web sign-in or an agent's "
+        "request, orange when openvpn3 says connected but nothing gets through, red when it failed or dropped. Click "
+        "connects, right-click opens the drawer, middle-click checks now.",
+        "packages/tablet/.config/tablet/config.toml",
+        needs='[Tablet](https://github.com/NathanielInman/tablet), `openvpn3`',
         states={
-            "disconnected": State("\U000f0319", "disconnected"),
-            "connected": State("\U000f0318", "connected"),
+            "off": State("\U000f0319", "off"),
+            "connecting": State("\U000f0319 \u2026", "connecting"),
+            "signin": State("\U000f0319 sign in", "signin"),
+            "held": State("\U000f0318", "held"),
+            "stale": State("\U000f0319 stale", "stale"),
         },
-        default="disconnected",
+        default="off",
     ),
     "custom/silence-notifications": Widget(
         "Do not disturb",

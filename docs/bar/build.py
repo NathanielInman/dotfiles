@@ -747,7 +747,9 @@ ALT = (
     "song, marks a moment, and stops, and the transcript is made and ready to copy; dictation types a comment into the "
     "editor. The desk drawer slides the key lights and the power menu out of its arrow, and the key lights warm the "
     "room. The Timetable clock names the next meeting, its drawer starts a focus block, then the clock turns amber and "
-    "red to join. The VPN connects, a swaync notification arrives, and do not disturb silences it and hides the song."
+    "red to join. The Tablet lamp starts the work VPN, pulses amber through the web sign-in and turns frost; its drawer "
+    "shows the tunnel held with both probes answering, then stale when nothing gets through, and Reconnect brings it "
+    "back. A swaync notification arrives, and do not disturb silences it and hides the song."
 )
 
 

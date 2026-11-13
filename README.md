@@ -1,7 +1,7 @@
 # Arch + Hyprland dotfiles
 
 <p align="center">
-  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop under a floating waybar of frosted pills: workspaces with a glyph per open window, the window title, Tannoy's cover and song, a pill of lamps, the audio pill, the desk pill and the Timetable clock. A build turns the Roundhouse lamp red; its drawer says memory is stalling, and its link opens the Switchyard board, where android is held until storefront finishes, the lamp calms and android starts. The Tannoy player slides out of the cover, and picking Chrome swaps the bar to a podcast. An agent asks for a secret: broker's request window waits for a YubiKey touch while the Signal Box lamp turns to an amber key, then the Signal Box panel lists every live grant and Revoke all dims the lamp. The volume switches to the headset and the mouse battery runs low. Logbook's lamp turns frost when Chrome takes the mic; its drawer records the meeting on air, with do not disturb hiding the song, marks a moment, and stops, and the transcript is made and ready to copy; dictation types a comment into the editor. The desk drawer slides the key lights and the power menu out of its arrow, and the key lights warm the room. The Timetable clock names the next meeting, its drawer starts a focus block, then the clock turns amber and red to join. The VPN connects, a swaync notification arrives, and do not disturb silences it and hides the song.">
+  <img src="Pictures/bar/hero.svg" width="100%" alt="A Hyprland desktop under a floating waybar of frosted pills: workspaces with a glyph per open window, the window title, Tannoy's cover and song, a pill of lamps, the audio pill, the desk pill and the Timetable clock. A build turns the Roundhouse lamp red; its drawer says memory is stalling, and its link opens the Switchyard board, where android is held until storefront finishes, the lamp calms and android starts. The Tannoy player slides out of the cover, and picking Chrome swaps the bar to a podcast. An agent asks for a secret: broker's request window waits for a YubiKey touch while the Signal Box lamp turns to an amber key, then the Signal Box panel lists every live grant and Revoke all dims the lamp. The volume switches to the headset and the mouse battery runs low. Logbook's lamp turns frost when Chrome takes the mic; its drawer records the meeting on air, with do not disturb hiding the song, marks a moment, and stops, and the transcript is made and ready to copy; dictation types a comment into the editor. The desk drawer slides the key lights and the power menu out of its arrow, and the key lights warm the room. The Timetable clock names the next meeting, its drawer starts a focus block, then the clock turns amber and red to join. The Tablet lamp starts the work VPN, pulses amber through the web sign-in and turns frost; its drawer shows the tunnel held with both probes answering, then stale when nothing gets through, and Reconnect brings it back. A swaync notification arrives, and do not disturb silences it and hides the song.">
 </p>
 
 <p align="center">
@@ -24,7 +24,7 @@ My Arch Linux desktop: Hyprland, waybar, kitty, zsh and Neovim. Each tool is its
 
 - **Hyprland in Lua.** There is no `hyprland.conf`. Binds, rules, monitors and idle are all [Lua files](packages/hyprland/.config/hypr).
 - **A bar made of small scripts.** Each widget below is one script you can drop into your own waybar, and the table says what it needs.
-- **A suite behind the bar.** Six lamps open programs of their own: [Roundhouse](https://github.com/NathanielInman/roundhouse) for the machine's health, [Switchyard](https://github.com/NathanielInman/switchyard) for builds and deploys, [Signal Box](https://github.com/NathanielInman/credential-broker#signal-box) for the secrets agents hold, [Tannoy](https://github.com/NathanielInman/tannoy) for what's playing, [Logbook](https://github.com/NathanielInman/logbook) for the mic and [Timetable](https://github.com/NathanielInman/timetable) for the day. The tour above opens each one.
+- **A suite behind the bar.** Seven lamps open programs of their own: [Roundhouse](https://github.com/NathanielInman/roundhouse) for the machine's health, [Switchyard](https://github.com/NathanielInman/switchyard) for builds and deploys, [Signal Box](https://github.com/NathanielInman/credential-broker#signal-box) for the secrets agents hold, [Tannoy](https://github.com/NathanielInman/tannoy) for what's playing, [Logbook](https://github.com/NathanielInman/logbook) for the mic, [Timetable](https://github.com/NathanielInman/timetable) for the day and [Tablet](https://github.com/NathanielInman/tablet) for the work VPN. The tour above opens each one.
 - **Pictures that can't go stale.** The animation above and the widget strips are drawn from the real config and stylesheet by [`docs/bar/build.py`](docs/bar/README.md), not screenshotted, so they change when the bar does. Each app's panel comes from that app's own README animation, so it changes when the app does.
 - **A one-reboot rebuild.** [`rebuild/`](rebuild/README.md) takes a blank machine from the Arch ISO to a working Hyprland session with every package installed.
 - **[Field notes](#field-notes)** for the problems real hardware threw at it, so you don't lose the evening I did.
@@ -59,7 +59,7 @@ Every widget in [`packages/waybar`](packages/waybar/.config/waybar), as it looks
 | <img src="Pictures/bar/widgets/roundhouse.svg" height="36" alt="Roundhouse"> | [Roundhouse](packages/roundhouse/.config/roundhouse/config.toml) | One lamp for the whole machine: green, amber, red. Click it for the [Roundhouse](https://github.com/NathanielInman/roundhouse) drawer: CPU, GPU, memory, disks and why the lamp is lit. | [Roundhouse](https://github.com/NathanielInman/roundhouse) |
 | <img src="Pictures/bar/widgets/switchyard.svg" height="36" alt="Switchyard"> | [Switchyard](packages/switchyard/.config/switchyard/config.toml) | The signal for [Switchyard](https://github.com/NathanielInman/switchyard), the board that builds, launches and deploys everything, one heavy build at a time: blue at rest, amber while building, green when it worked, red when it broke. | [Switchyard](https://github.com/NathanielInman/switchyard) |
 | <img src="Pictures/bar/widgets/broker.svg" height="36" alt="Signal Box"> | [Signal Box](packages/waybar/.config/waybar/config.jsonc) | The lamp for [Signal Box](https://github.com/NathanielInman/credential-broker#signal-box): the secrets agents can use right now through broker. The pie drains with the soonest grant and turns to a key while an agent is asking. Click for the panel, middle-click revokes everything. | [credential-broker](https://github.com/NathanielInman/credential-broker) |
-| <img src="Pictures/bar/widgets/vpn.svg" height="36" alt="VPN"> | [VPN](packages/waybar/.config/waybar/scripts/vpn.sh) | Connects or drops the work VPN (openvpn3). Right-click lists the sessions. | `openvpn3` and an imported profile |
+| <img src="Pictures/bar/widgets/tablet.svg" height="36" alt="Tablet"> | [Tablet](packages/tablet/.config/tablet/config.toml) | The lamp for [Tablet](https://github.com/NathanielInman/tablet), the work VPN through openvpn3: frost only while the tunnel is up and its probes answer, amber while it connects or waits on the web sign-in or an agent's request, orange when openvpn3 says connected but nothing gets through, red when it failed or dropped. Click connects, right-click opens the drawer, middle-click checks now. | [Tablet](https://github.com/NathanielInman/tablet), `openvpn3` |
 | <img src="Pictures/bar/widgets/silence-notifications.svg" height="36" alt="Do not disturb"> | [Do not disturb](packages/waybar/.config/waybar/config.jsonc) | Silences notifications (swaync). Also hides the song title while it is on. | `swaync` |
 | <img src="Pictures/bar/widgets/pulseaudio.svg" height="36" alt="Volume"> | [Volume](packages/waybar/.config/waybar/scripts/audio-switch.sh) | Volume and output. Click to switch the output, right-click to switch the input, middle-click for the mixer. | PipeWire (`wpctl`), `walker`, `pavucontrol` |
 | <img src="Pictures/bar/widgets/mouse-battery.svg" height="36" alt="Mouse battery"> | [Mouse battery](packages/waybar/.config/waybar/scripts/mouse-battery.sh) | The Logitech mouse's charge, amber when low, red when nearly empty. | A Logitech mouse (kernel `hidpp` driver) |
@@ -110,7 +110,7 @@ To use one widget without the rest, copy its script into `~/.config/waybar/scrip
 
 ### Companion programs
 
-Six widgets are front ends for programs that live in their own repos. Install the program, then stow its package here (Signal Box, Tannoy and Logbook need nothing stowed: their modules are already in the waybar config).
+Seven widgets are front ends for programs that live in their own repos. Install the program, then stow its package here (Signal Box, Tannoy and Logbook need nothing stowed: their modules are already in the waybar config).
 
 [**Roundhouse**](https://github.com/NathanielInman/roundhouse) is the lamp: one color for the health of the whole machine, and a drawer with CPU, GPU, memory pressure, network, every disk and share, and memory by app.
 
@@ -167,6 +167,17 @@ install -Dm755 target/release/timetable target/release/timetable-board -t ~/.loc
 broker set TIMETABLE_ICAL_URL --public --desc "Google Calendar secret iCal address for Timetable"
 cd ~/Sites/dot-files && ./install.sh timetable
 timetable doctor
+```
+
+[**Tablet**](https://github.com/NathanielInman/tablet) is the VPN lamp: frost only while the openvpn3 tunnel is up and its probes (Grafana and Nexus) answer through it, orange when openvpn3 says connected but nothing gets through, red when it failed or dropped, and `rebuild` when a library update broke the AUR build of openvpn3. It replaced `vpn.sh`, which counted any session object as connected. The drawer has the probes, the tunnel's DNS (still applied by the `openvpn3-tun-dns` hook; Tablet checks it), openvpn3's health with a Repair button that rebuilds it in a terminal, and the history. Agents use `tablet why <host>` before blaming a service and `tablet need dt -- <command>` to ask for the VPN.
+
+```bash
+sudo pacman -S --needed gtk4 gtk4-layer-shell
+git clone https://github.com/NathanielInman/tablet.git ~/Sites/tablet
+cd ~/Sites/tablet && cargo build --release
+install -Dm755 target/release/tablet target/release/tablet-board -t ~/.local/bin/
+cd ~/Sites/dot-files && ./install.sh tablet
+tablet doctor
 ```
 
 ## Field notes

@@ -29,7 +29,7 @@ back in its default state, and every panel closed, by the end of the loop.
 
 from dataclasses import dataclass, field
 
-LOOP = 60.0  # seconds
+LOOP = 66.5  # seconds
 MOVE = 0.7  # camera travel time
 ZOOM = 2.3
 
@@ -144,22 +144,35 @@ BEATS: list[Beat] = [
     Beat(49.3, set={"custom/timetable": "now"},
          caption=("Timetable", "red at start time; middle-click joins on workspace 2")),
 
-    # The VPN, then a notification, and do not disturb puts it (and the
-    # song title) away.
-    Beat(50.6, camera=(ZOOM, "custom/vpn")),
-    Beat(51.1, click="custom/vpn", set={"custom/vpn": "connected"},
-         caption=("VPN", "one click for the work VPN")),
-    Beat(52.3, camera=(1.0, None)),
-    Beat(52.8, scene="toast",
+    # Tablet: the VPN lamp, frost only while the tunnel works.
+    Beat(50.6, camera=(ZOOM, "custom/tablet")),
+    Beat(51.1, click="custom/tablet", set={"custom/tablet": "connecting"},
+         caption=("Tablet", "one click starts the work VPN")),
+    Beat(51.8, set={"custom/tablet": "signin"},
+         caption=("Tablet", "amber while the web sign-in waits")),
+    Beat(52.8, set={"custom/tablet": "held"},
+         caption=("Tablet", "frost once the tunnel answers")),
+    Beat(53.4, camera="panel:tablet"),
+    Beat(53.8, click="custom/tablet", open=("tablet", "held"),
+         caption=("Tablet", "probes check that the tunnel really works")),
+    Beat(55.4, look=("tablet", "stale"), set={"custom/tablet": "stale"},
+         caption=("Tablet", "connected, but nothing gets through: stale")),
+    Beat(57.0, click="tablet:card:reconnect", look=("tablet", "reconnected"), set={"custom/tablet": "held"},
+         caption=("Tablet", "one click reconnects")),
+    Beat(58.4, click="outside", close="tablet"),
+    Beat(58.8, camera=(1.0, None)),
+
+    # A notification, and do not disturb puts it (and the song title) away.
+    Beat(59.3, scene="toast",
          caption=("Notifications", "swaync, in the same Nord colors")),
-    Beat(54.2, camera=(ZOOM, "custom/broker")),
-    Beat(54.8, click="custom/silence-notifications", set={"custom/silence-notifications": "on"}, scene="toast-dismiss",
+    Beat(60.7, camera=(ZOOM, "custom/broker")),
+    Beat(61.3, click="custom/silence-notifications", set={"custom/silence-notifications": "on"}, scene="toast-dismiss",
          caption=("Do not disturb", "silences them, and hides the song title for screen shares")),
-    Beat(55.3, set={"custom/tannoy": "hidden"}),
-    Beat(57.0, camera=(1.0, None)),
+    Beat(61.8, set={"custom/tannoy": "hidden"}),
+    Beat(63.5, camera=(1.0, None)),
 
     # Back to rest.
-    Beat(57.6, scene="lights-off",
+    Beat(64.1, scene="lights-off",
          set={
              "custom/timetable": "free",
              "custom/keylights": "off",
@@ -168,7 +181,7 @@ BEATS: list[Beat] = [
              "custom/tannoy": "playing",
              "custom/broker": "live",
              "custom/logbook": "off",
-             "custom/vpn": "disconnected",
+             "custom/tablet": "off",
              "custom/switchyard": "idle",
              "pulseaudio": "speakers",
              "custom/mouse-battery": "ok",

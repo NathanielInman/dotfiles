@@ -1,7 +1,7 @@
 """The panels the bar opens, drawn by the apps themselves.
 
-Roundhouse, Switchyard, Signal Box (credential-broker), Tannoy, Timetable
-and Logbook each draw their own README hero, and each hero.py keeps its
+Roundhouse, Switchyard, Signal Box (credential-broker), Tannoy, Timetable,
+Logbook and Tablet each draw their own README hero, and each hero.py keeps its
 panel's code above a line that reads `# ---- end of the panel ----`. This
 module runs that top part of each file (never the story below it, which
 would write the app's own hero) and wraps the panel functions in one
@@ -31,6 +31,7 @@ HEROES = {
     "tannoy": "tannoy/docs/assets/hero.py",
     "timetable": "timetable/docs/assets/hero.py",
     "logbook": "logbook/docs/assets/hero.py",
+    "tablet": "tablet/docs/assets/hero.py",
 }
 
 # The apps' heroes use the system's monospace (an <img> loads no fonts),
@@ -224,6 +225,25 @@ def logbook(moment: str) -> Look:
 
 def logbook_css() -> str:
     return app("logbook")["METER_CSS"]
+
+
+# ------------------------------------------------------------ Tablet
+
+def tablet(state: str) -> Look:
+    """The drawer at a moment of the tour: "held" (the work VPN up, both
+    probes answering), "stale" (connected, nothing gets through) or
+    "checks" (the Checks tab)."""
+    tb = app("tablet")
+    board = tb["Board"]
+    s = {
+        "held": board("held", big="2m"),
+        "stale": board("stale", phase="stale", big="5m", probes=tb["PROBES_BAD"], reason=tb["STALE_REASON"],
+                       graph=tb["STALE_GRAPH"]),
+        "reconnected": board("held", big="1s", graph=tuple(reversed(tb["STALE_GRAPH"]))),
+        "checks": board("held", tab="checks"),
+    }[state]
+    svg, h, spots = tb["draw_drawer"](s)
+    return Look(svg, tb["DRAWER_W"], h, {k: tb["center"](v) for k, v in spots.items()})
 
 
 __all__ = ["Look", "FONT", "scoped", "replace"]

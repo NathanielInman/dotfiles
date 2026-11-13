@@ -14,7 +14,7 @@ python3 docs/bar/preview.py --svg Pictures/bar/widgets/timetable.svg 0 2
 
 Needs Python with fontTools, the `ttf-jetbrains-mono-nerd` package (the
 bar's glyphs are a subset of JetBrains Mono Nerd Font, embedded in each
-SVG), and the six apps checked out beside dot-files (`~/Sites/roundhouse`
+SVG), and the seven apps checked out beside dot-files (`~/Sites/roundhouse`
 and so on; `BAR_APPS=<dir>` points somewhere else). `preview.py` also needs
 Chrome or Chromium. Set `BAR_FONT` to use another font file.
 
@@ -26,7 +26,7 @@ Chrome or Chromium. Set `BAR_FONT` to use another font file.
 | `packages/waybar/.config/waybar/style.css` | The font size, the pill color and border, each module's padding, and every color: `#custom-timetable.soon` colors the clock in its `soon` state, the same rule waybar uses. A class with an `animation` pulses. |
 | [`widgets.py`](widgets.py) | What each module prints in each state, its name and the sentence in the README table. |
 | [`story.py`](story.py) | The hero's timeline: camera moves, clicks, state changes, panels opening, captions. |
-| [`apps.py`](apps.py) | The panels: Roundhouse's drawer, Switchyard's board, Signal Box and broker's request window, Tannoy's player, Logbook's drawer and Timetable's drawer, each drawn by the app's own `hero.py`. |
+| [`apps.py`](apps.py) | The panels: Roundhouse's drawer, Switchyard's board, Signal Box and broker's request window, Tannoy's player, Logbook's drawer, Timetable's drawer and Tablet's drawer, each drawn by the app's own `hero.py`. |
 | [`scenes.py`](scenes.py) | Which states of each panel the tour shows, which module each springs out of, and the swaync notification. |
 | [`svgkit.py`](svgkit.py) | The embedded font, the SVG builder and its keyframes. |
 
