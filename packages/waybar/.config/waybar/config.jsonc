@@ -34,7 +34,8 @@
       "custom/tannoy"
     ]
   },
-  // Health and state lamps: off is dim, on is a color
+  // The lamps of the programs in ~/Sites: off is dim, on is a color, and a
+  // click opens each one's own drawer
   "group/pill-lamps": {
     "orientation": "horizontal",
     "modules": [
@@ -42,7 +43,7 @@
       "custom/switchyard",
       "custom/broker",
       "custom/tablet",
-      "custom/silence-notifications"
+      "custom/logbook"
     ]
   },
   "group/pill-audio": {
@@ -52,13 +53,12 @@
       "custom/mouse-battery"
     ]
   },
-  // Dictation and the recorders stay in view (the recorders only show while
-  // recording); the rarely touched toggles slide out of the arrow on hover.
-  // Anything that is on stays in view: lit key lights leave the drawer.
+  // Plain toggles slide out of the arrow on hover. Anything that is on stays
+  // in view: do not disturb and lit key lights leave the drawer.
   "group/pill-desk": {
     "orientation": "horizontal",
     "modules": [
-      "custom/logbook",
+      "custom/silence-notifications#on",
       "custom/keylights#lit",
       "group/desk-drawer"
     ]
@@ -72,13 +72,14 @@
     },
     "modules": [
       "custom/desk-handle",
+      "custom/silence-notifications",
       "custom/keylights",
       "custom/power-menu"
     ]
   },
   "custom/desk-handle": {
     "format": "\uf053",
-    "tooltip-format": "Key lights, power"
+    "tooltip-format": "Do not disturb, key lights, power"
   },
   "hyprland/workspaces": {
     // A dim number, then a glyph per open window: a mini list of what each
@@ -202,6 +203,25 @@
       "none": "",
       "inhibited-notification": "",
       "inhibited-none": "",
+      "dnd-notification": "",
+      "dnd-none": "",
+      "dnd-inhibited-notification": "",
+      "dnd-inhibited-none": ""
+    },
+    "tooltip": false,
+    "on-click": "swaync-client -d -sw",
+    "on-click-right": "swaync-client -t -sw"
+  },  // The same bell outside the drawer, only while do not disturb is on
+  // (an empty icon hides the module)
+  "custom/silence-notifications#on": {
+    "exec": "swaync-client -swb",
+    "return-type": "json",
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "",
+      "none": "",
+      "inhibited-notification": "",
+      "inhibited-none": "",
       "dnd-notification": "",
       "dnd-none": "",
       "dnd-inhibited-notification": "",
