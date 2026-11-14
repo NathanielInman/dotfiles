@@ -2,6 +2,7 @@
 # Follow the Arctis Nova Pro Wireless headset, however it happens to be linked:
 #   headset ON  -> make the headset the default audio output
 #   headset OFF -> hand the default output back to the desk speakers
+#                  (wired to the Scarlett Solo line outs since 2026-11-13)
 #
 # The headset reaches the PC two ways and each needs its own probe:
 #
@@ -24,7 +25,7 @@
 BASE_SINK='alsa_output.usb-SteelSeries_Arctis_Nova_Pro_Wireless-00.analog-stereo'
 BASE_SOURCE='alsa_input.usb-SteelSeries_Arctis_Nova_Pro_Wireless-00.mono-fallback'
 BT_SINK_PREFIX='bluez_output.28_9A_4B_3D_60_CB'
-SPEAKER_SINK='alsa_output.pci-0000_0a_00.4.analog-stereo'
+SPEAKER_SINK='alsa_output.usb-Focusrite_Scarlett_Solo_4th_Gen_S1DJRNH66414D9-00.HiFi__Line1__sink'  # desk speakers on the Scarlett line outs
 DESK_SOURCE='alsa_input.usb-Blue_Microphones_Yeti_X_2045SG003DV8_888-000313110306-00.analog-stereo'
 SWITCH_MIC="${SWITCH_MIC:-0}"
 POLL=2        # seconds between polls
