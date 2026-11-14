@@ -19,6 +19,8 @@ limine-snapper-sync
 nordic-theme
 openvpn3
 paru-bin
+scarlett2
+scarlett2-firmware
 scc
 slack-desktop
 sway-audio-idle-inhibit-git

@@ -3,6 +3,7 @@
 adobe-source-code-pro-fonts
 age
 age-plugin-yubikey
+alsa-scarlett-gui
 alsa-utils
 amd-ucode
 atuin
