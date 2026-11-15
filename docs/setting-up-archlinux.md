@@ -290,9 +290,10 @@ systemctl enable bluetooth.service --now
 
 The board also has onboard Bluetooth (MediaTek MT7925, USB `13d3:3602`, the BT half of the Wi-Fi card). With it present BlueZ made it the default controller and the MX Master paired to it instead of the dongle, so `etc/udev/rules.d/52-disable-onboard-bt.rules` deauthorizes it (`bluetoothctl list` should show one controller). Wi-Fi is unaffected.
 
-Two Bluetooth quirks of the TP-Link UB500 (RTL8761B) dongle are handled by `install.sh`:
+Three Bluetooth quirks of the TP-Link UB500 (RTL8761B) dongle are handled by `install.sh`:
 
-- `etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules` keeps the dongle powered (USB autosuspend after 2s idle dropped the mouse mid-drag).
+- `etc/modprobe.d/btusb-no-autosuspend.conf` keeps the dongle powered. USB autosuspend after 2s idle dropped the mouse mid-drag and on some boots made the firmware download time out. It has to be a module option: btusb re-enables autosuspend when it binds, after udev rules run.
+- `bt-dongle-watchdog.service` runs `usr/local/bin/bt-dongle-watchdog` at boot: if BlueZ has no controller after 25s (firmware load failed, kernel log loops on `hci0: Resetting usb device`), it replugs the dongle in software by toggling its `authorized` flag, up to 3 times.
 - `bt-force-central`: when the Arctis Nova Pro Wireless reconnects on its own it takes the central role, and with the dongle as peripheral A2DP audio stutters badly even at -20 dBm RSSI. `etc/udev/rules.d/51-bt-force-central.rules` starts `bt-force-central.service` for every new `hciX:N` link, which runs `usr/local/bin/bt-force-central` (`hcitool sr <addr> master`, then `hcitool lp <addr> HOLD,SNIFF,PARK` so the peer cannot switch it back). Check with `sudo hcitool con` (want `CENTRAL`) and `sudo hcitool rssi <addr>`.
 
 Pairings live in `/var/lib/bluetooth/<adapter MAC>/` and the peripheral bonds to that MAC too, so swapping dongles (even the same model) means re-pairing every device.

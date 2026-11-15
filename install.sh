@@ -281,21 +281,47 @@ setup_system() {
         fi
     fi
 
-    # udev rule — keep the TP-Link UB500 BT adapter powered. USB autosuspend
-    # drops the adapter after 2s idle, disconnecting BT peripherals mid-use
-    # (ended slurp screenshot drags early via synthesized button release).
-    local btudev_src="$DOTFILES_DIR/etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules"
-    local btudev_dst="/etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules"
-    if [[ -f "$btudev_dst" ]] && cmp -s "$btudev_src" "$btudev_dst"; then
-        echo -e "  ${GREEN}[configured]${NC} BT adapter no-autosuspend udev rule"
+    # btusb autosuspend off: autosuspend dropped the UB500 dongle (and the
+    # mouse) mid-use and made its firmware download time out at boot. btusb
+    # turns autosuspend on itself when it binds, after udev rules run, so this
+    # has to be a module option; the old udev rule for it never stuck.
+    local btas_src="$DOTFILES_DIR/etc/modprobe.d/btusb-no-autosuspend.conf"
+    local btas_dst="/etc/modprobe.d/btusb-no-autosuspend.conf"
+    local btas_old="/etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules"
+    if cmp -s "$btas_src" "$btas_dst" && [[ ! -e "$btas_old" ]]; then
+        echo -e "  ${GREEN}[configured]${NC} btusb autosuspend off"
     else
-        echo -n -e "  ${YELLOW}[available]${NC} Install udev rule to stop BT adapter autosuspend (drops mouse mid-use)? [y/N] "
+        echo -n -e "  ${YELLOW}[available]${NC} Turn off btusb autosuspend (drops the mouse, breaks dongle firmware load)? [y/N] "
         if confirm; then
-            sudo install -Dm644 "$btudev_src" "$btudev_dst"
-            udev_reload
-            echo -e "  ${GREEN}[configured]${NC} BT adapter no-autosuspend udev rule"
+            sudo install -Dm644 "$btas_src" "$btas_dst"
+            if [[ -e "$btas_old" ]]; then
+                sudo rm -f "$btas_old"
+                udev_reload
+            fi
+            echo -e "  ${GREEN}[configured]${NC} btusb autosuspend off (takes effect when btusb next loads)"
         else
-            echo -e "  ${YELLOW}[skipped]${NC} BT adapter no-autosuspend udev rule"
+            echo -e "  ${YELLOW}[skipped]${NC} btusb autosuspend off"
+        fi
+    fi
+
+    # bt-dongle-watchdog: at boot, replug the UB500 in software if its firmware
+    # download failed and BlueZ never got a controller.
+    local btwd_bin_src="$DOTFILES_DIR/usr/local/bin/bt-dongle-watchdog"
+    local btwd_bin_dst="/usr/local/bin/bt-dongle-watchdog"
+    local btwd_svc_src="$DOTFILES_DIR/etc/systemd/system/bt-dongle-watchdog.service"
+    local btwd_svc_dst="/etc/systemd/system/bt-dongle-watchdog.service"
+    if cmp -s "$btwd_bin_src" "$btwd_bin_dst" && cmp -s "$btwd_svc_src" "$btwd_svc_dst" && systemctl is-enabled bt-dongle-watchdog.service &>/dev/null; then
+        echo -e "  ${GREEN}[configured]${NC} BT dongle boot watchdog"
+    else
+        echo -n -e "  ${YELLOW}[available]${NC} Install BT dongle boot watchdog (replugs the UB500 if its firmware fails to load)? [y/N] "
+        if confirm; then
+            sudo install -Dm755 "$btwd_bin_src" "$btwd_bin_dst"
+            sudo install -Dm644 "$btwd_svc_src" "$btwd_svc_dst"
+            sudo systemctl daemon-reload
+            sudo systemctl enable bt-dongle-watchdog.service
+            echo -e "  ${GREEN}[configured]${NC} BT dongle boot watchdog"
+        else
+            echo -e "  ${YELLOW}[skipped]${NC} BT dongle boot watchdog"
         fi
     fi
 

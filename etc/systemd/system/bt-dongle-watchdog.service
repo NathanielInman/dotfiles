@@ -1,0 +1,12 @@
+[Unit]
+Description=Replug the UB500 Bluetooth dongle if its firmware fails to load at boot
+After=bluetooth.service
+Wants=bluetooth.service
+
+[Service]
+# exec, not oneshot: the wait can take a minute and must not hold up boot.
+Type=exec
+ExecStart=/usr/local/bin/bt-dongle-watchdog
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,61 @@
+#!/bin/bash
+# Boot fallback for the TP-Link UB500 Bluetooth dongle (USB 2357:0604).
+#
+# Sometimes the RTL8761B firmware download times out at boot and btusb loops
+# on "Resetting usb device" forever: hci0 exists in sysfs but BlueZ never
+# gets a controller, so the MX Master has nothing to connect to. A software
+# replug (authorized 0 -> 1) reloads the firmware cleanly. This waits for
+# BlueZ to report a controller and replugs the dongle if none shows up.
+#
+# Started by bt-dongle-watchdog.service; also safe to run by hand.
+
+VID=2357 PID=0604
+WAIT=25      # seconds to wait for a controller before (and after) each replug
+TRIES=3
+
+find_dongle() {
+    local d
+    for d in /sys/bus/usb/devices/*; do
+        [[ -f $d/idVendor && $(<"$d/idVendor") == "$VID" && $(<"$d/idProduct") == "$PID" ]] || continue
+        echo "$d"
+        return 0
+    done
+    return 1
+}
+
+has_controller() {
+    timeout 5 bluetoothctl list 2>/dev/null | grep -q '^Controller'
+}
+
+wait_for_controller() {
+    local i
+    for ((i = 0; i < WAIT; i++)); do
+        has_controller && return 0
+        sleep 1
+    done
+    return 1
+}
+
+if wait_for_controller; then
+    echo "bt-dongle-watchdog: controller up, nothing to do"
+    exit 0
+fi
+
+for ((try = 1; try <= TRIES; try++)); do
+    if ! dev=$(find_dongle); then
+        echo "bt-dongle-watchdog: no controller and UB500 not plugged in" >&2
+        exit 1
+    fi
+    echo "bt-dongle-watchdog: no controller, replugging $dev (try $try/$TRIES)"
+    echo on >"$dev/power/control" 2>/dev/null
+    echo 0 >"$dev/authorized"
+    sleep 2
+    echo 1 >"$dev/authorized"
+    if wait_for_controller; then
+        echo "bt-dongle-watchdog: controller up after replug"
+        exit 0
+    fi
+done
+
+echo "bt-dongle-watchdog: still no controller after $TRIES replugs; unplug the UB500 and plug it back in" >&2
+exit 1

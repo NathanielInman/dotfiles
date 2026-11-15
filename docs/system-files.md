@@ -14,13 +14,14 @@ The fix comes from an NVIDIA engineer in [Hyprland discussion #10517](https://gi
 
 ## Bluetooth headset stutters at full signal
 
-`etc/udev/rules.d/50-bt-adapter-no-autosuspend.rules`, `52-disable-onboard-bt.rules`, `51-bt-force-central.rules`, `etc/systemd/system/bt-force-central.service`, `usr/local/bin/bt-force-central`
+`etc/modprobe.d/btusb-no-autosuspend.conf`, `etc/udev/rules.d/52-disable-onboard-bt.rules`, `51-bt-force-central.rules`, `etc/systemd/system/bt-force-central.service`, `bt-dongle-watchdog.service`, `usr/local/bin/bt-force-central`, `usr/local/bin/bt-dongle-watchdog`
 
-Three fixes for one TP-Link UB500 dongle:
+Four fixes for one TP-Link UB500 dongle:
 
-- USB autosuspend powered the dongle down after 2 seconds idle and dropped the mouse mid-drag. The first rule keeps it on.
-- The board's onboard MediaTek Bluetooth became the default controller and grabbed the mouse. The second rule turns it off so only the UB500 is used.
-- When the Arctis headset reconnects on its own it takes the central role, and with the PC as the peripheral A2DP audio stutters even at -20 dBm. On every new link the third rule starts `bt-force-central`, which switches the PC back to central (`hcitool sr <addr> master`) and sets the link policy so the headset can't switch it again.
+- USB autosuspend powered the dongle down after 2 seconds idle and dropped the mouse mid-drag, and on some boots it made the firmware download time out, leaving no controller at all. The modprobe option turns btusb autosuspend off. A udev rule setting `power/control=on` used to do this, but btusb turns autosuspend back on when it binds, after the rule has run.
+- If the firmware download still fails at boot (`bluetoothctl list` is empty, the kernel log loops on `hci0: Resetting usb device`), `bt-dongle-watchdog` replugs the dongle in software (`authorized` 0 then 1), which reloads the firmware cleanly.
+- The board's onboard MediaTek Bluetooth became the default controller and grabbed the mouse. `52-disable-onboard-bt.rules` turns it off so only the UB500 is used.
+- When the Arctis headset reconnects on its own it takes the central role, and with the PC as the peripheral A2DP audio stutters even at -20 dBm. On every new link `51-bt-force-central.rules` `bt-force-central`, which switches the PC back to central (`hcitool sr <addr> master`) and sets the link policy so the headset can't switch it again.
 
 `sudo hcitool con` should show `CENTRAL`. The [setup guide](setting-up-archlinux.md#first-boot) has the full story.
 
