@@ -3,7 +3,7 @@
 hl.monitor({ output = "DP-3", mode = "2560x1440@59.95", position = "0x0", scale = 1 })
 hl.monitor({ output = "DP-2", mode = "2560x1440@59.95", position = "2560x0", scale = 1 })
 -- Fallback: any output not matched above (e.g. a different connector name
--- through the KVM, like HDMI-A-1) still lights up at its preferred mode.
+-- after a GPU swap) still lights up at its preferred mode.
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })
 
 -- Workspace assignments
