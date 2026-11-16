@@ -24,19 +24,21 @@ export-env { $env.PNPM_HOME = $"($env.HOME)/.local/share/pnpm" }
 export-env { $env.PATH = ($env.PATH | split row (char esep) | prepend $env.PNPM_HOME ) }
 # Elgato Key Lights, addressed by permanent IPv6 link-local address (derived
 # from the device MAC, so no DHCP lease or mDNS discovery). %enp6s0 is the
-# interface they're on; brightness 3 is the left light, 50 the right.
+# interface they're on. The left light (e88f) is the key at 36, the right
+# (e88e) is fill at 11, both at 312 mireds (3200K); keep these in step with
+# keylights-toggle.sh.
 def _keylight [addr: string, on: int, brightness: int] {
   http put -t application/json $"http://[($addr)%enp6s0]:9123/elgato/lights" {
-    numberOfLights: 1, lights: [{on: $on, brightness: $brightness, temperature: 344}]
+    numberOfLights: 1, lights: [{on: $on, brightness: $brightness, temperature: 312}]
   } | ignore
 }
 def lightson [] {
-  _keylight "fe80::3e6a:9dff:fe14:e88f" 1 3
-  _keylight "fe80::3e6a:9dff:fe14:e88e" 1 50
+  _keylight "fe80::3e6a:9dff:fe14:e88f" 1 36
+  _keylight "fe80::3e6a:9dff:fe14:e88e" 1 11
 }
 def lightsoff [] {
-  _keylight "fe80::3e6a:9dff:fe14:e88f" 0 3
-  _keylight "fe80::3e6a:9dff:fe14:e88e" 0 50
+  _keylight "fe80::3e6a:9dff:fe14:e88f" 0 36
+  _keylight "fe80::3e6a:9dff:fe14:e88e" 0 11
 }
 
 # pnpm

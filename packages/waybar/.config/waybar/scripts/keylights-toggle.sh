@@ -3,8 +3,13 @@
 # Toggles the Elgato Key Lights for the waybar custom/keylights on-click.
 # Addresses each light directly at its fixed IoT VLAN address (a UniFi DHCP
 # reservation), so no mDNS discovery is involved. Turning on
-# restores the canonical per-light brightness (left 3, right 50), matching the
-# lightson/lightsoff shell aliases.
+# restores the canonical lighting, matching the lightson/lightsoff shell
+# aliases in .zshrc and env.nu. The left light sits off to the side and is the
+# key; the right sits near the camera axis and only fills, since as a key it
+# lights the face flat. Left 36 / right 11 at 312 mireds (3200K), tuned on
+# camera 2026-11-16: about 3:1 key to fill. 344 (2900K) turned skin orange.
+# The lights apply these values on every toggle, so change them here, not
+# only in the Elgato app.
 LEFT="192.168.20.90"
 RIGHT="192.168.20.91"
 
@@ -17,11 +22,11 @@ fi
 
 _kl() { # $1=addr  $2=on(1)/off(0)  $3=brightness
   curl -s -m2 -X PUT "http://$1:9123/elgato/lights" \
-    -d "{\"numberOfLights\":1,\"lights\":[{\"on\":$2,\"brightness\":$3,\"temperature\":344}]}" >/dev/null
+    -d "{\"numberOfLights\":1,\"lights\":[{\"on\":$2,\"brightness\":$3,\"temperature\":312}]}" >/dev/null
 }
 
-_kl "$LEFT" "$on" 3 &
-_kl "$RIGHT" "$on" 35 &
+_kl "$LEFT" "$on" 36 &
+_kl "$RIGHT" "$on" 11 &
 wait
 
 # Redraw custom/keylights now instead of at its next poll
