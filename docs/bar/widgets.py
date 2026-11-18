@@ -242,6 +242,20 @@ WIDGETS: dict[str, Widget] = {
         },
         default="idle",
     ),
+    "custom/waybill": Widget(
+        "Waybill",
+        "The lamp for [Waybill](https://github.com/NathanielInman/waybill), the task board my agents work from: dim "
+        "until a task of mine holds other work up or a decision is waiting on me, then amber with how many. Click "
+        "opens the drawer, where a decision is settled with one click; right-click brings the board on workspace 6 "
+        "forward.",
+        "packages/waybill/.config/waybill/config.toml",
+        needs='[Waybill](https://github.com/NathanielInman/waybill), `task`',
+        states={
+            "calm": State("\u25cf", "calm"),
+            "needs": State("\u25cf 1", "needs-you"),
+        },
+        default="calm",
+    ),
     "custom/broker": Widget(
         "Signal Box",
         "The lamp for [Signal Box](https://github.com/NathanielInman/credential-broker#signal-box): the secrets agents can use "

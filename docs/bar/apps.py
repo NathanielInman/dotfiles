@@ -1,7 +1,7 @@
 """The panels the bar opens, drawn by the apps themselves.
 
 Roundhouse, Switchyard, Signal Box (credential-broker), Tannoy, Timetable,
-Logbook and Tablet each draw their own README hero, and each hero.py keeps its
+Logbook, Tablet and Waybill each draw their own README hero, and each hero.py keeps its
 panel's code above a line that reads `# ---- end of the panel ----`. This
 module runs that top part of each file (never the story below it, which
 would write the app's own hero) and wraps the panel functions in one
@@ -32,6 +32,7 @@ HEROES = {
     "timetable": "timetable/docs/assets/hero.py",
     "logbook": "logbook/docs/assets/hero.py",
     "tablet": "tablet/docs/assets/hero.py",
+    "waybill": "waybill/docs/assets/hero.py",
 }
 
 # The apps' heroes use the system's monospace (an <img> loads no fonts),
@@ -246,3 +247,15 @@ def tablet(state: str) -> Look:
 
 
 __all__ = ["Look", "FONT", "scoped", "replace"]
+
+
+# ------------------------------------------------------------ Waybill
+
+def waybill(state: str) -> Look:
+    """The Desk drawer at a moment of the tour: "asked" (a decision waits,
+    its options as buttons) or "ruled" (the option was clicked: the decision
+    is gone and the drawer says what was written)."""
+    wb = app("waybill")
+    desk = {"asked": wb["ASKED"], "ruled": wb["RULED"]}[state]
+    svg, h, spots = wb["draw_drawer"](desk)
+    return Look(svg, wb["DRAWER_W"], h, {k: wb["center"](v) for k, v in spots.items()})

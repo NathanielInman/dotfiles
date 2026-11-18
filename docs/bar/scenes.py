@@ -33,6 +33,7 @@ ANCHORS = {
     "logbook": "custom/logbook",
     "timetable": "custom/timetable",
     "tablet": "custom/tablet",
+    "waybill": "custom/waybill",
 }
 
 # The states the tour shows, by panel. Each is a function so an app is
@@ -62,6 +63,7 @@ LOOKS = {
     },
     "logbook": {k: (lambda k=k: apps.logbook(k)) for k in ("mic", "onair", "marked", "transcribing", "ready")},
     "tablet": {k: (lambda k=k: apps.tablet(k)) for k in ("held", "stale", "reconnected", "checks")},
+    "waybill": {k: (lambda k=k: apps.waybill(k)) for k in ("asked", "ruled")},
     "timetable": {
         "next": lambda: apps.timetable(14, 33),
         "focus": lambda: apps.timetable(14, 33, 25),
