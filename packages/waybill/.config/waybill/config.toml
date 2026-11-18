@@ -16,3 +16,38 @@ decision = "decision"
 # The tag set from the tasks skill (~/Sites/tasks/skills/tasks/SKILL.md).
 title = 50
 tags = ["research", "bug", "verify"]
+# Every project in the Projects table of that skill, by name rather than by
+# family, so a typo like plos.orgins is still refused. A new project gets a
+# line here beside its table row.
+projects = [
+  "forge",
+  "det33",
+  "detour-33",
+  "plos.db",
+  "plos.origins",
+  "plos.personas",
+  "plos.atlas",
+  "plos.arena",
+  "plos.armory",
+  "plos.clay",
+  "plos.loom",
+  "plos.dashboard",
+  "plos.d20",
+  "broker",
+  "kepler",
+  "pachinko",
+  "bulwark",
+  "coterie",
+  "internal",
+  "jackpot",
+  "oddseed",
+  "bnb",
+  "etb",
+  "homelab",
+  "switchyard",
+  "tannoy",
+  "timetable",
+  "logbook",
+  "roundhouse",
+  "waybill",
+]
