@@ -25,11 +25,18 @@ Each beat happens at `t` seconds into the loop and may:
 
 The looks each panel can show are in scenes.LOOKS. Every module must be
 back in its default state, and every panel closed, by the end of the loop.
+
+The camera settles once per app. Frame the panel before its lamp changes
+("panel:<name>" works ahead of the opening) and stay there through the
+lamp, the panel and its clicks; go from one app straight to the next. Zoom
+on a module only when the beat has no panel (the volume, the desk) or the
+lamp tells several beats on its own (Tablet connecting). Show the whole
+desktop only for what happens out on it: dictation and the notification.
 """
 
 from dataclasses import dataclass, field
 
-LOOP = 71.4  # seconds
+LOOP = 70.6  # seconds
 MOVE = 0.7  # camera travel time
 ZOOM = 2.3
 
@@ -62,10 +69,9 @@ BEATS: list[Beat] = [
 
     # Roundhouse: a heavy build turns the lamp red, and the drawer says why.
     Beat(4.8, set={"custom/switchyard": "building"}),
-    Beat(5.0, camera=(2.0, "custom/roundhouse")),
+    Beat(5.0, camera="panel:roundhouse"),
     Beat(5.8, set={"custom/roundhouse": "act"},
          caption=("Roundhouse", "one lamp for the whole machine, red when it needs you")),
-    Beat(6.9, camera="panel:roundhouse"),
     Beat(7.3, click="custom/roundhouse", open=("roundhouse", "act"),
          caption=("Roundhouse", "click it to see why: memory is stalling")),
     Beat(9.5, look=("roundhouse", "calm"), set={"custom/roundhouse": "calm"},
@@ -79,19 +85,16 @@ BEATS: list[Beat] = [
     Beat(14.0, look=("switchyard", "done"),
          caption=("Switchyard", "storefront finishes, and android takes the main line")),
     Beat(15.8, click="outside", close="switchyard"),
-    Beat(16.0, camera=(1.0, None)),
 
     # Waybill: an agent files a decision, and one click in the drawer rules.
-    Beat(16.4, camera=(ZOOM, "custom/waybill")),
+    Beat(16.2, camera="panel:waybill"),
     Beat(16.9, set={"custom/waybill": "needs"},
          caption=("Waybill", "amber when the agents are waiting on you: a decision is open")),
-    Beat(18.1, camera="panel:waybill"),
-    Beat(18.5, click="custom/waybill", open=("waybill", "asked"),
+    Beat(18.3, click="custom/waybill", open=("waybill", "asked"),
          caption=("Waybill", "what waits on you, decisions first")),
     Beat(20.3, click="waybill:option:0", look=("waybill", "ruled"), set={"custom/waybill": "calm"},
          caption=("Waybill", "one click rules, and the task goes back to the agents")),
     Beat(22.0, click="outside", close="waybill"),
-    Beat(22.4, camera=(1.0, None)),
 
     # Signal Box: an agent asks for a secret, a touch grants it, and the
     # panel shows everything live and revokes it.
@@ -125,11 +128,10 @@ BEATS: list[Beat] = [
     Beat(38.4, click="outside", close="tablet"),
 
     # Logbook: a meeting on air, then its transcript, then dictation.
-    Beat(38.8, camera=(ZOOM, "custom/logbook")),
+    Beat(38.8, camera="panel:logbook"),
     Beat(39.2, set={"custom/logbook": "mic"},
          caption=("Logbook", "frost: Chrome has the mic, and Logbook says so")),
-    Beat(40.4, camera="panel:logbook"),
-    Beat(40.8, click="custom/logbook", open=("logbook", "mic")),
+    Beat(40.6, click="custom/logbook", open=("logbook", "mic")),
     Beat(42.0, click="logbook:record-meeting", look=("logbook", "onair"),
          set={"custom/logbook": "recording", "custom/silence-notifications": "on",
               "custom/silence-notifications#on": "on", "custom/tannoy": "hidden"},
@@ -148,49 +150,49 @@ BEATS: list[Beat] = [
          caption=("Dictation", "middle-click the lamp and talk; voxtype types where the cursor is")),
     Beat(50.0, set={"custom/logbook": "off"}),
 
+    # The notification arrives while the whole desktop is in view.
+    Beat(50.2, scene="toast",
+         caption=("Notifications", "swaync, in the same Nord colors")),
+
     # Audio.
-    Beat(50.4, camera=(ZOOM, "pulseaudio")),
-    Beat(51.0, click="pulseaudio", set={"pulseaudio": "headset"},
+    Beat(51.6, camera=(ZOOM, "pulseaudio")),
+    Beat(52.2, click="pulseaudio", set={"pulseaudio": "headset"},
          caption=("Volume", "click to switch to the headset")),
-    Beat(52.0, camera=(ZOOM, "custom/mouse-battery")),
-    Beat(52.4, set={"custom/mouse-battery": "low"},
+    Beat(53.2, camera=(ZOOM, "custom/mouse-battery")),
+    Beat(53.6, set={"custom/mouse-battery": "low"},
          caption=("Mouse battery", "amber when it needs charging")),
 
     # The desk: plain toggles wait behind the arrow, and what is on stays
     # in view when it closes.
-    Beat(53.4, camera=(1.0, None)),
-    Beat(53.8, scene="toast",
-         caption=("Notifications", "swaync, in the same Nord colors")),
-    Beat(55.2, camera=(ZOOM, "custom/desk-handle")),
-    Beat(55.7, hover="custom/desk-handle", set={"group/desk-drawer": "open"},
+    Beat(54.6, camera=(ZOOM, "custom/desk-handle")),
+    Beat(55.1, hover="custom/desk-handle", set={"group/desk-drawer": "open"},
          caption=("Desk", "do not disturb, the key lights and the power menu wait behind the arrow")),
-    Beat(56.8, click="custom/silence-notifications",
+    Beat(56.2, click="custom/silence-notifications",
          set={"custom/silence-notifications": "on", "custom/silence-notifications#on": "on"}, scene="toast-dismiss",
-         caption=("Do not disturb", "silences them, and hides the song title for screen shares")),
-    Beat(57.3, set={"custom/tannoy": "hidden"}),
-    Beat(58.2, click="custom/keylights", set={"custom/keylights": "on", "custom/keylights#lit": "on"}, scene="lights-on",
+         caption=("Do not disturb", "silences notifications, and hides the song title for screen shares")),
+    Beat(56.7, set={"custom/tannoy": "hidden"}),
+    Beat(57.6, click="custom/keylights", set={"custom/keylights": "on", "custom/keylights#lit": "on"}, scene="lights-on",
          caption=("Key lights", "both Elgato lights in one click")),
-    Beat(59.4, hover="custom/timetable", set={"group/desk-drawer": "closed"},
+    Beat(58.8, hover="custom/timetable", set={"group/desk-drawer": "closed"},
          caption=("Desk", "whatever is on stays in view when the drawer closes")),
 
     # Timetable: the clock says what's next.
-    Beat(60.4, camera=(ZOOM, "custom/timetable"), set={"custom/timetable": "next"},
+    Beat(59.8, camera="panel:timetable", set={"custom/timetable": "next"},
          caption=("Timetable", "the clock names the next meeting")),
-    Beat(61.6, camera="panel:timetable"),
-    Beat(62.0, click="custom/timetable", open=("timetable", "next"),
+    Beat(61.2, click="custom/timetable", open=("timetable", "next"),
          caption=("Timetable", "three zones, Join, and the day with its free gaps")),
-    Beat(63.8, click="timetable:focus", look=("timetable", "focus"), set={"custom/timetable": "focus"},
+    Beat(63.0, click="timetable:focus", look=("timetable", "focus"), set={"custom/timetable": "focus"},
          caption=("Timetable", "a focus block that ends before the next meeting")),
-    Beat(65.6, click="outside", close="timetable"),
-    Beat(66.0, camera=(ZOOM, "custom/timetable")),
-    Beat(66.6, set={"custom/timetable": "soon"},
+    Beat(64.8, click="outside", close="timetable"),
+    Beat(65.2, camera=(ZOOM, "custom/timetable")),
+    Beat(65.8, set={"custom/timetable": "soon"},
          caption=("Timetable", "amber 10 minutes out")),
-    Beat(67.7, set={"custom/timetable": "now"},
+    Beat(66.9, set={"custom/timetable": "now"},
          caption=("Timetable", "red at start time; middle-click joins on workspace 2")),
-    Beat(69.0, camera=(1.0, None)),
+    Beat(68.2, camera=(1.0, None)),
 
     # Back to rest.
-    Beat(69.8, scene="lights-off",
+    Beat(69.0, scene="lights-off",
          set={
              "custom/timetable": "free",
              "custom/keylights": "off",

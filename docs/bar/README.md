@@ -64,6 +64,8 @@ screen it fits; the camera zooms in to a module or frames an open panel.
 3. Optionally give it a moment in the hero: add beats to `BEATS` in
    `story.py` (and widen `LOOP` if the story gets longer). A beat can zoom
    the camera to the module, click it, change states and show a caption.
+   Keep the camera to one move per app: frame the panel
+   (`camera="panel:weather"`) before its lamp changes and stay there.
    Every module must be back in its default state by the end of the loop;
    `build.py` says which one is not. It also stops if a state's text is
    long enough to push the bar's right side into its left.
