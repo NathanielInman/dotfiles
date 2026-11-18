@@ -46,6 +46,7 @@ do_user_units() {
     command -v elephant >/dev/null && elephant service enable
     systemctl --user enable --now waybar.service
     systemctl --user enable headset-autoswitch.service
+    systemctl --user enable workspace-mute.service
 }
 
 do_system_files() {
@@ -162,7 +163,7 @@ do_crontab_restore() {
 
 rb_init first-boot "$RB_LOG_DIR"
 step critical session "Running as $RB_USER inside the desktop session" do_session
-step minor user_units "Enable waybar, elephant, headset-autoswitch" do_user_units
+step minor user_units "Enable waybar, elephant, headset-autoswitch, workspace-mute" do_user_units
 step minor system_files "install.sh -y -s (deferred bits)" do_system_files
 step minor theme "GTK theme and dark mode" do_theme
 step minor snapshot_menu "First limine-snapper-sync run" do_snapshot_menu

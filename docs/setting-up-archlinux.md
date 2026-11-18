@@ -57,7 +57,7 @@ Do everything that doesn't need a running desktop from the archiso, so the first
    ./install.sh -s                       # in a chroot systemctl enables units and skips --now/daemon-reload
    ```
 
-   `systemctl --user` needs a running user manager, so enable the user units (`waybar`, `headset-autoswitch`, `elephant`, `hyprpolkitagent`) from the first Hyprland terminal. PipeWire's sockets are enabled by default.
+   `systemctl --user` needs a running user manager, so enable the user units (`waybar`, `headset-autoswitch`, `workspace-mute`, `elephant`, `hyprpolkitagent`) from the first Hyprland terminal. PipeWire's sockets are enabled by default.
 
 4. **Leave the chroot**, point `resolv.conf` at resolved (arch-chroot bind-mounts over it, so do it from outside), and reboot. This is the only reboot:
 
@@ -607,6 +607,16 @@ the top). Enable it on machines that have the base station plugged in:
 
 ```
 systemctl --user enable --now headset-autoswitch
+```
+
+It also stows `workspace-mute.service`, which mutes every app whose window sits
+on a muted workspace and unmutes it when the window moves away. Workspace 10 is
+muted by default, so games that agents launch there for screenshots stay quiet.
+Super+M toggles the focused workspace; the list lives in
+`~/.local/state/workspace-mute/workspaces`.
+
+```
+systemctl --user enable --now workspace-mute
 ```
 
 To remove a package's symlinks later, run `./install.sh -u <package>`.
