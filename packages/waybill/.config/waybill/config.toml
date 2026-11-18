@@ -1,0 +1,18 @@
+# Waybill (~/Sites/waybill): the task board, the lamp in the bar and the
+# `waybill` command agents work the list with. The list itself is
+# Taskwarrior's, in ~/Sites/tasks (packages/task has the taskrc).
+#
+# Every key is optional; ~/Sites/waybill/packaging/examples/config.toml has
+# them all with their defaults.
+
+[tags]
+# Tasks that need my hands: art, audio, accounts, a playtest, my eyes.
+# They land in Needs you and agents leave them alone. A visit that opens
+# with "Nate:" is a ruling.
+hands = ["nate"]
+decision = "decision"
+
+[lint]
+# The tag set from the tasks skill (~/Sites/tasks/skills/tasks/SKILL.md).
+title = 50
+tags = ["research", "bug", "verify"]
