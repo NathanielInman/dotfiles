@@ -224,10 +224,10 @@
       "none": "",
       "inhibited-notification": "",
       "inhibited-none": "",
-      "dnd-notification": "",
-      "dnd-none": "",
-      "dnd-inhibited-notification": "",
-      "dnd-inhibited-none": ""
+      "dnd-notification": "",
+      "dnd-none": "",
+      "dnd-inhibited-notification": "",
+      "dnd-inhibited-none": ""
     },
     "tooltip": false,
     "on-click": "swaync-client -d -sw",
