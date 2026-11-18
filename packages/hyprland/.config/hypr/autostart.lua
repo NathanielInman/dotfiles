@@ -37,5 +37,7 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("discord", { workspace = "3 silent" })
   hl.exec_cmd("t3code", { workspace = "4 silent" })
   hl.exec_cmd("~/.config/hypr/scripts/neovide-autostart.sh ~/Sites/notes/dt_frontend_todos.md", { workspace = "5 silent" })
-  hl.exec_cmd("kitty --class vit -e vit", { workspace = "6 silent" })
+  -- Waybill (~/Sites/waybill) is the task board and lives on workspace 6 for
+  -- good; the bar lamp and its drawer bring this same window forward
+  hl.exec_cmd("~/.local/bin/waybill-board", { workspace = "6 silent" })
 end)

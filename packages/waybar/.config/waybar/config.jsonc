@@ -98,6 +98,7 @@
       "class<kitty>": " ",
       "class<float-term>": " ",
       "class<vit>": " ",
+      "class<io.github.nathanielinman.Waybill>": " ",
       "class<zoom>": " ",
       "class<Godot.*>": " ",
       "class<blender>": " ",
@@ -120,7 +121,8 @@
       "nate@FROSTYARCH:(.*)": "  $1",
       "~/(.*)": "  ~/$1",
       "T3 Code.*": "  T3 Code",
-      "vit": "  tasks"
+      "vit": "  tasks",
+      "Waybill": "  tasks"
     }
   },
   "image#tannoy-art": {

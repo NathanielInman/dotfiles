@@ -62,7 +62,7 @@ hl.window_rule({
 hl.window_rule({ name = "slack-workspace", match = { class = "Slack" }, workspace = "2" })
 hl.window_rule({ name = "discord-workspace", match = { class = "discord" }, workspace = "3" })
 hl.window_rule({ name = "t3code-workspace", match = { class = "com.t3tools.T3Code" }, workspace = "4" })
-hl.window_rule({ name = "vit-workspace", match = { class = "vit" }, workspace = "6" })
+hl.window_rule({ name = "waybill-workspace", match = { class = "io.github.nathanielinman.Waybill" }, workspace = "6" })
 
 -- Detour 33 (Godot): agents run the game with a real window for perf runs and
 -- screenshots. Keep it on workspace 9, silently, so it never lands on the
