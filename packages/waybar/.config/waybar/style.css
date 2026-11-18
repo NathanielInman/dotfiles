@@ -108,6 +108,7 @@ window#waybar.empty #window {
 
 #custom-roundhouse,
 #custom-switchyard,
+#custom-waybill,
 #custom-broker,
 #custom-tablet,
 #custom-silence-notifications,
@@ -130,6 +131,7 @@ window#waybar.empty #window {
 #custom-logbook:hover,
 #custom-silence-notifications:hover,
 #custom-switchyard:hover,
+#custom-waybill:hover,
 #custom-broker:hover,
 #custom-power-menu:hover,
 #custom-desk-handle:hover,
@@ -231,6 +233,20 @@ window#waybar.empty #window {
 
 #custom-switchyard.offline {
   color: @dim;
+}
+
+/* Waybill lamp: dim while nothing of mine holds work up, amber with a
+   count when a task or a decision of mine does. */
+#custom-waybill {
+  color: @dim;
+}
+
+#custom-waybill.needs-you {
+  color: @yellow;
+}
+
+#custom-waybill.error {
+  color: @red;
 }
 
 /* Signal Box: dim when nothing is granted, frost while something is live,

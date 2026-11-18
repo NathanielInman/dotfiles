@@ -41,6 +41,7 @@
     "modules": [
       "custom/roundhouse",
       "custom/switchyard",
+      "custom/waybill",
       "custom/broker",
       "custom/tablet",
       "custom/logbook"
@@ -291,6 +292,18 @@
     "return-type": "json",
     "on-click": "~/.local/bin/yard toggle",
     "on-click-right": "~/.local/bin/yard ack",
+    "tooltip": true
+  },
+  // Waybill (~/Sites/waybill, config in packages/waybill): the task list. The
+  // lamp is dim until a task of mine holds other work up or a decision is
+  // open, then amber with how many. Click opens the Desk drawer above it,
+  // right-click opens the board.
+  "custom/waybill": {
+    "exec": "~/.local/bin/waybill bar",
+    "restart-interval": 5,
+    "return-type": "json",
+    "on-click": "~/.local/bin/waybill toggle",
+    "on-click-right": "~/.local/bin/waybill-board",
     "tooltip": true
   },
   // Signal Box (credential-broker, settings in ~/.config/broker/board.toml):
