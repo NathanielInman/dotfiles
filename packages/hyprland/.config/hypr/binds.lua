@@ -74,6 +74,7 @@ hl.bind(mod .. " + B", hl.dsp.exec_cmd("killall -SIGUSR1 waybar"), { description
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("swayosd-client --output-volume +5"), { repeating = true, description = "Volume up · sound audio louder" })
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("swayosd-client --output-volume -5"), { repeating = true, description = "Volume down · sound audio quieter" })
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("swayosd-client --output-volume mute-toggle"), { description = "Mute · sound audio volume" })
+hl.bind(mod .. " + M", hl.dsp.exec_cmd("~/.config/hypr/scripts/workspace-mute.py toggle"), { description = "Mute this workspace's apps, again to unmute · sound audio silence background agents" })
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("swayosd-client --input-volume mute-toggle"), { description = "Mute microphone · mic input" })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("~/.local/bin/tannoy play-pause"), { description = "Play or pause · music media tannoy" })
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("~/.local/bin/tannoy next"), { description = "Next track · music media skip" })
