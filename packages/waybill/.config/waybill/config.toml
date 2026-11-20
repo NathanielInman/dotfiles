@@ -33,6 +33,7 @@ projects = [
   "plos.loom",
   "plos.dashboard",
   "plos.d20",
+  "plos.roguelike",
   "broker",
   "kepler",
   "pachinko",
