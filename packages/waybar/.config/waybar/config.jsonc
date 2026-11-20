@@ -286,14 +286,15 @@
   // Layover (~/Sites/layover): the screensaver's idle line, which replaced
   // hypridle. A moon: dim while armed, amber while something holds the saver
   // or the dark (the tooltip says what) or the config is looser than
-  // shipped, frost while a hack runs. Click starts the saver now,
-  // right-click holds everything for an hour, middle-click releases.
+  // shipped, frost while a hack runs. Click opens the drawer (the idle
+  // line, the hacks with their wear numbers, the history), middle-click
+  // starts the saver now, right-click holds everything for an hour.
   "custom/layover": {
     "exec": "~/.local/bin/layover bar",
     "return-type": "json",
-    "on-click": "~/.local/bin/layover now",
+    "on-click": "~/.local/bin/layover toggle",
+    "on-click-middle": "~/.local/bin/layover now",
     "on-click-right": "~/.local/bin/layover hold 1h",
-    "on-click-middle": "~/.local/bin/layover release",
     "tooltip": true
   },
   // Switchyard (~/Sites/switchyard, tasks in packages/switchyard): the board of
