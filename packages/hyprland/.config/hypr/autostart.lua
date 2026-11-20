@@ -21,10 +21,10 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("blueman-applet")
   hl.exec_cmd("awww-daemon")
   hl.exec_cmd("sleep 1 && ~/.config/hypr/scripts/wallpaper.sh")
-  hl.exec_cmd("hypridle")
+  -- Idle (the saver at 15 minutes, lock and screens off at an hour) is
+  -- Layover's: layover.service under graphical-session.target.
   -- swayosd-server occasionally segfaults; relaunch it so volume/mute keys keep working
   hl.exec_cmd("bash -c 'until swayosd-server; do sleep 1; done'")
-  hl.exec_cmd("sway-audio-idle-inhibit")
   hl.exec_cmd("walker --gapplication-service")
   -- voxtype runs as a systemd user service (voxtype.service, enabled via
   -- `systemctl --user enable voxtype`) so it restarts if PipeWire drops it

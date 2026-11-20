@@ -322,7 +322,6 @@ Now for installing window manager stuff (Hyprland)
 - `slurp` - region selection tool for Wayland screenshots
 - `swappy` - screenshot annotation tool
 - `hyprlock` - screen locker for Hyprland
-- `hypridle` - idle management daemon for Hyprland
 - `hyprpolkitagent` - polkit authentication agent: the password dialog for `pkexec`, privileged mounts and settings panels. Without one these fail with "No authentication agent found" and no prompt ever appears. Runs as a user service (`systemctl --user enable --now hyprpolkitagent.service`), which `graphical-session.target` starts through `hyprland-session.target`
 - `pamixer` - pulseaudio/pipewire CLI mixer
 - `pavucontrol` - GUI volume mixer for per-app and per-device levels
@@ -340,11 +339,10 @@ Now for installing window manager stuff (Hyprland)
 - `swayosd` - on-screen volume/brightness popups, started from `autostart.lua` and driven by the media keys in `binds.lua`
 - `neovide` - GPU NeoVim GUI that `autostart.lua` opens on login (`scripts/neovide-autostart.sh`)
 - `noto-fonts-emoji` - color emoji font
-- `sway-audio-idle-inhibit-git` (**AUR**) - holds off hypridle while audio is playing, started from `autostart.lua`
 
 ```
-pacman -S hyprland swaync kitty noto-fonts noto-fonts-emoji adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard yad blueman grim slurp swappy wf-recorder hyprlock hypridle hyprpolkitagent hyprpicker swayosd neovide pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
-paru -S waybar-git walker elephant-all sway-audio-idle-inhibit-git
+pacman -S hyprland swaync kitty noto-fonts noto-fonts-emoji adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-jetbrains-mono ttf-jetbrains-mono-nerd awww wl-clipboard yad blueman grim slurp swappy wf-recorder hyprlock hyprpolkitagent hyprpicker swayosd neovide pamixer pavucontrol playerctl brightnessctl xdg-desktop-portal-hyprland qt5-wayland qt6-wayland bc xdg-user-dirs xdg-utils
+paru -S waybar-git walker elephant-all
 ```
 
 Enable the polkit agent with `systemctl --user enable --now hyprpolkitagent.service`. walker needs the `elephant` daemon running as a user service. `elephant service enable` writes `~/.config/systemd/user/elephant.service` and enables it. `autostart.lua` also starts `hyprland-session.target`, which is stowed with the `hyprland` package (`packages/hyprland/.config/systemd/user/`), so it doesn't need to be created by hand.
@@ -915,7 +913,7 @@ broker exec --request TR_CLI_HOST TR_CLI_USERNAME TR_CLI_PASSWORD -- sh -c \
 
 Validate that under `core` of `.gitconfig` the `pager` value is set to `delta` to reflect `git-delta` package.
 
-Screen locking is handled by `hyprlock` and idle management by `hypridle`. Both configs live in `~/.config/hypr/` (installed via the hyprland stow package) and still use hyprlang `.conf` files (only the compositor config moved to lua). Lock screen is triggered manually via SUPER+Escape.
+Screen locking is handled by `hyprlock`, whose config lives in `~/.config/hypr/` (installed via the hyprland stow package) and still uses a hyprlang `.conf` file (only the compositor config moved to lua). Lock screen is triggered manually via SUPER+Escape. Idle is [Layover](https://github.com/NathanielInman/layover)'s: build it from `~/Sites/layover`, copy `packaging/systemd/layover.service` to `~/.config/systemd/user/` with `ExecStart=%h/.local/bin/layover daemon`, and `systemctl --user enable --now layover.service`. It starts a saver after 15 minutes idle, then locks with hyprlock and turns the screens off after an hour.
 
 Now for installing vim package manager
 
