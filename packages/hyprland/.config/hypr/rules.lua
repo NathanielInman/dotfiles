@@ -82,7 +82,7 @@ hl.window_rule({
 hl.window_rule({ name = "no-window-blur", match = { class = ".*" }, no_blur = true })
 hl.layer_rule({
   name         = "bar-blur",
-  match        = { namespace = "^(waybar|roundhouse|switchyard|broker-board|tannoy|timetable|walker|swaync-notification-window|swaync-control-center|swayosd)$" },
+  match        = { namespace = "^(waybar|roundhouse|switchyard|broker-board|tannoy|timetable|layover|walker|swaync-notification-window|swaync-control-center|swayosd)$" },
   blur         = true,
   ignore_alpha = 0.3,
 })
