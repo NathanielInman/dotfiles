@@ -115,6 +115,7 @@ window#waybar.empty #window {
 #pulseaudio,
 #custom-mouse-battery,
 #custom-logbook,
+#custom-layover,
 #custom-desk-handle,
 #custom-keylights,
 #custom-power-menu {
@@ -129,6 +130,7 @@ window#waybar.empty #window {
 #custom-keylights:hover,
 #custom-tablet:hover,
 #custom-logbook:hover,
+#custom-layover:hover,
 #custom-silence-notifications:hover,
 #custom-switchyard:hover,
 #custom-waybill:hover,
@@ -399,6 +401,24 @@ window#waybar.empty #window {
   to {
     color: #6e3b40;
   }
+}
+
+/* Layover: the screensaver's moon. Dim while armed or dark, amber while
+   something holds the line or the config is looser than shipped, frost
+   while a hack runs. Empty (hidden) while the daemon is off. */
+#custom-layover,
+#custom-layover.armed,
+#custom-layover.dark {
+  color: @dim;
+}
+
+#custom-layover.held,
+#custom-layover.loose {
+  color: @yellow;
+}
+
+#custom-layover.saver {
+  color: @frost;
 }
 
 #custom-desk-handle {

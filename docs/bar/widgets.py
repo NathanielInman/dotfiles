@@ -211,6 +211,21 @@ WIDGETS: dict[str, Widget] = {
         },
         default="off",
     ),
+    "custom/layover": Widget(
+        "Layover",
+        "The moon for [Layover](https://github.com/NathanielInman/layover), the screensaver that replaced hypridle: "
+        "dim while armed, amber while a video, a call, playing audio (for the dark) or a hold keeps the screen on, "
+        "and the tooltip says which. After 15 minutes idle a hack runs; after an hour the session locks and the "
+        "screens turn off. Click starts the saver now, right-click holds everything for an hour, middle-click "
+        "releases.",
+        "packages/waybar/.config/waybar/config.jsonc",
+        needs='[Layover](https://github.com/NathanielInman/layover), `hyprlock`, `pactl`',
+        states={
+            "armed": State("\U000f0594", "armed"),
+            "held": State("\U000f0594", "held"),
+        },
+        default="armed",
+    ),
     "custom/silence-notifications": Widget(
         "Do not disturb",
         "Silences notifications (swaync). It waits in the desk drawer and steps out of it while it is on, which also "
@@ -275,7 +290,7 @@ WIDGETS: dict[str, Widget] = {
         "Power",
         "Idle, lock, log out, suspend, reboot or shut down, through walker.",
         f"{WAYBAR}/scripts/power-menu.sh",
-        needs='`walker`, `hyprlock`, `hypridle`',
+        needs='`walker`, `hyprlock`',
         states={"on": State("\u23fb")},
         default="on",
     ),
