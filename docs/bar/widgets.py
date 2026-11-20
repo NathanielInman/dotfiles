@@ -216,8 +216,9 @@ WIDGETS: dict[str, Widget] = {
         "The moon for [Layover](https://github.com/NathanielInman/layover), the screensaver that replaced hypridle: "
         "dim while armed, amber while a video, a call, playing audio (for the dark) or a hold keeps the screen on, "
         "and the tooltip says which. After 15 minutes idle a hack runs; after an hour the session locks and the "
-        "screens turn off. Click starts the saver now, right-click holds everything for an hour, middle-click "
-        "releases.",
+        "screens turn off. Click for the Layover drawer: the idle line now with Start and Hold, every hack with "
+        "its wear numbers and a preview, and the history of what the line did and why. Middle-click starts the "
+        "saver now, right-click holds everything for an hour.",
         "packages/waybar/.config/waybar/config.jsonc",
         needs='[Layover](https://github.com/NathanielInman/layover), `hyprlock`, `pactl`',
         states={
