@@ -23,6 +23,7 @@ scarlett2
 scarlett2-firmware
 scc
 slack-desktop
+sway-audio-idle-inhibit-git
 t3code-bin
 tintin
 topgrade

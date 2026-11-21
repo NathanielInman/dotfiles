@@ -67,6 +67,7 @@ gthumb
 gvfs
 gvfs-smb
 headsetcontrol
+hypridle
 hyprland
 hyprlock
 hyprpicker
