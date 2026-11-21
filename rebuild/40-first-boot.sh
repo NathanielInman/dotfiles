@@ -127,6 +127,7 @@ do_claude_t3() {
     zstd -dcf "$M/home/t3-statev2-snapshot.sqlite.zst" -o "$HOME/.t3/userdata/statev2.sqlite"
     zstd -dcf "$M/home/t3-state-snapshot.sqlite.zst" -o "$HOME/.t3/userdata/state.sqlite"
     ln -sfn "$HOME/Sites/tasks/skills/tasks" "$HOME/.claude/skills/tasks"
+    "$SRC/scripts/sync-agent-skills.sh"
 }
 
 do_extra_home() {

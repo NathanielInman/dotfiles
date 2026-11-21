@@ -1239,6 +1239,7 @@ It never asks for a Claude login of its own. It spawns the installed `claude`, w
 
 - **One window only.** The app holds Electron's single-instance lock, so a second launch exits immediately (`T3CODE_HOME` and `--user-data-dir` don't get around it). Run sessions in parallel as threads inside the one window instead.
 - **Work profile.** T3 Code runs `claude` directly, so the `.zshrc` `claude` function and its digitalturbine routing never fire and every thread uses the personal `~/.claude` login. For DT repos, add a second Claude provider instance in Settings > Providers with `CLAUDE_CONFIG_DIR path` set to `~/.claude-work`, and pick that instance for those threads.
+- **Sharing Claude skills, rules, and memories with Antigravity (Gemini/Neon).** Antigravity reads its global customizations from `~/.t3/userdata/providers/antigravity/<hash>/config/` (`skills/` and `rules/`), not `~/.claude/`. Run `~/Sites/dot-files/scripts/sync-agent-skills.sh` (also called by `rebuild/40-first-boot.sh`) after signing into Antigravity or updating `~/.claude/skills` / `CLAUDE.md`. It materializes local skills with `rsync -aL` (Antigravity's file-read sandbox resolves symlinks and blocks targets outside `config/skills`) and writes always-on rules for `~/.claude/CLAUDE.md` plus Claude's home/per-repo memory index.
 - State lives in `~/.t3` (threads, worktrees) and `~/.config/t3code` (Electron profile).
 
 ## Hyprland Plugin Setup
