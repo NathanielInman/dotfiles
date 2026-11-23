@@ -15,7 +15,7 @@ docs have drifted from the bar and the apps before, as one sentence each.
 import re
 import subprocess
 import tomllib
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from apps import APPS, HEROES
@@ -44,6 +44,10 @@ class App:
     check: list[str]
     root: Path  # the app's checkout
     hero: Path  # its hero.py
+    # Where it builds today, and where a port still has to take it. The suite
+    # targets Linux, Windows and macOS.
+    platforms: list[str] = field(default_factory=list)
+    planned: list[str] = field(default_factory=list)
 
     @property
     def slug(self) -> str:
@@ -127,13 +131,24 @@ def summary(apps: list[App], widgets: int, scripts: int, others: list[str], tour
     )
 
 
+PLATFORM_NAMES = {"linux": "Linux", "windows": "Windows", "macos": "macOS"}
+
+
+def runs_on(a: App) -> str:
+    """"Linux, Windows, macOS", or "Linux (Windows, macOS planned)"."""
+    now = listing([PLATFORM_NAMES.get(p, p) for p in a.platforms]).replace(" and ", ", ")
+    if a.planned:
+        return f"{now} ({', '.join(PLATFORM_NAMES.get(p, p) for p in a.planned)} planned)"
+    return now
+
+
 def section(apps: list[App]) -> str:
     """The suite table and each app's install steps."""
-    rows = ["| App | In the bar | Replaced | Built in | Stow here |", "|---|---|---|---|---|"]
+    rows = ["| App | In the bar | Replaced | Built in | Runs on | Stow here |", "|---|---|---|---|---|---|"]
     for a in apps:
         retired = ", ".join(f"`{r}`" for r in a.retired)
         stow = f"`{a.stow}`" if a.stow else ""
-        rows.append(f"| [{a.name}]({a.repo}) | {a.lamp} | {retired} | {a.language} | {stow} |")
+        rows.append(f"| [{a.name}]({a.repo}) | {a.lamp} | {retired} | {a.language} | {runs_on(a)} | {stow} |")
     out = [
         f"{words(len(apps)).capitalize()} of the widgets are front ends for apps that live in their own repos. "
         "Each app describes itself in a `suite.toml` beside its README hero, and `docs/bar/build.py` writes this "
@@ -236,6 +251,8 @@ def problems(apps, config, beats, parse, fresh: str) -> tuple[list[str], list[st
             errors.append(f"config.jsonc: {module} runs `{binary} bar`, but no app beside dot-files has a "
                           f"suite.toml for it; add one beside its hero.py")
     for a in apps:
+        if not a.platforms:
+            errors.append(f"{a.root.name}/suite.toml has no platforms; list where it builds today")
         if a.module not in config:
             errors.append(f"{a.root.name}/suite.toml names {a.module}, which is not in config.jsonc")
         if a.hero.resolve() not in {(APPS / h).resolve() for h in HEROES.values()}:

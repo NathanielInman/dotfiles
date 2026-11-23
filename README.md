@@ -91,17 +91,17 @@ To use one widget without the rest, copy its script into `~/.config/waybar/scrip
 <!-- suite:start -->
 Nine of the widgets are front ends for apps that live in their own repos. Each app describes itself in a `suite.toml` beside its README hero, and `docs/bar/build.py` writes this section from those files, so it changes when an app does.
 
-| App | In the bar | Replaced | Built in | Stow here |
-|---|---|---|---|---|
-| [Tannoy](https://github.com/NathanielInman/tannoy) | The cover and song from any MPRIS player | `currently-playing.sh` | Rust |  |
-| [Roundhouse](https://github.com/NathanielInman/roundhouse) | Green, amber or red for the whole machine, and a drawer that says why |  | Rust | `roundhouse` |
-| [Switchyard](https://github.com/NathanielInman/switchyard) | The build signal: blue at rest, amber building, green or red when it ends |  | Rust | `switchyard` |
-| [Waybill](https://github.com/NathanielInman/waybill) | Amber when a decision or a task of yours holds work up | `vit` | Rust | `waybill` |
-| [Signal Box](https://github.com/NathanielInman/credential-broker#signal-box) | A pie that drains with the soonest grant, a key while an agent asks |  | Go |  |
-| [Tablet](https://github.com/NathanielInman/tablet) | Frost only while the VPN's probes answer through it | `vpn.sh` | Rust | `tablet` |
-| [Logbook](https://github.com/NathanielInman/logbook) | On Air for meetings, captures, dictation and any app with the mic | `meeting-record.sh`, `screen-record.sh`, `voxtype-status.sh` | Rust |  |
-| [Layover](https://github.com/NathanielInman/layover) | The moon: dim while armed, amber while something holds the screen on | `hypridle` | Rust |  |
-| [Timetable](https://github.com/NathanielInman/timetable) | The clock, with the next meeting beside it | `timezone.sh`, `pomodoro.sh` | Rust | `timetable` |
+| App | In the bar | Replaced | Built in | Runs on | Stow here |
+|---|---|---|---|---|---|
+| [Tannoy](https://github.com/NathanielInman/tannoy) | The cover and song from any MPRIS player | `currently-playing.sh` | Rust | Linux (Windows, macOS planned) |  |
+| [Roundhouse](https://github.com/NathanielInman/roundhouse) | Green, amber or red for the whole machine, and a drawer that says why |  | Rust | Linux, Windows, macOS | `roundhouse` |
+| [Switchyard](https://github.com/NathanielInman/switchyard) | The build signal: blue at rest, amber building, green or red when it ends |  | Rust | Linux, Windows, macOS | `switchyard` |
+| [Waybill](https://github.com/NathanielInman/waybill) | Amber when a decision or a task of yours holds work up | `vit` | Rust | Linux (Windows, macOS planned) | `waybill` |
+| [Signal Box](https://github.com/NathanielInman/credential-broker#signal-box) | A pie that drains with the soonest grant, a key while an agent asks |  | Go | Linux, Windows, macOS |  |
+| [Tablet](https://github.com/NathanielInman/tablet) | Frost only while the VPN's probes answer through it | `vpn.sh` | Rust | Linux (Windows, macOS planned) | `tablet` |
+| [Logbook](https://github.com/NathanielInman/logbook) | On Air for meetings, captures, dictation and any app with the mic | `meeting-record.sh`, `screen-record.sh`, `voxtype-status.sh` | Rust | Linux (Windows, macOS planned) |  |
+| [Layover](https://github.com/NathanielInman/layover) | The moon: dim while armed, amber while something holds the screen on | `hypridle` | Rust | Linux (Windows, macOS planned) |  |
+| [Timetable](https://github.com/NathanielInman/timetable) | The clock, with the next meeting beside it | `timezone.sh`, `pomodoro.sh` | Rust | Linux (Windows, macOS planned) | `timetable` |
 
 Install an app, then stow its package here if it has one. Each block runs from a clean Arch install:
 
