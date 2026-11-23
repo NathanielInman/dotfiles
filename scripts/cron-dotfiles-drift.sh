@@ -33,8 +33,17 @@ trap 'rm -f "$note"' EXIT
 
 open="$("$WAYBILL" find --project dotfiles --json README drift 2>>"$LOG" |
   python3 -c 'import json,sys; t=[x for x in json.load(sys.stdin) if x["title"]==sys.argv[1]]; print(t[0]["uuid"][:8] if t else "")' "$TITLE")"
+# Only warnings (exit 0) means only Nate can fix it (a screenshot), so the
+# task carries his hands tag and agents leave it alone; an error is theirs.
 if [[ -n "$open" ]]; then
   "$WAYBILL" note "$open" --append "$(cat "$note")" >>"$LOG" 2>&1
+  if (( status == 0 )); then
+    "$WAYBILL" edit "$open" --tag nate >>"$LOG" 2>&1
+  else
+    "$WAYBILL" edit "$open" --untag nate >>"$LOG" 2>&1
+  fi
 else
-  "$WAYBILL" add --project dotfiles --note-file "$note" -- "$TITLE" >>"$LOG" 2>&1
+  tags=()
+  (( status == 0 )) && tags=(--tag nate)
+  "$WAYBILL" add --project dotfiles "${tags[@]}" --note-file "$note" -- "$TITLE" >>"$LOG" 2>&1
 fi
