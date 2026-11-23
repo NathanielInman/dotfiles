@@ -52,4 +52,5 @@ projects = [
   "roundhouse",
   "waybill",
   "layover",
+  "dotfiles",
 ]
