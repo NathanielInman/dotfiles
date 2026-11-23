@@ -313,6 +313,16 @@ WIDGETS: dict[str, Widget] = {
         },
         default="free",
     ),
+    "custom/steam": Widget(
+        "Steam",
+        "Steam's icon, shown while Steam runs, in place of its tray icon (which has no unread dot and ignores a "
+        "click). Click floats the Friends List or hides it; right-click opens Steam's own menu: Friends, Library, "
+        "Store and Settings.",
+        f"{WAYBAR}/scripts/steam-friends.sh",
+        needs='`steam`',
+        states={"on": State("\uf1b6")},
+        default="on",
+    ),
     "tray": Widget(
         "Tray",
         "Apps that keep running in the background.",
