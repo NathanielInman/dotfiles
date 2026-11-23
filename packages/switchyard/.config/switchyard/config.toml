@@ -39,10 +39,6 @@ tags = ["desk"]
 name = "Scheduled"
 tags = ["scheduled"]
 
-[[tab]]
-name = "Timers"
-tags = ["timers"]
-
 [bar]
 icon = "󰐱"
 
