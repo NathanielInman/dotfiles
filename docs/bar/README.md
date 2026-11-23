@@ -54,8 +54,16 @@ has drifted from the bar and the apps:
 
 It runs before each commit once a clone turns the hook on
 (`git config core.hooksPath .githooks`; `rebuild/` does it), and each night
-from `scripts/cron-dotfiles-drift.sh`, which files what it finds as a
-Waybill task in the `dotfiles` project.
+at 03:30 as Switchyard's `readme-drift` task (`tasks.d/checks.toml` in the
+`switchyard` package). A failed run lights the board, and Switchyard's
+`on_finish` hook opens a Waybill alarm that the next green run closes.
+
+Each app's `suite.toml` also lists its `platforms` (where it builds today)
+and `planned` (where a port still has to take it); the suite table shows
+both, and `--check` wants every app to name its platforms. Each app's own
+`.githooks/pre-push` builds every platform it lists, and at 04:00 the
+`platform-sweep` task runs all of them through `scripts/check-platforms.sh`,
+for the builds that got pushed past a hook.
 
 ## Adding an app
 

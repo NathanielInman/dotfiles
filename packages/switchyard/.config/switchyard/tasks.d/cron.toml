@@ -35,9 +35,3 @@ label = "nightly backup"
 description = "back up any dirty ~/Sites repo to its remote"
 schedule = "03:00"
 steps = ["$HOME/Sites/dot-files/scripts/cron-sites-nightly-backup.sh"]
-
-[task.dotfiles-drift]
-label = "dotfiles drift"
-description = "file README drift in dot-files as a Waybill task"
-schedule = "03:30"
-steps = ["$HOME/Sites/dot-files/scripts/cron-dotfiles-drift.sh"]

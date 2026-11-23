@@ -1144,7 +1144,7 @@ Now enable the cronie cron service for systemd and start immediately
 sudo systemctl enable cronie.service --now
 ```
 
-The user crontab stays empty. The scheduled jobs (hourly `notes` and `tasks` sync, the 2:55am `pkglist/` refresh, the 3am `~/Sites` backup and the 3:30am README drift check) are Switchyard tasks in `packages/switchyard/.config/switchyard/tasks.d/cron.toml`, which stow puts in place. Switchyard runs them on their schedules while you are logged in, catches up a missed run at the next login, lights the bar when one fails and keeps every run on its History tab. They show on the board's Scheduled tab; `yard ls` lists them with their next run.
+The user crontab stays empty. The scheduled jobs (hourly `notes` and `tasks` sync, the 2:55am `pkglist/` refresh, the 3am `~/Sites` backup) are Switchyard tasks in `packages/switchyard/.config/switchyard/tasks.d/cron.toml`, and the 3:30am README drift check and the 4am platform sweep of every app are in `tasks.d/checks.toml`; stow puts both in place. Switchyard runs them on their schedules while you are logged in, catches up a missed run at the next login, lights the bar when one fails and keeps every run on its History tab. They show on the board's Scheduled tab; `yard ls` lists them with their next run.
 
 The nightly backup is documented in full in [`docs/sites-nightly-backup.md`](./sites-nightly-backup.md): owned repos get an atomic conventional commit + push on the current branch, every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote.
 

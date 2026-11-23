@@ -1,0 +1,27 @@
+# Nightly checks that need no judgment. A failed run lights the board, and
+# hooks.on_finish opens a Waybill alarm that the next green run closes.
+
+[defaults]
+tags = ["checks"]
+dir = "~/Sites/dot-files"
+shelf = true
+
+# The README's counts, suite, widget table and packages against the bar and
+# the apps; docs/bar/README.md lists what it checks.
+[task.readme-drift]
+label = "README drift"
+description = "dot-files' README against the bar and the apps"
+steps = ["python3 docs/bar/build.py --check"]
+schedule = "03:30"
+catch_up = true
+errors = ["python", "generic"]
+
+# Each app's own pre-push check, for the builds that got past it.
+[task.platform-sweep]
+label = "platform sweep"
+description = "every app builds for each platform its suite.toml claims"
+heavy = true
+steps = ["scripts/check-platforms.sh"]
+schedule = "04:00"
+catch_up = true
+errors = ["rust", "go", "generic"]
