@@ -4,7 +4,6 @@
 [defaults]
 tags = ["checks"]
 dir = "~/Sites/dot-files"
-shelf = true
 
 # The README's counts, suite, widget table and packages against the bar and
 # the apps; docs/bar/README.md lists what it checks.
