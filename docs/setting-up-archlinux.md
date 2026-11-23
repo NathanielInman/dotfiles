@@ -1100,22 +1100,23 @@ cd ~/Sites
 git clone https://github.com/nathanielinman/notes.git
 ```
 
-Tasks live in Taskwarrior 3 with `vit` as the TUI. The data is the
+Tasks live in Taskwarrior 3, drawn and worked by
+[Waybill](https://github.com/NathanielInman/waybill). The data is the
 `taskchampion.sqlite3` database in its own git repo, cloned into Sites:
 
 ```
-sudo pacman -S task vit
+sudo pacman -S task
 cd ~/Sites
 git clone https://github.com/nathanielinman/tasks.git
 ```
 
 The `task` stow package (above) points Taskwarrior at it through
-`~/.config/task/taskrc` (`data.location=~/Sites/tasks`) and gives vit a
-`~/.config/vit/config.ini`, which also keeps vit's first-run "create config?"
-prompt from blocking autostart. Hyprland opens vit on workspace 6 at login
-(`kitty --class vit -e vit`, pinned by a window rule on class `vit`). Check
-with `task next`; vit's own keys are listed with `?` inside it, plus `o` (ours)
-to open the task's long-form note.
+`~/.config/task/taskrc` (`data.location=~/Sites/tasks`). Install Waybill as
+the README's suite section says, then stow the `waybill` package for its
+lint. Hyprland opens `waybill-board` on workspace 6 at login (`autostart.lua`,
+pinned by a window rule on its app id in `rules.lua`). Agents work the list
+through the `waybill` command (`waybill next`, `waybill done`, `waybill ask`);
+check it with `waybill lanes`.
 
 How tasks are organized (projects, tags, `ref` markers, notes, per-visit
 annotations) is a Claude skill kept in the tasks repo. Link it in so every
