@@ -36,7 +36,7 @@ desktop only for what happens out on it: dictation and the notification.
 
 from dataclasses import dataclass, field
 
-LOOP = 70.6  # seconds
+LOOP = 77.2  # seconds
 MOVE = 0.7  # camera travel time
 ZOOM = 2.3
 
@@ -154,45 +154,56 @@ BEATS: list[Beat] = [
     Beat(50.2, scene="toast",
          caption=("Notifications", "swaync, in the same Nord colors")),
 
+    # Layover: the moon opens the idle line, and Hold keeps the screen on.
+    Beat(51.6, camera="panel:layover"),
+    Beat(52.2, click="custom/layover", open=("layover", "now"),
+         caption=("Layover", "the idle line: a hack at 15 minutes, lock and screens off at an hour")),
+    Beat(54.2, click="layover:tab:hacks", look=("layover", "hacks"),
+         caption=("Layover", "every hack, with what the wear test measured")),
+    Beat(56.0, click="layover:tab:now", look=("layover", "now")),
+    Beat(56.6, click="layover:now:hold", set={"custom/layover": "held"},
+         caption=("Layover", "Hold 1h keeps the screen on, and the moon turns amber")),
+    Beat(57.8, click="outside", close="layover"),
+
     # Audio.
-    Beat(51.6, camera=(ZOOM, "pulseaudio")),
-    Beat(52.2, click="pulseaudio", set={"pulseaudio": "headset"},
+    Beat(58.2, camera=(ZOOM, "pulseaudio")),
+    Beat(58.8, click="pulseaudio", set={"pulseaudio": "headset"},
          caption=("Volume", "click to switch to the headset")),
-    Beat(53.2, camera=(ZOOM, "custom/mouse-battery")),
-    Beat(53.6, set={"custom/mouse-battery": "low"},
+    Beat(59.8, camera=(ZOOM, "custom/mouse-battery")),
+    Beat(60.2, set={"custom/mouse-battery": "low"},
          caption=("Mouse battery", "amber when it needs charging")),
 
     # The desk: plain toggles wait behind the arrow, and what is on stays
     # in view when it closes.
-    Beat(54.6, camera=(ZOOM, "custom/desk-handle")),
-    Beat(55.1, hover="custom/desk-handle", set={"group/desk-drawer": "open"},
+    Beat(61.2, camera=(ZOOM, "custom/desk-handle")),
+    Beat(61.7, hover="custom/desk-handle", set={"group/desk-drawer": "open"},
          caption=("Desk", "do not disturb, the key lights and the power menu wait behind the arrow")),
-    Beat(56.2, click="custom/silence-notifications",
+    Beat(62.8, click="custom/silence-notifications",
          set={"custom/silence-notifications": "on", "custom/silence-notifications#on": "on"}, scene="toast-dismiss",
          caption=("Do not disturb", "silences notifications, and hides the song title for screen shares")),
-    Beat(56.7, set={"custom/tannoy": "hidden"}),
-    Beat(57.6, click="custom/keylights", set={"custom/keylights": "on", "custom/keylights#lit": "on"}, scene="lights-on",
+    Beat(63.3, set={"custom/tannoy": "hidden"}),
+    Beat(64.2, click="custom/keylights", set={"custom/keylights": "on", "custom/keylights#lit": "on"}, scene="lights-on",
          caption=("Key lights", "both Elgato lights in one click")),
-    Beat(58.8, hover="custom/timetable", set={"group/desk-drawer": "closed"},
+    Beat(65.4, hover="custom/timetable", set={"group/desk-drawer": "closed"},
          caption=("Desk", "whatever is on stays in view when the drawer closes")),
 
     # Timetable: the clock says what's next.
-    Beat(59.8, camera="panel:timetable", set={"custom/timetable": "next"},
+    Beat(66.4, camera="panel:timetable", set={"custom/timetable": "next"},
          caption=("Timetable", "the clock names the next meeting")),
-    Beat(61.2, click="custom/timetable", open=("timetable", "next"),
+    Beat(67.8, click="custom/timetable", open=("timetable", "next"),
          caption=("Timetable", "three zones, Join, and the day with its free gaps")),
-    Beat(63.0, click="timetable:focus", look=("timetable", "focus"), set={"custom/timetable": "focus"},
+    Beat(69.6, click="timetable:focus", look=("timetable", "focus"), set={"custom/timetable": "focus"},
          caption=("Timetable", "a focus block that ends before the next meeting")),
-    Beat(64.8, click="outside", close="timetable"),
-    Beat(65.2, camera=(ZOOM, "custom/timetable")),
-    Beat(65.8, set={"custom/timetable": "soon"},
+    Beat(71.4, click="outside", close="timetable"),
+    Beat(71.8, camera=(ZOOM, "custom/timetable")),
+    Beat(72.4, set={"custom/timetable": "soon"},
          caption=("Timetable", "amber 10 minutes out")),
-    Beat(66.9, set={"custom/timetable": "now"},
+    Beat(73.5, set={"custom/timetable": "now"},
          caption=("Timetable", "red at start time; middle-click joins on workspace 2")),
-    Beat(68.2, camera=(1.0, None)),
+    Beat(74.8, camera=(1.0, None)),
 
     # Back to rest.
-    Beat(69.0, scene="lights-off",
+    Beat(75.6, scene="lights-off",
          set={
              "custom/timetable": "free",
              "custom/keylights": "off",
@@ -204,6 +215,7 @@ BEATS: list[Beat] = [
              "custom/logbook": "off",
              "custom/tablet": "off",
              "custom/waybill": "calm",
+             "custom/layover": "armed",
              "custom/switchyard": "idle",
              "pulseaudio": "speakers",
              "custom/mouse-battery": "ok",

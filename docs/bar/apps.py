@@ -1,7 +1,8 @@
 """The panels the bar opens, drawn by the apps themselves.
 
-Roundhouse, Switchyard, Signal Box (credential-broker), Tannoy, Timetable,
-Logbook, Tablet and Waybill each draw their own README hero, and each hero.py keeps its
+Every app in the suite (Roundhouse, Switchyard, Signal Box from
+credential-broker, Tannoy, Timetable, Logbook, Tablet, Waybill and Layover)
+draws its own README hero, and each hero.py keeps its
 panel's code above a line that reads `# ---- end of the panel ----`. This
 module runs that top part of each file (never the story below it, which
 would write the app's own hero) and wraps the panel functions in one
@@ -33,6 +34,7 @@ HEROES = {
     "logbook": "logbook/docs/assets/hero.py",
     "tablet": "tablet/docs/assets/hero.py",
     "waybill": "waybill/docs/assets/hero.py",
+    "layover": "layover/docs/assets/hero.py",
 }
 
 # The apps' heroes use the system's monospace (an <img> loads no fonts),
@@ -259,3 +261,13 @@ def waybill(state: str) -> Look:
     desk = {"asked": wb["ASKED"], "ruled": wb["RULED"]}[state]
     svg, h, spots = wb["draw_drawer"](desk)
     return Look(svg, wb["DRAWER_W"], h, {k: wb["center"](v) for k, v in spots.items()})
+
+
+# ------------------------------------------------------------ Layover
+
+def layover(tab: str) -> Look:
+    """The drawer on one of its tabs: "now" (the idle line, with Start and
+    Hold) or "hacks" (every hack with its wear test numbers)."""
+    lo = app("layover")
+    svg, h, spots = lo["draw_drawer"]({"now": "Now", "hacks": "Hacks", "history": "History"}[tab])
+    return Look(svg, lo["DRAWER_W"], h, {k: lo["center"](v) for k, v in spots.items()})
