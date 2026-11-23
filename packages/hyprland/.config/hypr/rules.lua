@@ -53,13 +53,23 @@ hl.window_rule({
   center = true,
 })
 
+-- Steam Friends List: narrow floating panel above the bottom-right tray
+-- instead of taking half a monitor on the scrolling tape.
+hl.window_rule({
+  name  = "steam-friends-float",
+  match = { class = "^steam$", initial_title = "^Friends List$" },
+  float = true,
+  size  = { 360, 760 },
+  move  = "(monitor_w-window_w-10) (monitor_h-window_h-48)",
+})
+
 hl.window_rule({ name = "zoom-workspace", match = { class = "zoom" }, workspace = "2" })
 hl.window_rule({
   name  = "zoom-no-steal-focus",
   match = { class = "zoom", title = "zoom" },
   suppress_event = "activate",
 })
-hl.window_rule({ name = "slack-workspace", match = { class = "Slack" }, workspace = "2" })
+hl.window_rule({ name = "slack-workspace", match = { class = "^[Ss]lack$" }, workspace = "2" })
 hl.window_rule({ name = "discord-workspace", match = { class = "discord" }, workspace = "3" })
 hl.window_rule({ name = "t3code-workspace", match = { class = "com.t3tools.T3Code" }, workspace = "4" })
 hl.window_rule({ name = "waybill-workspace", match = { class = "io.github.nathanielinman.Waybill" }, workspace = "6" })

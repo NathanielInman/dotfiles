@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <object class="GtkMenu" id="menu">
+    <child>
+      <object class="GtkMenuItem" id="friends">
+        <property name="label">Friends List</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="library">
+        <property name="label">Library</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="store">
+        <property name="label">Store</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="settings">
+        <property name="label">Settings</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="sep1"/>
+    </child>
+    <child>
+      <object class="GtkMenuItem" id="quit">
+        <property name="label">Exit Steam</property>
+      </object>
+    </child>
+  </object>
+</interface>

@@ -61,7 +61,7 @@ tooltip label {
 #pill-audio,
 #pill-desk,
 #custom-timetable,
-#tray {
+#pill-tray {
   background: rgba(40, 42, 46, 0.84);
   border: 1px solid rgba(76, 86, 106, 0.55);
   border-radius: 10px;
@@ -485,8 +485,20 @@ window#waybar.empty #window {
 }
 
 /* ---- Tray ---- */
+#custom-steam {
+  color: @fg;
+  padding: 0 7px;
+  border-radius: 7px;
+  margin: 3px 0;
+}
+
+#custom-steam:hover {
+  background: rgba(129, 161, 193, 0.18);
+  color: @frost;
+}
+
 #tray {
-  padding: 0 10px;
+  padding: 0 6px;
 }
 
 #tray > .passive {

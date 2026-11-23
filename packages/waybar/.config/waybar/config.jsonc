@@ -21,7 +21,7 @@
     "group/pill-audio",
     "group/pill-desk",
     "custom/timetable",
-    "tray"
+    "group/pill-tray"
   ],
   // Tannoy (~/Sites/tannoy): the cover and now playing share one pill. The
   // daemon follows every MPRIS player over D-Bus and redraws the cover by
@@ -251,8 +251,38 @@
     "on-click-middle": "~/.local/bin/timetable join",
     "tooltip": true
   },
+  "group/pill-tray": {
+    "orientation": "horizontal",
+    "modules": [
+      "custom/steam",
+      "tray"
+    ]
+  },
+  // Steam: hidden from native tray (no unread dot, and its SNI exposes no
+  // Activate handler). Left-click toggles the floating Friends List;
+  // right-click opens a native popup menu mirroring Steam's tray menu.
+  "custom/steam": {
+    "exec": "echo steam",
+    "exec-if": "pgrep -x steam",
+    "format": "",
+    "tooltip-format": "Steam\nLeft: toggle Friends List · Right: menu",
+    "interval": 5,
+    "on-click": "~/.config/waybar/scripts/steam-friends.sh",
+    "menu": "on-click-right",
+    "menu-file": "~/.config/waybar/steam-menu.xml",
+    "menu-actions": {
+      "friends": "~/.config/waybar/scripts/steam-friends.sh",
+      "library": "setsid -f steam steam://open/games </dev/null >/dev/null 2>&1",
+      "store": "setsid -f steam steam://open/store </dev/null >/dev/null 2>&1",
+      "settings": "setsid -f steam steam://open/settings </dev/null >/dev/null 2>&1",
+      "quit": "setsid -f steam -shutdown </dev/null >/dev/null 2>&1"
+    }
+  },
   "tray": {
-    "spacing": 8
+    "spacing": 8,
+    "ignore-list": [
+      "steam"
+    ]
   },
   // Tablet (~/Sites/tablet, config in packages/tablet): the VPN lamp. Dim
   // while off, frost while the tunnel is up and its probes answer, amber
