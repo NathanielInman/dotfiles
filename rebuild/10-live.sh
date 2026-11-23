@@ -179,6 +179,7 @@ do_dotfiles() {
     fi
     git clone -q "$SRC" "$dst"
     git -C "$dst" remote set-url origin "$DOTFILES_URL"
+    git -C "$dst" config core.hooksPath .githooks
     chown -R "$RB_UID:$RB_UID" "$dst"
 }
 

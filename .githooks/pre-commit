@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Refuses a commit while the README has drifted from the bar or the apps
+# (docs/bar/build.py --check says what and where). Turned on per clone with
+#   git config core.hooksPath .githooks
+# The suite checks need the apps checked out beside dot-files; without them
+# there is nothing to check against, so the commit goes through.
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+export BAR_APPS="${BAR_APPS:-$HOME/Sites}"
+compgen -G "$BAR_APPS/*/docs/assets/suite.toml" >/dev/null || exit 0
+python3 "$root/docs/bar/build.py" --check
