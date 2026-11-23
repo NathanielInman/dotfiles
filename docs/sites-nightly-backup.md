@@ -1,13 +1,13 @@
 # Nightly `~/Sites` Backup
 
-A safety-net cron that guarantees no uncommitted work in `~/Sites` can be lost to a
+A safety-net job that guarantees no uncommitted work in `~/Sites` can be lost to a
 dead disk. After an HDD failure ate days of work, the rule is simple: every night,
 any dirty repo gets its working tree onto a remote.
 
 > [!IMPORTANT]
-> `~/Sites` is exclusively git repositories. The cron assumes every directly-nested
+> `~/Sites` is exclusively git repositories. The job assumes every directly-nested
 > directory is a git repo with a remote. A dirty repo with **no** remote can't be
-> backed up off the disk and is logged as a loud warning.
+> backed up off the disk: it is logged as a loud warning and fails the run.
 
 Script: [`scripts/cron-sites-nightly-backup.sh`](../scripts/cron-sites-nightly-backup.sh)
 
@@ -95,7 +95,10 @@ so it's recoverable the same way.
   `id_rsa*`, `*credentials*`, etc. are logged as warnings before they'd reach a remote.
   The right fix is to add them to `.gitignore`; run with `EXCLUDE_RISKY=1` to actively
   hold them out of the backup. Tune `SECRET_PATTERNS` at the top of the script.
-- **Per-repo isolation**: a failure in one repo is logged and the run continues.
+- **Per-repo isolation**: a failure in one repo is logged and the run continues. At the
+  end, if any repo's work did not reach a remote, the script prints
+  `error: not backed up: <repos>` and exits 1, so the Switchyard task turns red and the
+  bar lights instead of a green lamp over lost work.
 - Logs are written to `~/.local/state/sites-nightly-backup/backup-<date>.log`.
 
 ## Install
@@ -108,10 +111,11 @@ tab; a night the machine was off or logged out runs once at the next login.
 
 > [!TIP]
 > Push works unattended because `~/.git-credentials` holds plaintext HTTPS tokens for
-> `github.com` and `gitlab.com` (the `store` credential helper), so auth doesn't depend
-> on a graphical keyring/DBus session that won't exist at 3am. If you ever rotate to a
+> `github.com` and `gitlab.com` (the `store` credential helper). The run happens inside
+> your desktop session, but a keyring can still be locked or prompt at 3am with nobody
+> there to answer, so the tokens keep auth from depending on it. If you ever rotate to a
 > keyring-only setup, re-add the tokens to `~/.git-credentials` or the 3am pushes will
-> silently fail - check the logfile.
+> fail: the task goes red, and the logfile names each repo.
 
 ## Dry run / testing
 

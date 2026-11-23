@@ -187,6 +187,8 @@ commit_and_push() {
 # --- main ------------------------------------------------------------------
 log "=== nightly ~/Sites backup ($TS) host=$HOST dry_run=$DRY_RUN ==="
 
+failed=()  # repos whose work did not reach a remote
+
 shopt -s nullglob
 for repo in "$SITES_DIR"/*/; do
   repo="${repo%/}"
@@ -206,7 +208,8 @@ for repo in "$SITES_DIR"/*/; do
 
   url="$(git -C "$repo" remote get-url origin 2>/dev/null)"
   if [[ -z "$url" ]]; then
-    log "$name: !!! DIRTY but has NO remote — cannot back up off this disk"; continue
+    log "$name: !!! DIRTY but has NO remote: cannot back up off this disk"
+    failed+=("$name (no remote)"); continue
   fi
 
   branch="$(git -C "$repo" symbolic-ref --quiet --short HEAD 2>/dev/null)"
@@ -217,11 +220,19 @@ for repo in "$SITES_DIR"/*/; do
 
   # Detached HEAD has no branch to commit onto, so always snapshot it.
   if is_owned "$owner" && [[ -n "$branch" ]]; then
-    commit_and_push "$repo" "$branch"
+    commit_and_push "$repo" "$branch" || failed+=("$name")
   else
     [[ -z "$branch" ]] && log "  detached HEAD -> snapshot"
-    snapshot_and_push "$repo" "$branch"
+    snapshot_and_push "$repo" "$branch" || failed+=("$name")
   fi
 done
 
+# Any repo whose work did not reach a remote fails the run, so Switchyard
+# turns the task red instead of showing a green lamp over lost work.
+if (( ${#failed[@]} )); then
+  log "=== done: ${#failed[@]} repo(s) NOT backed up ==="
+  list="$(printf '%s, ' "${failed[@]}")"
+  printf 'error: not backed up: %s\n' "${list%, }" >&2
+  exit 1
+fi
 log "=== done ==="
