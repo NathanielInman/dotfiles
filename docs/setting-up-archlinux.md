@@ -1126,6 +1126,14 @@ project's agent sessions pick it up:
 ln -sfn ~/Sites/tasks/skills/tasks ~/.claude/skills/tasks
 ```
 
+The Switchyard skill tells agents to put checks and chores on Switchyard (a
+`schedule`, or `yard run <id> --at <when>` once) instead of scheduling an agent.
+Link it the same way:
+
+```
+ln -sfn ~/Sites/switchyard/skills/switchyard ~/.claude/skills/switchyard
+```
+
 Taskwarrior 3 can't read the old 2.x `*.data` files. If a clone ever has them
 again (history before Oct 2026 does), `task import-v2` moves them into the
 database, then delete the `*.data` files to silence the upgrade warning.

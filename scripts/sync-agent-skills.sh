@@ -19,7 +19,8 @@ mkdir -p "$CLAUDE_SKILLS"
 for pair in \
     "tasks:$HOME/Sites/tasks/skills/tasks" \
     "homelab:$HOME/Sites/tasks/skills/homelab" \
-    "broker:$HOME/Sites/credential-broker/skills/broker"
+    "broker:$HOME/Sites/credential-broker/skills/broker" \
+    "switchyard:$HOME/Sites/switchyard/skills/switchyard"
 do
     name="${pair%%:*}"
     target="${pair#*:}"
