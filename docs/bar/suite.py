@@ -67,27 +67,24 @@ def in_bar_order(apps: list[App], order: list[str]) -> list[App]:
 
 # ------------------------------------------------------------ counting
 
-def _files(app: App) -> list[Path]:
-    ext = {"Rust": "*.rs", "Go": "*.go"}[app.language]
-    return [p for p in app.root.rglob(ext) if not {"target", "vendor", "node_modules", ".git"} & set(p.parts)]
+def _files(root: Path, language: str) -> list[Path]:
+    ext = {"Rust": "*.rs", "Go": "*.go"}[language]
+    return [p for p in root.rglob(ext) if not {"target", "vendor", "node_modules", ".git"} & set(p.parts)]
+
+
+# Crates the apps share from repos of their own, counted with the suite.
+SHARED = ["bar-anchor"]
 
 
 def size(apps: list[App]) -> tuple[int, int]:
-    """Lines of code and tests across the suite. The bar-anchor crate is
-    copied into several apps; it counts once."""
+    """Lines of code and tests across the suite and its shared crates."""
     lines = tests = 0
-    anchor_seen = False
-    for a in apps:
-        has_anchor = False
-        for p in _files(a):
-            if "bar-anchor" in p.parts:
-                has_anchor = True
-                if anchor_seen:
-                    continue
+    trees = [(a.root, a.language) for a in apps] + [(APPS / s, "Rust") for s in SHARED if (APPS / s).is_dir()]
+    for root, language in trees:
+        for p in _files(root, language):
             text = p.read_text(encoding="utf-8", errors="replace")
             lines += text.count("\n")
-            tests += len(re.findall(r"#\[(?:tokio::)?test\]" if a.language == "Rust" else r"^func Test", text, re.M))
-        anchor_seen |= has_anchor
+            tests += len(re.findall(r"#\[(?:tokio::)?test\]" if language == "Rust" else r"^func Test", text, re.M))
     return lines, tests
 
 
