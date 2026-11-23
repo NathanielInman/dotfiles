@@ -4,6 +4,8 @@
 tags = ["desk"]
 dir = "~"
 notify = "failure"
+# Rarely clicked: on the Shelf rather than a tab of their own.
+shelf = true
 
 # [w] keeps pkill from matching the bash -c running it.
 [task.wallpaper]

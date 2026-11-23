@@ -32,10 +32,6 @@ name = "Deploys"
 tags = ["deploy"]
 
 [[tab]]
-name = "Desk"
-tags = ["desk"]
-
-[[tab]]
 name = "Scheduled"
 tags = ["scheduled"]
 
