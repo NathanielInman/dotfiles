@@ -165,7 +165,7 @@ commit_and_push() {
   fi
 
   git -C "$repo" add -A -- . "${EXCLUDES[@]}"
-  git -C "$repo" commit -m "chore: nightly backup $TS $SKIP_CI_TAG" >>"$LOG_FILE" 2>&1 || {
+  git -C "$repo" commit --no-verify -m "chore: nightly backup $TS $SKIP_CI_TAG" >>"$LOG_FILE" 2>&1 || {
     log "  nothing staged to commit (all changes excluded?)"; return 0; }
 
   local -a opts
