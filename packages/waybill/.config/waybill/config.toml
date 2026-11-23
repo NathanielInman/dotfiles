@@ -11,6 +11,9 @@
 # with "Nate:" is a ruling.
 hands = ["nate"]
 decision = "decision"
+# Something broke: the lamp turns red and the card gets a red border.
+# Switchyard's on-finish hook files these in ops when a scheduled job fails.
+alarm = "alarm"
 
 [lint]
 # The tag set from the tasks skill (~/Sites/tasks/skills/tasks/SKILL.md).
@@ -53,4 +56,5 @@ projects = [
   "waybill",
   "layover",
   "dotfiles",
+  "ops",
 ]

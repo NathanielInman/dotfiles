@@ -247,6 +247,7 @@ window#waybar.empty #window {
   color: @yellow;
 }
 
+#custom-waybill.alarm,
 #custom-waybill.error {
   color: @red;
 }

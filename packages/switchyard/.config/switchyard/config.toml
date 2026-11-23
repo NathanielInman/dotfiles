@@ -159,3 +159,9 @@ label = "btrfs scrub /"
 unit = "btrfs-scrub@data"
 id = "scrub-data"
 label = "btrfs scrub /data"
+
+# After every finished run: a scheduled, one-off or timer run that failed
+# opens a red alarm task in Waybill's ops project; the next green run closes
+# it. See the script for the rules.
+[hooks]
+on_finish = "~/.config/switchyard/bin/on-finish.sh"

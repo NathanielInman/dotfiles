@@ -59,6 +59,7 @@ Rebuilds hyprpm plugins after every Hyprland upgrade so boot doesn't complain ab
 
 - `cron-git-notes-auto-update.sh` and `cron-git-tasks-auto-update.sh` sync the `notes` and `tasks` repos hourly.
 - `cron-sites-nightly-backup.sh` runs at 3am so no uncommitted work in `~/Sites` is ever lost to a dead disk. Repos I own get an atomic commit and push on the current branch. Every other dirty repo is snapshotted to a `backup/auto/<host>/<branch>` ref on its remote without touching the working tree. Write-up: [sites-nightly-backup.md](sites-nightly-backup.md).
+- `packages/switchyard/.config/switchyard/bin/on-finish.sh` is Switchyard's `hooks.on_finish`: when a scheduled job, a one-off `--at` run or a watched timer fails, it files one high-priority `alarm` task in Waybill's `ops` project (the Waybill lamp turns red), keeps a count and the latest log in its note, and closes it when the job next runs green.
 - `pkglist-refresh.sh` rewrites `pkglist/` from `pacman -Qqe` at 2:55am, just before the backup commits it.
 - `statusline-command.sh` is a Claude Code statusline: directory, branch, model, context, usage window, cost and session length. See the [setup guide](setting-up-archlinux.md#claude-code-statusline).
 

@@ -14,4 +14,8 @@ uda.ref.label=Ref
 
 # Keep the list glanceable: annotations (the per-visit log) collapse to a
 # [N] count; Enter in vit shows them in full.
+# Alarms (something broke; Switchyard's on-finish hook files them in ops)
+# outrank everything else, so they top the Ready lane and `waybill next`.
+urgency.user.tag.alarm.coefficient=20.0
+
 report.next.columns=id,start.age,entry.age,depends,priority,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description.count,urgency
