@@ -39,6 +39,10 @@ tags = ["desk"]
 name = "Scheduled"
 tags = ["scheduled"]
 
+[[tab]]
+name = "Timers"
+tags = ["timers"]
+
 [bar]
 icon = "󰐱"
 
@@ -140,3 +144,22 @@ ignore = ["*.lock", "package-lock.json", "pnpm-lock.yaml", "CHANGELOG.md", "pack
 # other author committing to one is "act", not the default "tidy".
 [inspection.severity]
 foreign_author = "act"
+
+# systemd timers other repos and the distro install, watched read-only.
+[[timer]]
+unit = "plos-origins-pull-backups"
+label = "plos backups pull"
+
+[[timer]]
+unit = "broker-cert-renew"
+label = "broker cert renew"
+
+[[timer]]
+unit = "btrfs-scrub@-"
+id = "scrub-root"
+label = "btrfs scrub /"
+
+[[timer]]
+unit = "btrfs-scrub@data"
+id = "scrub-data"
+label = "btrfs scrub /data"
