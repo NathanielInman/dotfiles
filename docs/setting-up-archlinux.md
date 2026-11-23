@@ -1146,6 +1146,8 @@ cron workfiles are stored under `/var/spool/cron` and `/etc/cron*`. You can edit
 0 3 * * * /home/nate/Sites/dot-files/scripts/cron-sites-nightly-backup.sh
 # refresh pkglist/ so the 3am backup commits any package changes
 55 2 * * * /home/nate/Sites/dot-files/scripts/pkglist-refresh.sh
+# file README drift in dot-files as a Waybill task (docs/bar/README.md)
+30 3 * * * /home/nate/Sites/dot-files/scripts/cron-dotfiles-drift.sh
 ```
 
 The nightly backup is documented in full in [`docs/sites-nightly-backup.md`](./sites-nightly-backup.md): owned repos get an atomic conventional commit + push on the current branch, every other dirty repo is snapshotted non-destructively to a `backup/auto/<host>/<branch>` ref on its remote.

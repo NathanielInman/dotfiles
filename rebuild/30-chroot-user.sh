@@ -140,6 +140,8 @@ do_crontab() {
 0 3 * * * $HOME/Sites/dot-files/scripts/cron-sites-nightly-backup.sh
 # refresh pkglist/ so the 3am backup commits any package changes
 55 2 * * * $HOME/Sites/dot-files/scripts/pkglist-refresh.sh
+# file README drift in dot-files as a Waybill task
+30 3 * * * $HOME/Sites/dot-files/scripts/cron-dotfiles-drift.sh
 EOF
     crontab -l
 }
