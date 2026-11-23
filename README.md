@@ -205,6 +205,7 @@ install -Dm755 target/release/layover target/release/layover-board -t ~/.local/b
 install -Dm644 packaging/systemd/layover.service -t ~/.config/systemd/user/
 sed -i 's|^ExecStart=.*|ExecStart=%h/.local/bin/layover daemon|' ~/.config/systemd/user/layover.service
 systemctl --user enable --now layover.service
+layover doctor
 ```
 
 </details>
