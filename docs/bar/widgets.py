@@ -41,7 +41,8 @@ class Widget:
     name: str
     # One or two sentences for the README's widget table.
     what: str
-    # The file that makes it, relative to the repo root.
+    # The file that makes it, relative to the repo root. An app's name in
+    # the table links to its repo from its suite.toml instead.
     source: str
     # What to install (or own) before the widget works, for the README's
     # Needs column. Markdown; empty for widgets drawn only in the hero.

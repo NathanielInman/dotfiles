@@ -34,6 +34,7 @@ ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 
 import scenes  # noqa: E402
+import suite  # noqa: E402
 from story import BEATS, DICTATED, LOOP, MOVE, ZOOM  # noqa: E402
 from svgkit import (  # noqa: E402
     BG0, BG1, BOLD, DIM, FAINT, FG, FROST, GO, ORANGE, REG, VIOLET, WIN, WIN_BAR, WIN_LINE,
@@ -53,7 +54,11 @@ STILL = 5.0  # the moment shown with reduced motion: Roundhouse's drawer
 
 def load_jsonc(path: Path):
     """JSON with // comments and trailing commas."""
-    out, i, s = [], 0, path.read_text(encoding="utf-8")
+    return parse_jsonc(path.read_text(encoding="utf-8"))
+
+
+def parse_jsonc(s: str):
+    out, i = [], 0
     in_str = False
     while i < len(s):
         c = s[i]
@@ -901,24 +906,58 @@ def strip(m: Mod):
     return svg.render(round(width, 1), height, f"{m.w.name}: " + ", ".join(states), scale=1.5)
 
 
-def write_table():
+# The apps that describe themselves in a suite.toml, in the bar's order.
+SUITE = suite.in_bar_order(suite.load(), [m for e in LEFT + RIGHT for m in e.mods])
+SUITE_REPO = {a.module: a.repo for a in SUITE}
+
+
+def widget_table() -> str:
+    """The widget table. An app's name links to its repo (from its
+    suite.toml); a script's to the script."""
     rows = ["| | Widget | What it does | Needs |", "|---|---|---|---|"]
     for m in own_widgets():
         slug = m.name.split("/")[-1]
         rows.append(
             f'| <img src="Pictures/bar/widgets/{slug}.svg" height="36" alt="{esc(m.w.name)}"> '
-            f"| [{m.w.name}]({m.w.source}) | {m.w.what} | {m.w.needs} |"
+            f"| [{m.w.name}]({SUITE_REPO.get(m.name, m.w.source)}) | {m.w.what} | {m.w.needs} |"
         )
+    return "\n".join(rows) + "\n"
+
+
+def readme() -> str:
+    """README.md with every generated block brought up to date."""
+    own = own_widgets()
+    apps = [m for m in own if m.name in SUITE_REPO]
+    scripts = [m for m in own if m.name not in SUITE_REPO and m.w.source.endswith(".sh")]
+    others = [m.w.name[0].lower() + m.w.name[1:] for m in own if m not in apps and m not in scripts]
+    toured = all(any(a.module in b.set or b.click == a.module for b in BEATS) for a in SUITE)
     text = README.read_text(encoding="utf-8")
-    start, end = "<!-- bar-widgets:start -->", "<!-- bar-widgets:end -->"
-    if start not in text or end not in text:
-        print(f"README.md has no {start} / {end} markers; skipped the table")
-        return
-    a, b = text.index(start) + len(start), text.index(end)
-    README.write_text(text[:a] + "\n" + "\n".join(rows) + "\n" + text[b:], encoding="utf-8")
+    for name, body in [
+        ("bar-widgets", widget_table()),
+        ("suite-summary", suite.summary(SUITE, len(own), len(scripts), others, toured)),
+        ("suite", suite.section(SUITE)),
+    ]:
+        out = suite.replace_block(text, name, body)
+        if out is None:
+            print(f"README.md has no {name} markers; skipped it")
+        else:
+            text = out
+    return text
+
+
+def check():
+    """`build.py --check`: writes nothing, says what has drifted."""
+    errors, warnings = suite.problems(SUITE, CONFIG, BEATS, parse_jsonc, readme())
+    for w in warnings:
+        print(f"warning: {w}")
+    for e in errors:
+        print(e)
+    sys.exit(1 if errors else 0)
 
 
 def main():
+    if "--check" in sys.argv[1:]:
+        check()
     (OUT / "widgets").mkdir(parents=True, exist_ok=True)
     (OUT / "hero.svg").write_text(hero(), encoding="utf-8")
     keep = set()
@@ -931,7 +970,7 @@ def main():
     for old in (OUT / "widgets").glob("*.svg"):
         if old.name not in keep:
             old.unlink()
-    write_table()
+    README.write_text(readme(), encoding="utf-8")
     size = (OUT / "hero.svg").stat().st_size // 1024
     print(f"wrote Pictures/bar/hero.svg ({size} KB) and {len(keep)} widget strips")
     missing = REG.missing | BOLD.missing
