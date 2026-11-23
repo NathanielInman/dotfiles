@@ -100,21 +100,17 @@ so it's recoverable the same way.
 
 ## Install
 
-The cron isn't managed by stow - add it to your crontab once:
-
-```bash
-# Make sure cronie is running (see setting-up-archlinux.md)
-sudo systemctl enable cronie.service --now
-
-# crontab -e, then add:
-0 3 * * * /home/nate/Sites/dot-files/scripts/cron-sites-nightly-backup.sh
-```
+It runs as the Switchyard task `sites-nightly-backup` (schedule `03:00`, with
+`catch_up = true`) from `packages/switchyard/.config/switchyard/tasks.d/cron.toml`,
+which stow puts in place. A failed run lights the bar and stays on the History
+tab; a night the machine was off or logged out runs once at the next login.
+`yard run sites-nightly-backup` runs it by hand.
 
 > [!TIP]
-> Push works in cron because `~/.git-credentials` holds plaintext HTTPS tokens for
+> Push works unattended because `~/.git-credentials` holds plaintext HTTPS tokens for
 > `github.com` and `gitlab.com` (the `store` credential helper), so auth doesn't depend
 > on a graphical keyring/DBus session that won't exist at 3am. If you ever rotate to a
-> keyring-only setup, re-add the tokens to `~/.git-credentials` or the cron pushes will
+> keyring-only setup, re-add the tokens to `~/.git-credentials` or the 3am pushes will
 > silently fail - check the logfile.
 
 ## Dry run / testing
@@ -129,4 +125,4 @@ cat ~/.local/state/sites-nightly-backup/backup-$(date +%F).log
 
 ## Disable
 
-Remove the `0 3 * * *` line from `crontab -e`.
+Delete the `[task.sites-nightly-backup]` table from `tasks.d/cron.toml`.

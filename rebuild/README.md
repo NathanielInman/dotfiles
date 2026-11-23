@@ -10,7 +10,7 @@ The guide explains each piece. The scripts do it.
 | `bootstrap.sh` | live ISO, root | Installs live tools, mounts Rime, decrypts the Claude token (one touch), writes `claude-rebuild` |
 | `10-live.sh` | live ISO, root | Asks for the password and wipe confirmation, then runs unattended: disks, pacstrap, fstab, `20-chroot.sh` |
 | `20-chroot.sh` | chroot, root (started by 10) | Locale, Limine, NVIDIA initramfs, network, user, services, snapper, then `30-chroot-user.sh` |
-| `30-chroot-user.sh` | chroot, user (started by 20) | Stow, oh-my-zsh, rustup, paru, AUR list, cargo tools, Claude, crontab, `install.sh -y -s` |
+| `30-chroot-user.sh` | chroot, user (started by 20) | Stow, oh-my-zsh, rustup, paru, AUR list, cargo tools, Claude, `install.sh -y -s` |
 | `40-first-boot.sh` | Hyprland kitty, user | User services, theme, then restore from the backup set (YubiKey, `~/Sites`, home, Claude/T3) |
 
 `config.sh` holds the machine settings (disks, user, hostname, Rime). Every value can be overridden from the environment.

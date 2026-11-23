@@ -53,9 +53,9 @@ Rebuilds hyprpm plugins after every Hyprland upgrade so boot doesn't complain ab
 
 `usr/share/applications/` holds `.desktop` overrides, mostly `NoDisplay=true`, to keep unwanted apps out of walker. Copy them to `/usr/share/applications/` by hand.
 
-## Cron jobs and other scripts
+## Scheduled jobs and other scripts
 
-`scripts/` holds the cron helpers (add them with `crontab -e`, see the [setup guide](setting-up-archlinux.md)) and a few other tools:
+`scripts/` holds the scheduled jobs, which Switchyard runs from `packages/switchyard/.config/switchyard/tasks.d/cron.toml` (they lived in the crontab until 2026-11-23, hence the `cron-` names), and a few other tools:
 
 - `cron-git-notes-auto-update.sh` and `cron-git-tasks-auto-update.sh` sync the `notes` and `tasks` repos hourly.
 - `cron-sites-nightly-backup.sh` runs at 3am so no uncommitted work in `~/Sites` is ever lost to a dead disk. Repos I own get an atomic commit and push on the current branch. Every other dirty repo is snapshotted to a `backup/auto/<host>/<branch>` ref on its remote without touching the working tree. Write-up: [sites-nightly-backup.md](sites-nightly-backup.md).

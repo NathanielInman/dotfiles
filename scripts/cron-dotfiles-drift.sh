@@ -4,7 +4,7 @@
 # task in the dotfiles project so an agent picks it up off the board. One
 # open task at a time: a later night appends to its note instead.
 #
-#   30 3 * * * $HOME/Sites/dot-files/scripts/cron-dotfiles-drift.sh
+# Runs as the Switchyard task dotfiles-drift at 03:30 (tasks.d/cron.toml).
 set -uo pipefail
 
 DOT="$HOME/Sites/dot-files"

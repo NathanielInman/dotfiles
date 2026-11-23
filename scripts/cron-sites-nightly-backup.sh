@@ -20,7 +20,7 @@
 # unattended at 3am even when rate-limited/offline, so commit messages are
 # deterministic. See docs/sites-nightly-backup.md for the full rationale.
 #
-# Install:  crontab -e  ->  0 3 * * * /home/nate/Sites/dot-files/scripts/cron-sites-nightly-backup.sh
+# Runs:     the Switchyard task sites-nightly-backup at 03:00 (tasks.d/cron.toml)
 # Dry run:  DRY_RUN=1 /home/nate/Sites/dot-files/scripts/cron-sites-nightly-backup.sh
 
 # --- cron-safe environment -------------------------------------------------

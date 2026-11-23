@@ -131,21 +131,6 @@ do_mime() {
     done
 }
 
-do_crontab() {
-    crontab -l &>/dev/null && { echo "crontab already set"; return 0; }
-    crontab - <<EOF
-@hourly $HOME/Sites/dot-files/scripts/cron-git-notes-auto-update.sh
-@hourly $HOME/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh
-# nightly safety net: back up any dirty ~/Sites repo to its remote
-0 3 * * * $HOME/Sites/dot-files/scripts/cron-sites-nightly-backup.sh
-# refresh pkglist/ so the 3am backup commits any package changes
-55 2 * * * $HOME/Sites/dot-files/scripts/pkglist-refresh.sh
-# file README drift in dot-files as a Waybill task
-30 3 * * * $HOME/Sites/dot-files/scripts/cron-dotfiles-drift.sh
-EOF
-    crontab -l
-}
-
 do_orphans() {
     # Last, so it catches leftovers from every step above: build tools that
     # an AUR package or cargo pulled in and nothing needs any more. Anything
@@ -180,6 +165,5 @@ step minor sdcv "sdcv dictionary" do_sdcv
 step minor claude "Claude Code native install" do_claude
 step minor pipx "trcli via pipx" do_pipx
 step minor mime "Default apps (xdg-mime)" do_mime
-step minor crontab "User crontab" do_crontab
 step minor orphans "Remove orphaned build dependencies" do_orphans
 rb_summary

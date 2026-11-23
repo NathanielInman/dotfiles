@@ -5,7 +5,7 @@
 #   grep -v '^#' pkglist/repo.txt | sudo pacman -S --needed -
 #   grep -v '^#' pkglist/aur.txt  | paru -S --needed -
 #
-# Runs from cron just before the 3am nightly backup, which commits and pushes
+# Runs from Switchyard (tasks.d/cron.toml) just before the 3am nightly backup, which commits and pushes
 # any change. Safe to run by hand.
 set -euo pipefail
 

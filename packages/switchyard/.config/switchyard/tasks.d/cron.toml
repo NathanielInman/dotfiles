@@ -1,0 +1,43 @@
+# The jobs that used to live in the crontab, adopted by `yard adopt cron` on
+# 2026-11-23. Switchyard runs them on these schedules, so a failure lights the
+# bar and every run lands in History. The crontab no longer has them.
+
+[defaults]
+tags = ["scheduled"]
+dir = "~"
+notify = "failure"
+# A run missed while the daemon was down, the machine asleep or nobody
+# logged in happens once it is back. Cron skipped those.
+catch_up = true
+
+[task.git-notes-auto-update]
+label = "notes sync"
+description = "pull and push ~/Sites/notes"
+schedule = "hourly"
+steps = ["$HOME/Sites/dot-files/scripts/cron-git-notes-auto-update.sh"]
+
+[task.git-tasks-auto-update]
+label = "tasks sync"
+description = "pull and push ~/Sites/tasks (Waybill)"
+schedule = "hourly"
+steps = ["$HOME/Sites/dot-files/scripts/cron-git-tasks-auto-update.sh"]
+
+# Its own task rather than a first step of the backup: a failed refresh
+# must never stop the backup from running.
+[task.pkglist-refresh]
+label = "pkglist refresh"
+description = "refresh pkglist/ so the 3am backup commits any package changes"
+schedule = "55 2 * * *"
+steps = ["$HOME/Sites/dot-files/scripts/pkglist-refresh.sh"]
+
+[task.sites-nightly-backup]
+label = "nightly backup"
+description = "back up any dirty ~/Sites repo to its remote"
+schedule = "03:00"
+steps = ["$HOME/Sites/dot-files/scripts/cron-sites-nightly-backup.sh"]
+
+[task.dotfiles-drift]
+label = "dotfiles drift"
+description = "file README drift in dot-files as a Waybill task"
+schedule = "03:30"
+steps = ["$HOME/Sites/dot-files/scripts/cron-dotfiles-drift.sh"]
