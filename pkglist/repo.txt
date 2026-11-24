@@ -54,12 +54,14 @@ galculator
 git
 git-delta
 github-cli
+gke-gcloud-auth-plugin
 glab
 glances
 glow
 gnome-keyring
 go
 godot-mono
+google-cloud-cli
 gping
 gpu-screen-recorder
 grim
@@ -94,6 +96,7 @@ linux-firmware
 linux-headers
 man-db
 maven
+mingw-w64-gcc
 mpv
 ncdu
 neovide

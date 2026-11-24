@@ -10,8 +10,6 @@ fselect
 gdbuspp
 godot-mono-export-templates-linux
 google-chrome
-google-cloud-cli
-google-cloud-cli-component-gke-gcloud-auth-plugin
 gtk-engine-murrine
 gtk2
 jira-cli
