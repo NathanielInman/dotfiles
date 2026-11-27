@@ -24,3 +24,16 @@ steps = ["scripts/check-platforms.sh"]
 schedule = "04:00"
 catch_up = true
 errors = ["rust", "go", "generic"]
+
+# Everything built from plos-db (releases, arena, personas worlds, the tools'
+# WebAssembly loaders, the game box, d20) against plos-db and plos-origins
+# master. Reads public endpoints, local checkouts and the box over ssh.
+[task.plos-drift]
+label = "plos drift"
+description = "every plos-db consumer level with master"
+dir = "~/Sites/plos-db"
+steps = ["scripts/check-drift.sh"]
+schedule = "08:00"
+catch_up = true
+notify_tail = 4
+errors = ["generic"]
